@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { adminApi } from './api/api';
-import { adminApi as managerApi } from './api/manager-api';
+import { adminApi } from '../../api/api';
+import { adminApi as managerApi } from '../../api/manager-api';
 import {
   Search,
   Plus,

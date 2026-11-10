@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Plus, TicketPercent, Pencil, Power, Search, X } from "lucide-react";
-import { adminApi } from "./api/manager-api";
-import { useManagerList } from "./shared/hooks/useManagerResource";
-import "./admin-vouchers.css";
+import { adminApi } from "../../api/manager-api";
+import { useManagerList } from "../../shared/hooks/useManagerResource";
+import "./styles/admin-vouchers.css";
 
 const labels = { ACTIVE: "Đang áp dụng", SCHEDULED: "Sắp bắt đầu", EXPIRED: "Đã hết hạn", EXHAUSTED: "Hết lượt", DISABLED: "Đã tắt" };
 const money = value => Number(value || 0).toLocaleString("vi-VN") + " đ";

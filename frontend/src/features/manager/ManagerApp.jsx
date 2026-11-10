@@ -13,7 +13,7 @@ import { TicketPercent } from "lucide-react";
 import { canAdvanceOrder, isFinalOrder } from './order-transitions';
 import SurveyRewardEditor, { RewardFields, emptyReward } from './SurveyRewardEditor';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-const AdminVouchers = React.lazy(() => import('../../AdminVouchers'));
+const AdminVouchers = React.lazy(() => import('../admin/AdminVouchers'));
 const CustomerProfile = React.lazy(() => import('./CustomerProfile'));
 const CustomerCare = React.lazy(() => import('./CustomerCare'));
 const CareDashboard = React.lazy(() => import('./CareDashboard'));

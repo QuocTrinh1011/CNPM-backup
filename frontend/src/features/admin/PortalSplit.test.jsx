@@ -3,8 +3,8 @@ import React from 'react';
 import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
 import {it,expect,vi,afterEach,beforeEach} from 'vitest';
 import SystemAdminApp from './SystemAdminApp';
-import {adminApi,adminRefreshSession} from './api/api';
-vi.mock('./api/api',()=>({adminApi:vi.fn(),adminRefreshSession:vi.fn(),adminSignIn:vi.fn(),adminSignOut:vi.fn()}));
+import {adminApi,adminRefreshSession} from '../../api/api';
+vi.mock('../../api/api',()=>({adminApi:vi.fn(),adminRefreshSession:vi.fn(),adminSignIn:vi.fn(),adminSignOut:vi.fn()}));
 beforeEach(()=>{window.localStorage.removeItem('admin-sidebar-collapsed');window.localStorage.removeItem('admin-theme')});
 afterEach(()=>{cleanup();vi.resetAllMocks();vi.unstubAllEnvs()});
 it.each([

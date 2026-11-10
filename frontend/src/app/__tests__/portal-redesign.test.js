@@ -6,7 +6,7 @@ const userStyles = readFileSync('src/features/storefront/styles/user-redesign.cs
 const managerStyles = readFileSync('src/features/manager/styles/manager-redesign.css', 'utf8');
 const newFormStyles = readFileSync('src/features/storefront/styles/customer-new-form.css', 'utf8');
 const cockpitStyles = readFileSync('src/features/manager/styles/manager-cockpit.css', 'utf8');
-const adminStyles = ['admin-governance.css','admin-aurora.css'].map(file => readFileSync(`src/${file}`, 'utf8'));
+const adminStyles = ['features/admin/styles/admin-governance.css','features/admin/styles/admin-aurora.css'].map(file => readFileSync(`src/${file}`, 'utf8'));
 
 function rules(css) {
   const style = document.createElement('style');
