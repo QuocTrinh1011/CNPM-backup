@@ -4,7 +4,7 @@ import { useManagerReadPause } from '../../shared/hooks/useManagerResource';
 import { showReturn, displayOrderLabel, deliveryLabel, returnLabels } from '../../shared/utils/order-display';
 import '../../shared/styles/order-display.css';
 import SourceCareCreator from './SourceCareCreator';
-const OrderFinancePanel=React.lazy(()=>import('./ManagerRefunds').then(module=>({default:module.OrderFinancePanel})));
+const OrderPaymentPanel=React.lazy(()=>import('./ManagerPaymentPanel'));
 export { returnLabels } from '../../shared/utils/order-display';
 import { X, User, Calendar, CreditCard, MapPin, RotateCcw, AlertTriangle } from 'lucide-react';
 
@@ -109,11 +109,11 @@ export default function ManagerOrderDetail({ detail: sourceDetail, loading, erro
                 </div>
               )}
             </div>
-            {detail.finance&&<React.Suspense fallback={<p role="status">Đang tải sổ hoàn tiền…</p>}><OrderFinancePanel key={detail.id} order={detail} onUpdated={setProcessed} onEditingChange={setFinanceEditing}/></React.Suspense>}
+            {detail.finance&&<React.Suspense fallback={<p role="status">Đang tải thông tin thanh toán…</p>}><OrderPaymentPanel key={detail.id} order={detail} onUpdated={setProcessed} onEditingChange={setFinanceEditing}/></React.Suspense>}
             {showReturn(detail) && <section className="admin-return-management" aria-label="Xử lý đổi trả">
               <h3>Theo dõi đổi trả</h3>
               <p>Yêu cầu lúc: {date(detail.returnRequestedAt)}</p>
-              <p>Chỉ ghi nhận xử lý. Không tự hoàn tiền, cộng tồn kho hoặc hoàn lượt voucher.</p>
+              <p>Ghi nhận kết quả đổi trả. Hệ thống không tự thay đổi tồn kho hoặc lượt voucher.</p>
               <ol className="return-history">
                 {(detail.returnHistory || []).map((entry,index)=><li key={entry.id || index}>
                   <b>{returnLabels[entry.status] || entry.status}</b><small>{date(entry.createdAt)}{entry.managerName ? ` · ${entry.managerName}` : ''}</small>
@@ -128,7 +128,7 @@ export default function ManagerOrderDetail({ detail: sourceDetail, loading, erro
               </div>}
               {action && <form onSubmit={process} className="admin-return-form">
                 <h4>{actionLabels[action]}</h4>
-                <label htmlFor="return-processing-note">{action==='REJECTED'?'Lý do từ chối':action==='COMPLETED'?'Ghi chú cách giải quyết (đổi hàng/hoàn tiền đã thực hiện bên ngoài)':'Ghi chú (không bắt buộc)'}</label>
+                <label htmlFor="return-processing-note">{action==='REJECTED'?'Lý do từ chối':action==='COMPLETED'?'Ghi chú cách xử lý đổi trả':'Ghi chú (không bắt buộc)'}</label>
                 <textarea id="return-processing-note" autoFocus required={action!=='APPROVED'} maxLength={1000} value={note} disabled={busy} onChange={e=>setNote(e.target.value)}/>
                 <small>{note.length}/1.000 ký tự · Nội dung được thông báo cho khách.</small>
                 {failure && <p role="alert" className="danger-text">{failure}</p>}

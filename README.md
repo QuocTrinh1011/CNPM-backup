@@ -207,6 +207,7 @@ Sao lưu, xác định phiên bản schema đã triển khai và đọc migratio
 | Hoàn tiền và dòng tiền | `010_refunds_abandoned_payos.sql`, `011_cashflow_voucher_customer_limit.sql` |
 | Chăm sóc khách hàng | `012_customer_care.sql` → `013_care_sources.sql` → `014_care_outcomes.sql` → `015_care_reminders.sql` |
 | Nhật ký và phiếu hỗ trợ | `016_audit_logs.sql`, `017_support_tickets.sql` |
+| Thống kê doanh thu và nhập kho | `018_sales_statistics.sql`, `019_stock_receipts.sql` |
 
 Các script nằm trong `database/migrations/`. Migration nhắc hạn cần bảng công việc chăm sóc và thông báo nền có trước; phiếu hỗ trợ cần các bảng nền khách hàng, đơn hàng và thông báo. Backend có ghi audit cần bảng nhật ký trước khi thực hiện nghiệp vụ mới. Xem hướng dẫn từng chức năng ở mục [Tài liệu chi tiết](#tài-liệu-chi-tiết).
 
@@ -352,6 +353,7 @@ GitHub Actions phân loại thay đổi để chạy backend `mvn verify`, front
 | Voucher và đánh giá | [Voucher](docs/database/vouchers.md), [đánh giá và thưởng khảo sát](docs/database/reviews-rewards.md) |
 | Thu – hoàn tiền và giới hạn cá nhân | [Báo cáo, quy tắc voucher và migration](docs/features/cashflow-voucher-limits.md) |
 | Nhật ký và kiểm tra nghiệp vụ | [Audit log](docs/features/audit-logs.md), [ma trận QA](docs/qa/crm-workflow-qa.md), [cấu hình demo](docs/ops/env-demo.md), [quyết định và ghi nhận thay đổi](docs/requirements/decisions-changelog.md) |
+| Nhập kho và chi phí mua hàng | [Phiếu nhập kho](docs/features/stock-receipts.md) |
 | Sơ đồ | [Thư mục sơ đồ](docs/design/diagrams/) |
 
 Tài liệu từng đợt có thể ghi kết quả kiểm tra ở thời điểm khác nhau. Khi có khác biệt, đối chiếu phiên bản mã nguồn và migration đang triển khai.

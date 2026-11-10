@@ -23,7 +23,8 @@ public class AuditTrail {
     public static Map<String,Object> snapshot(Object item){
         var m=new TreeMap<String,Object>();
         if(item instanceof User u){m.put("role",u.getRole());m.put("locked",u.isLocked());m.put("deleted",u.getDeletedAt()!=null);}
-        else if(item instanceof Order o){m.put("orderCode",o.getOrderCode());m.put("status",o.getStatus());m.put("returnStatus",o.getReturnStatus());m.put("paymentStatus",o.getPaymentStatus());}
+        else if(item instanceof Order o){m.put("orderCode",o.getOrderCode());m.put("status",o.getStatus());m.put("returnStatus",o.getReturnStatus());m.put("paymentStatus",o.getPaymentStatus());m.put("salespersonId",o.getSalespersonId());}
+        else if(item instanceof StockReceipt r){m.put("receiptCode",r.getReceiptCode());m.put("supplierId",r.getSupplier()==null?null:r.getSupplier().id);m.put("supplierName",r.getSupplierName());m.put("totalCost",r.getTotalCost());m.put("receivedAt",r.getReceivedAt());m.put("status",r.getStatus());}
         else if(item instanceof Product p){m.put("name",p.getName());m.put("price",p.getPrice());m.put("stock",p.getStock());m.put("active",p.isActive());m.put("category",p.getCategory());}
         else if(item instanceof StoreVoucher v){m.put("code",v.getCode());m.put("discountType",v.getDiscountType());m.put("discountValue",v.getDiscountValue());m.put("minOrderAmount",v.getMinOrderAmount());m.put("maxDiscountAmount",v.getMaxDiscountAmount());m.put("usageLimit",v.getUsageLimit());m.put("perCustomerLimit",v.getPerCustomerLimit());m.put("startsAt",v.getStartsAt());m.put("expiresAt",v.getExpiresAt());m.put("active",v.isActive());}
         else if(item instanceof Feedback f){m.put("status",f.getStatus());m.put("hidden",f.isHidden());m.put("deleted",f.getDeletedAt()!=null);m.put("hasShopResponse",f.getAdminResponse()!=null&&!f.getAdminResponse().isBlank());}

@@ -26,3 +26,4 @@
 .return-history small { display:block; }
 .return-history p { white-space:pre-wrap; }
 .admin-return-management .admin-dialog-actions { flex-wrap:wrap; gap:8px; }
+.admin-salesperson-assignment{display:grid;gap:8px;margin:16px 0;padding:13px;border:1px solid var(--admin-border,#cbd5e1);border-radius:10px;background:var(--admin-soft,#f8fafc)}.admin-salesperson-assignment>div:first-child{display:grid;gap:3px}.admin-salesperson-assignment small{color:var(--admin-muted,#64748b);font-size:11px}.admin-salesperson-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.admin-salesperson-controls select{flex:1;min-width:180px;min-height:38px;padding:8px 10px;border:1px solid var(--admin-border,#cbd5e1);border-radius:8px;background:var(--admin-surface,#fff);color:var(--admin-text,#0f172a);font:inherit}.admin-salesperson-assignment [role=alert]{margin:0;color:#b91c1c;font-size:12px}

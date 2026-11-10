@@ -23,5 +23,7 @@ Các phụ thuộc bên dưới được đối chiếu từ bảng và cột m�
 | 15 | [015_care_reminders.sql](015_care_reminders.sql) | Liên kết thông báo với công việc và hạn chăm sóc. | `012_customer_care.sql` tạo `customer_care_tasks`; cần bảng nền `customer_notifications`. |
 | 16 | [016_audit_logs.sql](016_audit_logs.sql) | Tạo nhật ký kiểm toán và index tra cứu. | Không phụ thuộc migration khác; bảng mới lưu ảnh chụp tác nhân, không có FK. |
 | 17 | [017_support_tickets.sql](017_support_tickets.sql) | Tạo phiếu hỗ trợ và liên kết thông báo. | Các bảng nền `customers`, `orders`, `customer_notifications`; script không tham chiếu trực tiếp tới audit, care hoặc reminders. Giữ cuối theo thứ tự triển khai đã thống nhất. |
+| 18 | [018_sales_statistics.sql](018_sales_statistics.sql) | Gán tùy chọn nhân viên Manager cho đơn hàng để thống kê doanh thu. | Các bảng nền `customers`, `orders`. |
+| 19 | [019_stock_receipts.sql](019_stock_receipts.sql) | Tạo phiếu nhập kho và dòng sản phẩm để ghi chi phí mua hàng. | `002_manager_portal.sql` tạo `suppliers`; cần bảng nền `products`, `customers`. Backend ghi audit khi nhận phiếu nên cần `016_audit_logs.sql`. |
 
 Database cài mới dùng [`../schema.sql`](../schema.sql), sau đó có thể nạp dữ liệu minh họa bằng [`../seed/seed_data.sql`](../seed/seed_data.sql). Schema hiện tại đã bao gồm cấu trúc ứng dụng mới; không áp dụng toàn bộ migration như một bước bắt buộc cho database mới.

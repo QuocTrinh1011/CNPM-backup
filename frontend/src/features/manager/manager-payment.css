@@ -1,0 +1,10 @@
+.manager-payment-panel{min-width:0;margin:1rem 0;padding:1rem;border:1px solid var(--admin-border,#94a3b866);border-radius:14px;color:inherit}
+.manager-payment-panel h3{margin:0 0 .8rem}
+.manager-payment-panel p{overflow-wrap:anywhere}
+.manager-payment-warning,.manager-payment-note{margin:.75rem 0;padding:.8rem;border-inline-start:4px solid #d97706;background:color-mix(in srgb,#f59e0b 8%,transparent)}
+.manager-payment-warning p{margin:.35rem 0}
+.manager-payment-form{display:grid;gap:.8rem;margin-top:1rem;padding:1rem;border:1px solid var(--admin-border,#94a3b866);border-radius:10px}
+.manager-payment-form h4,.manager-payment-form p{margin:0}
+.manager-payment-form label{display:grid;gap:.4rem}
+.manager-payment-form textarea{min-height:80px;resize:vertical;font:inherit;color:inherit;background:transparent;border:1px solid var(--admin-border,#94a3b8);border-radius:8px;padding:.65rem}
+.manager-payment-form>div{display:flex;flex-wrap:wrap;gap:.6rem}

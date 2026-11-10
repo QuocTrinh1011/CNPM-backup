@@ -918,3 +918,4 @@ form.internal-filters {
   .internal-header-right { flex-wrap: wrap; }
   .admin-shell.internal-portal :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) { font-size: 16px; }
 }
+.payment-review-warning{color:#92400e;font-weight:600}

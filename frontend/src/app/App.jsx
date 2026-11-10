@@ -10,7 +10,6 @@ import PaymentQr from "../features/storefront/PaymentQr";
 import CustomerLayout from '../features/customer/CustomerLayout';
 import CustomerVouchers, { RewardSummary } from '../features/customer/CustomerVouchers';
 import OrderReviews from '../features/customer/OrderReviews';
-import RefundSummary from '../features/customer/RefundSummary';
 import CustomerPassword from '../features/customer/CustomerPassword';
 const SupportTickets=React.lazy(()=>import('../features/support-tickets/SupportTickets'));
 import { useCartSelection, cartLineKey, canBuyLine, transferGuestSelection, subtractPurchased } from '../features/storefront/cart-selection';
@@ -2540,7 +2539,6 @@ export function OrderView({ order, onNotice, onChanged, onPaymentChanged, onRece
       ))}
       {order.discountAmount > 0 && <div className="order-total"><span>GIẢM GIÁ {order.voucherCode ? `(${order.voucherCode})` : ""}</span><strong>-{money(order.discountAmount)}</strong></div>}
       <div className="order-total"><span>TỔNG ĐƠN HÀNG</span><strong>{money(order.totalAmount)}</strong></div>
-      <RefundSummary refund={order.refund}/>
       <p className="shop-order-payment-method"><b>Phương thức thanh toán:</b> {order.paymentMethod === "PAYOS" ? "Quét mã QR PayOS" : "Thanh toán khi nhận hàng"}</p>
       {order.paymentMethod === "PAYOS" && <p className={paid ? "shop-payment-label is-paid" : "shop-payment-label"}>Trạng thái thanh toán: {paid ? "Đã thanh toán" : "Chưa thanh toán"}</p>}
       {order.paymentMethod === "PAYOS" && <PaymentQr orderId={order.id} onPaid={order.paymentStatus === "PAID" ? undefined : () => { setPaid(true); onNotice?.("Thanh toán thành công!"); onPaymentChanged?.(); }} />}

@@ -36,7 +36,7 @@ export default function RetentionReport({go}) {
           <div className="retention-track" aria-hidden="true"><div style={{width:`${Math.min(100,Math.max(0,Number(group.percentage)))}%`}} /></div>
         </div>)}
       </div>
-      <aside><p>Chỉ tính đơn COMPLETED. Khách thân thiết được ưu tiên khi có từ {data.thresholds.loyalOrders} đơn hoặc {number(data.thresholds.loyalValue)} đ giá trị đơn hoàn thành.</p><p>Đơn hoàn thành có đổi trả vẫn tính; chưa trừ hoàn tiền. Đây không phải tiền thực thu. Khi chưa có khách đã mua, tỷ lệ và giá trị trung bình bằng 0.</p><p>Cập nhật: <time dateTime={data.updatedAt}>{new Date(data.updatedAt).toLocaleString('vi-VN',{timeZone:data.thresholds.timezone})}</time> (giờ Việt Nam). Tự cập nhật mỗi 5 giây khi tab đang mở.</p></aside>
+      <aside><p>Chỉ tính đơn COMPLETED. Khách thân thiết được ưu tiên khi có từ {data.thresholds.loyalOrders} đơn hoặc {number(data.thresholds.loyalValue)} đ giá trị đơn hoàn thành.</p><p>Đây là chỉ số theo đơn hoàn thành, không phải tiền thực thu. Khi chưa có khách đã mua, tỷ lệ và giá trị trung bình bằng 0.</p><p>Cập nhật: <time dateTime={data.updatedAt}>{new Date(data.updatedAt).toLocaleString('vi-VN',{timeZone:data.thresholds.timezone})}</time> (giờ Việt Nam). Tự cập nhật mỗi 5 giây khi tab đang mở.</p></aside>
     </>}
   </section>;
 }
