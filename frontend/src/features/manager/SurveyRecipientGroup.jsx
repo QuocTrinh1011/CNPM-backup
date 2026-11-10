@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import {adminApi} from '../../api/manager-api';
 import {lifecycleLabels} from './CustomerLifecycle';
-import './styles/survey-recipient-group.css';
+import './survey-recipient-group.css';
 
 export const recipientFilterKeys=['q','stage','dormant','minCompletedOrders','maxCompletedOrders','minCompletedValue','maxCompletedValue','lastPurchaseFrom','lastPurchaseTo','minRating','maxRating','surveyed','surveyId'];
 const sourceKeys=[...recipientFilterKeys,'page','sort','direction'];

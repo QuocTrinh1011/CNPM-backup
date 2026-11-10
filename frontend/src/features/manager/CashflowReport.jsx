@@ -2,7 +2,7 @@ import React,{useCallback,useMemo} from 'react';
 import {adminApi} from '../../api/manager-api';
 import {useManagerResource} from '../../shared/hooks/useManagerResource';
 import {useManagerFilters,managerQuery,vietnamDateRange} from '../../shared/hooks/useManagerFilters';
-import './styles/cashflow-report.css';
+import './cashflow-report.css';
 const money=value=>new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND',maximumFractionDigits:0}).format(Number(value||0));
 const defaults=()=>{const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const from=new Date(`${today}T00:00:00Z`);from.setUTCDate(from.getUTCDate()-29);return{tab:'customers',fromDate:from.toISOString().slice(0,10),toDate:today,groupBy:'day'};};
 export default function CashflowReport(){

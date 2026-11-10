@@ -3,7 +3,7 @@ import { displayOrderLabel } from '../../shared/utils/order-display';
 import { adminApi, adminEndpoints } from '../../api/manager-api';
 import { useManagerResource } from '../../shared/hooks/useManagerResource';
 import ManagerOrderDetail, { money, date, orderLabels, paymentLabels, returnLabels } from './ManagerOrderDetail';
-import './styles/customer-profile.css';
+import './customer-profile.css';
 import CustomerLifecycle, {lifecycleExplanation} from './CustomerLifecycle';
 const CustomerCare=React.lazy(()=>import('./CustomerCare'));
 

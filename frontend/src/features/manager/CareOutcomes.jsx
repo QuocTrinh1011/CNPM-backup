@@ -3,7 +3,7 @@ import {adminApi} from '../../api/manager-api';
 import {useManagerResource} from '../../shared/hooks/useManagerResource';
 import {managerQuery} from '../../shared/hooks/useManagerFilters';
 import {AssigneeFilter,careOutcomes} from './CustomerCare';
-import './styles/care-outcomes-report.css';
+import './care-outcomes-report.css';
 
 const number=value=>new Intl.NumberFormat('vi-VN').format(value);
 const percentage=value=>new Intl.NumberFormat('vi-VN',{minimumFractionDigits:2,maximumFractionDigits:2}).format(value);

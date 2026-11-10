@@ -3,7 +3,7 @@ import {adminApi} from '../../api/manager-api';
 import {useManagerList,useManagerReadPause} from '../../shared/hooks/useManagerResource';
 import {useManagerFilters,managerQuery} from '../../shared/hooks/useManagerFilters';
 import RefundSummary,{refundMoney} from '../customer/RefundSummary';
-import './styles/manager-refunds.css';
+import './manager-refunds.css';
 const dates=value=>value?new Date(value).toLocaleString('vi-VN'):'—';
 const labels={PENDING:'Chờ hoàn',COMPLETED:'Đã hoàn',REJECTED:'Đã từ chối'};
 export const reviewLabels={MISSING_PAYMENT:'Thiếu bản ghi thanh toán',MISSING_LINK:'Thiếu link thanh toán',DUPLICATE_LINK:'Link giao dịch bị trùng',UNMAPPED_LEGACY_LINK:'Link cũ chưa đối chiếu được',PROVIDER_MISMATCH:'Thông tin PayOS không khớp',PARTIAL_PAYMENT:'Nhận tiền một phần',OVERPAYMENT:'Nhận tiền vượt giá trị đơn',UNKNOWN_PROVIDER_STATUS:'Trạng thái PayOS chưa nhận diện',CANCEL_NOT_CONFIRMED:'Chưa xác nhận hủy link',MULTIPLE_PAYMENTS:'Có nhiều giao dịch đã trả tiền',LOCAL_PROVIDER_CONFLICT:'Trạng thái web và PayOS chưa khớp',PROVIDER_UNAVAILABLE:'Chưa kết nối được PayOS'};

@@ -2,7 +2,7 @@ import React, {useCallback} from 'react';
 import {adminApi} from '../../api/manager-api';
 import {useManagerResource} from '../../shared/hooks/useManagerResource';
 import {lifecycleLabels} from './CustomerLifecycle';
-import './styles/retention-report.css';
+import './retention-report.css';
 
 const number = value => new Intl.NumberFormat('vi-VN', {maximumFractionDigits:0}).format(value);
 const decimal = value => new Intl.NumberFormat('vi-VN', {minimumFractionDigits:2,maximumFractionDigits:2}).format(value);
