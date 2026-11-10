@@ -15,7 +15,7 @@ import CustomerPassword from '../features/customer/CustomerPassword';
 const SupportTickets=React.lazy(()=>import('../features/support-tickets/SupportTickets'));
 import { useCartSelection, cartLineKey, canBuyLine, transferGuestSelection, subtractPurchased } from '../features/storefront/cart-selection';
 import { useCustomerRouter, actionPaths, isAccountPath, needsCustomer, isKnownPath, safeReturn } from './routing/customer-routing';
-import '../features/customer/styles/customer-pages.css';
+import './customer-pages.css';
 export { default as AddressModal } from "../features/customer/CustomerAddresses";
 import {
   api,
