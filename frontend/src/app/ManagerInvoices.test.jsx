@@ -2,10 +2,10 @@
 import React from 'react';
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import ManagerApp from '../../app/ManagerApp';
-import { adminApi, adminRefreshSession } from '../../api/manager-api';
+import ManagerApp from './ManagerApp';
+import { adminApi, adminRefreshSession } from '../api/manager-api';
 
-vi.mock('../../api/manager-api', async original => ({ ...await original(), adminApi: vi.fn(), adminRefreshSession: vi.fn() }));
+vi.mock('../api/manager-api', async original => ({ ...await original(), adminApi: vi.fn(), adminRefreshSession: vi.fn() }));
 
 const page = (content = []) => ({ content, totalElements: content.length, totalPages: content.length ? 1 : 0 });
 const invoice = {
@@ -29,7 +29,7 @@ const detail = {
 };
 const flush = async () => {
   await act(async () => {
-    await import('./ManagerInvoices');
+    await import('../features/manager/ManagerInvoices');
     await vi.advanceTimersByTimeAsync(0);
   });
 };
