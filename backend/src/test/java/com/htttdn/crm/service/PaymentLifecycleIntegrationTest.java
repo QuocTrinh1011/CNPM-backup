@@ -4,7 +4,6 @@ import com.htttdn.crm.entity.*;
 import com.htttdn.crm.repository.*;
 import com.htttdn.crm.security.JwtTokenService;
 import com.htttdn.crm.dto.admin.AdminDtos.StatusRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,27 +22,16 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:refunds;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;LOCK_TIMEOUT=10000","spring.datasource.driver-class-name=org.h2.Driver","spring.datasource.username=sa","spring.datasource.password=","spring.jpa.database-platform=org.hibernate.dialect.H2Dialect","spring.jpa.hibernate.ddl-auto=create-drop","crm.care-reminders.enabled=false"})
+@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:payment-lifecycle;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;LOCK_TIMEOUT=10000","spring.datasource.driver-class-name=org.h2.Driver","spring.datasource.username=sa","spring.datasource.password=","spring.jpa.database-platform=org.hibernate.dialect.H2Dialect","spring.jpa.hibernate.ddl-auto=create-drop","crm.care-reminders.enabled=false"})
 @AutoConfigureMockMvc
-class RefundIntegrationTest {
+class PaymentLifecycleIntegrationTest {
     @Autowired UserRepository users;@Autowired OrderRepository orders;@Autowired PaymentRepository payments;@Autowired OrderRefundRepository refunds;@Autowired PaymentAttemptRepository attempts;
-    @Autowired AdminOrderService adminOrders;@Autowired AbandonedOrderWorker worker;@Autowired OrderService customerOrders;@Autowired JwtTokenService jwt;@Autowired ObjectMapper mapper;@Autowired MockMvc mvc;@Autowired PlatformTransactionManager tm;
+    @Autowired AdminOrderService adminOrders;@Autowired AbandonedOrderWorker worker;@Autowired OrderService customerOrders;@Autowired JwtTokenService jwt;@Autowired MockMvc mvc;@Autowired PlatformTransactionManager tm;
     @MockitoBean PayosService payos;
-    User customer,manager,admin;String token,adminToken;TransactionTemplate tx;
-    @BeforeEach void setup(){tx=new TransactionTemplate(tm);customer=user("CUSTOMER");manager=user("MANAGER");admin=user("ADMIN");token="Bearer "+jwt.issue(manager.getId(),"MANAGER");adminToken="Bearer "+jwt.issue(admin.getId(),"ADMIN");}
+    User customer,manager;String token;TransactionTemplate tx;
+    @BeforeEach void setup(){tx=new TransactionTemplate(tm);customer=user("CUSTOMER");manager=user("MANAGER");token="Bearer "+jwt.issue(manager.getId(),"MANAGER");}
     User user(String role){User u=new User();u.setEmail(UUID.randomUUID()+"@refund.test");u.setFullName(role);u.setRole(role);u.setPasswordHash("test-only");return users.save(u);}
     Order order(String method,String status,String payment){return tx.execute(s->{Order o=new Order();o.setCustomer(customer);o.setOrderCode(Math.abs(UUID.randomUUID().getMostSignificantBits()%900000000000L));o.setTotalAmount(new BigDecimal("100000"));o.setPaymentMethod(method);o.setStatus(status);o.setPaymentStatus(payment);o.setExpiresAt(Instant.now().minus(Duration.ofHours(25)));orders.saveAndFlush(o);Payment p=new Payment();p.setOrder(o);p.setAmount(o.getTotalAmount());p.setStatus(payment);p.setPaymentLinkId("link-"+o.getId());payments.save(p);return o;});}
-    String create(Long id,int amount,String key,String type) throws Exception{return mvc.perform(post("/api/manager/orders/"+id+"/refunds").header("Authorization",token).contentType("application/json").content(mapper.writeValueAsString(Map.of("reasonType",type,"amount",amount,"note","Ghi nhận thủ công","requestKey",key)))).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();}
-    void returns(Order o){tx.executeWithoutResult(s->orders.findById(o.getId()).orElseThrow().setReturnStatus("APPROVED"));}
-    @Test void concurrentCreationUsesOneIdempotencyKeyAndOneReservation()throws Exception{
-        Order o=order("PAYOS","DELIVERED","PAID");returns(o);CountDownLatch start=new CountDownLatch(1);
-        try(var pool=Executors.newFixedThreadPool(2)){
-            var a=pool.submit(()->{start.await();return create(o.getId(),100000,"concurrent","RETURN");});
-            var b=pool.submit(()->{start.await();return create(o.getId(),100000,"concurrent","RETURN");});
-            start.countDown();assertEquals(mapper.readTree(a.get(20,TimeUnit.SECONDS)).path("id"),mapper.readTree(b.get(20,TimeUnit.SECONDS)).path("id"));
-        }
-        assertEquals(1,refunds.findByOrderIdOrderByIdDesc(o.getId()).size());assertEquals(0,new BigDecimal("100000").compareTo(orders.findById(o.getId()).orElseThrow().refundPendingAmount));
-    }
     @Test void networkFailureAndChangedStatusNeverReleaseResources(){
         Order o=order("PAYOS","PENDING","EXPIRED");when(payos.getPayment("link-"+o.getId())).thenThrow(new com.htttdn.crm.exception.ApiException(org.springframework.http.HttpStatus.BAD_GATEWAY,"PAYMENT_PROVIDER_ERROR","Test"));
         assertEquals("RETRY",worker.cancel(o.getId(),Instant.now(),Duration.ofHours(24)));Order current=orders.findById(o.getId()).orElseThrow();assertFalse(current.isStockReleased());assertEquals("PENDING",current.getStatus());assertTrue(current.paymentReviewRequired);
@@ -54,44 +42,23 @@ class RefundIntegrationTest {
         when(payos.getPayment(old)).thenReturn(new PayosService.ProviderPayment(o.getOrderCode(),100000,100000,"PAID",old));when(payos.getPayment(latest)).thenReturn(new PayosService.ProviderPayment(o.getOrderCode()+1,100000,0,"EXPIRED",latest));
         assertEquals("PAID",worker.cancel(o.getId(),Instant.now(),Duration.ofHours(24)));assertEquals("PENDING",orders.findById(o.getId()).orElseThrow().getStatus());assertEquals("PAID",payments.findByOrderId(o.getId()).orElseThrow().getStatus());assertFalse(orders.findById(o.getId()).orElseThrow().isStockReleased());
     }
-    @Test void paidCancellationCreatesOneRefundAndDoesNotRecreateAfterRejection()throws Exception{
+    @Test void paidCancellationKeepsPaymentEvidenceAndDoesNotCreateRefund()throws Exception{
         Order o=order("PAYOS","PENDING","PAID");adminOrders.updateStatus(o.getId(),new StatusRequest("CANCELLED","Test"));adminOrders.updateStatus(o.getId(),new StatusRequest("CANCELLED","Test"));
-        var rows=refunds.findByOrderIdOrderByIdDesc(o.getId());assertEquals(1,rows.size());assertEquals("PAID",payments.findByOrderId(o.getId()).orElseThrow().getStatus());
-        Long id=rows.getFirst().id;
-        mvc.perform(post("/api/manager/refunds/"+id+"/reject").header("Authorization",token).contentType("application/json").content("{\"note\":\"Đối soát lại\"}")).andExpect(status().isOk());
-        adminOrders.updateStatus(o.getId(),new StatusRequest("CANCELLED","Test"));assertEquals(1,refunds.findByOrderIdOrderByIdDesc(o.getId()).size());
-        assertEquals("PENDING",mapper.readTree(create(o.getId(),100000,"replacement","CANCEL")).path("status").asText());
+        assertTrue(refunds.findByOrderIdOrderByIdDesc(o.getId()).isEmpty());
+        assertEquals("PAID",payments.findByOrderId(o.getId()).orElseThrow().getStatus());
+        mvc.perform(get("/api/manager/refunds").header("Authorization",token)).andExpect(status().isNotFound());
+        mvc.perform(post("/api/manager/orders/"+o.getId()+"/refunds").header("Authorization",token)
+                .contentType("application/json").content("{}")).andExpect(status().isNotFound());
     }
-    @Test void partialRefundsAreBoundedIdempotentAndPublicResponseDoesNotLeakNotes()throws Exception{
-        Order o=order("PAYOS","DELIVERED","PAID");returns(o);
-        long first=mapper.readTree(create(o.getId(),30000,"part-1","RETURN")).path("id").asLong();
-        assertEquals(first,mapper.readTree(create(o.getId(),30000,"part-1","RETURN")).path("id").asLong());
-        long second=mapper.readTree(create(o.getId(),70000,"part-2","RETURN")).path("id").asLong();
-        mvc.perform(get("/api/manager/refunds").param("q",o.getOrderCode().toString()).param("status","PENDING").param("size","1").header("Authorization",token)).andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(2)).andExpect(jsonPath("$.content.length()").value(1));
-        mvc.perform(post("/api/manager/orders/"+o.getId()+"/refunds").header("Authorization",token).contentType("application/json").content("{\"reasonType\":\"RETURN\",\"amount\":1,\"note\":\"Vượt\",\"requestKey\":\"extra\"}")).andExpect(status().isConflict());
-        mvc.perform(post("/api/manager/refunds/"+first+"/complete").header("Authorization",token).contentType("application/json").content("{\"note\":\"Test\"}")).andExpect(status().isBadRequest());
-        String body="{\"note\":\"Nội bộ bí mật\",\"bankReference\":\"BANK-PRIVATE\"}";
-        for(int i=0;i<2;i++)mvc.perform(post("/api/manager/refunds/"+first+"/complete").header("Authorization",token).contentType("application/json").content(body)).andExpect(status().isOk());
-        Order current=orders.findById(o.getId()).orElseThrow();assertEquals("PARTIAL",current.refundStatus);assertEquals(0,new BigDecimal("70000").compareTo(current.refundPendingAmount));
-        mvc.perform(get("/api/manager/orders").param("q",o.getOrderCode().toString()).param("refundStatus","PARTIAL").param("paymentReview","false").header("Authorization",token)).andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1));
-        mvc.perform(get("/api/admin/audit-logs").param("action","REFUND_COMPLETE").header("Authorization",adminToken)).andExpect(status().isOk());
-        mvc.perform(post("/api/manager/refunds/"+first+"/complete").header("Authorization",token).contentType("application/json").content("{\"note\":\"Nội bộ bí mật\",\"bankReference\":\"DIFFERENT\"}")).andExpect(status().isConflict());
-        String response=mvc.perform(get("/api/orders/"+o.getId()).header("Authorization","Bearer "+jwt.issue(customer.getId(),"CUSTOMER"))).andExpect(status().isOk()).andExpect(jsonPath("$.refund.status").value("PARTIAL")).andReturn().getResponse().getContentAsString();
-        assertFalse(response.contains("BANK-PRIVATE"));assertFalse(response.contains("Nội bộ bí mật"));
-        mvc.perform(post("/api/manager/refunds/"+second+"/complete").header("Authorization",token).contentType("application/json").content(body)).andExpect(status().isOk());
-        assertEquals("FULL",orders.findById(o.getId()).orElseThrow().refundStatus);
-        for(String role:List.of("ADMIN","CUSTOMER"))mvc.perform(get("/api/manager/refunds").header("Authorization","Bearer "+jwt.issue(user(role).getId(),role))).andExpect(status().isForbidden());
-        mvc.perform(get("/api/manager/refunds")).andExpect(status().isUnauthorized());
-    }
-    @Test void codRequiresExplicitCollectionAndRepeatedConfirmationPreservesEvidence()throws Exception{
-        Order o=order("COD","DELIVERED","COD");returns(o);
-        String request="{\"reasonType\":\"RETURN\",\"amount\":10000,\"note\":\"Test\",\"requestKey\":\"cod\"}";
-        mvc.perform(post("/api/manager/orders/"+o.getId()+"/refunds").header("Authorization",token).contentType("application/json").content(request)).andExpect(status().isConflict());
+    @Test void codCollectionIsIdempotentAndRefundRouteIsRemoved()throws Exception{
+        Order o=order("COD","DELIVERED","COD");
         String url="/api/manager/orders/"+o.getId()+"/cod-collection";
         mvc.perform(patch(url).header("Authorization",token).contentType("application/json").content("{\"note\":\"Đã đối soát\"}")).andExpect(status().isOk());
         Instant collected=orders.findById(o.getId()).orElseThrow().codCollectedAt;
         mvc.perform(patch(url).header("Authorization",token).contentType("application/json").content("{\"note\":\"Gửi lại\"}")).andExpect(status().isOk());
-        assertEquals(collected,orders.findById(o.getId()).orElseThrow().codCollectedAt);assertEquals("PAID",payments.findByOrderId(o.getId()).orElseThrow().getStatus());create(o.getId(),10000,"cod","RETURN");
+        assertEquals(collected,orders.findById(o.getId()).orElseThrow().codCollectedAt);assertEquals("PAID",payments.findByOrderId(o.getId()).orElseThrow().getStatus());
+        mvc.perform(post("/api/manager/orders/"+o.getId()+"/refunds").header("Authorization",token)
+                .contentType("application/json").content("{}")).andExpect(status().isNotFound());
         Order pending=order("COD","PENDING","COD");mvc.perform(patch("/api/manager/orders/"+pending.getId()+"/cod-collection").header("Authorization",token).contentType("application/json").content("{\"note\":\"Test\"}")).andExpect(status().isConflict());
     }
     @Test void autoCancelChecksProviderAgainAndRepeatedWorkersDoNotDuplicateEffects(){
@@ -134,11 +101,11 @@ class RefundIntegrationTest {
             assertEquals("NEEDS_REVIEW",worker.cancel(o.getId(),Instant.now(),Duration.ofHours(24)));Order current=orders.findById(o.getId()).orElseThrow();assertEquals("PENDING",current.getStatus());assertTrue(current.paymentReviewRequired);assertFalse(current.isStockReleased());
         }
     }
-    @Test void syncOfCancelledPaidOrderCreatesRefundOnce()throws Exception{
+    @Test void syncOfCancelledPaidOrderRecordsPaymentWithoutCreatingRefund()throws Exception{
         Order o=order("PAYOS","CANCELLED","CANCELLED");String link="link-"+o.getId();
         tx.executeWithoutResult(s->{var a=new PaymentAttempt();a.setOrder(orders.findById(o.getId()).orElseThrow());a.setProviderOrderCode(o.getOrderCode());a.setPaymentLinkId(link);attempts.save(a);});
         when(payos.getPayment(link)).thenReturn(new PayosService.ProviderPayment(o.getOrderCode(),100000,100000,"PAID",link));
-        customerOrders.syncPayment(customer,o.getId());customerOrders.syncPayment(customer,o.getId());assertEquals(1,refunds.findByOrderIdOrderByIdDesc(o.getId()).size());assertEquals("PAID",orders.findById(o.getId()).orElseThrow().getPaymentStatus());
+        customerOrders.syncPayment(customer,o.getId());customerOrders.syncPayment(customer,o.getId());assertTrue(refunds.findByOrderIdOrderByIdDesc(o.getId()).isEmpty());assertEquals("PAID",orders.findById(o.getId()).orElseThrow().getPaymentStatus());
     }
     @Test void reconcilingLegacyAlreadyPaidCancellationDoesNotBackfillRefunds()throws Exception{
         Order o=order("PAYOS","CANCELLED","PAID");String link="link-"+o.getId();when(payos.getPayment(link)).thenReturn(new PayosService.ProviderPayment(o.getOrderCode(),100000,100000,"PAID",link));
