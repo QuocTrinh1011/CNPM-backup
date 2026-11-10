@@ -135,7 +135,17 @@ Luồng chung: **Ba portal React → REST API Spring Boot → PostgreSQL**. PayO
 
 ```text
 backend/               Ứng dụng Spring Boot, REST API và test backend
-frontend/              Ba portal React, API client, CSS và test frontend
+frontend/
+├── src/
+│   ├── main.jsx        Chọn portal theo Vite mode
+│   ├── app/            App shell, routing và portal entrypoint
+│   ├── api/            API client
+│   ├── features/       Storefront, customer, support-tickets, manager, admin
+│   ├── shared/         Hook, tiện ích và CSS dùng chung
+│   ├── styles/         CSS toàn cục
+│   └── data/           Dữ liệu địa chỉ và giấy phép nguồn
+├── scripts/            Công cụ kiểm tra responsive
+└── public/             Tài nguyên tĩnh
 database/
 ├── schema.sql          Schema PostgreSQL khởi tạo
 ├── seed/               Dữ liệu minh họa

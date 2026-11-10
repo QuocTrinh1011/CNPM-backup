@@ -1,9 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import './styles.css';
-const App = React.lazy(() => import('./UserPortal'));
-const AdminApp = React.lazy(() => import('./AdminPortal'));
-const ManagerApp = React.lazy(() => import('./ManagerPortal'));
+import './styles/styles.css';
+const App = React.lazy(() => import('./app/portals/UserPortal'));
+const AdminApp = React.lazy(() => import('./app/portals/AdminPortal'));
+const ManagerApp = React.lazy(() => import('./app/portals/ManagerPortal'));
 
 const mode = import.meta.env.MODE;
 const isAdmin = mode === 'admin' || (mode !== 'user' && (window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/')));

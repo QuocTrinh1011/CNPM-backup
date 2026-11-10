@@ -10,7 +10,27 @@ $env:VITE_API_BASE_URL='http://localhost:8080'
 npm run dev
 ```
 
-The default API base URL is `http://localhost:8080`. Copy `.env.example` to `.env.local` to override it, then restart Vite. Run `npm run dev:user` on port 5173 and `npm run dev:admin` on port 5174 in separate terminals. Both connect to the same backend but use separate sessions. Admin list screens call `/api/admin/users`, `/products`, `/orders`, `/feedback`, and `/surveys`; dashboard cards call the revenue, user, and survey report endpoints.
+The default API base URL is `http://localhost:8080`. Copy `.env.example` to `.env.local` to override it, then restart Vite. Run `npm run dev:user` on port 5173, `npm run dev:admin` on port 5174, and `npm run dev:manager` on port 5175 in separate terminals. All three connect to the same backend and use separate sessions. Admin list screens call `/api/admin/users`, `/products`, `/orders`, `/feedback`, and `/surveys`; dashboard cards call the revenue, user, and survey report endpoints.
+
+## Source layout
+
+```text
+src/
+├── main.jsx             Selects the portal for the current Vite mode
+├── app/                 App shell, customer routing and portal entrypoints
+├── api/                 Customer and manager API clients
+├── features/
+│   ├── storefront/      Shopping and checkout flows
+│   ├── customer/        Customer account pages and order feedback
+│   ├── support-tickets/ Support ticket views for customer and manager
+│   ├── manager/         Store operations and CRM workflows
+│   └── admin/           System administration
+├── shared/              Shared hooks, utilities and styles
+├── styles/              Global styles
+└── data/                Vietnam addresses and source data license
+```
+
+Feature component tests and component-only styles live beside their component. Shared and portal-wide styles are grouped under each feature's `styles/` folder; global CSS is under `src/styles/`. Portal entrypoints retain the CSS import order required for cascade precedence.
 
 ## Implemented customer flows
 
