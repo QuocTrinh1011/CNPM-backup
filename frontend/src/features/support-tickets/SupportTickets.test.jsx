@@ -5,7 +5,7 @@ import {it,expect,vi,beforeEach,afterEach} from 'vitest';
 import SupportTickets from './SupportTickets';
 import {api,refreshSession} from '../../api/api';
 import {adminApi,adminRefreshSession} from '../../api/manager-api';
-import {isKnownPath,needsCustomer,safeReturn} from '../../app/routing/customer-routing';
+import {isKnownPath,needsCustomer,safeReturn} from '../../app/customer-routing';
 import ManagerApp from '../manager/ManagerApp';
 vi.mock('../../api/api',async original=>({...await original(),api:vi.fn(),refreshSession:vi.fn()}));
 vi.mock('../../api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
