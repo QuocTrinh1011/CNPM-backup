@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { api, endpoints } from "./api";
+import { api, endpoints } from "./api/api";
 import CustomerVouchers from './CustomerVouchers';
 
 export function useCheckoutVoucher(cart) {

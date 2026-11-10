@@ -3,9 +3,9 @@ import React, { StrictMode } from "react";
 import { act, cleanup, configure, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AdminApp, { useAdminList } from "./ManagerApp";
-import { adminApi, adminRefreshSession } from "./manager-api";
+import { adminApi, adminRefreshSession } from "./api/manager-api";
 
-vi.mock("./manager-api", async (importOriginal) => ({
+vi.mock("./api/manager-api", async (importOriginal) => ({
   ...(await importOriginal()),
   adminApi: vi.fn(),
   adminRefreshSession: vi.fn(),

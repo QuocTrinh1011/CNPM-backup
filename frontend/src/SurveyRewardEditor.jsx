@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { adminApi } from './manager-api';
-import { useManagerReadPause } from './useManagerResource';
+import { adminApi } from './api/manager-api';
+import { useManagerReadPause } from './shared/hooks/useManagerResource';
 export const emptyReward=()=>({enabled:false,discountType:'PERCENTAGE',discountValue:10,minOrderAmount:0,maxDiscountAmount:null,validDays:30});
 export function RewardFields({ value, onChange, disabled }) {
   const change=(key,v)=>onChange({...value,[key]:v});

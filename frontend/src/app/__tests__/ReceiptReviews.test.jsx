@@ -2,10 +2,10 @@
 import React from 'react';
 import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { afterEach, it, expect, vi } from 'vitest';
-import { OrdersPage, ReceiptAction, OrderView } from './App';
-import OrderReviews from './OrderReviews';
-import { api } from './api';
-vi.mock('./api', async original => ({ ...await original(), api: vi.fn() }));
+import { OrdersPage, ReceiptAction, OrderView } from '../App';
+import OrderReviews from '../../OrderReviews';
+import { api } from '../../api/api';
+vi.mock('../../api/api', async original => ({ ...await original(), api: vi.fn() }));
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
 const order = { id: 9, orderCode: 9009, status: 'DELIVERED', paymentMethod: 'COD', totalAmount: 100, items: [{ productId: 2, name: 'Áo', quantity: 1 }, { productId: 3, name: 'Quần', quantity: 1 }] };
 const states = [{ productId: 2, reviewed: false, canReview: true }, { productId: 3, reviewed: false, canReview: true }];

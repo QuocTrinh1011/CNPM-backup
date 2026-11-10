@@ -3,8 +3,8 @@ import React from 'react';
 import {render,screen,cleanup} from '@testing-library/react';
 import {it,expect,vi,afterEach} from 'vitest';
 import CustomerVouchers from './CustomerVouchers';
-import {useShopResource} from './storefront-hooks';
-vi.mock('./storefront-hooks',()=>({useShopResource:vi.fn()}));
+import {useShopResource} from './shared/hooks/storefront-hooks';
+vi.mock('./shared/hooks/storefront-hooks',()=>({useShopResource:vi.fn()}));
 afterEach(()=>{cleanup();vi.resetAllMocks();});
 it('keeps an active general voucher visible but disables selection when personal quota is used',()=>{
  useShopResource.mockReturnValue({data:{content:[{code:'SHOP1',source:'GENERAL',state:'ACTIVE',perCustomerLimit:1,customerUses:1,customerRemaining:0,selectable:false,unavailableReason:'VOUCHER_PER_CUSTOMER_LIMIT',discountType:'PERCENTAGE',discountValue:10,minOrderAmount:0}],totalPages:1}});

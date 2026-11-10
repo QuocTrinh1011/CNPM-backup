@@ -1,7 +1,7 @@
 import React,{useCallback,useEffect,useState} from 'react';
-import {adminApi} from './manager-api';
-import {useManagerResource,useManagerReadPause} from './useManagerResource';
-import {managerQuery} from './useManagerFilters';
+import {adminApi} from './api/manager-api';
+import {useManagerResource,useManagerReadPause} from './shared/hooks/useManagerResource';
+import {managerQuery} from './shared/hooks/useManagerFilters';
 import {TaskForm,careLabels,careOutcomes} from './CustomerCare';
 import './manager-care-inbox.css';
 

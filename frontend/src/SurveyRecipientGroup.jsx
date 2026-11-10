@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from 'react';
-import {adminApi} from './manager-api';
+import {adminApi} from './api/manager-api';
 import {lifecycleLabels} from './CustomerLifecycle';
 import './survey-recipient-group.css';
 

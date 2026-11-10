@@ -4,8 +4,8 @@ import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import SurveyFilterPicker from './SurveyFilterPicker';
 import {groupSurveyRoute,groupSurveySource} from './SurveyRecipientGroup';
-import {adminApi} from './manager-api';
-vi.mock('./manager-api',async original=>({...await original(),adminApi:vi.fn()}));
+import {adminApi} from './api/manager-api';
+vi.mock('./api/manager-api',async original=>({...await original(),adminApi:vi.fn()}));
 afterEach(()=>{cleanup();vi.resetAllMocks();});
 const result={options:{content:[{id:2,title:'Other survey',status:'PUBLISHED'}],totalPages:2},selected:{id:77,title:'Old selected survey',status:'DRAFT',deleted:true}};
 it('keeps an archived selection outside the current page while searching and paging',async()=>{

@@ -4,10 +4,10 @@ import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/re
 import { it, expect, afterEach, beforeEach, vi } from 'vitest';
 import ShippingFields, { PhoneField, phoneDigits, validPhone, prepareAddress, shippingErrors } from './ShippingFields';
 import provinces from './data/vietnam-addresses.json';
-import { AddressModal } from './App';
+import { AddressModal } from './app/App';
 import CheckoutPage from './CheckoutPage';
-import { api } from './api';
-vi.mock('./api', async original => ({...(await original()), api:vi.fn()}));
+import { api } from './api/api';
+vi.mock('./api/api', async original => ({...(await original()), api:vi.fn()}));
 beforeEach(() => { vi.clearAllMocks(); api.mockResolvedValue([]); });
 afterEach(cleanup);
 const saved={ id:1,recipientName:'Khách thử',phone:'0912345678',addressLine:'12 Đường thử',province:'Thành phố Hà Nội',ward:'Phường Ba Đình',district:'Quận cũ',defaultAddress:true };

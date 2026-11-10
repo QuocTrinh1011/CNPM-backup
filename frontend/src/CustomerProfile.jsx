@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { displayOrderLabel } from './order-display';
-import { adminApi, adminEndpoints } from './manager-api';
-import { useManagerResource } from './useManagerResource';
+import { displayOrderLabel } from './shared/utils/order-display';
+import { adminApi, adminEndpoints } from './api/manager-api';
+import { useManagerResource } from './shared/hooks/useManagerResource';
 import ManagerOrderDetail, { money, date, orderLabels, paymentLabels, returnLabels } from './ManagerOrderDetail';
 import './customer-profile.css';
 import CustomerLifecycle, {lifecycleExplanation} from './CustomerLifecycle';

@@ -2,11 +2,11 @@
 import React from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { it, expect, vi, afterEach } from 'vitest';
-import OrderReviews from './OrderReviews';
-import CustomerVouchers from './CustomerVouchers';
-import { RewardFields, emptyReward } from './SurveyRewardEditor';
-import { api } from './api';
-vi.mock('./api',async original=>({...await original(),api:vi.fn()}));
+import OrderReviews from '../../OrderReviews';
+import CustomerVouchers from '../../CustomerVouchers';
+import { RewardFields, emptyReward } from '../../SurveyRewardEditor';
+import { api } from '../../api/api';
+vi.mock('../../api/api',async original=>({...await original(),api:vi.fn()}));
 afterEach(()=>{cleanup();vi.resetAllMocks();});
 it('reviews a completed order product once despite multiple variants',async()=>{
   let done=false;

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MapPin, Plus, X, Pencil, Check } from "lucide-react";
-import { api, endpoints } from "./api";
+import { api, endpoints } from "./api/api";
 import ShippingFields, { PhoneField, prepareAddress, shippingErrors } from "./ShippingFields";
 import "./checkout-page.css";
 

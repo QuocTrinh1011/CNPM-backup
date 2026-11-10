@@ -1,8 +1,8 @@
 import React,{useCallback,useEffect,useRef,useState} from 'react';
-import {api} from './api';
-import {adminApi} from './manager-api';
-import {useManagerResource,useManagerReadPause} from './useManagerResource';
-import {managerQuery} from './useManagerFilters';
+import {api} from './api/api';
+import {adminApi} from './api/manager-api';
+import {useManagerResource,useManagerReadPause} from './shared/hooks/useManagerResource';
+import {managerQuery} from './shared/hooks/useManagerFilters';
 import {Picker,AssigneeFilter} from './CustomerCare';
 import './support-tickets.css';
 

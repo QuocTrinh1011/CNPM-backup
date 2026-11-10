@@ -2,12 +2,12 @@
 import React from 'react';
 import {act,cleanup,fireEvent,render,renderHook,screen,waitFor} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
-import PaymentQr from './PaymentQr';
-import CustomerVouchers from './CustomerVouchers';
-import CustomerPassword from './CustomerPassword';
-import {useManagerFilters,vietnamDateRange} from './useManagerFilters';
-import {api} from './api';
-vi.mock('./api',async original=>({...await original(),api:vi.fn()}));
+import PaymentQr from '../../PaymentQr';
+import CustomerVouchers from '../../CustomerVouchers';
+import CustomerPassword from '../../CustomerPassword';
+import {useManagerFilters,vietnamDateRange} from '../../shared/hooks/useManagerFilters';
+import {api} from '../../api/api';
+vi.mock('../../api/api',async original=>({...await original(),api:vi.fn()}));
 afterEach(()=>{cleanup();vi.useRealTimers();vi.resetAllMocks();window.history.replaceState({},'','/');});
 it('does not overlap slow QR polling and aborts when leaving',async()=>{
  vi.useFakeTimers();api.mockReturnValue(new Promise(()=>{}));

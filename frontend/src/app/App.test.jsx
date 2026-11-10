@@ -3,9 +3,9 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { beforeEach, afterEach, it, expect, vi } from 'vitest';
 import App, { OrdersModal, OrderView } from './App';
-import CheckoutPage from './CheckoutPage';
-import { api, refreshSession } from './api';
-vi.mock('./api', async original => ({ ...(await original()), api:vi.fn(), refreshSession:vi.fn() }));
+import CheckoutPage from '../CheckoutPage';
+import { api, refreshSession } from '../api/api';
+vi.mock('../api/api', async original => ({ ...(await original()), api:vi.fn(), refreshSession:vi.fn() }));
 const product={id:1,name:'Áo kiểm thử',price:200000,stock:5,sizes:'M,L',colors:'Đen',imageUrl:'/test.png'};
 beforeEach(() => {
   vi.clearAllMocks(); localStorage.clear(); window.history.replaceState({},'', '/'); window.scrollTo=vi.fn();

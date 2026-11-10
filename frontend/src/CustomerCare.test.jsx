@@ -4,8 +4,8 @@ import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react
 import {beforeEach,afterEach,it,vi,expect} from 'vitest';
 import ManagerApp from './ManagerApp';
 import {careDeadline} from './CustomerCare';
-import {adminApi,adminRefreshSession} from './manager-api';
-vi.mock('./manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
+import {adminApi,adminRefreshSession} from './api/manager-api';
+vi.mock('./api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
 const customer={id:7,fullName:'Khách A',email:'customer@test.vn'};
 const staff={id:3,fullName:'Quản lý B',email:'staff@test.vn'};
 const task={id:8,customerId:7,customerName:'Khách A',assigneeId:3,assigneeName:'Quản lý B',assigneeActive:true,title:'Gọi chăm sóc',description:'Hỏi trải nghiệm',status:'TODO',overdue:true,dueAt:'2026-01-01T10:00:00Z',createdAt:'2026-01-01T09:00:00Z',updatedAt:'2026-01-01T09:00:00Z',version:0};

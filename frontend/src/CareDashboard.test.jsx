@@ -3,8 +3,8 @@ import React from 'react';
 import {render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
 import {it,expect,vi,afterEach} from 'vitest';
 import CareDashboard from './CareDashboard';
-import {adminApi} from './manager-api';
-vi.mock('./manager-api',()=>({adminApi:vi.fn()}));
+import {adminApi} from './api/manager-api';
+vi.mock('./api/manager-api',()=>({adminApi:vi.fn()}));
 afterEach(()=>{cleanup();vi.clearAllMocks();});
 const counts={total:3,todo:1,inProgress:1,completed:1,overdue:2};
 it('loads counts, preserves date filters in drilldown and loads dormant customers only on demand',async()=>{

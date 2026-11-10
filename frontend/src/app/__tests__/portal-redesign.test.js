@@ -86,7 +86,7 @@ describe('portal redesign isolation', () => {
     const entry = readFileSync('index.html', 'utf8');
     expect(entry).toContain('family=Manrope');
     expect(entry.match(/fonts.googleapis.com\/css2/g)).toHaveLength(1);
-    for (const file of ['styles.css', 'storefront.css', 'admin-design.css', 'user-redesign.css', 'manager-redesign.css']) {
+    for (const file of ['styles/styles.css', 'storefront.css', 'shared/styles/admin-design.css', 'user-redesign.css', 'manager-redesign.css']) {
       expect(readFileSync(`src/${file}`, 'utf8')).not.toContain('@import url');
     }
     expect(managerStyles).toContain('--mono: var(--sans)');
@@ -95,12 +95,12 @@ describe('portal redesign isolation', () => {
   it('keeps mobile input text readable and stacks the Admin hero', () => {
     expect(userStyles).toContain('textarea) { font-size: 16px; }');
     expect(managerStyles).toContain('.manager-login input { font-size: 16px; }');
-    expect(readFileSync('src/internal-portal.css', 'utf8')).toContain('.internal-hero-banner { flex-direction: column;');
+    expect(readFileSync('src/shared/styles/internal-portal.css', 'utf8')).toContain('.internal-hero-banner { flex-direction: column;');
   });
   it('keeps notices content-sized instead of stretching between top and bottom', () => {
     expect(userStyles).toMatch(/\.toast \{[^}]*top: auto;[^}]*height: auto;/);
     expect(userStyles).toContain('bottom: calc(88px + env(safe-area-inset-bottom,0px))');
-    const app = readFileSync('src/App.jsx', 'utf8');
+    const app = readFileSync('src/app/App.jsx', 'utf8');
     expect(app).toContain('aria-label="Đóng thông báo"');
     expect(app).toContain('window.clearTimeout(timer)');
   });

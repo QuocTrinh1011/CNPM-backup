@@ -1,14 +1,14 @@
-import { hasReturn, showReturn, displayOrderLabel, returnLabel } from './order-display';
-import {useManagerFilters,managerQuery,vietnamDateRange} from './useManagerFilters';
+import { hasReturn, showReturn, displayOrderLabel, returnLabel } from './shared/utils/order-display';
+import {useManagerFilters,managerQuery,vietnamDateRange} from './shared/hooks/useManagerFilters';
 import ManagerOrderDetail from './ManagerOrderDetail';
 import SourceCareCreator from './SourceCareCreator';
 import ManagerMyTasks,{MyTaskSummary,CareTaskDetail} from './ManagerMyTasks';
 import ManagerNotificationBell from './ManagerNotificationBell';
 import CustomerLifecycle, {CustomerLifecycleFilters} from './CustomerLifecycle';
-import { useManagerResource, useManagerList, ManagerSyncStatus, useManagerReadPause } from "./useManagerResource";
+import { useManagerResource, useManagerList, ManagerSyncStatus, useManagerReadPause } from "./shared/hooks/useManagerResource";
 import {CustomerCreate,SurveyAudience} from './ManagerTools';
 import SurveyRecipientGroup,{groupSurveyRoute,groupSurveySource} from './SurveyRecipientGroup';
-import './internal-portal.css';
+import './shared/styles/internal-portal.css';
 import { TicketPercent } from "lucide-react";
 import { canAdvanceOrder, isFinalOrder } from './order-transitions';
 import SurveyRewardEditor, { RewardFields, emptyReward } from './SurveyRewardEditor';
@@ -59,7 +59,7 @@ import {
   adminRefreshSession,
   adminSignIn,
   adminSignOut,
-} from "./manager-api";
+} from "./api/manager-api";
 
 const money = (value) =>
   new Intl.NumberFormat("vi-VN", {

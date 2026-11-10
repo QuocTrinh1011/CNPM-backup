@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { adminApi } from './manager-api';
-import { beginManagerMutation, isManagerMutating, subscribeManagerMutations } from './manager-sync';
+import { adminApi } from '../../api/manager-api';
+import { beginManagerMutation, isManagerMutating, subscribeManagerMutations } from '../../api/manager-sync';
 
 export const MANAGER_POLL_MS = 5000;
 let nextId = 0;

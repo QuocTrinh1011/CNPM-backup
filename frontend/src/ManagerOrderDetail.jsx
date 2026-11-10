@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { adminApi } from './manager-api';
-import { useManagerReadPause } from './useManagerResource';
-import { showReturn, displayOrderLabel, deliveryLabel, returnLabels } from './order-display';
-import './order-display.css';
+import { adminApi } from './api/manager-api';
+import { useManagerReadPause } from './shared/hooks/useManagerResource';
+import { showReturn, displayOrderLabel, deliveryLabel, returnLabels } from './shared/utils/order-display';
+import './shared/styles/order-display.css';
 import SourceCareCreator from './SourceCareCreator';
 const OrderFinancePanel=React.lazy(()=>import('./ManagerRefunds').then(module=>({default:module.OrderFinancePanel})));
-export { returnLabels } from './order-display';
+export { returnLabels } from './shared/utils/order-display';
 import { X, User, Calendar, CreditCard, MapPin, RotateCcw, AlertTriangle } from 'lucide-react';
 
 export const orderLabels = { PENDING: 'Chờ xác nhận', PENDING_PAYMENT: 'Chờ thanh toán', CONFIRMED: 'Đã xác nhận', PREPARING: 'Đang chuẩn bị', SHIPPED: 'Đang giao', DELIVERING: 'Đang giao', DELIVERED: 'Đã giao — chờ khách xác nhận', COMPLETED: 'Khách đã nhận hàng', CANCELLED: 'Đã hủy' };

@@ -3,9 +3,9 @@ import React, { StrictMode } from 'react';
 import { act, cleanup, renderHook, render, screen, fireEvent } from '@testing-library/react';
 import { beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { useManagerResource, useManagerList, ManagerSyncStatus } from './useManagerResource';
-import { beginManagerMutation } from './manager-sync';
-import { adminApi } from './manager-api';
-vi.mock('./manager-api', () => ({ adminApi: vi.fn() }));
+import { beginManagerMutation } from '../../api/manager-sync';
+import { adminApi } from '../../api/manager-api';
+vi.mock('../../api/manager-api', () => ({ adminApi: vi.fn() }));
 const deferred = () => {
   let resolve, reject;
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });

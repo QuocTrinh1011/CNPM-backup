@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Plus, TicketPercent, Pencil, Power, Search, X } from "lucide-react";
-import { adminApi } from "./manager-api";
-import { useManagerList } from "./useManagerResource";
+import { adminApi } from "./api/manager-api";
+import { useManagerList } from "./shared/hooks/useManagerResource";
 import "./admin-vouchers.css";
 
 const labels = { ACTIVE: "Đang áp dụng", SCHEDULED: "Sắp bắt đầu", EXPIRED: "Đã hết hạn", EXHAUSTED: "Hết lượt", DISABLED: "Đã tắt" };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import './styles.css';
+import './styles/styles.css';
 const App = React.lazy(() => import('./UserPortal'));
 const AdminApp = React.lazy(() => import('./AdminPortal'));
 const ManagerApp = React.lazy(() => import('./ManagerPortal'));

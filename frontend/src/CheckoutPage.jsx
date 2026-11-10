@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowUpRight, Check, MapPin, Package, ShieldCheck, CreditCard, Truck } from "lucide-react";
-import { api } from "./api";
+import { api } from "./api/api";
 import VoucherField, { useCheckoutVoucher } from "./VoucherField";
 import { useAddresses, AddressPicker, AddressSummary, preferredAddress, addressValid, deliveryText } from "./CustomerAddresses";
 import PaymentQr from "./PaymentQr";

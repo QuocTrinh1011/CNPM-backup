@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from 'react';
-import {adminApi} from './manager-api';
+import {adminApi} from './api/manager-api';
 
 const label=survey=>`${survey.title} (#${survey.id})${survey.deleted?' — Đã xóa':survey.status==='DRAFT'?' — Bản nháp / đã gỡ':''}`;
 export default function SurveyFilterPicker({value,onChange}) {

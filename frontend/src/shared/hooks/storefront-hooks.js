@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { api } from './api';
+import { api } from '../../api/api';
 
 export function useShopResource(path) {
   const [data, setData] = useState(null);

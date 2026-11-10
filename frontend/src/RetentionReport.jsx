@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
-import {adminApi} from './manager-api';
-import {useManagerResource} from './useManagerResource';
+import {adminApi} from './api/manager-api';
+import {useManagerResource} from './shared/hooks/useManagerResource';
 import {lifecycleLabels} from './CustomerLifecycle';
 import './retention-report.css';
 

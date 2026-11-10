@@ -1,7 +1,7 @@
 import React,{useCallback,useState} from 'react';
-import {adminApi} from './manager-api';
-import {useManagerResource} from './useManagerResource';
-import {managerQuery} from './useManagerFilters';
+import {adminApi} from './api/manager-api';
+import {useManagerResource} from './shared/hooks/useManagerResource';
+import {managerQuery} from './shared/hooks/useManagerFilters';
 import {AssigneeFilter} from './CustomerCare';
 import './customer-care.css';
 const labels={total:'Tổng công việc',todo:'Chưa thực hiện',inProgress:'Đang xử lý',completed:'Hoàn thành',overdue:'Quá hạn'};

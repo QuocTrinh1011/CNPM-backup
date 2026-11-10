@@ -4,8 +4,8 @@ import { act, cleanup, render, screen, fireEvent } from '@testing-library/react'
 import { beforeEach, afterEach, it, vi, expect } from 'vitest';
 import ManagerApp from './ManagerApp';
 import AdminVouchers from './AdminVouchers';
-import { adminApi, adminRefreshSession } from './manager-api';
-vi.mock('./manager-api', async original => ({ ...await original(), adminApi: vi.fn(), adminRefreshSession: vi.fn() }));
+import { adminApi, adminRefreshSession } from './api/manager-api';
+vi.mock('./api/manager-api', async original => ({ ...await original(), adminApi: vi.fn(), adminRefreshSession: vi.fn() }));
 beforeEach(() => {
   vi.useFakeTimers();
   vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');

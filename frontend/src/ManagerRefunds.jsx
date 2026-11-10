@@ -1,7 +1,7 @@
 import React,{useCallback,useEffect,useRef,useState} from 'react';
-import {adminApi} from './manager-api';
-import {useManagerList,useManagerReadPause} from './useManagerResource';
-import {useManagerFilters,managerQuery} from './useManagerFilters';
+import {adminApi} from './api/manager-api';
+import {useManagerList,useManagerReadPause} from './shared/hooks/useManagerResource';
+import {useManagerFilters,managerQuery} from './shared/hooks/useManagerFilters';
 import RefundSummary,{refundMoney} from './RefundSummary';
 import './manager-refunds.css';
 const dates=value=>value?new Date(value).toLocaleString('vi-VN'):'—';

@@ -1,22 +1,22 @@
-import { showReturn, returnLabel, displayOrderLabel, deliveryLabel } from './order-display';
-import './order-display.css';
+import { showReturn, returnLabel, displayOrderLabel, deliveryLabel } from '../shared/utils/order-display';
+import '../shared/styles/order-display.css';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useStorefrontDialogs, useShopResource } from './storefront-hooks';
-import AccountDropdown from './AccountDropdown';
-import StorefrontHome from './StorefrontHome';
-import AddressModal from "./CustomerAddresses";
-import CheckoutPage, { CheckoutState } from "./CheckoutPage";
-import PaymentQr from "./PaymentQr";
-import CustomerLayout from './CustomerLayout';
-import CustomerVouchers, { RewardSummary } from './CustomerVouchers';
-import OrderReviews from './OrderReviews';
-import RefundSummary from './RefundSummary';
-import CustomerPassword from './CustomerPassword';
-const SupportTickets=React.lazy(()=>import('./SupportTickets'));
-import { useCartSelection, cartLineKey, canBuyLine, transferGuestSelection, subtractPurchased } from './cart-selection';
-import { useCustomerRouter, actionPaths, isAccountPath, needsCustomer, isKnownPath, safeReturn } from './customer-routing';
-import './customer-pages.css';
-export { default as AddressModal } from "./CustomerAddresses";
+import { useStorefrontDialogs, useShopResource } from '../shared/hooks/storefront-hooks';
+import AccountDropdown from '../AccountDropdown';
+import StorefrontHome from '../StorefrontHome';
+import AddressModal from "../CustomerAddresses";
+import CheckoutPage, { CheckoutState } from "../CheckoutPage";
+import PaymentQr from "../PaymentQr";
+import CustomerLayout from '../CustomerLayout';
+import CustomerVouchers, { RewardSummary } from '../CustomerVouchers';
+import OrderReviews from '../OrderReviews';
+import RefundSummary from '../RefundSummary';
+import CustomerPassword from '../CustomerPassword';
+const SupportTickets=React.lazy(()=>import('../SupportTickets'));
+import { useCartSelection, cartLineKey, canBuyLine, transferGuestSelection, subtractPurchased } from '../cart-selection';
+import { useCustomerRouter, actionPaths, isAccountPath, needsCustomer, isKnownPath, safeReturn } from './routing/customer-routing';
+import '../customer-pages.css';
+export { default as AddressModal } from "../CustomerAddresses";
 import {
   api,
   currentApiBase,
@@ -25,7 +25,7 @@ import {
   signIn,
   signOut,
   signUp,
-} from "./api";
+} from "../api/api";
 import {
   ArrowLeft,
   ArrowUp, ArrowUpRight,

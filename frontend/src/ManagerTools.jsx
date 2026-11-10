@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from 'react';
-import {adminApi as api} from './manager-api';
-import {useManagerReadPause} from './useManagerResource';
+import {adminApi as api} from './api/manager-api';
+import {useManagerReadPause} from './shared/hooks/useManagerResource';
 export function CustomerCreate({onSaved,user}){
  const [form,setForm]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
  useManagerReadPause(!!form);

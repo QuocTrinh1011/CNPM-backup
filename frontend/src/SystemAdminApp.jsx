@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { adminApi, adminRefreshSession, adminSignIn, adminSignOut } from './api';
+import { adminApi, adminRefreshSession, adminSignIn, adminSignOut } from './api/api';
 import InternalDirectory from './InternalDirectory';
 import AuditLogs from './AuditLogs';
-import './internal-portal.css';
+import './shared/styles/internal-portal.css';
 import {
   LayoutDashboard,
   ShieldCheck,

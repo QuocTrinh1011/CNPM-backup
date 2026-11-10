@@ -1,6 +1,6 @@
 import React,{useCallback,useEffect,useState} from 'react';
-import {adminApi} from './api';
-import {useManagerFilters,managerQuery,vietnamDateRange} from './useManagerFilters';
+import {adminApi} from './api/api';
+import {useManagerFilters,managerQuery,vietnamDateRange} from './shared/hooks/useManagerFilters';
 import './audit-logs.css';
 
 const types={ORDER:'Đơn hàng',CUSTOMER:'Khách hàng',ACCOUNT:'Tài khoản nội bộ',PRODUCT:'Sản phẩm',VOUCHER:'Voucher',FEEDBACK:'Phản hồi',SURVEY:'Khảo sát',CARE_TASK:'Công việc chăm sóc',CARE_NOTE:'Ghi chú chăm sóc',SUPPORT_TICKET:'Phiếu hỗ trợ'};

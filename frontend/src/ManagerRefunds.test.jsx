@@ -4,8 +4,8 @@ import {render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
 import {it,expect,vi,afterEach} from 'vitest';
 import ManagerRefunds,{OrderFinancePanel} from './ManagerRefunds';
 import RefundSummary from './RefundSummary';
-import {adminApi} from './manager-api';
-vi.mock('./manager-api',()=>({adminApi:vi.fn()}));
+import {adminApi} from './api/manager-api';
+vi.mock('./api/manager-api',()=>({adminApi:vi.fn()}));
 afterEach(()=>{cleanup();vi.resetAllMocks();window.history.replaceState({},'','/');});
 const order={id:9,status:'CANCELLED',paymentMethod:'PAYOS',paymentStatus:'PAID',totalAmount:100000,finance:{refund:{status:'NONE',refundedAmount:0,pendingAmount:0,availableAmount:100000}}};
 it('shows a partial refund and its outstanding pending amount together',()=>{

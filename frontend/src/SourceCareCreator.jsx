@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from 'react';
-import {adminApi} from './manager-api';
-import {useManagerReadPause} from './useManagerResource';
+import {adminApi} from './api/manager-api';
+import {useManagerReadPause} from './shared/hooks/useManagerResource';
 import './customer-care.css';
 const TaskForm=React.lazy(()=>import('./CustomerCare').then(module=>({default:module.TaskForm})));
 

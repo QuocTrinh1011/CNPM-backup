@@ -1,7 +1,7 @@
 import React,{useCallback,useEffect,useRef,useState} from 'react';
 import {Bell} from 'lucide-react';
-import {adminApi} from './manager-api';
-import {useManagerResource} from './useManagerResource';
+import {adminApi} from './api/manager-api';
+import {useManagerResource} from './shared/hooks/useManagerResource';
 import './manager-care-inbox.css';
 
 export default function ManagerNotificationBell({go,location}){

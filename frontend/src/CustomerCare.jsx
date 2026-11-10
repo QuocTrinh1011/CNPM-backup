@@ -1,7 +1,7 @@
 import React,{useCallback,useEffect,useRef,useState} from 'react';
-import {adminApi} from './manager-api';
-import {useManagerResource,useManagerReadPause} from './useManagerResource';
-import {managerQuery} from './useManagerFilters';
+import {adminApi} from './api/manager-api';
+import {useManagerResource,useManagerReadPause} from './shared/hooks/useManagerResource';
+import {managerQuery} from './shared/hooks/useManagerFilters';
 import './customer-care.css';
 
 export const careLabels={TODO:'Chưa thực hiện',IN_PROGRESS:'Đang xử lý',COMPLETED:'Hoàn thành'};

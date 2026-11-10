@@ -1,7 +1,7 @@
 import React,{useCallback} from 'react';
-import {adminApi} from './manager-api';
-import {useManagerResource} from './useManagerResource';
-import {managerQuery} from './useManagerFilters';
+import {adminApi} from './api/manager-api';
+import {useManagerResource} from './shared/hooks/useManagerResource';
+import {managerQuery} from './shared/hooks/useManagerFilters';
 import {AssigneeFilter,careOutcomes} from './CustomerCare';
 import './care-outcomes-report.css';
 

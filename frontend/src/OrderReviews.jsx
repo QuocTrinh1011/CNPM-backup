@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Star, X } from 'lucide-react';
-import { api } from './api';
-import { useShopResource } from './storefront-hooks';
+import { api } from './api/api';
+import { useShopResource } from './shared/hooks/storefront-hooks';
 
 const STAR_LABELS = { 1: 'Tệ', 2: 'Không hài lòng', 3: 'Bình thường', 4: 'Hài lòng', 5: 'Tuyệt vời' };
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=85';
