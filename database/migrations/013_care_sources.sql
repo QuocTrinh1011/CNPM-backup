@@ -1,4 +1,4 @@
--- Source links are optional. Old tasks remain unchanged. Run after migration_customer_care.sql.
+-- Source links are optional. Old tasks remain unchanged. Run after 012_customer_care.sql.
 BEGIN;
 ALTER TABLE customer_care_tasks ADD COLUMN IF NOT EXISTS source_type VARCHAR(30);
 ALTER TABLE customer_care_tasks ADD COLUMN IF NOT EXISTS source_id BIGINT;
