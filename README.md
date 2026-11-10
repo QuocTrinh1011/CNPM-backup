@@ -119,7 +119,7 @@ Khi lọc theo khảo sát cụ thể, **chưa trả lời chỉ tính trong đ�
 | CI | GitHub Actions: backend verify, frontend build, lint tài liệu/PlantUML và CodeQL |
 | Thiết kế/tài liệu | Figma/Google Stitch, Markdown và sơ đồ PlantUML |
 
-Luồng chung: **Ba portal React → REST API Spring Boot → PostgreSQL**. PayOS là dịch vụ thanh toán bên ngoài, giao tiếp với backend qua API và webhook. Namespace nghiệp vụ Manager là `/api/manager/*`, quản trị hệ thống là `/api/admin/*`; API khách hàng dùng các đường dẫn như `/api/orders`, `/api/surveys`, `/api/support-tickets`.
+Luồng chung: **Ba portal React → REST API Spring Boot → PostgreSQL**. PayOS là dịch vụ thanh toán bên ngoài, giao tiếp với backend qua API và webhook. Namespace nghiệp vụ Manager là `/api/manager/*`, quản trị hệ thống là `/api/admin/*`; API khách hàng dùng các đường dẫn như `/api/orders` và `/api/surveys`.
 
 ## Cấu trúc thư mục
 
@@ -194,12 +194,13 @@ Sao lưu, xác định phiên bản schema đã triển khai và đọc migratio
 | Nền tảng tài khoản/portal | `001_admin_user_split.sql`, `002_manager_portal.sql` |
 | Khảo sát, phản hồi và voucher | `003_survey_management.sql`, `004_feedback_moderation.sql`, `005_voucher_management.sql`, `006_review_survey_rewards.sql` |
 | Thanh toán và đổi trả | `007_payos_qr.sql`, `008_payos_attempts.sql`, `009_return_management.sql` |
-| Hoàn tiền và dòng tiền | `010_refunds_abandoned_payos.sql`, `011_cashflow_voucher_customer_limit.sql` |
-| Chăm sóc khách hàng | `012_customer_care.sql` → `013_care_sources.sql` → `014_care_outcomes.sql` → `015_care_reminders.sql` |
-| Nhật ký và phiếu hỗ trợ | `016_audit_logs.sql`, `017_support_tickets.sql` |
-| Thống kê doanh thu và nhập kho | `018_sales_statistics.sql`, `019_stock_receipts.sql` |
+| Hoàn tiền và dòng tiền (lịch sử, phần hoàn tiền/báo cáo gỡ ở 020) | `010_refunds_abandoned_payos.sql`, `011_cashflow_voucher_customer_limit.sql` |
+| Chăm sóc khách hàng (lịch sử, gỡ ở 020) | `012_customer_care.sql` → `013_care_sources.sql` → `014_care_outcomes.sql` → `015_care_reminders.sql` |
+| Audit log và phiếu hỗ trợ (phiếu hỗ trợ gỡ ở 020) | `016_audit_logs.sql`, `017_support_tickets.sql` |
+| Thống kê doanh thu (lịch sử, gỡ ở 020) và nhập kho | `018_sales_statistics.sql`, `019_stock_receipts.sql` |
+| Gỡ schema tính năng đã bỏ và mô hình CTKM | `020_retire_refund_care_support_reports.sql`, `021_promotion_campaigns.sql` |
 
-Các script nằm trong `database/migrations/`. Migration nhắc hạn cần bảng công việc chăm sóc và thông báo nền có trước; phiếu hỗ trợ cần các bảng nền khách hàng, đơn hàng và thông báo. Backend có ghi audit cần bảng nhật ký trước khi thực hiện nghiệp vụ mới. Xem hướng dẫn từng chức năng ở mục [Tài liệu chi tiết](#tài-liệu-chi-tiết).
+Các script nằm trong `database/migrations/`. Migration 020 xóa dữ liệu nghiệp vụ trong các bảng hoàn tiền, chăm sóc và phiếu hỗ trợ cùng các cột báo cáo đã bỏ; sao lưu database trước khi chạy. Bảng `audit_logs` và các bản ghi lịch sử được giữ nguyên. Migration 021 thêm mô hình campaign CTKM và các rule theo sản phẩm, hóa đơn, voucher. Xem thứ tự và phụ thuộc tại [database/migrations/README.md](database/migrations/README.md).
 
 `database/maintenance/cleanup_legacy.sql` dành cho dữ liệu/cấu trúc cũ, **không phải bước cài đặt mặc định**. Chỉ dùng khi đã hiểu nội dung, có bản sao lưu và đã kiểm thử trên bản sao. Khởi động lại backend sau khi cập nhật migration/mã nguồn; chạy SQL không tự nạp endpoint mới vào tiến trình Java đang chạy.
 
