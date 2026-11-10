@@ -34,6 +34,12 @@ it('removes manager supplier tools and redirects the retired route', async () =>
   expect(screen.queryByText('Đối tác cung cấp')).toBeNull();
   expect(adminApi.mock.calls.some(([url]) => url.includes('/suppliers'))).toBe(false);
 });
+it('keeps the invoices section instead of redirecting to the dashboard', async () => {
+  window.history.replaceState({}, '', '/manager/invoices');
+  render(<ManagerApp/>);
+  await waitFor(() => expect(adminApi.mock.calls.some(([url]) => String(url).startsWith('/api/manager/orders?'))).toBe(true));
+  expect(window.location.pathname).toBe('/manager/invoices');
+});
 
 describe("manager list lifecycle", () => {
   it("mounts and cleans up under StrictMode without returning a Promise cleanup", async () => {

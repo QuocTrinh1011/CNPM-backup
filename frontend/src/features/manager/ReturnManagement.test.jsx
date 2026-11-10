@@ -15,7 +15,7 @@ it('approves then completes without modifying delivery status and shows the hist
  render(<ManagerOrderDetail detail={order} onClose={()=>{}}/>);
  fireEvent.click(screen.getByText('Chấp thuận'));fireEvent.click(screen.getByText('Xác nhận xử lý'));
  fireEvent.click(await screen.findByText('Hoàn tất xử lý'));
- const input=screen.getByLabelText(/Ghi chú cách giải quyết/);
+ const input=screen.getByLabelText(/Ghi chú cách xử lý đổi trả/);
  expect(screen.getByText('Xác nhận xử lý').disabled).toBe(true);
  fireEvent.change(input,{target:{value:'Đã đổi hàng tại cửa hàng'}});fireEvent.click(screen.getByText('Xác nhận xử lý'));
  expect(await screen.findByText('Đã đổi hàng tại cửa hàng')).toBeTruthy();expect(screen.queryByText('Hoàn tất xử lý')).toBeNull();
