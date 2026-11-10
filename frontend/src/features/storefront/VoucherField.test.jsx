@@ -3,8 +3,8 @@ import React from "react";
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import VoucherField, { useCheckoutVoucher } from "./VoucherField";
-import { api } from "./api/api";
-vi.mock("./api/api",async original=>({...await original(),api:vi.fn()}));
+import { api } from "../../api/api";
+vi.mock("../../api/api",async original=>({...await original(),api:vi.fn()}));
 const cart = {subtotal:100000,items:[{productId:1,quantity:1,lineTotal:100000}]};
 it("selects a general voucher alongside rewards then explicitly applies it",async()=>{
   api.mockImplementation(async path=>path.startsWith('/api/customers/me/vouchers')

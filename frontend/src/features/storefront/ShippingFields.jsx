@@ -1,6 +1,6 @@
 import React, { useId, useState, useRef, useEffect, useMemo } from 'react';
 import { ChevronDown, Search, Check, X } from 'lucide-react';
-import provinces from './data/vietnam-addresses.json';
+import provinces from '../../data/vietnam-addresses.json';
 
 export function normalizeSearchText(text) {
   return String(text || '')

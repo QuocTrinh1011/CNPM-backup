@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowUpRight, Check, MapPin, Package, ShieldCheck, CreditCard, Truck } from "lucide-react";
-import { api } from "./api/api";
+import { api } from "../../api/api";
 import VoucherField, { useCheckoutVoucher } from "./VoucherField";
-import { useAddresses, AddressPicker, AddressSummary, preferredAddress, addressValid, deliveryText } from "./CustomerAddresses";
+import { useAddresses, AddressPicker, AddressSummary, preferredAddress, addressValid, deliveryText } from "../../CustomerAddresses";
 import PaymentQr from "./PaymentQr";
-import "./checkout-page.css";
+import "./styles/checkout-page.css";
 
 const money = value => Number(value || 0).toLocaleString("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 });
 

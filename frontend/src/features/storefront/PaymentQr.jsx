@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { ArrowUpRight, RefreshCw } from "lucide-react";
-import { api, endpoints } from "./api/api";
-import "./payment-qr.css";
+import { api, endpoints } from "../../api/api";
+import "./styles/payment-qr.css";
 
 const money = value => Number(value || 0).toLocaleString("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 });
 

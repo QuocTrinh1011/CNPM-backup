@@ -2,9 +2,9 @@
 // CSS contracts: new portal styles must not leak into the system Admin.
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-const userStyles = readFileSync('src/user-redesign.css', 'utf8');
+const userStyles = readFileSync('src/features/storefront/styles/user-redesign.css', 'utf8');
 const managerStyles = readFileSync('src/manager-redesign.css', 'utf8');
-const newFormStyles = readFileSync('src/customer-new-form.css', 'utf8');
+const newFormStyles = readFileSync('src/features/storefront/styles/customer-new-form.css', 'utf8');
 const cockpitStyles = readFileSync('src/manager-cockpit.css', 'utf8');
 const adminStyles = ['admin-governance.css','admin-aurora.css'].map(file => readFileSync(`src/${file}`, 'utf8'));
 
@@ -86,7 +86,7 @@ describe('portal redesign isolation', () => {
     const entry = readFileSync('index.html', 'utf8');
     expect(entry).toContain('family=Manrope');
     expect(entry.match(/fonts.googleapis.com\/css2/g)).toHaveLength(1);
-    for (const file of ['styles/styles.css', 'storefront.css', 'shared/styles/admin-design.css', 'user-redesign.css', 'manager-redesign.css']) {
+    for (const file of ['styles/styles.css', 'features/storefront/styles/storefront.css', 'shared/styles/admin-design.css', 'features/storefront/styles/user-redesign.css', 'manager-redesign.css']) {
       expect(readFileSync(`src/${file}`, 'utf8')).not.toContain('@import url');
     }
     expect(managerStyles).toContain('--mono: var(--sans)');

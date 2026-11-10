@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { api, endpoints } from "./api/api";
-import CustomerVouchers from './CustomerVouchers';
+import { api, endpoints } from "../../api/api";
+import CustomerVouchers from '../../CustomerVouchers';
 
 export function useCheckoutVoucher(cart) {
   const [code, setCode] = useState(""), [result, setResult] = useState(null), [busy, setBusy] = useState(false), [error, setError] = useState("");

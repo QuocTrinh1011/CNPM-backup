@@ -3,9 +3,9 @@ import React from "react";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import PaymentQr from "./PaymentQr";
-import { api } from "./api/api";
+import { api } from "../../api/api";
 
-vi.mock("./api/api", async original => ({ ...await original(), api: vi.fn() }));
+vi.mock("../../api/api", async original => ({ ...await original(), api: vi.fn() }));
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
 
 const pending = { orderCode: 1001, amount: 249000, paymentStatus: "PENDING", qrCode: "000201010212", paymentUrl: "https://pay.payos.vn/web/test", expiresAt: new Date(Date.now() + 600000).toISOString() };

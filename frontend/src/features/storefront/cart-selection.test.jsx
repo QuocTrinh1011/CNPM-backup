@@ -3,7 +3,7 @@ import React from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { cartLineKey, reconcileSelection, useCartSelection, subtractPurchased, summarizeCart, transferGuestSelection, saveSelection, readSelection } from './cart-selection';
-import { CartDrawer } from './app/App';
+import { CartDrawer } from '../../app/App';
 const items = [
   { productId: 1, name: 'Áo', color: 'Đen', size: 'M', stock: 8, quantity: 2, unitPrice: 100, lineTotal: 200 },
   { productId: 1, name: 'Áo', color: 'Đen', size: 'L', stock: 8, quantity: 1, unitPrice: 100, lineTotal: 100 },
