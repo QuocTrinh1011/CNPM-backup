@@ -2,21 +2,21 @@ import { showReturn, returnLabel, displayOrderLabel, deliveryLabel } from '../sh
 import '../shared/styles/order-display.css';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useStorefrontDialogs, useShopResource } from '../shared/hooks/storefront-hooks';
-import AccountDropdown from '../AccountDropdown';
+import AccountDropdown from '../features/customer/AccountDropdown';
 import StorefrontHome from '../features/storefront/StorefrontHome';
-import AddressModal from "../CustomerAddresses";
+import AddressModal from "../features/customer/CustomerAddresses";
 import CheckoutPage, { CheckoutState } from "../features/storefront/CheckoutPage";
 import PaymentQr from "../features/storefront/PaymentQr";
-import CustomerLayout from '../CustomerLayout';
-import CustomerVouchers, { RewardSummary } from '../CustomerVouchers';
-import OrderReviews from '../OrderReviews';
-import RefundSummary from '../RefundSummary';
-import CustomerPassword from '../CustomerPassword';
+import CustomerLayout from '../features/customer/CustomerLayout';
+import CustomerVouchers, { RewardSummary } from '../features/customer/CustomerVouchers';
+import OrderReviews from '../features/customer/OrderReviews';
+import RefundSummary from '../features/customer/RefundSummary';
+import CustomerPassword from '../features/customer/CustomerPassword';
 const SupportTickets=React.lazy(()=>import('../SupportTickets'));
 import { useCartSelection, cartLineKey, canBuyLine, transferGuestSelection, subtractPurchased } from '../features/storefront/cart-selection';
 import { useCustomerRouter, actionPaths, isAccountPath, needsCustomer, isKnownPath, safeReturn } from './routing/customer-routing';
-import '../customer-pages.css';
-export { default as AddressModal } from "../CustomerAddresses";
+import '../features/customer/styles/customer-pages.css';
+export { default as AddressModal } from "../features/customer/CustomerAddresses";
 import {
   api,
   currentApiBase,

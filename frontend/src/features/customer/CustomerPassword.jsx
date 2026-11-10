@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { api, endpoints, signOut } from './api/api';
+import { api, endpoints, signOut } from '../../api/api';
 
 export default function CustomerPassword({ initialMode, onNavigate, onNotice }) {
   const [form, setForm] = useState(() => {

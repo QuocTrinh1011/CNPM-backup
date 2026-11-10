@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useShopResource } from './shared/hooks/storefront-hooks';
+import { useShopResource } from '../../shared/hooks/storefront-hooks';
 const money=value=>new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(value||0);
 const states={ACTIVE:'Còn sử dụng',USED:'Đã dùng',EXPIRED:'Hết hạn',DISABLED:'Đã tắt',EXHAUSTED:'Đã dùng',SCHEDULED:'Chưa đến hạn'};
 export function RewardSummary({ reward }) {

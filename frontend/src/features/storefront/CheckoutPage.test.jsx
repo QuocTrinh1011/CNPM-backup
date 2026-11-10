@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testi
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import App from "../../app/App";
 import CheckoutPage from "./CheckoutPage";
-import AddressModal from "../../CustomerAddresses";
+import AddressModal from "../customer/CustomerAddresses";
 import { api, refreshSession, signIn } from "../../api/api";
 import { saveSelection, cartLineKey } from "./cart-selection";
 vi.mock("../../api/api", async original => ({ ...await original(), api:vi.fn(), refreshSession:vi.fn(), signIn:vi.fn() }));

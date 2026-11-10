@@ -3,7 +3,7 @@ import React from 'react';
 import {render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
 import {it,expect,vi,afterEach} from 'vitest';
 import ManagerRefunds,{OrderFinancePanel} from './ManagerRefunds';
-import RefundSummary from './RefundSummary';
+import RefundSummary from './features/customer/RefundSummary';
 import {adminApi} from './api/manager-api';
 vi.mock('./api/manager-api',()=>({adminApi:vi.fn()}));
 afterEach(()=>{cleanup();vi.resetAllMocks();window.history.replaceState({},'','/');});

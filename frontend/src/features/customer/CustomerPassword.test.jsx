@@ -3,8 +3,8 @@ import React from 'react';
 import {render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
 import {it,expect,vi,afterEach} from 'vitest';
 import CustomerPassword from './CustomerPassword';
-import {api} from './api/api';
-vi.mock('./api/api',()=>({api:vi.fn(),endpoints:{forgotPassword:'/forgot',resetPassword:'/reset'},signOut:vi.fn()}));
+import {api} from '../../api/api';
+vi.mock('../../api/api',()=>({api:vi.fn(),endpoints:{forgotPassword:'/forgot',resetPassword:'/reset'},signOut:vi.fn()}));
 afterEach(()=>{cleanup();vi.resetAllMocks();window.history.replaceState({},'','/');});
 it('reads a reset link then removes its secret fragment without persisting it',async()=>{
  window.history.replaceState({},'','/dat-lai-mat-khau#email=owner%40example.com&code='+ 'A'.repeat(43));

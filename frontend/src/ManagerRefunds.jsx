@@ -2,7 +2,7 @@ import React,{useCallback,useEffect,useRef,useState} from 'react';
 import {adminApi} from './api/manager-api';
 import {useManagerList,useManagerReadPause} from './shared/hooks/useManagerResource';
 import {useManagerFilters,managerQuery} from './shared/hooks/useManagerFilters';
-import RefundSummary,{refundMoney} from './RefundSummary';
+import RefundSummary,{refundMoney} from './features/customer/RefundSummary';
 import './manager-refunds.css';
 const dates=value=>value?new Date(value).toLocaleString('vi-VN'):'—';
 const labels={PENDING:'Chờ hoàn',COMPLETED:'Đã hoàn',REJECTED:'Đã từ chối'};

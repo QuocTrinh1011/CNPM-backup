@@ -2,8 +2,8 @@
 import React from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { it, expect, vi, afterEach } from 'vitest';
-import OrderReviews from '../../OrderReviews';
-import CustomerVouchers from '../../CustomerVouchers';
+import OrderReviews from '../../features/customer/OrderReviews';
+import CustomerVouchers from '../../features/customer/CustomerVouchers';
 import { RewardFields, emptyReward } from '../../SurveyRewardEditor';
 import { api } from '../../api/api';
 vi.mock('../../api/api',async original=>({...await original(),api:vi.fn()}));
