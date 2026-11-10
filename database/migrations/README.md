@@ -25,5 +25,9 @@ Các phụ thuộc bên dưới được đối chiếu từ bảng và cột m�
 | 17 | [017_support_tickets.sql](017_support_tickets.sql) | Tạo phiếu hỗ trợ và liên kết thông báo. | Các bảng nền `customers`, `orders`, `customer_notifications`; script không tham chiếu trực tiếp tới audit, care hoặc reminders. Giữ cuối theo thứ tự triển khai đã thống nhất. |
 | 18 | [018_sales_statistics.sql](018_sales_statistics.sql) | Gán tùy chọn nhân viên Manager cho đơn hàng để thống kê doanh thu. | Các bảng nền `customers`, `orders`. |
 | 19 | [019_stock_receipts.sql](019_stock_receipts.sql) | Tạo phiếu nhập kho và dòng sản phẩm để ghi chi phí mua hàng. | `002_manager_portal.sql` tạo `suppliers`; cần bảng nền `products`, `customers`. Backend ghi audit khi nhận phiếu nên cần `016_audit_logs.sql`. |
+| 20 | [020_retire_refund_care_support_reports.sql](020_retire_refund_care_support_reports.sql) | Gỡ bảng/cột chỉ thuộc hoàn tiền, chăm sóc, phiếu hỗ trợ và báo cáo. | Chạy sau migrations 010–018; xóa cột thông báo liên kết care/ticket trước các bảng; không đụng `audit_logs`, COD collection hay payment review. |
+| 21 | [021_promotion_campaigns.sql](021_promotion_campaigns.sql) | Tạo campaign CTKM và ba nhóm rule sản phẩm, hóa đơn, voucher. Chỉ là mô hình dữ liệu. | Cần bảng nền `products`, `store_vouchers`; độc lập với migration 020. |
+
+Migration 020 xóa dữ liệu nghiệp vụ trong các bảng đã gỡ. Nhật ký kiểm toán tổng quát trong `audit_logs` được giữ nguyên để tra cứu các bản ghi lịch sử, kể cả loại entity CARE/TICKET cũ.
 
 Database cài mới dùng [`../schema.sql`](../schema.sql), sau đó có thể nạp dữ liệu minh họa bằng [`../seed/seed_data.sql`](../seed/seed_data.sql). Schema hiện tại đã bao gồm cấu trúc ứng dụng mới; không áp dụng toàn bộ migration như một bước bắt buộc cho database mới.

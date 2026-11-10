@@ -25,21 +25,8 @@ public class CustomerActivityService {
           select 'SURVEY',r.survey_id,'SUBMITTED',r.created_at,r.id,r.customer_id
           from survey_responses r
           union all
-          select 'SUPPORT_TICKET',s.id,'CREATED',s.created_at,s.id,s.customer_id
-          from support_tickets s
-          union all
-          select 'CARE_TASK',t.id,'CREATED',t.created_at,t.id,t.customer_id
-          from customer_care_tasks t
-          union all
-          select 'CARE_TASK',t.id,'COMPLETED',t.completed_at,t.id,t.customer_id
-          from customer_care_tasks t
-          where t.status='COMPLETED' and t.completed_at is not null
-          union all
           select a.entity_type,a.target_id,a.action,a.created_at,a.id,o.customer_id
           from audit_logs a join orders o on a.entity_type='ORDER' and o.order_id=a.target_id where a.action<>'CREATE'
-          union all
-          select a.entity_type,a.target_id,a.action,a.created_at,a.id,s.customer_id
-          from audit_logs a join support_tickets s on a.entity_type='SUPPORT_TICKET' and s.id=a.target_id where a.action<>'CREATE'
           union all
           select a.entity_type,a.target_id,a.action,a.created_at,a.id,f.customer_id
           from audit_logs a join feedback f on a.entity_type='FEEDBACK' and f.feedback_id=a.target_id where a.action<>'CREATE' and f.deleted_at is null

@@ -34,10 +34,8 @@ public class AdminOrderService extends AdminServiceSupport {
     private final NotificationService notifications;
     private final VoucherService vouchers;
     private final StockService stock;
-    @org.springframework.beans.factory.annotation.Autowired private com.htttdn.crm.repository.UserRepository users;
     @org.springframework.beans.factory.annotation.Autowired
     public AdminOrderService(OrderRepository orders, NotificationService notifications, VoucherService vouchers, PaymentRepository payments, StockService stock) { this.orders = orders; this.notifications = notifications; this.vouchers=vouchers; this.payments=payments; this.stock=stock; }
-    public AdminOrderService(OrderRepository orders, NotificationService notifications, VoucherService vouchers, PaymentRepository payments, StockService stock, RefundService ignoredLegacyRefundService) { this(orders, notifications, vouchers, payments, stock); }
     public Page<Order> list(String status, int page, int size) {
         if (status != null && (status.equals("RETURN") || status.startsWith("RETURN_"))) {
             String returnStatus=status.equals("RETURN")?null:status.substring(7);
@@ -48,15 +46,6 @@ public class AdminOrderService extends AdminServiceSupport {
         return status == null || status.isBlank() ? orders.findAll(page(page, size)) : orders.findByStatus(status, page(page, size));
     }
     public Order get(Long id) { return orders.findById(id).orElseThrow(); }
-    @Transactional public Order assignSalesperson(Long id, Long salespersonId) {
-        Order order=orders.findForStatusUpdate(id).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"ORDER_NOT_FOUND","Không tìm thấy đơn hàng."));
-        if(salespersonId!=null)users.findById(salespersonId)
-                .filter(user->"MANAGER".equals(user.getRole())&&!user.isLocked()&&user.getDeletedAt()==null)
-                .orElseThrow(()->new ApiException(HttpStatus.BAD_REQUEST,"INVALID_SALESPERSON","Chỉ có thể gán nhân viên Manager đang hoạt động."));
-        if(java.util.Objects.equals(order.getSalespersonId(),salespersonId))return order;
-        var before=snapshot(order);order.setSalespersonId(salespersonId);order.setUpdatedAt(Instant.now());
-        Order saved=orders.save(order);audit("ASSIGN_SALESPERSON","ORDER",id,before,saved);return saved;
-    }
     @Transactional public Order updateStatus(Long id, StatusRequest request) {
         if (!STATUSES.contains(request.status())) throw new IllegalArgumentException("Invalid order status");
         String reason = request.reason() == null ? "" : request.reason().trim();

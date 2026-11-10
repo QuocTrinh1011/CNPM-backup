@@ -23,14 +23,12 @@ public class AuditTrail {
     public static Map<String,Object> snapshot(Object item){
         var m=new TreeMap<String,Object>();
         if(item instanceof User u){m.put("role",u.getRole());m.put("locked",u.isLocked());m.put("deleted",u.getDeletedAt()!=null);}
-        else if(item instanceof Order o){m.put("orderCode",o.getOrderCode());m.put("status",o.getStatus());m.put("returnStatus",o.getReturnStatus());m.put("paymentStatus",o.getPaymentStatus());m.put("salespersonId",o.getSalespersonId());}
+        else if(item instanceof Order o){m.put("orderCode",o.getOrderCode());m.put("status",o.getStatus());m.put("returnStatus",o.getReturnStatus());m.put("paymentStatus",o.getPaymentStatus());}
         else if(item instanceof StockReceipt r){m.put("receiptCode",r.getReceiptCode());m.put("supplierId",r.getSupplier()==null?null:r.getSupplier().id);m.put("supplierName",r.getSupplierName());m.put("totalCost",r.getTotalCost());m.put("receivedAt",r.getReceivedAt());m.put("status",r.getStatus());}
         else if(item instanceof Product p){m.put("name",p.getName());m.put("price",p.getPrice());m.put("stock",p.getStock());m.put("active",p.isActive());m.put("category",p.getCategory());}
         else if(item instanceof StoreVoucher v){m.put("code",v.getCode());m.put("discountType",v.getDiscountType());m.put("discountValue",v.getDiscountValue());m.put("minOrderAmount",v.getMinOrderAmount());m.put("maxDiscountAmount",v.getMaxDiscountAmount());m.put("usageLimit",v.getUsageLimit());m.put("perCustomerLimit",v.getPerCustomerLimit());m.put("startsAt",v.getStartsAt());m.put("expiresAt",v.getExpiresAt());m.put("active",v.isActive());}
         else if(item instanceof Feedback f){m.put("status",f.getStatus());m.put("hidden",f.isHidden());m.put("deleted",f.getDeletedAt()!=null);m.put("hasShopResponse",f.getAdminResponse()!=null&&!f.getAdminResponse().isBlank());}
         else if(item instanceof Survey s){m.put("title",s.getTitle());m.put("status",s.getStatus());m.put("audience",s.getAudience());m.put("deleted",s.getDeletedAt()!=null);var r=s.getReward();if(r!=null){m.put("rewardEnabled",r.isEnabled());m.put("rewardType",r.getDiscountType());m.put("rewardValue",r.getDiscountValue());m.put("rewardMinimum",r.getMinOrderAmount());m.put("rewardMaximum",r.getMaxDiscountAmount());m.put("rewardDays",r.getValidDays());}}
-        else if(item instanceof CustomerCareTask t){m.put("customerId",t.customerId);m.put("assigneeId",t.assigneeId);m.put("status",t.status);m.put("dueAt",t.dueAt);m.put("completedAt",t.completedAt);m.put("outcome",t.outcome);m.put("sourceType",t.sourceType);m.put("sourceId",t.sourceId);m.put("parentTaskId",t.parentTaskId);m.put("version",t.version);}
-        else if(item instanceof CustomerCareNote n){m.put("customerId",n.customerId);m.put("authorId",n.authorId);}
         else throw new IllegalArgumentException("Unsupported audit snapshot");
         return m;
     }

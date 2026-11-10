@@ -15,12 +15,10 @@ public class PaymentReconciliationService {
     private final NotificationService notifications;
     @org.springframework.beans.factory.annotation.Autowired
     public PaymentReconciliationService(PayosService payos,PaymentAttemptRepository attempts,PaymentRepository payments,NotificationService notifications){this.payos=payos;this.attempts=attempts;this.payments=payments;this.notifications=notifications;}
-    public PaymentReconciliationService(PayosService payos,PaymentAttemptRepository attempts,PaymentRepository payments,NotificationService notifications,RefundService ignoredLegacyRefundService){this(payos,attempts,payments,notifications);}
     public static void review(Order o,String reason){o.paymentReviewRequired=true;o.paymentReviewReason=reason;o.paymentReviewAt=Instant.now();}
     public static void clearReview(Order o){o.paymentReviewRequired=false;o.paymentReviewReason=null;o.paymentReviewAt=null;}
     @Transactional(propagation=Propagation.MANDATORY) public void paid(Order o,Payment p,PaymentAttempt attempt){
         boolean wasPaid="PAID".equals(o.getPaymentStatus());
-        if(!wasPaid&&o.paidAt==null&&"PAYOS".equals(o.getPaymentMethod()))o.paidAt=Instant.now();
         if(attempt!=null){attempt.setStatus("PAID");attempt.setUpdatedAt(Instant.now());attempts.save(attempt);}
         o.setPaymentStatus("PAID");p.setStatus("PAID");o.setUpdatedAt(Instant.now());p.setUpdatedAt(Instant.now());payments.save(p);
         if(!wasPaid)notifications.create(o.getCustomer(),"CANCELLED".equals(o.getStatus())?"Thanh toán sau khi hủy đơn":"Thanh toán thành công",

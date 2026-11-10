@@ -49,12 +49,6 @@ public class OrderService {
         this.reconciliation=reconciliation;
     }
 
-    public OrderService(OrderRepository orders, ProductRepository products, CartItemRepository carts,
-                        PaymentRepository payments, PaymentAttemptRepository attempts, PaymentWebhookEventRepository webhookEvents,
-                        VoucherService vouchers, NotificationService notifications, PayosService payos, FeedbackRepository feedback, AuditTrail audit, StockService stock, RefundService ignoredLegacyRefundService, PaymentReconciliationService reconciliation) {
-        this(orders, products, carts, payments, attempts, webhookEvents, vouchers, notifications, payos, feedback, audit, stock, reconciliation);
-    }
-
     @Transactional
     public Checkout create(User customer, CheckoutRequest request) {
         if (request.deliveryAddress() == null || request.deliveryAddress().isBlank()) throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_CART", "Vui lòng nhập địa chỉ giao hàng.");

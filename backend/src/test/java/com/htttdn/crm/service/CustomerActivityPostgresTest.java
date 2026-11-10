@@ -10,13 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfEnvironmentVariable(named="CRM_POSTGRES_QA",matches="true")
-@SpringBootTest(properties={"spring.jpa.hibernate.ddl-auto=none","crm.care-reminders.enabled=false"})
+@SpringBootTest(properties={"spring.jpa.hibernate.ddl-auto=none"})
 @Transactional
 class CustomerActivityPostgresTest {
     @Autowired JdbcTemplate db;
     @Autowired CustomerActivityService activities;
     @Autowired CustomerLifecycleQuery customers;
-    @Autowired RetentionReportService retention;
     @Test void timelineFiltersAndResolvedCountUseOnlyTemporaryTables() {
         // No public table data, sequences or schema are modified.
         db.execute("create temporary table customers(customer_id bigint primary key,full_name varchar,email varchar,phone varchar,age integer,preferences varchar,created_at timestamptz,locked boolean,lock_reason varchar,role varchar,deleted_at timestamptz) on commit drop");
@@ -25,18 +24,14 @@ class CustomerActivityPostgresTest {
         db.execute("create temporary table survey_responses(id bigint primary key,customer_id bigint,survey_id bigint,created_at timestamptz) on commit drop");
         db.execute("create temporary table survey_definitions(id bigint primary key,title varchar,status varchar,audience varchar,created_at timestamptz,deleted_at timestamptz) on commit drop");
         db.execute("create temporary table survey_recipients(survey_id bigint,customer_id bigint) on commit drop");
-        db.execute("create temporary table support_tickets(id bigint primary key,customer_id bigint,status varchar,created_at timestamptz) on commit drop");
-        db.execute("create temporary table customer_care_tasks(id bigint primary key,customer_id bigint,status varchar,created_at timestamptz,completed_at timestamptz) on commit drop");
         db.execute("create temporary table audit_logs(id bigint primary key,entity_type varchar,target_id bigint,action varchar,created_at timestamptz) on commit drop");
         db.update("insert into customers(customer_id,full_name,email,role,created_at,locked) values(1,'Buyer','buyer@test','CUSTOMER',CURRENT_TIMESTAMP,true),(2,'Other','other@test','CUSTOMER',CURRENT_TIMESTAMP,false),(3,'Staff','staff@test','MANAGER',CURRENT_TIMESTAMP,false)");
         db.update("insert into orders values(10,1,'COMPLETED',100,CURRENT_TIMESTAMP),(20,2,'PENDING',100,CURRENT_TIMESTAMP)");
         db.update("insert into feedback values(1,1,2,null,CURRENT_TIMESTAMP),(2,1,4,null,CURRENT_TIMESTAMP),(3,1,5,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)");
         db.update("insert into survey_responses values(1,1,100,CURRENT_TIMESTAMP)");
-        db.update("insert into support_tickets values(1,1,'RESOLVED',CURRENT_TIMESTAMP),(2,1,'RESOLVED',CURRENT_TIMESTAMP),(3,3,'RESOLVED',CURRENT_TIMESTAMP)");
         db.update("insert into audit_logs values(1,'ORDER',10,'UPDATE',CURRENT_TIMESTAMP),(2,'SUPPORT_TICKET',1,'UPDATE',CURRENT_TIMESTAMP)");
-        assertEquals(8,activities.list(1,0,1).totalElements());
+        assertEquals(5,activities.list(1,0,1).totalElements());
         assertEquals(1,activities.list(2,0,10).totalElements());
-        assertEquals(2,retention.report().resolvedSupportTickets());
         var filters=new CustomerLifecycleQuery.Filters(null,null,null,null,null,null,null,null,null,"createdAt","desc",0,1,new BigDecimal("3"),new BigDecimal("3"),true);
         assertEquals(1,customers.list(filters).totalElements());
         assertEquals(1,customers.list(filters).content().getFirst().id());
