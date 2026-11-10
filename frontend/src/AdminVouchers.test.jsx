@@ -3,7 +3,7 @@ import React from "react";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import AdminVouchers from "./AdminVouchers";
-import AdminApp from "./ManagerApp";
+import AdminApp from "./features/manager/ManagerApp";
 import { adminApi, adminRefreshSession } from "./api/manager-api";
 vi.mock("./api/manager-api",async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
 const voucher={id:1,code:"SHOP10",description:"Khuyến mãi",discountType:"PERCENTAGE",discountValue:10,minOrderAmount:0,usedCount:1,usageLimit:10,active:true,state:"ACTIVE",totalDiscount:10000};

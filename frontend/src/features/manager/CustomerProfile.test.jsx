@@ -2,7 +2,7 @@
 import React from 'react';
 import { act, cleanup, render, screen, fireEvent, within } from '@testing-library/react';
 import { beforeEach, afterEach, it, vi, expect } from 'vitest';
-import ManagerApp from '../../ManagerApp';
+import ManagerApp from './ManagerApp';
 import { adminApi, adminRefreshSession } from '../../api/manager-api';
 vi.mock('../../api/manager-api', async original => ({ ...await original(), adminApi: vi.fn(), adminRefreshSession: vi.fn() }));
 const profile = (name='Customer A') => ({ customer: { id: 1, fullName: name, email: 'customer@test.vn', locked: true, lockReason: 'Lý do thử nghiệm' }, summary: { totalOrders: 2, completedOrders: 1, cancelledOrders: 1, returnOrders: 0, completedValue: 90000 } });

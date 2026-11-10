@@ -1,26 +1,26 @@
-import { hasReturn, showReturn, displayOrderLabel, returnLabel } from './shared/utils/order-display';
-import {useManagerFilters,managerQuery,vietnamDateRange} from './shared/hooks/useManagerFilters';
-import ManagerOrderDetail from './features/manager/ManagerOrderDetail';
-import SourceCareCreator from './features/manager/SourceCareCreator';
-import ManagerMyTasks,{MyTaskSummary,CareTaskDetail} from './features/manager/ManagerMyTasks';
-import ManagerNotificationBell from './features/manager/ManagerNotificationBell';
-import CustomerLifecycle, {CustomerLifecycleFilters} from './features/manager/CustomerLifecycle';
-import { useManagerResource, useManagerList, ManagerSyncStatus, useManagerReadPause } from "./shared/hooks/useManagerResource";
-import {CustomerCreate,SurveyAudience} from './features/manager/ManagerTools';
-import SurveyRecipientGroup,{groupSurveyRoute,groupSurveySource} from './features/manager/SurveyRecipientGroup';
-import './shared/styles/internal-portal.css';
+import { hasReturn, showReturn, displayOrderLabel, returnLabel } from '../../shared/utils/order-display';
+import {useManagerFilters,managerQuery,vietnamDateRange} from '../../shared/hooks/useManagerFilters';
+import ManagerOrderDetail from './ManagerOrderDetail';
+import SourceCareCreator from './SourceCareCreator';
+import ManagerMyTasks,{MyTaskSummary,CareTaskDetail} from './ManagerMyTasks';
+import ManagerNotificationBell from './ManagerNotificationBell';
+import CustomerLifecycle, {CustomerLifecycleFilters} from './CustomerLifecycle';
+import { useManagerResource, useManagerList, ManagerSyncStatus, useManagerReadPause } from "../../shared/hooks/useManagerResource";
+import {CustomerCreate,SurveyAudience} from './ManagerTools';
+import SurveyRecipientGroup,{groupSurveyRoute,groupSurveySource} from './SurveyRecipientGroup';
+import '../../shared/styles/internal-portal.css';
 import { TicketPercent } from "lucide-react";
-import { canAdvanceOrder, isFinalOrder } from './features/manager/order-transitions';
-import SurveyRewardEditor, { RewardFields, emptyReward } from './features/manager/SurveyRewardEditor';
+import { canAdvanceOrder, isFinalOrder } from './order-transitions';
+import SurveyRewardEditor, { RewardFields, emptyReward } from './SurveyRewardEditor';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-const AdminVouchers = React.lazy(() => import('./AdminVouchers'));
-const CustomerProfile = React.lazy(() => import('./features/manager/CustomerProfile'));
-const CustomerCare = React.lazy(() => import('./features/manager/CustomerCare'));
-const CareDashboard = React.lazy(() => import('./features/manager/CareDashboard'));
-const RetentionReport = React.lazy(() => import('./features/manager/RetentionReport'));
-const SupportTickets = React.lazy(()=>import('./features/support-tickets/SupportTickets'));
-const ManagerRefunds = React.lazy(()=>import('./features/manager/ManagerRefunds'));
-const CashflowReport = React.lazy(()=>import('./features/manager/CashflowReport'));
+const AdminVouchers = React.lazy(() => import('../../AdminVouchers'));
+const CustomerProfile = React.lazy(() => import('./CustomerProfile'));
+const CustomerCare = React.lazy(() => import('./CustomerCare'));
+const CareDashboard = React.lazy(() => import('./CareDashboard'));
+const RetentionReport = React.lazy(() => import('./RetentionReport'));
+const SupportTickets = React.lazy(()=>import('../support-tickets/SupportTickets'));
+const ManagerRefunds = React.lazy(()=>import('./ManagerRefunds'));
+const CashflowReport = React.lazy(()=>import('./CashflowReport'));
 import {
   Activity,
   LayoutDashboard,
@@ -59,7 +59,7 @@ import {
   adminRefreshSession,
   adminSignIn,
   adminSignOut,
-} from "./api/manager-api";
+} from "../../api/manager-api";
 
 const money = (value) =>
   new Intl.NumberFormat("vi-VN", {

@@ -4,7 +4,7 @@ import {act,render,screen,fireEvent,cleanup,within} from '@testing-library/react
 import {beforeEach,afterEach,it,expect,vi} from 'vitest';
 import CareOutcomes from './CareOutcomes';
 import CareDashboard from './CareDashboard';
-import ManagerApp from '../../ManagerApp';
+import ManagerApp from './ManagerApp';
 import {adminApi,adminRefreshSession} from '../../api/manager-api';
 vi.mock('../../api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
 const counts={completed:6,recorded:3,unrecorded:3,contacted:1,unreachable:1,resolved:1,needsFollowUp:0,resolvedRate:33.33};

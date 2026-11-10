@@ -2,7 +2,7 @@
 import React from 'react';
 import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react';
 import {beforeEach,afterEach,it,vi,expect} from 'vitest';
-import ManagerApp from '../../ManagerApp';
+import ManagerApp from './ManagerApp';
 import {careDeadline} from './CustomerCare';
 import {adminApi,adminRefreshSession} from '../../api/manager-api';
 vi.mock('../../api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));

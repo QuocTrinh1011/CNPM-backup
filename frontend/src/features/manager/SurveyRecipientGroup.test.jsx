@@ -2,7 +2,7 @@
 import React from 'react';
 import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
 import {beforeEach,afterEach,it,expect,vi} from 'vitest';
-import ManagerApp from '../../ManagerApp';
+import ManagerApp from './ManagerApp';
 import SurveyRecipientGroup,{groupSurveyRoute,groupSurveySource} from './SurveyRecipientGroup';
 import {adminApi,adminRefreshSession} from '../../api/manager-api';
 vi.mock('../../api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));

@@ -4,7 +4,7 @@ import {act,render,screen,fireEvent,cleanup,within} from '@testing-library/react
 import {it,expect,vi,beforeEach,afterEach} from 'vitest';
 import ManagerMyTasks,{CareTaskDetail,MyTaskSummary} from './features/manager/ManagerMyTasks';
 import ManagerNotificationBell from './features/manager/ManagerNotificationBell';
-import ManagerApp from './ManagerApp';
+import ManagerApp from './features/manager/ManagerApp';
 import {adminApi,adminRefreshSession} from './api/manager-api';
 vi.mock('./api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
 const task={id:42,customerId:2,customerName:'Khách A',assigneeId:3,assigneeName:'Quản lý',assigneeActive:true,title:'Liên hệ đơn đổi trả',description:'Nội dung chăm sóc',status:'TODO',dueAt:'2026-10-15T05:00:00Z',overdue:true,version:0};
