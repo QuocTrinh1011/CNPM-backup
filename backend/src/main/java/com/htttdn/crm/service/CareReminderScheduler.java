@@ -18,7 +18,7 @@ public class CareReminderScheduler {
     public void tick(){
         try{
             Long fields=db.queryForObject("select count(*) from information_schema.columns where table_schema=current_schema() and lower(table_name)='customer_notifications' and lower(column_name) in ('care_task_id','care_due_at')",Long.class);
-            if(fields==null||fields<2){if(!warned)LOG.warn("Care reminders require migration_care_reminders.sql; no schema changes were performed.");warned=true;return;}
+            if(fields==null||fields<2){if(!warned)LOG.warn("Care reminders require database/migrations/015_care_reminders.sql; no schema changes were performed.");warned=true;return;}
             reminders.runOnce(Instant.now());warned=false;
         }catch(RuntimeException failure){if(!warned)LOG.warn("Care reminders could not refresh; retrying next minute ({})",failure.getClass().getSimpleName());warned=true;}
     }

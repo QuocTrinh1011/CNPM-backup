@@ -18,7 +18,7 @@ class CareSourcePostgresTest {
     @Test void migrationRerunAndPartialUniqueIndexWithRollback() throws Exception {
         // DDL and fixture rows are rolled back; do not install a migration permanently during QA.
         try(var connection=db.getDataSource().getConnection()){assertTrue(connection.getMetaData().getURL().startsWith("jdbc:postgresql:"));}
-        String sql=Files.readString(Path.of("../database/migration_care_sources.sql")).replace("BEGIN;","").replace("COMMIT;","");
+        String sql=Files.readString(Path.of("../database/migrations/013_care_sources.sql")).replace("BEGIN;","").replace("COMMIT;","");
         for(int i=0;i<2;i++)for(String statement:sql.split(";"))if(!statement.isBlank())db.execute(statement);
         Long actor=db.queryForObject("insert into customers(full_name,email,password_hash,role) values ('Care source QA',?,'not-a-login','MANAGER') returning customer_id",Long.class,"care-source-"+java.util.UUID.randomUUID()+"@example.test");
         Timestamp now=Timestamp.from(Instant.now());

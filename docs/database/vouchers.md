@@ -2,13 +2,13 @@
 
 ## Cài đặt trên database đang có
 
-Chạy **migration_voucher_management.sql** trước khi khởi động backend mới:
+Chạy **`database/migrations/005_voucher_management.sql`** trước khi khởi động backend mới:
 
 ```sh
-psql -h localhost -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/migration_voucher_management.sql
+psql -h localhost -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/migrations/005_voucher_management.sql
 ```
 
-Database mới dùng `schema.sql`. Không cần thay đổi `application.yml`.
+Database mới dùng `database/schema.sql`. Không cần thay đổi `application.yml`.
 Migration thêm mô tả, mức trần giảm giá, unique index không phân biệt hoa/thường và bảng lịch sử `voucher_usages`.
 Nếu dữ liệu cũ có mã trùng không phân biệt hoa/thường, migration rollback; kiểm tra và xử lý thủ công, không tự gộp lịch sử.
 

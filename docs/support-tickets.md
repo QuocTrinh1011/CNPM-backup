@@ -4,7 +4,7 @@
 
 - Chỉ thêm một bảng nghiệp vụ `support_tickets`; dùng lại `customers`, `orders`, `customer_notifications`, `audit_logs`.
 - Thêm một cột nullable `support_ticket_id` có khóa ngoại vào thông báo cũ để mở đúng phiếu. Không chứa ID phiếu trong `order_id` hay `care_task_id`.
-- Người vận hành chạy `database/migration_support_tickets.sql` sau các migration nhật ký/chăm sóc/nhắc việc trước đây, rồi khởi động lại backend. Đợt này không tự chạy migration hoặc sửa `application.yml`.
+- Người vận hành chạy `database/migrations/017_support_tickets.sql` trên database có sẵn các bảng nền `customers`, `orders` và `customer_notifications`, rồi khởi động lại backend. SQL không phụ thuộc trực tiếp vào migration nhật ký, chăm sóc hoặc nhắc việc. Đợt này không tự chạy migration hoặc sửa `application.yml`.
 - Khách mở `/ho-tro`, `/ho-tro/{id}`. Manager mở `/manager/support-tickets`, chi tiết dùng `?id=...`; tìm kiếm, trạng thái, khách/người phụ trách và phân trang nằm trong query string. Hồ sơ 360° có liên kết tới phiếu của khách.
 
 ## Quy tắc bản đầu

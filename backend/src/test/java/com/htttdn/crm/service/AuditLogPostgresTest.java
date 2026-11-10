@@ -21,7 +21,7 @@ class AuditLogPostgresTest {
     @Test void migrationAndQueryOnPostgresRollback() throws Exception {
         try(var connection=db.getDataSource().getConnection()){assertTrue(connection.getMetaData().getURL().startsWith("jdbc:postgresql:"));}
         // Keep DDL and test rows inside the test transaction, never commit the migration here.
-        String sql=Files.readString(Path.of("../database/migration_audit_logs.sql")).replace("BEGIN;","").replace("COMMIT;","");
+        String sql=Files.readString(Path.of("../database/migrations/016_audit_logs.sql")).replace("BEGIN;","").replace("COMMIT;","");
         for(String statement:sql.split(";"))if(!statement.isBlank())db.execute(statement);
         // Re-running the additive migration is safe.
         for(String statement:sql.split(";"))if(!statement.isBlank())db.execute(statement);
