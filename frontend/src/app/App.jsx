@@ -12,7 +12,7 @@ import CustomerVouchers, { RewardSummary } from '../features/customer/CustomerVo
 import OrderReviews from '../features/customer/OrderReviews';
 import RefundSummary from '../features/customer/RefundSummary';
 import CustomerPassword from '../features/customer/CustomerPassword';
-const SupportTickets=React.lazy(()=>import('../SupportTickets'));
+const SupportTickets=React.lazy(()=>import('../features/support-tickets/SupportTickets'));
 import { useCartSelection, cartLineKey, canBuyLine, transferGuestSelection, subtractPurchased } from '../features/storefront/cart-selection';
 import { useCustomerRouter, actionPaths, isAccountPath, needsCustomer, isKnownPath, safeReturn } from './routing/customer-routing';
 import '../features/customer/styles/customer-pages.css';

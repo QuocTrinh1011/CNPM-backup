@@ -18,7 +18,7 @@ const CustomerProfile = React.lazy(() => import('./CustomerProfile'));
 const CustomerCare = React.lazy(() => import('./CustomerCare'));
 const CareDashboard = React.lazy(() => import('./CareDashboard'));
 const RetentionReport = React.lazy(() => import('./RetentionReport'));
-const SupportTickets = React.lazy(()=>import('./SupportTickets'));
+const SupportTickets = React.lazy(()=>import('./features/support-tickets/SupportTickets'));
 const ManagerRefunds = React.lazy(()=>import('./ManagerRefunds'));
 const CashflowReport = React.lazy(()=>import('./CashflowReport'));
 import {
