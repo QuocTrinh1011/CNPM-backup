@@ -1,7 +1,7 @@
 /* Stitch reference, adapted to real storefront routes and data. Portal scoped. */
 
 .site-shell[data-shop-theme] {
-  --sans: 'Manrope', system-ui, sans-serif;
+  --sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --serif: var(--sans);
   --mono: var(--sans);
   --paper: #f8fafc;
@@ -16,8 +16,8 @@
   --accent-hover: #c2410c;
   --accent-soft: #ffedd5;
   --accent-tint: #fff7ed;
-  --radius-lg: 12px;
-  --shadow-card: 0 2px 8px #0f172a06;
+  --radius-lg: 6px;
+  --shadow-card: var(--shadow-sm);
   font: 400 14px/1.6 var(--sans);
   background: var(--paper);
   color: var(--ink);

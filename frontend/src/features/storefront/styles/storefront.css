@@ -6,9 +6,9 @@
 
 /* ── Light Mode Design Tokens ── */
 .site-shell {
-  --sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --serif: var(--sans);
-  --mono: var(--sans);
+  --sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Playfair Display', Georgia, serif;
+  --mono: 'JetBrains Mono', 'DM Mono', monospace;
   font-family: var(--sans);
   font-size: 15px;
   line-height: 1.6;

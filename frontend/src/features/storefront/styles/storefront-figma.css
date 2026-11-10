@@ -1,7 +1,5 @@
 /* User portal only. Visual system based on the supplied Figma storefront. */
 .site-shell {
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --serif: var(--sans); --mono: var(--sans);
   --paper: #f7f6f0; --white: #ffffff; --soft: #edf1e9;
   --ink: #10251b; --muted: #58695e; --line: #dce3da;
   --accent: #c94d30; --accent-hover: #ae3e24; --accent-soft: #fae9e1;

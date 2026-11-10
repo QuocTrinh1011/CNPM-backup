@@ -6,9 +6,6 @@
 
 /* ── 1. Root Design Tokens & Color Palette ── */
 .site-shell {
-  --sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --serif: 'Playfair Display', Georgia, serif;
-  --mono: 'JetBrains Mono', 'DM Mono', monospace;
   font-family: var(--sans);
   letter-spacing: -0.012em;
   -webkit-font-smoothing: antialiased;
