@@ -39,7 +39,6 @@ Admin APIs use a separate JWT flow: call `/api/admin/auth/login`, then send its 
 - `GET/POST /api/admin/surveys`, `PATCH /api/admin/surveys/{id}/publish`, `DELETE /api/admin/surveys/{id}`
 - `GET/POST /api/admin/products`, `PUT/DELETE /api/admin/products/{id}`, `PATCH /api/admin/products/{id}/stock`
 - `GET /api/admin/orders`, `GET /api/admin/orders/{id}`, `PATCH /api/admin/orders/{id}/status`
-- `GET /api/admin/reports/revenue`, `GET /api/admin/reports/users`, `GET /api/admin/surveys/stats`
 - `POST /api/admin/auth/login`, `POST /api/admin/auth/refresh`, `POST /api/admin/auth/logout`
 
 All list endpoints support `page` and `size`; users and products also support `q`, while feedback/survey/order lists support `status`.

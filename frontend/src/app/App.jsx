@@ -4,18 +4,17 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useStorefrontDialogs, useShopResource } from '../shared/hooks/storefront-hooks';
 import AccountDropdown from '../features/customer/AccountDropdown';
 import StorefrontHome from '../features/storefront/StorefrontHome';
-import AddressModal from "../features/customer/CustomerAddresses";
+import AddressModal from "../shared/address/AddressBook";
 import CheckoutPage, { CheckoutState } from "../features/storefront/CheckoutPage";
 import PaymentQr from "../features/storefront/PaymentQr";
 import CustomerLayout from '../features/customer/CustomerLayout';
 import CustomerVouchers, { RewardSummary } from '../features/customer/CustomerVouchers';
 import OrderReviews from '../features/customer/OrderReviews';
 import CustomerPassword from '../features/customer/CustomerPassword';
-const SupportTickets=React.lazy(()=>import('../features/support-tickets/SupportTickets'));
 import { useCartSelection, cartLineKey, canBuyLine, transferGuestSelection, subtractPurchased } from '../features/storefront/cart-selection';
-import { useCustomerRouter, actionPaths, isAccountPath, needsCustomer, isKnownPath, safeReturn } from './customer-routing';
+import { useCustomerRouter, actionPaths, isAccountPath, needsCustomer, isKnownPath, safeReturn } from '../shared/routing/customer-routing';
 import '../features/customer/customer-pages.css';
-export { default as AddressModal } from "../features/customer/CustomerAddresses";
+export { default as AddressModal } from "../shared/address/AddressBook";
 import {
   api,
   currentApiBase,
@@ -786,7 +785,6 @@ function App() {
             if (action === 'login' || action === 'register') { setAuthMode(action); setAuthAfterLogin(null); setAuthOpen(true); return; }
             if (action === 'logout') { logout(); return; }
             if (action === 'orders') { navigateOrders(); return; }
-            if (action === 'support') { navigate('/ho-tro'); return; }
             const screens = { profile: setProfileOpen, wishlist: setWishlistOpen, notifications: setNotificationsOpen, addresses: setAddressesOpen, surveys: setSurveysOpen, password: setPasswordOpen };
             screens[action]?.(true);
           }}/>
@@ -1121,7 +1119,7 @@ function App() {
         !user ? <CheckoutState title="Đăng nhập để đặt hàng" message="Đăng nhập để sử dụng địa chỉ đã lưu và theo dõi đơn hàng." action="Đăng nhập" onAction={() => openAuth("checkout")}/> :
         cartError ? <CheckoutState title="Chưa tải được giỏ hàng" message={cartError} action="Thử lại giỏ hàng" onAction={loadCart}/> :
         cartLoading || cartOwner !== user.id ? <CheckoutState title="Chuẩn bị đặt hàng" message="Đang tải và đồng bộ giỏ hàng..." loading/> :
-        <CheckoutPage key={user.id} cart={selection.cart} onShop={() => openCatalog("")} onCart={() => navigate('/gio-hang')} onOrders={() => navigateOrders()}
+        <CheckoutPage key={user.id} cart={selection.cart} onShop={() => openCatalog("")} onCart={() => navigate('/gio-hang')} onOrders={() => navigateOrders()} VoucherWallet={CustomerVouchers}
           onPlaced={async (response, purchased) => {
             if (userRef.current?.id !== user.id) return;
             setCart(current => subtractPurchased(current, purchased)); reloadNotifications();
@@ -1423,7 +1421,6 @@ function App() {
       {extraPage && !ordersRoute && <CustomerPageFrame account={accountPage} pathname={pathname} user={user} navigate={navigate}>
       {needsCustomer(pathname) && (sessionChecking || sessionError || !user) ? <CheckoutState title={sessionChecking ? 'Đang khôi phục tài khoản' : 'Đăng nhập để tiếp tục'} message={sessionError || 'Đang kiểm tra phiên đăng nhập...'} loading={sessionChecking} action={sessionError ? 'Thử lại' : undefined} onAction={retrySession}/> : <>
       {pathname === '/tai-khoan/voucher' && <CustomerVouchers/>}
-      {(pathname==='/ho-tro'||/^\/ho-tro\/\d+$/.test(pathname))&&<React.Suspense fallback={<p role="status">Đang tải hỗ trợ…</p>}><SupportTickets location={pathname+window.location.search} navigate={navigate}/></React.Suspense>}
       {!isKnownPath(pathname) && <CheckoutState title="Không tìm thấy trang" message="Đường dẫn không tồn tại." action="Về trang chủ" onAction={() => navigate('/')}/>}
       {pathname === '/thanh-toan' && <CheckoutState title="Kiểm tra thanh toán" message="Mở đơn hàng để kiểm tra trạng thái thanh toán được xác nhận từ cửa hàng." action="Xem đơn hàng" onAction={() => navigate('/don-hang')}/>}
       {productId && productError && <CheckoutState title="Chưa tải được sản phẩm" message={productError} action="Thử lại" onAction={() => setProductReload(value => value + 1)}/>}
@@ -1518,7 +1515,7 @@ function App() {
       )}
       {wishlistOpen && (wishlistError ? <CheckoutState title="Chưa tải được yêu thích" message={wishlistError} action="Thử lại" onAction={loadWishlist}/> : wishlistLoading ? <CheckoutState title="Đang tải yêu thích" loading/> : <WishlistModal page items={wishlist} onClose={() => navigate('/tai-khoan')} onRemove={(item) => toggleWishlist(item)} onOpen={openProduct} onNotice={showNotice} />)}
       {addressesOpen && <AddressModal page onClose={() => navigate('/tai-khoan')} onNotice={showNotice} />}
-      {notificationsOpen && <NotificationsModal page onClose={() => navigate('/tai-khoan')} onNotice={showNotice} onCount={setNotificationCount} onNavigate={navigate}/>}
+      {notificationsOpen && <NotificationsModal page onClose={() => navigate('/tai-khoan')} onNotice={showNotice} onCount={setNotificationCount} />}
       {passwordOpen && <CustomerPassword initialMode={pathname === '/quen-mat-khau' ? 'forgot' : pathname === '/dat-lai-mat-khau' ? 'reset' : 'change'} onNavigate={navigate} onNotice={showNotice} />}
       </>}
       </CustomerPageFrame>}
@@ -2479,7 +2476,6 @@ export function OrderView({ order, onNotice, onChanged, onPaymentChanged, onRece
   };
   return (
     <div className="order-view">
-      <a className="back-link" href={`/ho-tro?orderId=${order.id}&new=1`}>Yêu cầu hỗ trợ đơn hàng này</a>
       {order.status === 'COMPLETED' && <OrderReviews key={order.id} order={order} autoOpen={autoReview} onAutoOpened={onReviewOpened} onReviewStatus={setHasOrderReview}/>}
       {action && <form className="shop-reason-form" onSubmit={submitAction}><h3>{action === 'cancel' ? 'Hủy đơn hàng' : 'Yêu cầu đổi/trả'}</h3><label>Lý do<textarea autoFocus required maxLength={1000} value={reason} onChange={event => setReason(event.target.value)} /></label>{actionError && <p role="alert" className="shop-inline-error">{actionError}</p>}<div className="order-actions"><button type="button" className="button button-light" disabled={busy} onClick={() => setAction(null)}>Quay lại</button><button className="button button-dark" disabled={busy}>{busy ? 'Đang gửi...' : 'Xác nhận'}</button></div></form>}
       <div className="order-view-head">
@@ -2562,7 +2558,7 @@ function WishlistModal({ page = false, items, onClose, onRemove, onOpen, onNotic
 
 
 
-function NotificationsModal({ page = false, onClose, onNotice, onCount,onNavigate }) {
+function NotificationsModal({ page = false, onClose, onNotice, onCount }) {
   const alive=useRef(true);useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
   const { data, error: listError, load } = useShopResource(endpoints.notifications);
   const lock = useRef(false);
@@ -2570,9 +2566,9 @@ function NotificationsModal({ page = false, onClose, onNotice, onCount,onNavigat
   useEffect(() => { if (data) onCount(data.unreadCount || 0); }, [data, onCount]);
   const read = async item => {
     if (lock.current) return;
-    if(item?.readAt){if(item.supportTicketId)onNavigate?.(`/ho-tro/${item.supportTicketId}`);return;}
+    if(item?.readAt)return;
     lock.current = true; setBusy(true); setError('');
-    try { await api(item ? endpoints.notificationRead(item.id) : endpoints.notificationsReadAll, { method: 'PATCH' }); await load(); if(alive.current&&item?.supportTicketId)onNavigate?.(`/ho-tro/${item.supportTicketId}`); }
+    try { await api(item ? endpoints.notificationRead(item.id) : endpoints.notificationsReadAll, { method: 'PATCH' }); await load(); }
     catch (cause) { setError(cause.message); }
     finally { lock.current = false; setBusy(false); }
   };

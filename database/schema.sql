@@ -81,7 +81,6 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS cancel_reason VARCHAR(1000);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS return_reason VARCHAR(1000);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS return_status VARCHAR(30) NOT NULL DEFAULT 'NONE';
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS return_requested_at TIMESTAMPTZ;
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS salesperson_id BIGINT REFERENCES customers(customer_id) ON DELETE SET NULL;
 
 CREATE UNIQUE INDEX IF NOT EXISTS uq_orders_order_code ON orders(order_code) WHERE order_code IS NOT NULL;
 CREATE TABLE IF NOT EXISTS order_return_events (
@@ -418,53 +417,6 @@ DO $$ DECLARE item RECORD; BEGIN
 END $$;
 COMMIT;
 
--- Basic customer care; existing order/payment/voucher data is unchanged.
-BEGIN;
-CREATE TABLE IF NOT EXISTS customer_care_notes (
- id BIGSERIAL PRIMARY KEY,customer_id BIGINT NOT NULL REFERENCES customers(customer_id),
- author_id BIGINT NOT NULL REFERENCES customers(customer_id),author_name VARCHAR(255) NOT NULL,
- content VARCHAR(4000) NOT NULL CHECK(length(trim(content))>0),created_at TIMESTAMPTZ NOT NULL
-);
-CREATE INDEX IF NOT EXISTS idx_care_notes_customer ON customer_care_notes(customer_id,created_at DESC,id DESC);
-CREATE TABLE IF NOT EXISTS customer_care_tasks (
- id BIGSERIAL PRIMARY KEY,customer_id BIGINT NOT NULL REFERENCES customers(customer_id),
- assignee_id BIGINT NOT NULL REFERENCES customers(customer_id),title VARCHAR(255) NOT NULL CHECK(length(trim(title))>0),
- description VARCHAR(4000) NOT NULL DEFAULT '',status VARCHAR(30) NOT NULL DEFAULT 'TODO' CHECK(status IN ('TODO','IN_PROGRESS','COMPLETED')),
- due_at TIMESTAMPTZ NOT NULL,created_by BIGINT NOT NULL REFERENCES customers(customer_id),updated_by BIGINT NOT NULL REFERENCES customers(customer_id),
- created_at TIMESTAMPTZ NOT NULL,updated_at TIMESTAMPTZ NOT NULL,completed_at TIMESTAMPTZ,version BIGINT NOT NULL DEFAULT 0
-);
-CREATE INDEX IF NOT EXISTS idx_care_tasks_customer ON customer_care_tasks(customer_id,due_at,id);
-CREATE INDEX IF NOT EXISTS idx_care_tasks_assignee ON customer_care_tasks(assignee_id,status,due_at);
-CREATE INDEX IF NOT EXISTS idx_care_tasks_due ON customer_care_tasks(status,due_at);
-ALTER TABLE customer_care_tasks ADD COLUMN IF NOT EXISTS source_type VARCHAR(30);
-ALTER TABLE customer_care_tasks ADD COLUMN IF NOT EXISTS source_id BIGINT;
-CREATE UNIQUE INDEX IF NOT EXISTS uq_care_source_open ON customer_care_tasks(source_type,source_id) WHERE source_type IS NOT NULL AND status <> 'COMPLETED';
-CREATE INDEX IF NOT EXISTS idx_care_source ON customer_care_tasks(source_type,source_id);
-ALTER TABLE customer_care_tasks ADD COLUMN IF NOT EXISTS outcome VARCHAR(30);
-ALTER TABLE customer_care_tasks ADD COLUMN IF NOT EXISTS result_note VARCHAR(4000);
-ALTER TABLE customer_care_tasks ADD COLUMN IF NOT EXISTS parent_task_id BIGINT REFERENCES customer_care_tasks(id);
-CREATE UNIQUE INDEX IF NOT EXISTS uq_care_parent_task ON customer_care_tasks(parent_task_id);
-ALTER TABLE customer_notifications ADD COLUMN IF NOT EXISTS care_task_id BIGINT REFERENCES customer_care_tasks(id);
-ALTER TABLE customer_notifications ADD COLUMN IF NOT EXISTS care_due_at TIMESTAMPTZ;
-CREATE UNIQUE INDEX IF NOT EXISTS uq_care_notification ON customer_notifications(customer_id,care_task_id,type,care_due_at);
-CREATE INDEX IF NOT EXISTS idx_care_notification_inbox ON customer_notifications(customer_id,created_at DESC,id DESC) WHERE care_task_id IS NOT NULL;
-
-CREATE TABLE IF NOT EXISTS support_tickets (
-    id BIGSERIAL PRIMARY KEY, customer_id BIGINT NOT NULL REFERENCES customers(customer_id),
-    order_id BIGINT REFERENCES orders(order_id), assignee_id BIGINT REFERENCES customers(customer_id),
-    created_by BIGINT NOT NULL REFERENCES customers(customer_id), request_key VARCHAR(36) NOT NULL,
-    title VARCHAR(150) NOT NULL, description VARCHAR(4000) NOT NULL,
-    status VARCHAR(30) NOT NULL DEFAULT 'NEW' CHECK(status IN ('NEW','IN_PROGRESS','WAITING_CUSTOMER','RESOLVED')),
-    messages TEXT NOT NULL DEFAULT '[]', created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), resolved_at TIMESTAMPTZ,
-    version BIGINT NOT NULL DEFAULT 0, CONSTRAINT uq_support_request UNIQUE(created_by,request_key)
-);
-CREATE INDEX IF NOT EXISTS idx_support_customer ON support_tickets(customer_id,updated_at DESC,id DESC);
-CREATE INDEX IF NOT EXISTS idx_support_queue ON support_tickets(status,assignee_id,updated_at DESC,id DESC);
-ALTER TABLE customer_notifications ADD COLUMN IF NOT EXISTS support_ticket_id BIGINT REFERENCES support_tickets(id);
-CREATE INDEX IF NOT EXISTS idx_support_notification ON customer_notifications(support_ticket_id,customer_id);
-COMMIT;
-
 -- Internal portal operation history. Account deletion never cascades into this history.
 BEGIN;
 CREATE TABLE IF NOT EXISTS audit_logs (
@@ -475,10 +427,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_logs(created_at,id);
 CREATE INDEX IF NOT EXISTS idx_audit_actor_role ON audit_logs(actor_role,created_at);
--- Run on a backup/test copy first. No historical collection/refund evidence is inferred.
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS refund_status VARCHAR(10) NOT NULL DEFAULT 'NONE' CHECK (refund_status IN ('NONE','PENDING','PARTIAL','FULL'));
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS refunded_amount NUMERIC(15,2) NOT NULL DEFAULT 0 CHECK (refunded_amount >= 0);
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS refund_pending_amount NUMERIC(15,2) NOT NULL DEFAULT 0 CHECK (refund_pending_amount >= 0);
+-- Payment collection and review state remain operational; refunds are no longer modeled here.
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS cod_collected_amount NUMERIC(15,2) CHECK (cod_collected_amount >= 0);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS cod_collected_at TIMESTAMPTZ;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS cod_collected_by BIGINT;
@@ -486,37 +435,11 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS cod_collection_note VARCHAR(1000);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_review_required BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_review_reason VARCHAR(120);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_review_at TIMESTAMPTZ;
-CREATE TABLE IF NOT EXISTS order_refunds (
-    id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-    order_id BIGINT NOT NULL REFERENCES orders(order_id),
-    reason_type VARCHAR(10) NOT NULL CHECK (reason_type IN ('CANCEL','RETURN')),
-    amount NUMERIC(15,2) NOT NULL CHECK (amount > 0),
-    status VARCHAR(10) NOT NULL DEFAULT 'PENDING' CHECK (status IN ('PENDING','COMPLETED','REJECTED')),
-    request_key VARCHAR(100) NOT NULL,
-    note VARCHAR(1000), processing_note VARCHAR(1000), bank_reference VARCHAR(120),
-    requested_by BIGINT, processed_by BIGINT,
-    requested_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, processed_at TIMESTAMPTZ,
-    UNIQUE (order_id, request_key),
-    CHECK (status = 'PENDING' OR (processed_at IS NOT NULL AND processing_note IS NOT NULL AND length(trim(processing_note)) > 0)),
-    CHECK (status <> 'COMPLETED' OR (bank_reference IS NOT NULL AND length(trim(bank_reference)) > 0))
-);
-CREATE INDEX IF NOT EXISTS idx_order_refunds_status ON order_refunds(status,id);
-CREATE INDEX IF NOT EXISTS idx_order_refunds_order ON order_refunds(order_id,id);
 CREATE INDEX IF NOT EXISTS idx_orders_payment_review ON orders(payment_review_required,order_id);
 CREATE INDEX IF NOT EXISTS idx_orders_abandoned ON orders(expires_at,order_id)
     WHERE payment_method='PAYOS' AND status IN ('PENDING','PENDING_PAYMENT') AND payment_status IN ('PENDING','EXPIRED','FAILED','CANCELLED');
--- Apply after 010_refunds_abandoned_payos.sql. No historical dates/usages are inferred.
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ;
 ALTER TABLE store_vouchers ADD COLUMN IF NOT EXISTS per_customer_limit INTEGER
     CHECK (per_customer_limit IS NULL OR per_customer_limit > 0);
-CREATE INDEX IF NOT EXISTS idx_cashflow_payos_paid ON orders(paid_at)
-    WHERE payment_method='PAYOS' AND payment_status='PAID' AND total_amount>0;
-CREATE INDEX IF NOT EXISTS idx_cashflow_cod_collected ON orders(cod_collected_at)
-    WHERE payment_method='COD' AND cod_collected_at IS NOT NULL;
-CREATE INDEX IF NOT EXISTS idx_cashflow_refund_processed ON order_refunds(processed_at)
-    WHERE status='COMPLETED';
-CREATE INDEX IF NOT EXISTS idx_orders_salesperson ON orders(salesperson_id,order_id)
-    WHERE salesperson_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_voucher_customer_active ON voucher_usages(voucher_id,order_id)
     WHERE released_at IS NULL;
 
@@ -548,4 +471,38 @@ CREATE TABLE IF NOT EXISTS stock_receipt_items (
 );
 CREATE INDEX IF NOT EXISTS idx_stock_receipt_items_receipt ON stock_receipt_items(receipt_id,id);
 CREATE INDEX IF NOT EXISTS idx_stock_receipt_items_product ON stock_receipt_items(product_id,receipt_id);
+
+CREATE TABLE IF NOT EXISTS promotion_campaigns (
+    id BIGSERIAL PRIMARY KEY,
+    campaign_code VARCHAR(40) NOT NULL UNIQUE,
+    name VARCHAR(150) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    CONSTRAINT chk_promotion_campaign_dates CHECK (end_date >= start_date)
+);
+
+CREATE TABLE IF NOT EXISTS promotion_product_rules (
+    id BIGSERIAL PRIMARY KEY,
+    campaign_id BIGINT NOT NULL REFERENCES promotion_campaigns(id) ON DELETE CASCADE,
+    product_id BIGINT NOT NULL REFERENCES products(product_id) ON DELETE RESTRICT,
+    discount_percent NUMERIC(5,2) NOT NULL CHECK (discount_percent > 0 AND discount_percent <= 100),
+    CONSTRAINT uq_promotion_product_rule UNIQUE(campaign_id,product_id)
+);
+
+CREATE TABLE IF NOT EXISTS promotion_invoice_rules (
+    id BIGSERIAL PRIMARY KEY,
+    campaign_id BIGINT NOT NULL REFERENCES promotion_campaigns(id) ON DELETE CASCADE,
+    minimum_invoice_amount NUMERIC(15,2) NOT NULL CHECK (minimum_invoice_amount >= 0),
+    discount_percent NUMERIC(5,2) NOT NULL CHECK (discount_percent > 0 AND discount_percent <= 100),
+    CONSTRAINT uq_promotion_invoice_rule UNIQUE(campaign_id,minimum_invoice_amount)
+);
+
+CREATE TABLE IF NOT EXISTS promotion_voucher_rules (
+    id BIGSERIAL PRIMARY KEY,
+    campaign_id BIGINT NOT NULL REFERENCES promotion_campaigns(id) ON DELETE CASCADE,
+    voucher_id BIGINT NOT NULL REFERENCES store_vouchers(id) ON DELETE RESTRICT,
+    discount_percent NUMERIC(5,2) NOT NULL CHECK (discount_percent > 0 AND discount_percent <= 100),
+    CONSTRAINT uq_promotion_voucher_rule UNIQUE(campaign_id,voucher_id)
+);
+CREATE INDEX IF NOT EXISTS idx_promotion_campaign_dates ON promotion_campaigns(start_date,end_date);
 COMMIT;

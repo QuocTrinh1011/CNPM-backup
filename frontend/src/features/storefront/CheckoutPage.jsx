@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowUpRight, Check, MapPin, Package, ShieldCheck, CreditCard, Truck } from "lucide-react";
 import { api } from "../../api/api";
 import VoucherField, { useCheckoutVoucher } from "./VoucherField";
-import { useAddresses, AddressPicker, AddressSummary, preferredAddress, addressValid, deliveryText } from "../customer/CustomerAddresses";
+import { useAddresses, AddressPicker, AddressSummary, preferredAddress, addressValid, deliveryText } from "../../shared/address/AddressBook";
 import PaymentQr from "./PaymentQr";
-import "./styles/checkout-page.css";
+import "../../shared/address/checkout-page.css";
 
 const money = value => Number(value || 0).toLocaleString("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 });
 
-export default function CheckoutPage({ cart, onPlaced, onShop, onOrders, onCart }) {
+export default function CheckoutPage({ cart, onPlaced, onShop, onOrders, onCart, VoucherWallet }) {
   const resource = useAddresses();
   const [selected, setSelected] = useState(null), [picker, setPicker] = useState(false);
   const [method, setMethod] = useState("COD"), [busy, setBusy] = useState(false), [error, setError] = useState(""), [result, setResult] = useState(null);
@@ -64,7 +64,7 @@ export default function CheckoutPage({ cart, onPlaced, onShop, onOrders, onCart 
         <label className={method === "COD" ? "is-selected" : ""}><input type="radio" name="payment-method" checked={method === "COD"} onChange={() => setMethod("COD")}/><Truck size={21}/><span><b>Thanh toán khi nhận hàng</b><small>Thanh toán cho đơn vị giao hàng (COD).</small></span></label>
         <label className={method === "PAYOS" ? "is-selected" : ""}><input type="radio" name="payment-method" checked={method === "PAYOS"} onChange={() => setMethod("PAYOS")}/><CreditCard size={21}/><span><b>payOS / VietQR</b><small>Quét mã QR ngay sau khi đặt hàng.</small></span></label>
       </fieldset></section>
-    </div><aside className="shop-checkout-card shop-checkout-totals"><h2>Tóm tắt đơn hàng</h2><VoucherField model={voucherModel} disabled={busy}/>
+    </div><aside className="shop-checkout-card shop-checkout-totals"><h2>Tóm tắt đơn hàng</h2><VoucherField model={voucherModel} disabled={busy} VoucherWallet={VoucherWallet}/>
       <dl><div><dt>Tạm tính</dt><dd>{money(cart.subtotal)}</dd></div>{voucherModel.voucher && <div className="shop-checkout-discount"><dt>Giảm giá ({voucherModel.voucher.code})</dt><dd>−{money(voucherModel.voucher.discountAmount)}</dd></div>}<div className="shop-checkout-total"><dt>Tổng thanh toán</dt><dd>{money(total)}</dd></div></dl>
       <form onSubmit={submit}>{error && <p className="shop-inline-error" role="alert">{error}</p>}<button className="button button-dark" type="submit" disabled={!ready}>{busy ? "ĐANG ĐẶT HÀNG..." : "ĐẶT HÀNG"}<ArrowUpRight size={17}/></button></form>
       {!selected && !resource.loading && !resource.error && <p>Vui lòng thêm địa chỉ để tiếp tục.</p>}<p className="shop-checkout-secure"><ShieldCheck size={16}/> Đơn hàng chỉ được xác nhận sau khi cửa hàng kiểm tra.</p>

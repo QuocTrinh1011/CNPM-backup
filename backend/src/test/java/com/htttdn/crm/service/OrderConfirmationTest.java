@@ -58,10 +58,9 @@ class OrderConfirmationTest {
     final PayosService payos = mock(PayosService.class);
     final FeedbackRepository feedback = mock(FeedbackRepository.class);
     final AuditTrail audit = mock(AuditTrail.class);
-    final RefundService refunds = mock(RefundService.class);
     final StockService stock = new StockService(products,mock(jakarta.persistence.EntityManager.class));
-    final PaymentReconciliationService reconciliation = new PaymentReconciliationService(payos,attempts,payments,notifications,refunds);
-    final OrderService service = new OrderService(orders,products,carts,payments,attempts,events,vouchers,notifications,payos,feedback,audit,stock,refunds,reconciliation);
+    final PaymentReconciliationService reconciliation = new PaymentReconciliationService(payos,attempts,payments,notifications);
+    final OrderService service = new OrderService(orders,products,carts,payments,attempts,events,vouchers,notifications,payos,feedback,audit,stock,reconciliation);
 
     @Test void completedReviewedOrderCannotRequestReturn() {
         User customer = new User(); org.springframework.test.util.ReflectionTestUtils.setField(customer,"id",2L);

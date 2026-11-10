@@ -5,9 +5,8 @@ import { useManagerResource } from '../../shared/hooks/useManagerResource';
 import ManagerOrderDetail, { money, date, orderLabels, paymentLabels, returnLabels } from './ManagerOrderDetail';
 import './customer-profile.css';
 import CustomerLifecycle, {lifecycleExplanation} from './CustomerLifecycle';
-const CustomerCare=React.lazy(()=>import('./CustomerCare'));
 
-const tabs = [['orders','Đơn hàng'],['activities','Lịch sử hoạt động'],['addresses','Địa chỉ'],['feedback','Đánh giá'],['surveys','Khảo sát'],['vouchers','Voucher'],['care','Chăm sóc']];
+const tabs = [['orders','Đơn hàng'],['activities','Lịch sử hoạt động'],['addresses','Địa chỉ'],['feedback','Đánh giá'],['surveys','Khảo sát'],['vouchers','Voucher']];
 const voucherLabels = { AVAILABLE: 'Còn sử dụng', USED: 'Đã dùng', EXPIRED: 'Hết hạn', DISABLED: 'Đã tắt', UPCOMING: 'Chưa đến hạn' };
 const feedbackLabels = { NEW: 'Mới', IN_PROGRESS: 'Đang xử lý', RESOLVED: 'Đã xử lý' };
 const releaseLabels = { UNKNOWN: 'Chưa có dữ liệu hoàn lượt', RELEASED: 'Đã hoàn lượt', COUNTED: 'Đang tính lượt' };
@@ -33,14 +32,13 @@ export default function CustomerProfile({ customerId, location, go }) {
     next.set('tab', nextTab); next.set('historyPage', String(nextPage));
     go(`users/${customerId}?${next}`);
   };
-  const back = () => {const next=new URLSearchParams(params);next.delete('tab');next.delete('historyPage');for(const key of [...next.keys()])if(key.startsWith('care_'))next.delete(key);if(!next.has('q'))next.set('q','');if(!next.has('page'))next.set('page','0');go(`users?${next}`);};
+  const back = () => {const next=new URLSearchParams(params);next.delete('tab');next.delete('historyPage');if(!next.has('q'))next.set('q','');if(!next.has('page'))next.set('page','0');go(`users?${next}`);};
   const { data, error, loading, load } = resource;
   const customer = data?.customer, summary = data?.summary;
   return <section className="customer-profile">
     <button className="admin-action" onClick={back}>← Danh sách khách hàng</button>
     {!validId ? <p role="alert">Không tìm thấy khách hàng.</p> : loading && !data ? <p role="status">Đang tải hồ sơ...</p> : error && !data ? <ErrorBox message={error} retry={() => load()}/> : customer && <>
       <div className="admin-panel profile-identity">
-        <button className="admin-action" onClick={()=>go(`support-tickets?customerId=${customer.id}`)}>Phiếu hỗ trợ của khách</button>
         <div><h2>{customer.fullName}</h2><span className="admin-status">{customer.locked ? 'Đã khóa' : 'Đang hoạt động'}</span></div>
         <CustomerLifecycle segment={data.segmentation}/>
         {data.segmentation&&<p className="profile-explanation">{lifecycleExplanation}</p>}
@@ -58,10 +56,10 @@ export default function CustomerProfile({ customerId, location, go }) {
           ['Ngày đặt gần nhất (đơn hoàn thành)',date(summary.lastCompletedOrderAt)],
         ].map(([label,value]) => <div className="admin-panel" key={label}><span>{label}</span><strong>{value}</strong></div>)}
       </div>
-      <p className="profile-explanation">Giá trị đơn hoàn thành là tổng tiền sau giảm giá của đơn COMPLETED, chưa trừ hoàn tiền; bao gồm đơn có yêu cầu đổi trả. Đây không phải số tiền đã thu.</p>
+      <p className="profile-explanation">Giá trị đơn hoàn thành là tổng tiền sau giảm giá của đơn COMPLETED; bao gồm đơn có yêu cầu đổi trả. Đây không phải số tiền đã thu.</p>
       <div className="admin-panel">
         <nav className="profile-tabs" aria-label="Nội dung hồ sơ">{tabs.map(([key,label]) => <button key={key} className={tab === key ? 'admin-primary' : 'admin-action'} aria-current={tab === key ? 'page' : undefined} onClick={() => navigate(key)}>{label}</button>)}</nav>
-        {tab==='care'?<CustomerCare customer={customer} go={go} location={location}/>:tab === 'vouchers' ? <div className="profile-voucher-sections"><ProfileList key="issued" base={base} kind="vouchers" title="Voucher được cấp"/><ProfileList key="usage" base={base} kind="voucher-usages" title="Lịch sử sử dụng" onDetail={setDetailId}/></div>
+        {tab === 'vouchers' ? <div className="profile-voucher-sections"><ProfileList key="issued" base={base} kind="vouchers" title="Voucher được cấp"/><ProfileList key="usage" base={base} kind="voucher-usages" title="Lịch sử sử dụng" onDetail={setDetailId}/></div>
           : <ProfileList key={tab} base={base} kind={tab} title={tabs.find(([key]) => key === tab)[1]} controlledPage={page} onPage={next => navigate(tab,next)} onDetail={setDetailId} go={go}/>}
       </div>
     </>}
@@ -74,8 +72,6 @@ function ActivityRecord({row,onDetail,go}) {
   const actions={CREATED:'Đã tạo',SUBMITTED:'Đã hoàn thành khảo sát',COMPLETED:'Đã hoàn thành',UPDATE:'Đã cập nhật',ORDER_STATUS:'Đổi trạng thái đơn',RETURN_PROCESS:'Xử lý đổi trả',DELETE:'Đã xóa',HIDE:'Đã ẩn',SHOW:'Đã hiện',CUSTOMER_CANCEL:'Khách hàng đã hủy đơn',CUSTOMER_RECEIPT:'Khách hàng đã xác nhận nhận hàng'};
   return <><h3>{types[row.type] || 'Hoạt động'} #{row.targetId}</h3><p>{actions[row.action] || 'Đã cập nhật'} · <time dateTime={row.createdAt}>{date(row.createdAt)}</time></p>
     {row.type==='ORDER'&&<button className="admin-action" onClick={()=>onDetail(row.targetId)}>Chi tiết đơn</button>}
-    {row.type==='SUPPORT_TICKET'&&<button className="admin-action" onClick={()=>go(`support-tickets?id=${row.targetId}`)}>Xem phiếu hỗ trợ</button>}
-    {row.type==='CARE_TASK'&&<button className="admin-action" onClick={()=>go(`care?taskId=${row.targetId}`)}>Xem công việc</button>}
   </>;
 }
 function ProfileList({ base, kind, title, controlledPage, onPage, onDetail, go }) {

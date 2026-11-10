@@ -1,6 +1,6 @@
 # ANH LỚN SHOP - Hệ thống bán hàng và quản lý quan hệ khách hàng (CRM)
 
-Đồ án môn **Hệ thống thông tin doanh nghiệp**, xây dựng website bán thời trang nam kết hợp CRM. Hệ thống không chỉ hỗ trợ mua hàng mà còn tổng hợp hồ sơ khách hàng, phân nhóm, khảo sát, tiếp nhận yêu cầu hỗ trợ và theo dõi công việc chăm sóc sau bán.
+Đồ án môn **Hệ thống thông tin doanh nghiệp**, xây dựng website bán thời trang nam kết hợp CRM. Hệ thống hỗ trợ mua hàng, tổng hợp hồ sơ khách hàng, phân nhóm và khảo sát.
 
 Dự án gồm ba giao diện độc lập **Khách hàng**, **Admin hệ thống** và **Nhân viên quản lý**, dùng chung backend và cơ sở dữ liệu PostgreSQL. Nội dung dưới đây mô tả chức năng đã có trong mã nguồn; các giới hạn triển khai được nêu riêng, không xem đây là hệ thống vận hành thương mại đã được chứng nhận.
 
@@ -26,7 +26,6 @@ Dự án gồm ba giao diện độc lập **Khách hàng**, **Admin hệ thốn
 - Xây dựng luồng bán hàng từ tra cứu sản phẩm đến đặt hàng, thanh toán, nhận hàng, đánh giá và đổi trả.
 - Tách quản trị tài khoản nội bộ khỏi nghiệp vụ vận hành cửa hàng.
 - Tập trung dữ liệu và lịch sử tương tác trong hồ sơ khách hàng 360°.
-- Hỗ trợ chăm sóc có người phụ trách, hạn xử lý, kết quả, nhắc việc và báo cáo.
 - Kiểm thử phân quyền, tính đúng dữ liệu, thao tác đồng thời và khả năng phục hồi khi lỗi API.
 
 Đầu việc được theo dõi tại [GitHub Issues](https://github.com/duygri/do-an-htttdn-crm/issues) và [GitHub Project](https://github.com/users/duygri/projects/1).
@@ -35,7 +34,7 @@ Dự án gồm ba giao diện độc lập **Khách hàng**, **Admin hệ thốn
 
 | Vai trò | Giao diện local | Trách nhiệm chính |
 | --- | --- | --- |
-| `CUSTOMER` | <http://localhost:5173> | Mua hàng, quản lý thông tin cá nhân, theo dõi đơn, khảo sát và gửi yêu cầu hỗ trợ |
+| `CUSTOMER` | <http://localhost:5173> | Mua hàng, quản lý thông tin cá nhân, theo dõi đơn và khảo sát |
 | `ADMIN` | <http://localhost:5174/admin/login> | Quản trị tài khoản ADMIN/MANAGER, tra cứu sản phẩm và xem nhật ký hệ thống |
 | `MANAGER` | <http://localhost:5175/manager/login> | Vận hành cửa hàng, quản lý khách hàng và thực hiện nghiệp vụ CRM |
 
@@ -53,26 +52,22 @@ Ba portal sử dụng luồng đăng nhập và phiên riêng. Backend kiểm tr
 - **Đơn hàng:** lịch sử có tab trạng thái, tìm kiếm/phân trang, xem chi tiết, tiếp tục thanh toán, hủy đơn theo điều kiện và xác nhận đã nhận hàng.
 - **Đánh giá/đổi trả:** đánh giá gắn với sản phẩm trong đơn hoàn thành; gửi yêu cầu đổi trả khi đủ điều kiện và theo dõi kết quả xử lý.
 - **Khảo sát/voucher:** trả lời khảo sát công khai hoặc được chỉ định, nhận voucher thưởng nếu được cấu hình; xem voucher cá nhân và ưu đãi cửa hàng còn hiệu lực.
-- **Hỗ trợ:** tạo phiếu gắn với đơn của mình nếu cần, gửi trao đổi và theo dõi tiến trình; không xem được ghi chú nội bộ của Manager.
 - **Thông báo:** xem và đánh dấu đã đọc các thông báo trong web. Có giao diện sáng/tối và bố cục responsive.
 
-Các trang thường dùng: `/san-pham/{id}`, `/gio-hang`, `/dat-hang`, `/don-hang`, `/tai-khoan`, `/tai-khoan/voucher`, `/khao-sat`, `/ho-tro`. Đường dẫn `/thanh-toan` phục vụ luồng quay về từ PayOS, không phải trang tạo đơn mới.
+Các trang thường dùng: `/san-pham/{id}`, `/gio-hang`, `/dat-hang`, `/don-hang`, `/tai-khoan`, `/tai-khoan/voucher`, `/khao-sat`. Đường dẫn `/thanh-toan` phục vụ luồng quay về từ PayOS, không phải trang tạo đơn mới.
 
 ### 2. Portal nhân viên quản lý
 
 - **Tổng quan:** chỉ số vận hành và liên kết nhanh đến đúng chức năng/bộ lọc.
 - **Khách hàng:** thêm/sửa, khóa/mở khóa, xóa mềm, tìm kiếm và lọc trên toàn bộ dữ liệu trước phân trang.
-- **Hồ sơ 360°:** thông tin liên hệ, địa chỉ, đơn hàng, đánh giá, khảo sát, voucher, chăm sóc và lịch sử hoạt động đã được ghi nhận.
+- **Hồ sơ khách hàng:** thông tin liên hệ, địa chỉ, đơn hàng, đánh giá, khảo sát, voucher và lịch sử hoạt động đã được ghi nhận.
 - **Phân nhóm:** chưa mua, mua lần đầu, quay lại, thân thiết; nhãn lâu chưa mua lại. Kết hợp ngày mua, số đơn, giá trị, điểm đánh giá và trạng thái tham gia khảo sát.
-- **Chăm sóc:** ghi chú, tạo/giao việc, hạn xử lý, ghi nhận kết quả, tạo việc kế tiếp; tạo việc từ phản hồi chưa xử lý hoặc đơn đổi trả.
-- **Việc của tôi:** xem việc cá nhân đang mở, đến hạn, sắp đến hạn, quá hạn và việc chăm sóc tiếp; nhận thông báo nhắc hạn có lưu.
 - **Sản phẩm và tồn kho:** quản lý thông tin, danh mục, giá, trạng thái hiển thị và số lượng tồn.
 - **Đơn hàng/đổi trả:** tìm kiếm, lọc, theo dõi thanh toán, cập nhật tiến trình giao hàng; chấp thuận, từ chối hoặc hoàn tất yêu cầu đổi trả theo luồng cho phép.
 - **Phản hồi:** tiếp nhận, trả lời, xử lý, ẩn/hiện và xóa mềm đánh giá.
-- **Phiếu hỗ trợ:** tạo hộ khách, phân công, trao đổi công khai, ghi chú nội bộ và cập nhật trạng thái xử lý.
 - **Khảo sát:** tạo nháp, phát hành/gỡ, thống kê kết quả, chọn tất cả khách hoặc chỉ định người nhận và cấu hình voucher thưởng.
 - **Khảo sát theo nhóm:** tạo bản nháp từ toàn bộ khách khớp bộ lọc, xem trước và chốt người nhận khi lưu; không tự phát hành. Có thể lọc đã/chưa trả lời một khảo sát cụ thể.
-- **Voucher/báo cáo:** quản lý mã giảm giá, báo cáo khách hàng, khảo sát, mua lại và kết quả chăm sóc. Lịch sử hoạt động của khách được xem riêng trong hồ sơ 360°; audit log hệ thống chỉ dành cho Admin.
+- **Voucher:** quản lý mã giảm giá. Lịch sử hoạt động của khách được xem trong hồ sơ; audit log hệ thống chỉ dành cho Admin.
 
 Các màn hình chính nằm dưới `/manager/*`. Dữ liệu màn hình đang mở được cập nhật mỗi 5 giây; tạm dừng khi tab bị ẩn hoặc người dùng đang nhập/gửi thao tác liên quan.
 
@@ -94,11 +89,10 @@ Các màn hình chính nằm dưới `/manager/*`. Dữ liệu màn hình đang 
 - Mỗi sản phẩm trong mỗi đơn hoàn thành chỉ đánh giá một lần; nhiều màu/size của cùng sản phẩm trong đơn dùng chung đánh giá. Bình luận tối đa 4.000 ký tự.
 - Đơn đã xác nhận nhận hàng và đã có đánh giá không được gửi yêu cầu đổi trả mới.
 - QR mặc định có hạn 15 phút. Trạng thái trả tiền do backend xác nhận qua PayOS; không tin tham số trên URL trình duyệt. Thử lại QR không tạo đơn mới hoặc trừ tồn kho lần nữa.
-- Có sổ hoàn tiền thủ công, xác nhận thu toàn bộ COD và cảnh báo đối soát PayOS. Tự hủy đơn PayOS bỏ dở sau hạn QR 24 giờ mặc định tắt; đọc [hướng dẫn migration, hoàn tiền và tự hủy](docs/features/refunds-auto-cancellation.md) trước khi bật. Không tự chuyển tiền hoặc xác nhận thu COD từ trạng thái giao hàng.
 - Mỗi đơn dùng một voucher. Voucher thưởng khảo sát thuộc đúng tài khoản, có giới hạn lượt; điều kiện được kiểm tra lại khi đặt hàng.
-- Xử lý đổi trả không tự hoàn tiền, cộng tồn kho hoặc thay trạng thái thanh toán. Việc xử lý thực tế bên ngoài cần được ghi nhận đúng nghiệp vụ.
+- Xử lý đổi trả không tự cộng tồn kho hoặc thay trạng thái thanh toán. Việc xử lý thực tế bên ngoài cần được ghi nhận đúng nghiệp vụ.
 
-### Phân nhóm và báo cáo
+### Phân nhóm khách hàng
 
 | Chỉ số/nhóm | Quy tắc |
 | --- | --- |
@@ -107,15 +101,11 @@ Các màn hình chính nằm dưới `/manager/*`. Dữ liệu màn hình đang 
 | Khách quay lại | Có ít nhất hai đơn hoàn thành, chưa đạt ngưỡng thân thiết |
 | Khách thân thiết | Ít nhất 5 đơn hoàn thành **hoặc** giá trị đơn hoàn thành từ 5.000.000 đồng; ưu tiên nhóm này |
 | Lâu chưa mua lại | Nhãn bổ sung: đã mua và từ 30 ngày lịch Việt Nam kể từ ngày đặt gần nhất trong các đơn hoàn thành |
-| Tỷ lệ mua lại toàn thời gian | Khách có ít nhất hai đơn hoàn thành / khách có ít nhất một đơn hoàn thành × 100 |
-| Giá trị đơn hoàn thành | Tổng tiền sau giảm giá của đơn `COMPLETED`, chưa trừ hoàn tiền; không đồng nhất tiền đã thu |
-| Tỷ lệ đã giải quyết công việc chăm sóc | Số việc có kết quả `RESOLVED` / số việc hoàn thành đã ghi nhận kết quả hợp lệ × 100 |
+| Giá trị đơn hoàn thành | Tổng tiền sau giảm giá của đơn `COMPLETED`; không đồng nhất tiền đã thu |
 
-Các phép chia có mẫu số 0 trả 0. Ngày nghiệp vụ CRM dùng múi giờ `Asia/Ho_Chi_Minh`. Đơn hoàn thành có đổi trả vẫn nằm trong phép tính giá trị đơn hoàn thành. Chỉ số **Giá trị đơn chưa hủy** ở dashboard là một phép tính khác, không phải tiền thực thu.
+Ngày nghiệp vụ CRM dùng múi giờ `Asia/Ho_Chi_Minh`. Đơn hoàn thành có đổi trả vẫn được tính trong ngưỡng phân nhóm khách hàng.
 
 Khi lọc theo khảo sát cụ thể, **chưa trả lời chỉ tính trong đối tượng nhận khảo sát đó**, không gom khách ngoài nhóm. Điểm đánh giá sản phẩm không được gọi là điểm hài lòng khảo sát. Timeline chỉ tổng hợp sự kiện có dữ liệu lưu, không dựng lại lịch sử cũ.
-
-Phiếu hỗ trợ có luồng **Mới → Đang xử lý → Chờ khách → Đã giải quyết**, cho phép xử lý tiếp từ bước chờ khách. Công việc chăm sóc có luồng riêng **Chưa thực hiện → Đang xử lý → Hoàn thành**. Nhắc việc đến hạn/quá hạn được backend kiểm tra định kỳ 60 giây, chống gửi trùng và không nhắc lặp hằng ngày.
 
 ## Công nghệ và kiến trúc
 
@@ -129,7 +119,7 @@ Phiếu hỗ trợ có luồng **Mới → Đang xử lý → Chờ khách → �
 | CI | GitHub Actions: backend verify, frontend build, lint tài liệu/PlantUML và CodeQL |
 | Thiết kế/tài liệu | Figma/Google Stitch, Markdown và sơ đồ PlantUML |
 
-Luồng chung: **Ba portal React → REST API Spring Boot → PostgreSQL**. PayOS là dịch vụ thanh toán bên ngoài, giao tiếp với backend qua API và webhook. Namespace nghiệp vụ Manager là `/api/manager/*`, quản trị hệ thống là `/api/admin/*`; API khách hàng dùng các đường dẫn như `/api/orders`, `/api/surveys`, `/api/support-tickets`.
+Luồng chung: **Ba portal React → REST API Spring Boot → PostgreSQL**. PayOS là dịch vụ thanh toán bên ngoài, giao tiếp với backend qua API và webhook. Namespace nghiệp vụ Manager là `/api/manager/*`, quản trị hệ thống là `/api/admin/*`; API khách hàng dùng các đường dẫn như `/api/orders` và `/api/surveys`.
 
 ## Cấu trúc thư mục
 
@@ -140,7 +130,7 @@ frontend/
 │   ├── main.jsx        Chọn portal theo Vite mode
 │   ├── app/            App shell, routing và portal entrypoint
 │   ├── api/            API client
-│   ├── features/       Storefront, customer, support-tickets, manager, admin
+│   ├── features/       Storefront, customer, manager, admin
 │   ├── shared/         Hook, tiện ích và CSS dùng chung
 │   ├── styles/         CSS toàn cục
 │   └── data/           Dữ liệu địa chỉ và giấy phép nguồn
@@ -204,12 +194,13 @@ Sao lưu, xác định phiên bản schema đã triển khai và đọc migratio
 | Nền tảng tài khoản/portal | `001_admin_user_split.sql`, `002_manager_portal.sql` |
 | Khảo sát, phản hồi và voucher | `003_survey_management.sql`, `004_feedback_moderation.sql`, `005_voucher_management.sql`, `006_review_survey_rewards.sql` |
 | Thanh toán và đổi trả | `007_payos_qr.sql`, `008_payos_attempts.sql`, `009_return_management.sql` |
-| Hoàn tiền và dòng tiền | `010_refunds_abandoned_payos.sql`, `011_cashflow_voucher_customer_limit.sql` |
-| Chăm sóc khách hàng | `012_customer_care.sql` → `013_care_sources.sql` → `014_care_outcomes.sql` → `015_care_reminders.sql` |
-| Nhật ký và phiếu hỗ trợ | `016_audit_logs.sql`, `017_support_tickets.sql` |
-| Thống kê doanh thu và nhập kho | `018_sales_statistics.sql`, `019_stock_receipts.sql` |
+| Hoàn tiền và dòng tiền (lịch sử, phần hoàn tiền/báo cáo gỡ ở 020) | `010_refunds_abandoned_payos.sql`, `011_cashflow_voucher_customer_limit.sql` |
+| Chăm sóc khách hàng (lịch sử, gỡ ở 020) | `012_customer_care.sql` → `013_care_sources.sql` → `014_care_outcomes.sql` → `015_care_reminders.sql` |
+| Audit log và phiếu hỗ trợ (phiếu hỗ trợ gỡ ở 020) | `016_audit_logs.sql`, `017_support_tickets.sql` |
+| Thống kê doanh thu (lịch sử, gỡ ở 020) và nhập kho | `018_sales_statistics.sql`, `019_stock_receipts.sql` |
+| Gỡ schema tính năng đã bỏ và mô hình CTKM | `020_retire_refund_care_support_reports.sql`, `021_promotion_campaigns.sql` |
 
-Các script nằm trong `database/migrations/`. Migration nhắc hạn cần bảng công việc chăm sóc và thông báo nền có trước; phiếu hỗ trợ cần các bảng nền khách hàng, đơn hàng và thông báo. Backend có ghi audit cần bảng nhật ký trước khi thực hiện nghiệp vụ mới. Xem hướng dẫn từng chức năng ở mục [Tài liệu chi tiết](#tài-liệu-chi-tiết).
+Các script nằm trong `database/migrations/`. Migration 020 xóa dữ liệu nghiệp vụ trong các bảng hoàn tiền, chăm sóc và phiếu hỗ trợ cùng các cột báo cáo đã bỏ; sao lưu database trước khi chạy. Bảng `audit_logs` và các bản ghi lịch sử được giữ nguyên. Migration 021 thêm mô hình campaign CTKM và các rule theo sản phẩm, hóa đơn, voucher. Xem thứ tự và phụ thuộc tại [database/migrations/README.md](database/migrations/README.md).
 
 `database/maintenance/cleanup_legacy.sql` dành cho dữ liệu/cấu trúc cũ, **không phải bước cài đặt mặc định**. Chỉ dùng khi đã hiểu nội dung, có bản sao lưu và đã kiểm thử trên bản sao. Khởi động lại backend sau khi cập nhật migration/mã nguồn; chạy SQL không tự nạp endpoint mới vào tiến trình Java đang chạy.
 
@@ -344,14 +335,10 @@ GitHub Actions phân loại thay đổi để chạy backend `mvn verify`, front
 | --- | --- |
 | Yêu cầu và phạm vi | [PRD](docs/requirements/prd-htttdn-crm.md), [yêu cầu hệ thống](docs/requirements/requirements.md) |
 | Hồ sơ 360° và phân nhóm | [Hồ sơ khách hàng](docs/features/customer-profile-360.md), [vòng đời](docs/features/customer-lifecycle.md) |
-| Chăm sóc và việc kế tiếp | [Chăm sóc](docs/features/customer-care.md), [liên kết nguồn](docs/features/care-sources.md), [kết quả và theo dõi tiếp](docs/features/care-outcomes.md) |
-| Nhắc việc cá nhân | [Việc của tôi và thông báo](docs/features/care-reminders.md) |
-| Báo cáo | [Dashboard chăm sóc](docs/features/care-dashboard.md), [kết quả chăm sóc](docs/features/care-outcomes-report.md), [giữ chân khách hàng](docs/features/retention-report.md) |
 | Khảo sát theo nhóm | [Chốt người nhận từ bộ lọc](docs/features/survey-recipient-groups.md), [lọc theo khảo sát cụ thể](docs/features/customer-survey-filters.md) |
-| Hỗ trợ và đổi trả | [Phiếu hỗ trợ](docs/features/support-tickets.md), [xử lý đổi trả](docs/features/return-management.md) |
+| Đổi trả | [Xử lý đổi trả](docs/features/return-management.md) |
 | Quản lý portal | [Ba portal](docs/database/manager-portal.md) |
 | Voucher và đánh giá | [Voucher](docs/database/vouchers.md), [đánh giá và thưởng khảo sát](docs/database/reviews-rewards.md) |
-| Thu – hoàn tiền và giới hạn cá nhân | [Báo cáo, quy tắc voucher và migration](docs/features/cashflow-voucher-limits.md) |
 | Nhật ký và kiểm tra nghiệp vụ | [Audit log](docs/features/audit-logs.md), [ma trận QA](docs/qa/crm-workflow-qa.md), [cấu hình demo](docs/ops/env-demo.md), [quyết định và ghi nhận thay đổi](docs/requirements/decisions-changelog.md) |
 | Nhập kho và chi phí mua hàng | [Phiếu nhập kho](docs/features/stock-receipts.md) |
 | Sơ đồ | [Thư mục sơ đồ](docs/design/diagrams/) |
@@ -362,8 +349,7 @@ Tài liệu từng đợt có thể ghi kết quả kiểm tra ở thời điể
 
 - Đây là đồ án mô phỏng; cần rà soát bảo mật, cấu hình, hiệu năng, sao lưu/khôi phục và vận hành trước khi dùng thực tế.
 - Đã tích hợp email khôi phục mật khẩu và thông báo đơn qua Resend dưới cờ cấu hình. Bộ demo/nghiệm thu mặc định giữ `RESEND_ENABLED=false` và `DEV_PASSWORD_RESET_ENABLED=false`; nhánh mã sáu chữ số chỉ dành cho profile `development`. Việc gửi email thật và điều kiện triển khai được kiểm tra riêng theo [hướng dẫn Resend](docs/ops/resend-email.md).
-- Chưa có email marketing, thông báo hệ điều hành, hoàn tiền tự động hoặc chiến dịch tự phát voucher. Nhắc việc và thông báo hiện tại nằm trong web.
-- Báo cáo mua lại toàn thời gian chưa phải phân tích giữ chân theo cohort; giá trị đơn không phải tiền thực thu hay lợi nhuận.
+- Chưa có email marketing, thông báo hệ điều hành hoặc chiến dịch tự phát voucher.
 - Giao diện quản lý nhà cung cấp không nằm trong menu hiện tại; database/API có thể còn thành phần tương thích từ các phiên bản trước.
 - Khi triển khai frontend lên web server, cần cấu hình fallback phù hợp cho route phía client để mở URL trực tiếp/refresh không bị 404, đồng thời chuyển tiếp đúng API và cookie.
 - Khi lỗi kết nối, kiểm tra backend đã chạy đúng cổng, `VITE_API_BASE_URL`, CORS và migration. Lỗi thiếu endpoint thường cần build/khởi động lại backend đúng phiên bản, không chỉ chạy SQL.

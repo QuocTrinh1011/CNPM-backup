@@ -22,15 +22,15 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:payment-lifecycle;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;LOCK_TIMEOUT=10000","spring.datasource.driver-class-name=org.h2.Driver","spring.datasource.username=sa","spring.datasource.password=","spring.jpa.database-platform=org.hibernate.dialect.H2Dialect","spring.jpa.hibernate.ddl-auto=create-drop","crm.care-reminders.enabled=false"})
+@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:payment-lifecycle;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;LOCK_TIMEOUT=10000","spring.datasource.driver-class-name=org.h2.Driver","spring.datasource.username=sa","spring.datasource.password=","spring.jpa.database-platform=org.hibernate.dialect.H2Dialect","spring.jpa.hibernate.ddl-auto=create-drop"})
 @AutoConfigureMockMvc
 class PaymentLifecycleIntegrationTest {
-    @Autowired UserRepository users;@Autowired OrderRepository orders;@Autowired PaymentRepository payments;@Autowired OrderRefundRepository refunds;@Autowired PaymentAttemptRepository attempts;
+    @Autowired UserRepository users;@Autowired OrderRepository orders;@Autowired PaymentRepository payments;@Autowired PaymentAttemptRepository attempts;
     @Autowired AdminOrderService adminOrders;@Autowired AbandonedOrderWorker worker;@Autowired OrderService customerOrders;@Autowired JwtTokenService jwt;@Autowired MockMvc mvc;@Autowired PlatformTransactionManager tm;
     @MockitoBean PayosService payos;
     User customer,manager;String token;TransactionTemplate tx;
     @BeforeEach void setup(){tx=new TransactionTemplate(tm);customer=user("CUSTOMER");manager=user("MANAGER");token="Bearer "+jwt.issue(manager.getId(),"MANAGER");}
-    User user(String role){User u=new User();u.setEmail(UUID.randomUUID()+"@refund.test");u.setFullName(role);u.setRole(role);u.setPasswordHash("test-only");return users.save(u);}
+    User user(String role){User u=new User();u.setEmail(UUID.randomUUID()+"@payment.test");u.setFullName(role);u.setRole(role);u.setPasswordHash("test-only");return users.save(u);}
     Order order(String method,String status,String payment){return tx.execute(s->{Order o=new Order();o.setCustomer(customer);o.setOrderCode(Math.abs(UUID.randomUUID().getMostSignificantBits()%900000000000L));o.setTotalAmount(new BigDecimal("100000"));o.setPaymentMethod(method);o.setStatus(status);o.setPaymentStatus(payment);o.setExpiresAt(Instant.now().minus(Duration.ofHours(25)));orders.saveAndFlush(o);Payment p=new Payment();p.setOrder(o);p.setAmount(o.getTotalAmount());p.setStatus(payment);p.setPaymentLinkId("link-"+o.getId());payments.save(p);return o;});}
     @Test void networkFailureAndChangedStatusNeverReleaseResources(){
         Order o=order("PAYOS","PENDING","EXPIRED");when(payos.getPayment("link-"+o.getId())).thenThrow(new com.htttdn.crm.exception.ApiException(org.springframework.http.HttpStatus.BAD_GATEWAY,"PAYMENT_PROVIDER_ERROR","Test"));
@@ -42,23 +42,17 @@ class PaymentLifecycleIntegrationTest {
         when(payos.getPayment(old)).thenReturn(new PayosService.ProviderPayment(o.getOrderCode(),100000,100000,"PAID",old));when(payos.getPayment(latest)).thenReturn(new PayosService.ProviderPayment(o.getOrderCode()+1,100000,0,"EXPIRED",latest));
         assertEquals("PAID",worker.cancel(o.getId(),Instant.now(),Duration.ofHours(24)));assertEquals("PENDING",orders.findById(o.getId()).orElseThrow().getStatus());assertEquals("PAID",payments.findByOrderId(o.getId()).orElseThrow().getStatus());assertFalse(orders.findById(o.getId()).orElseThrow().isStockReleased());
     }
-    @Test void paidCancellationKeepsPaymentEvidenceAndDoesNotCreateRefund()throws Exception{
+    @Test void paidCancellationKeepsPaymentEvidence(){
         Order o=order("PAYOS","PENDING","PAID");adminOrders.updateStatus(o.getId(),new StatusRequest("CANCELLED","Test"));adminOrders.updateStatus(o.getId(),new StatusRequest("CANCELLED","Test"));
-        assertTrue(refunds.findByOrderIdOrderByIdDesc(o.getId()).isEmpty());
         assertEquals("PAID",payments.findByOrderId(o.getId()).orElseThrow().getStatus());
-        mvc.perform(get("/api/manager/refunds").header("Authorization",token)).andExpect(status().isNotFound());
-        mvc.perform(post("/api/manager/orders/"+o.getId()+"/refunds").header("Authorization",token)
-                .contentType("application/json").content("{}")).andExpect(status().isNotFound());
     }
-    @Test void codCollectionIsIdempotentAndRefundRouteIsRemoved()throws Exception{
+    @Test void codCollectionIsIdempotent()throws Exception{
         Order o=order("COD","DELIVERED","COD");
         String url="/api/manager/orders/"+o.getId()+"/cod-collection";
         mvc.perform(patch(url).header("Authorization",token).contentType("application/json").content("{\"note\":\"Đã đối soát\"}")).andExpect(status().isOk());
         Instant collected=orders.findById(o.getId()).orElseThrow().codCollectedAt;
         mvc.perform(patch(url).header("Authorization",token).contentType("application/json").content("{\"note\":\"Gửi lại\"}")).andExpect(status().isOk());
         assertEquals(collected,orders.findById(o.getId()).orElseThrow().codCollectedAt);assertEquals("PAID",payments.findByOrderId(o.getId()).orElseThrow().getStatus());
-        mvc.perform(post("/api/manager/orders/"+o.getId()+"/refunds").header("Authorization",token)
-                .contentType("application/json").content("{}")).andExpect(status().isNotFound());
         Order pending=order("COD","PENDING","COD");mvc.perform(patch("/api/manager/orders/"+pending.getId()+"/cod-collection").header("Authorization",token).contentType("application/json").content("{\"note\":\"Test\"}")).andExpect(status().isConflict());
     }
     @Test void autoCancelChecksProviderAgainAndRepeatedWorkersDoNotDuplicateEffects(){
@@ -101,15 +95,15 @@ class PaymentLifecycleIntegrationTest {
             assertEquals("NEEDS_REVIEW",worker.cancel(o.getId(),Instant.now(),Duration.ofHours(24)));Order current=orders.findById(o.getId()).orElseThrow();assertEquals("PENDING",current.getStatus());assertTrue(current.paymentReviewRequired);assertFalse(current.isStockReleased());
         }
     }
-    @Test void syncOfCancelledPaidOrderRecordsPaymentWithoutCreatingRefund()throws Exception{
+    @Test void syncOfCancelledPaidOrderRecordsPayment()throws Exception{
         Order o=order("PAYOS","CANCELLED","CANCELLED");String link="link-"+o.getId();
         tx.executeWithoutResult(s->{var a=new PaymentAttempt();a.setOrder(orders.findById(o.getId()).orElseThrow());a.setProviderOrderCode(o.getOrderCode());a.setPaymentLinkId(link);attempts.save(a);});
         when(payos.getPayment(link)).thenReturn(new PayosService.ProviderPayment(o.getOrderCode(),100000,100000,"PAID",link));
-        customerOrders.syncPayment(customer,o.getId());customerOrders.syncPayment(customer,o.getId());assertTrue(refunds.findByOrderIdOrderByIdDesc(o.getId()).isEmpty());assertEquals("PAID",orders.findById(o.getId()).orElseThrow().getPaymentStatus());
+        customerOrders.syncPayment(customer,o.getId());customerOrders.syncPayment(customer,o.getId());assertEquals("PAID",orders.findById(o.getId()).orElseThrow().getPaymentStatus());
     }
-    @Test void reconcilingLegacyAlreadyPaidCancellationDoesNotBackfillRefunds()throws Exception{
+    @Test void reconcilingLegacyAlreadyPaidCancellationPreservesPayment()throws Exception{
         Order o=order("PAYOS","CANCELLED","PAID");String link="link-"+o.getId();when(payos.getPayment(link)).thenReturn(new PayosService.ProviderPayment(o.getOrderCode(),100000,100000,"PAID",link));
         mvc.perform(post("/api/manager/orders/"+o.getId()+"/payment/reconcile").header("Authorization",token)).andExpect(status().isOk());
-        assertTrue(refunds.findByOrderIdOrderByIdDesc(o.getId()).isEmpty());
+        assertEquals("PAID",orders.findById(o.getId()).orElseThrow().getPaymentStatus());
     }
 }

@@ -34,7 +34,7 @@ class AdminOrderServiceTest {
     final NotificationService notifications = mock(NotificationService.class);
     final PaymentRepository payments = mock(PaymentRepository.class);
     final StockService stock = mock(StockService.class);
-    final AdminOrderService service = new AdminOrderService(orders, notifications, mock(VoucherService.class), payments, stock, mock(RefundService.class));
+    final AdminOrderService service = new AdminOrderService(orders, notifications, mock(VoucherService.class), payments, stock);
 
     Order order(String status) {
         Order order = new Order(); order.setOrderCode(9009L); order.setCustomer(new User()); order.setStatus(status);

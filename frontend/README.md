@@ -17,20 +17,28 @@ The default API base URL is `http://localhost:8080`. Copy `.env.example` to `.en
 ```text
 src/
 ├── main.jsx             Selects the portal for the current Vite mode
-├── app/                 App shell, customer routing and portal entrypoints
+├── app/                 App shells, routing, portal entrypoints and integration tests
 ├── api/                 Customer and manager API clients
 ├── features/
 │   ├── storefront/      Shopping and checkout flows
 │   ├── customer/        Customer account pages and order feedback
-│   ├── support-tickets/ Support ticket views for customer and manager
 │   ├── manager/         Store operations and CRM workflows
 │   └── admin/           System administration
-├── shared/              Shared hooks, utilities and styles
+├── shared/
+│   ├── address/         Shared address book, picker and shipping fields
+│   ├── routing/         Customer route helpers
+│   ├── hooks/           Shared hooks
+│   ├── utils/           Shared utilities
+│   └── styles/          Shared styles
 ├── styles/              Global styles
 └── data/                Vietnam addresses and source data license
 ```
 
-Feature component tests and component-only styles live beside their component. Shared and portal-wide styles are grouped under each feature's `styles/` folder; global CSS is under `src/styles/`. Portal entrypoints retain the CSS import order required for cascade precedence.
+Feature component tests and component-only styles live beside their component. App-level integration tests live in src/app/; shared component tests live beside shared code. Shared and portal-wide styles are grouped under each feature styles/ folder; global CSS is under src/styles/. Portal entrypoints retain the CSS import order required for cascade precedence.
+
+Dependency direction: app/ may import features/ and shared/; features/ may import shared/. Features do not import each other, and shared code does not import from app or features. A Vitest guard checks these boundaries.
+
+The frontend no longer exposes refund, support-ticket, customer-care, personal-task, or report screens. Backend and database code are outside this frontend refactor.
 
 ## Implemented customer flows
 

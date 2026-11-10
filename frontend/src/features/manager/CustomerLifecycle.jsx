@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import './customer-lifecycle.css';
 import SurveyFilterPicker from './SurveyFilterPicker';
 export const lifecycleLabels={NO_PURCHASE:'Chưa mua hàng',FIRST_PURCHASE:'Mua lần đầu',RETURNING:'Khách quay lại',LOYAL:'Khách thân thiết'};
-export const lifecycleExplanation='Chỉ tính đơn hoàn thành: thân thiết từ 5 đơn hoặc 5.000.000 đ; lâu chưa mua lại từ 30 ngày lịch Việt Nam kể từ ngày đặt gần nhất trong các đơn hoàn thành. Giá trị sau giảm giá, chưa trừ hoàn tiền; đơn hoàn thành có đổi trả vẫn tính.';
+export const lifecycleExplanation='Chỉ tính đơn hoàn thành: thân thiết từ 5 đơn hoặc 5.000.000 đ; lâu chưa mua lại từ 30 ngày lịch Việt Nam kể từ ngày đặt gần nhất trong các đơn hoàn thành. Giá trị sau giảm giá; đơn hoàn thành có đổi trả vẫn tính.';
 export default function CustomerLifecycle({segment}) {
   if(!segment)return null;
   return <div className="customer-lifecycle"><span className={`admin-badge lifecycle-${segment.stage}`}>{lifecycleLabels[segment.stage]||segment.stage}</span>{segment.dormant&&<span className="admin-badge warning">Lâu chưa mua lại</span>}{segment.daysSinceLastPurchase!=null&&<small>{segment.daysSinceLastPurchase} ngày từ lần mua gần nhất</small>}</div>;

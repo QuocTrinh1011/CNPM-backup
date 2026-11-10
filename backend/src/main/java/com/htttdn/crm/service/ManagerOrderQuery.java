@@ -16,18 +16,16 @@ public class ManagerOrderQuery {
     public ManagerOrderQuery(NamedParameterJdbcTemplate db){this.db=db;}
     private static final String GROUP="CASE WHEN o.status='CANCELLED' THEN 'CANCELLED' WHEN coalesce(o.return_status,'NONE')<>'NONE' THEN 'RETURN' WHEN o.status IN ('PENDING','PENDING_PAYMENT') THEN 'PENDING' WHEN o.status IN ('CONFIRMED','PREPARING') THEN 'CONFIRMED' WHEN o.status IN ('SHIPPED','DELIVERING') THEN 'SHIPPED' ELSE o.status END";
     private static final String JOIN=" FROM orders o JOIN customers c ON c.customer_id=o.customer_id ";
-    private static final String DETAIL_JOIN=JOIN+" LEFT JOIN customers sp ON sp.customer_id=o.salesperson_id ";
     private static final Set<String> STATUSES=Set.of("PENDING","PENDING_PAYMENT","CONFIRMED","PREPARING","SHIPPED","DELIVERING","DELIVERED","COMPLETED","CANCELLED","RETURN","RETURN_REQUESTED","RETURN_APPROVED","RETURN_REJECTED","RETURN_COMPLETED");
     public record Filter(String status,String q,String paymentStatus,Instant from,Instant to,String sort,String direction,int page,int size,Boolean paymentReview){
         public Filter(String status,String q,String paymentStatus,Instant from,Instant to,String sort,String direction,int page,int size){this(status,q,paymentStatus,from,to,sort,direction,page,size,null);}
     }
     public record Finance(Instant codCollectedAt,boolean reviewRequired,String reviewReason,Instant reviewAt){}
     public record Customer(Long id,String fullName,String email){}
-    public record Salesperson(Long id,String fullName){}
     public record Product(Long id,String name,String imageUrl){}
     public record Line(Long id,Product product,int quantity,String size,String color,BigDecimal unitPrice){}
     public record Event(Long id,String status,String note,String managerName,Instant createdAt){}
-    public record View(Long id,Long orderCode,String status,String paymentStatus,String paymentMethod,String returnStatus,BigDecimal totalAmount,BigDecimal discountAmount,String voucherCode,Instant createdAt,Instant updatedAt,Customer customer,String deliveryAddress,String trackingCode,String cancelReason,String returnReason,Instant returnRequestedAt,List<Line> items,List<Event> returnHistory,Salesperson salesperson,Finance finance){}
+    public record View(Long id,Long orderCode,String status,String paymentStatus,String paymentMethod,String returnStatus,BigDecimal totalAmount,BigDecimal discountAmount,String voucherCode,Instant createdAt,Instant updatedAt,Customer customer,String deliveryAddress,String trackingCode,String cancelReason,String returnReason,Instant returnRequestedAt,List<Line> items,List<Event> returnHistory,Finance finance){}
     public record Page<T>(List<T> content,long totalElements,long totalPages,int number,int size){}
     private ApiException invalid(){return new ApiException(HttpStatus.BAD_REQUEST,"INVALID_FILTER","Bộ lọc, ngày hoặc phân trang không hợp lệ.");}
     private String where(Filter f,Map<String,Object> args,boolean includeStatus){
@@ -51,7 +49,7 @@ public class ManagerOrderQuery {
         String dir=f.direction()==null?"DESC":f.direction().toUpperCase(Locale.ROOT);if(column==null||!Set.of("ASC","DESC").contains(dir))throw invalid();
         long count=db.queryForObject("SELECT count(*)"+JOIN+where,args,Long.class);
         args.put("limit",f.size());args.put("offset",(long)f.page()*f.size());
-        var rows=db.query("SELECT o.*,c.full_name,c.email,sp.full_name AS salesperson_name"+DETAIL_JOIN+where+" ORDER BY "+column+" "+dir+",o.order_id DESC LIMIT :limit OFFSET :offset",args,(r,n)->view(r,List.of(),List.of()));
+        var rows=db.query("SELECT o.*,c.full_name,c.email"+JOIN+where+" ORDER BY "+column+" "+dir+",o.order_id DESC LIMIT :limit OFFSET :offset",args,(r,n)->view(r,List.of(),List.of()));
         return new Page<>(rows,count,(count+f.size()-1)/f.size(),f.page(),f.size());
     }
     public Map<String,Long> summary(Filter f){
@@ -64,8 +62,8 @@ public class ManagerOrderQuery {
         var args=Map.of("id",id);
         var lines=db.query("SELECT i.*,p.name,p.image_url FROM order_items i JOIN products p ON p.product_id=i.product_id WHERE i.order_id=:id ORDER BY i.order_item_id",args,(r,n)->new Line(r.getLong("order_item_id"),new Product(r.getLong("product_id"),r.getString("name"),r.getString("image_url")),r.getInt("quantity"),r.getString("size"),r.getString("color"),r.getBigDecimal("unit_price")));
         var history=db.query("SELECT * FROM order_return_events WHERE order_id=:id ORDER BY id",args,(r,n)->new Event(r.getLong("id"),r.getString("status"),r.getString("note"),r.getString("manager_name"),instant(r,"created_at")));
-        return db.query("SELECT o.*,c.full_name,c.email,sp.full_name AS salesperson_name"+DETAIL_JOIN+" WHERE o.order_id=:id",args,(r,n)->view(r,lines,history)).stream().findFirst().orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"ORDER_NOT_FOUND","Không tìm thấy đơn hàng."));
+        return db.query("SELECT o.*,c.full_name,c.email"+JOIN+" WHERE o.order_id=:id",args,(r,n)->view(r,lines,history)).stream().findFirst().orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"ORDER_NOT_FOUND","Không tìm thấy đơn hàng."));
     }
     private Instant instant(ResultSet r,String name)throws SQLException{var t=r.getTimestamp(name);return t==null?null:t.toInstant();}
-    private View view(ResultSet r,List<Line> lines,List<Event> history)throws SQLException{long salespersonId=r.getLong("salesperson_id");Salesperson salesperson=r.wasNull()?null:new Salesperson(salespersonId,r.getString("salesperson_name"));return new View(r.getLong("order_id"),r.getLong("order_code"),r.getString("status"),r.getString("payment_status"),r.getString("payment_method"),r.getString("return_status"),r.getBigDecimal("total_amount"),r.getBigDecimal("discount_amount"),r.getString("voucher_code"),instant(r,"created_at"),instant(r,"updated_at"),new Customer(r.getLong("customer_id"),r.getString("full_name"),r.getString("email")),r.getString("delivery_address"),r.getString("tracking_code"),r.getString("cancel_reason"),r.getString("return_reason"),instant(r,"return_requested_at"),lines,history,salesperson,new Finance(instant(r,"cod_collected_at"),r.getBoolean("payment_review_required"),r.getString("payment_review_reason"),instant(r,"payment_review_at")));}
+    private View view(ResultSet r,List<Line> lines,List<Event> history)throws SQLException{return new View(r.getLong("order_id"),r.getLong("order_code"),r.getString("status"),r.getString("payment_status"),r.getString("payment_method"),r.getString("return_status"),r.getBigDecimal("total_amount"),r.getBigDecimal("discount_amount"),r.getString("voucher_code"),instant(r,"created_at"),instant(r,"updated_at"),new Customer(r.getLong("customer_id"),r.getString("full_name"),r.getString("email")),r.getString("delivery_address"),r.getString("tracking_code"),r.getString("cancel_reason"),r.getString("return_reason"),instant(r,"return_requested_at"),lines,history,new Finance(instant(r,"cod_collected_at"),r.getBoolean("payment_review_required"),r.getString("payment_review_reason"),instant(r,"payment_review_at")));}
 }
