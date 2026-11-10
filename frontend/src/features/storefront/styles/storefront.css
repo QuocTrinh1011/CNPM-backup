@@ -1880,7 +1880,6 @@
 
 /* Voucher Field */
 .site-shell .shop-voucher-field { margin-bottom: 20px; }
-.site-shell .voucher-input { display: flex; gap: 8px; }
 .site-shell .voucher-input input { flex: 1; }
 .site-shell .voucher-input button {
   flex-shrink: 0;
