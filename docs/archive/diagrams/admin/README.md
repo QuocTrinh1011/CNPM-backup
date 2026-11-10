@@ -15,6 +15,6 @@ admin/
     └── images/    # Rendered use-case-diagram PNG files
 ```
 
-The root-level `SEQUENCE/` directory is intentionally not used. New Admin diagram assets should be added to the appropriate folder under `docs/diagrams/admin/`.
+The root-level `SEQUENCE/` directory is intentionally not used. New Admin diagram assets should be added to the appropriate folder under `docs/design/diagrams/sequence-new/admin/`.
 
 The detailed textual specifications are maintained in [`../../use-cases/admin/admin-use-case-specifications.docx`](../../use-cases/admin/admin-use-case-specifications.docx).

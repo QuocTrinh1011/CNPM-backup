@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Do not edit SQL contents, backend behavior, frontend files, or `docs/diagrams/`.
+- Do not edit SQL contents, backend behavior, frontend files, or `docs/design/diagrams/`.
 - Keep `database/backup/README.md` unchanged.
 - Use migration names `NNN_<original suffix after migration_>.sql`.
 - Preserve the four requested commit groups and use `refactor(database): ...` messages.

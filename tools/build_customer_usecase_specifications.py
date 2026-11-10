@@ -10,7 +10,7 @@ from docx.shared import Cm, Pt, RGBColor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "docs" / "use-cases" / "customer" / "customer-use-case-specifications.docx"
+OUTPUT = ROOT / "docs" / "archive" / "use-cases" / "customer" / "customer-use-case-specifications.docx"
 
 
 TRACEABILITY = [
@@ -523,7 +523,7 @@ def build_document():
         "Webhook payOS phải xác minh signature, orderCode, amount và tính idempotent; order PENDING_PAYMENT quá hạn phải được job dọn đúng một lần.",
         "Mọi thay đổi liên quan schema, trạng thái đơn hoặc quy tắc nghiệp vụ phải cập nhật ERD/data dictionary và sequence tương ứng trước khi merge.",
     ])
-    add_paragraph(doc, "Tài liệu này là deliverable của Issue #53 và được thiết kế để nhất quán với Issue #52 cùng các sequence diagram Customer trong thư mục docs/diagrams/customer.", italic=True)
+    add_paragraph(doc, "Tài liệu này là deliverable của Issue #53 và được thiết kế để nhất quán với Issue #52 cùng các sequence diagram Customer trong thư mục docs/design/diagrams/sequence-new/customer.", italic=True)
 
     doc.core_properties.title = "Đặc tả Use Case Customer CRM và Sales"
     doc.core_properties.subject = "Part III Customer CRM and Sales"

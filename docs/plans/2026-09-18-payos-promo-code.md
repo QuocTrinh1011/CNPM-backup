@@ -13,8 +13,8 @@
 ### Task 1: Update the customer payOS checkout sequence
 
 **Files:**
-- Modify: `docs/diagrams/customer/III-07-shopping-cart-order-payos.puml`
-- Verify: `docs/superpowers/specs/2026-09-18-payos-promo-code-design.md`
+- Modify: `docs/archive/diagrams/customer/sequence/plantuml/III-07-shopping-cart-order-payos.puml`
+- Verify: `docs/specs/2026-09-18-payos-promo-code-design.md`
 
 - [ ] **Step 1: Add the optional promotion input and validation boundary**
 
@@ -41,7 +41,7 @@
   Run:
 
   ```powershell
-  $diagram = "docs/diagrams/customer/III-07-shopping-cart-order-payos.puml"
+  $diagram = "docs/archive/diagrams/customer/sequence/plantuml/III-07-shopping-cart-order-payos.puml"
   $required = @(
     "promoCode", "PROMO_NOT_APPLICABLE", "discountAmount", "finalAmount",
     "validity", "eligibility", "usage", "Create pending order", "unique numeric orderCode",
@@ -67,17 +67,17 @@
     throw "Raw SQL or SQL syntax found in the business-language diagram"
   }
   git diff --check
-  if ((git diff --name-only HEAD) -ne "docs/diagrams/customer/III-07-shopping-cart-order-payos.puml") {
+  if ((git diff --name-only HEAD) -ne "docs/archive/diagrams/customer/sequence/plantuml/III-07-shopping-cart-order-payos.puml") {
     throw "Unexpected files changed in the implementation worktree"
   }
-  $target = "docs/diagrams/customer/III-07-shopping-cart-order-payos.puml"
+  $target = "docs/archive/diagrams/customer/sequence/plantuml/III-07-shopping-cart-order-payos.puml"
   $unexpected = git status --short --untracked-files=all | Where-Object {
     $_ -and ($_ -notmatch "^(?: M|M |MM) $([regex]::Escape($target))$")
   }
   if ($unexpected) {
     throw "Unexpected staged, unstaged, or untracked changes found"
   }
-  git diff -- docs/diagrams/customer/III-07-shopping-cart-order-payos.puml
+  git diff -- docs/archive/diagrams/customer/sequence/plantuml/III-07-shopping-cart-order-payos.puml
   ```
 
   Expected: every required-pattern assertion passes, the request assertion confirms that only `promoCode` is client-supplied, the no-promo and VND-rounding assertion passes, no raw SQL terms are found, `git diff --check` exits successfully, and both staged/unstaged/untracked checks report only the intended sequence update. Review the full diff manually for the mismatch branch to ensure it does not update payment/order status.
@@ -85,6 +85,6 @@
 - [ ] **Step 7: Commit the diagram update**
 
   ```powershell
-  git add docs/diagrams/customer/III-07-shopping-cart-order-payos.puml
+  git add docs/archive/diagrams/customer/sequence/plantuml/III-07-shopping-cart-order-payos.puml
   git commit -m "docs: add promo flow to payOS checkout sequence"
   ```

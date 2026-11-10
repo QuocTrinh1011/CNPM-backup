@@ -13,7 +13,7 @@
 ### Task 1: Add the Customer Use Case Diagram Source
 
 **Files:**
-- Create: `docs/diagrams/customer/III-00-customer-use-case.puml`
+- Create: `docs/archive/diagrams/customer/use-case/plantuml/III-00-customer-use-case.puml`
 
 - [ ] **Step 1: Write the PlantUML source**
 
@@ -26,14 +26,14 @@ Run a source check for one `@startuml` and one `@enduml`, balanced braces, all e
 - [ ] **Step 3: Commit the diagram source**
 
 ```text
-git add docs/diagrams/customer/III-00-customer-use-case.puml
+git add docs/archive/diagrams/customer/use-case/plantuml/III-00-customer-use-case.puml
 git commit -m "docs: add customer use case diagram source"
 ```
 
 ### Task 2: Render and Review the Diagram PNG
 
 **Files:**
-- Create: `docs/diagrams/customer/III-00-customer-use-case.png`
+- Create: `docs/archive/diagrams/customer/use-case/images/III-00-customer-use-case.png`
 
 - [ ] **Step 1: Render the approved PlantUML source**
 
@@ -46,14 +46,14 @@ Open the PNG at full resolution and check that actors, use-case labels, relation
 - [ ] **Step 3: Commit the PNG**
 
 ```text
-git add docs/diagrams/customer/III-00-customer-use-case.png
+git add docs/archive/diagrams/customer/use-case/images/III-00-customer-use-case.png
 git commit -m "docs: render customer use case diagram"
 ```
 
 ### Task 3: Build the Detailed Customer Use Case Specifications
 
 **Files:**
-- Create: `docs/use-cases/customer-use-case-specifications.docx`
+- Create: `docs/archive/use-cases/customer/customer-use-case-specifications.docx`
 - Create: `tools/build_customer_usecase_specifications.py`
 
 - [ ] **Step 1: Prepare the document builder**
@@ -107,7 +107,7 @@ Verify that the diagram, Word document, and any documented generator contain onl
 Tasks 1 and 2 already commit the diagram source and PNG. Commit only the remaining DOCX, builder, or revision files created after those commits:
 
 ```text
-git add docs/use-cases/customer-use-case-specifications.docx tools/build_customer_usecase_specifications.py
+git add docs/archive/use-cases/customer/customer-use-case-specifications.docx tools/build_customer_usecase_specifications.py
 git commit -m "docs: complete customer use case specifications"
 ```
 
