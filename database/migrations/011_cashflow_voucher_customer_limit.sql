@@ -1,5 +1,5 @@
 BEGIN;
--- Apply after migration_refunds_abandoned_payos.sql. No historical dates/usages are inferred.
+-- Apply after 010_refunds_abandoned_payos.sql. No historical dates/usages are inferred.
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ;
 ALTER TABLE store_vouchers ADD COLUMN IF NOT EXISTS per_customer_limit INTEGER
     CHECK (per_customer_limit IS NULL OR per_customer_limit > 0);
