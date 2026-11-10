@@ -136,7 +136,12 @@ Luồng chung: **Ba portal React → REST API Spring Boot → PostgreSQL**. PayO
 ```text
 backend/               Ứng dụng Spring Boot, REST API và test backend
 frontend/              Ba portal React, API client, CSS và test frontend
-database/              Schema, dữ liệu mẫu, migration và tài liệu database
+database/
+├── schema.sql          Schema PostgreSQL khởi tạo
+├── seed/               Dữ liệu minh họa
+├── migrations/         Migration đánh số và README thứ tự chạy
+├── maintenance/        Script bảo trì cấu trúc cũ
+└── backup/             Ghi chú backup/restore
 docs/                  Yêu cầu, thiết kế, sơ đồ và hướng dẫn chức năng CRM
 tests/                 Tài liệu/kịch bản kiểm thử bổ sung
 .github/workflows/     Quy trình CI và kiểm tra mã nguồn
@@ -161,7 +166,7 @@ cd do-an-htttdn-crm
 ```powershell
 psql -U postgres -c "CREATE DATABASE htttdn;"
 psql -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/schema.sql
-psql -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/seed_data.sql
+psql -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/seed/seed_data.sql
 ```
 
 `schema.sql` là cấu trúc khởi tạo hiện tại; `seed_data.sql` thêm dữ liệu minh họa để demo. Không chạy seed tùy tiện trên dữ liệu thật.
@@ -170,19 +175,20 @@ Tài khoản Admin minh họa do seed tạo là `admin@shop.com`, mật khẩu m
 
 ### 3. Nâng cấp database đã có
 
-Sao lưu, xác định phiên bản schema đã triển khai và đọc migration liên quan trước khi thực hiện. Không thay việc nâng cấp bằng cách xóa database hoặc chạy lại mọi script. Các nhóm migration có trong repository:
+Sao lưu, xác định phiên bản schema đã triển khai và đọc migration liên quan trước khi thực hiện. Không thay việc nâng cấp bằng cách xóa database hoặc chạy lại mọi script. Danh sách đầy đủ, thứ tự và phụ thuộc nằm trong [database/migrations/README.md](database/migrations/README.md).
 
 | Nhóm chức năng | Script |
 | --- | --- |
-| Nền tảng tài khoản/portal | `migration_admin_user_split.sql`, `migration_manager_portal.sql` |
-| Khảo sát, phản hồi và voucher | `migration_survey_management.sql`, `migration_feedback_moderation.sql`, `migration_voucher_management.sql`, `migration_review_survey_rewards.sql` |
-| Thanh toán và đổi trả | `migration_payos_qr.sql`, `migration_payos_attempts.sql`, `migration_return_management.sql` |
-| Chăm sóc khách hàng | `migration_customer_care.sql` → `migration_care_sources.sql` → `migration_care_outcomes.sql` → `migration_care_reminders.sql` |
-| Nhật ký và phiếu hỗ trợ | `migration_audit_logs.sql`, `migration_support_tickets.sql` |
+| Nền tảng tài khoản/portal | `001_admin_user_split.sql`, `002_manager_portal.sql` |
+| Khảo sát, phản hồi và voucher | `003_survey_management.sql`, `004_feedback_moderation.sql`, `005_voucher_management.sql`, `006_review_survey_rewards.sql` |
+| Thanh toán và đổi trả | `007_payos_qr.sql`, `008_payos_attempts.sql`, `009_return_management.sql` |
+| Hoàn tiền và dòng tiền | `010_refunds_abandoned_payos.sql`, `011_cashflow_voucher_customer_limit.sql` |
+| Chăm sóc khách hàng | `012_customer_care.sql` → `013_care_sources.sql` → `014_care_outcomes.sql` → `015_care_reminders.sql` |
+| Nhật ký và phiếu hỗ trợ | `016_audit_logs.sql`, `017_support_tickets.sql` |
 
-Các script nằm trong `database/`. Migration nhắc hạn cần bảng công việc và thông báo có trước; migration hỗ trợ cần các bảng tài khoản, đơn hàng và thông báo. Backend có ghi audit cần bảng nhật ký trước khi thực hiện nghiệp vụ mới. Xem hướng dẫn từng chức năng ở mục [Tài liệu chi tiết](#tài-liệu-chi-tiết).
+Các script nằm trong `database/migrations/`. Migration nhắc hạn cần bảng công việc chăm sóc và thông báo nền có trước; phiếu hỗ trợ cần các bảng nền khách hàng, đơn hàng và thông báo. Backend có ghi audit cần bảng nhật ký trước khi thực hiện nghiệp vụ mới. Xem hướng dẫn từng chức năng ở mục [Tài liệu chi tiết](#tài-liệu-chi-tiết).
 
-`cleanup_legacy.sql` dành cho dữ liệu/cấu trúc cũ, **không phải bước cài đặt mặc định**. Chỉ dùng khi đã hiểu nội dung, có bản sao lưu và đã kiểm thử trên bản sao. Khởi động lại backend sau khi cập nhật migration/mã nguồn; chạy SQL không tự nạp endpoint mới vào tiến trình Java đang chạy.
+`database/maintenance/cleanup_legacy.sql` dành cho dữ liệu/cấu trúc cũ, **không phải bước cài đặt mặc định**. Chỉ dùng khi đã hiểu nội dung, có bản sao lưu và đã kiểm thử trên bản sao. Khởi động lại backend sau khi cập nhật migration/mã nguồn; chạy SQL không tự nạp endpoint mới vào tiến trình Java đang chạy.
 
 ### 4. Chạy backend
 

@@ -3,7 +3,7 @@
 ## Triển khai
 
 1. Giữ backend cũ dừng trong lúc cập nhật. Sao lưu database theo quy trình đang dùng.
-2. Chạy `database/migration_care_reminders.sql` sau các migration công việc chăm sóc trước đây. Script chỉ bổ sung hai cột nullable, khóa ngoại và index trên bảng thông báo hiện có; không tạo bảng nghiệp vụ mới hoặc cập nhật lịch sử.
+2. Chạy `database/migrations/015_care_reminders.sql` sau các migration công việc chăm sóc trước đây. Script chỉ bổ sung hai cột nullable, khóa ngoại và index trên bảng thông báo hiện có; không tạo bảng nghiệp vụ mới hoặc cập nhật lịch sử.
 3. Build/khởi động lại backend rồi frontend Manager (cổng 5175). Không cần thay đổi `application.yml`.
 
 Migration **không được tự chạy** bởi tính năng này. Nếu chưa cài migration, scheduler ghi cảnh báo và bỏ qua; API thông báo mới cần migration để hoạt động. Khi cần dừng tác vụ nhắc tạm thời có thể đặt biến môi trường `CRM_CARE_REMINDERS_ENABLED=false`; mặc định bật.

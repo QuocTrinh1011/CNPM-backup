@@ -1,6 +1,6 @@
 # Quản lý đổi trả
 
-Chạy `database/migration_return_management.sql` trên PostgreSQL hiện có trước khi chạy bản mới (schema mới đã có bảng). Migration không chỉnh dữ liệu đơn cũ.
+Chạy `database/migrations/009_return_management.sql` trên PostgreSQL hiện có trước khi chạy bản mới (schema mới đã có bảng). Migration không chỉnh dữ liệu đơn cũ.
 
 Sau migration, dừng backend cũ (Ctrl+C trong terminal chạy backend), rồi chạy lại `mvn spring-boot:run` trong thư mục `backend`. Tiến trình Java đang chạy không tự nạp controller mới. Giữ cổng theo cấu hình hiện tại và bảo đảm `VITE_API_BASE_URL` của frontend trỏ đúng cổng đó; không cần sửa `application.yml`.
 

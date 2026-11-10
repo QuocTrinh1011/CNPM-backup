@@ -13,7 +13,7 @@ Manager mở `/manager/care` hoặc tab **Chăm sóc** trong hồ sơ 360°. Nú
 
 ## Database và khởi động
 
-Chạy `database/migration_customer_care.sql` trên PostgreSQL của dự án rồi khởi động lại backend. Migration thêm hai bảng và index, chạy lặp an toàn, không cập nhật dữ liệu nghiệp vụ cũ. Schema khởi tạo cũng đã có hai bảng. Giữ `application.yml`.
+Chạy `database/migrations/012_customer_care.sql` trên PostgreSQL của dự án rồi khởi động lại backend. Migration thêm hai bảng và index, chạy lặp an toàn, không cập nhật dữ liệu nghiệp vụ cũ. Schema khởi tạo cũng đã có hai bảng. Giữ `application.yml`.
 
 API chỉ MANAGER:
 

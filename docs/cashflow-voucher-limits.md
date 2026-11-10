@@ -4,8 +4,8 @@
 
 Sao lưu và kiểm tra trên môi trường thử trước khi triển khai. Với database hiện có:
 
-1. Áp dụng `database/migration_refunds_abandoned_payos.sql` của phần sổ hoàn tiền/COD trước, nếu chưa chạy.
-2. Áp dụng `database/migration_cashflow_voucher_customer_limit.sql`.
+1. Áp dụng `database/migrations/010_refunds_abandoned_payos.sql` của phần sổ hoàn tiền/COD trước, nếu chưa chạy.
+2. Áp dụng `database/migrations/011_cashflow_voucher_customer_limit.sql`.
 3. Build và khởi động lại backend, sau đó build frontend cùng phiên bản.
 
 Database mới dùng schema chuẩn `database/schema.sql`. Không cần chạy lại toàn bộ schema lên database đang có dữ liệu. Backend không tự chạy các file migration này. Đợt này không thêm bảng: chỉ thêm `orders.paid_at`, `store_vouchers.per_customer_limit`, ràng buộc và chỉ mục.

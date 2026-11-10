@@ -44,6 +44,6 @@ Admin APIs use a separate JWT flow: call `/api/admin/auth/login`, then send its 
 
 All list endpoints support `page` and `size`; users and products also support `q`, while feedback/survey/order lists support `status`.
 
-For an existing database created from an older schema, run `database/migration_admin_user_split.sql` before starting with `ddl-auto=none`. The script adds missing storefront/order columns and the refresh-token audience discriminator without deleting data.
+For an existing database created from an older schema, run `database/migrations/001_admin_user_split.sql` before starting with `ddl-auto=none`. The script adds missing storefront/order columns and the refresh-token audience discriminator without deleting data.
 
-For QR payment retry on an existing PostgreSQL database, run `database/migration_payos_qr.sql` and then `database/migration_payos_attempts.sql` before restarting the backend with `ddl-auto=none`. The latter preserves existing PayOS links as the first payment attempt. Do not rerun the full seed to migrate payments. Customer payment endpoints are `GET /api/orders/{id}/payment`, `POST /api/orders/{id}/payment/sync`, and `POST /api/orders/{id}/payment/retry`; all require the order owner's Bearer token.
+For QR payment retry on an existing PostgreSQL database, run `database/migrations/007_payos_qr.sql` and then `database/migrations/008_payos_attempts.sql` before restarting the backend with `ddl-auto=none`. The latter preserves existing PayOS links as the first payment attempt. Do not rerun the full seed to migrate payments. Customer payment endpoints are `GET /api/orders/{id}/payment`, `POST /api/orders/{id}/payment/sync`, and `POST /api/orders/{id}/payment/retry`; all require the order owner's Bearer token.

@@ -2,7 +2,7 @@
 
 ## Cài đặt
 
-Với database hiện có, chạy `database/migration_audit_logs.sql` rồi khởi động lại backend. Script chỉ bổ sung bảng và index, không sửa dữ liệu nghiệp vụ. Database cài mới dùng `database/schema.sql` đã gồm bảng này. Không cần đổi `application.yml`.
+Với database hiện có, chạy `database/migrations/016_audit_logs.sql` rồi khởi động lại backend. Script chỉ bổ sung bảng và index, không sửa dữ liệu nghiệp vụ. Database cài mới dùng `database/schema.sql` đã gồm bảng này. Không cần đổi `application.yml`.
 
 - Admin: `/admin/audit-logs`, API `GET /api/admin/audit-logs` trả toàn bộ nhật ký, gồm ADMIN, MANAGER và hai thao tác đơn hàng CUSTOMER bổ sung bên dưới.
 - Manager không có trang hoặc API tra cứu nhật ký. Thao tác Manager vẫn được ghi nhận để Admin tra cứu và hiển thị trong timeline hồ sơ 360°.

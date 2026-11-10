@@ -19,7 +19,7 @@ Tạo/hoàn thành việc không cập nhật trạng thái đơn, đổi trả,
 
 ## Cập nhật database
 
-Chạy `database/migration_care_sources.sql` sau `migration_customer_care.sql`, trước khi khởi động backend mới. Migration thêm hai cột nullable và index, chạy lặp an toàn. Không cập nhật dữ liệu cũ. Schema khởi tạo đã được bổ sung.
+Chạy `database/migrations/013_care_sources.sql` sau `database/migrations/012_customer_care.sql`, trước khi khởi động backend mới. Migration thêm hai cột nullable và index, chạy lặp an toàn. Không cập nhật dữ liệu cũ. Schema khởi tạo đã được bổ sung.
 
 ## API Manager
 

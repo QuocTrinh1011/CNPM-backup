@@ -4,7 +4,7 @@
 
 Chỉ mở rộng `customer_care_tasks` bằng `outcome`, `result_note` và `parent_task_id`. Liên kết tới công việc trước là khóa ngoại tự tham chiếu trong cùng bảng. Unique index trên parent_task_id bảo đảm mỗi việc chỉ có một việc kế tiếp. Không có bảng kết quả hoặc lịch hẹn riêng.
 
-Chạy `database/migration_care_outcomes.sql` sau migration chăm sóc/nguồn đã có, rồi khởi động lại backend. Migration chỉ thêm cột/index, chạy lặp an toàn, không UPDATE dữ liệu cũ. Schema cài mới cũng đã được bổ sung. Không thay đổi application.yml.
+Chạy `database/migrations/014_care_outcomes.sql` sau các migration chăm sóc và nguồn đã có, rồi khởi động lại backend. Migration chỉ thêm cột/index, chạy lặp an toàn, không UPDATE dữ liệu cũ. Schema cài mới cũng đã được bổ sung. Không thay đổi application.yml.
 
 ## Hoàn thành công việc
 
