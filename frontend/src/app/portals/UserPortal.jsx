@@ -1,6 +1,4 @@
-import '../../features/storefront/styles/storefront.css';
-import '../../features/storefront/styles/storefront-figma.css';
-import '../../features/storefront/styles/storefront-refinement.css';
-import '../../features/storefront/styles/user-redesign.css';
-import '../../features/storefront/styles/customer-new-form.css';
+import '../../features/storefront/styles/storefront-base.css';
+import '../../features/storefront/styles/storefront-theme.css';
+import '../../features/storefront/styles/storefront-customer.css';
 export {default} from '../App';

@@ -642,8 +642,6 @@
   --accent-tint: #fff0e7;
   --accent-text: #b84323;
   --line-strong: #8c9890;
-  --radius-lg: 6px;
-  --shadow-card: var(--shadow-sm);
 }
 .site-shell[data-shop-theme="dark"] {
   --accent-tint: #3c302a;
