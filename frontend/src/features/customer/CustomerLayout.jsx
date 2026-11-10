@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserRound, MapPin, KeyRound, Package, Heart, Bell, ClipboardList } from 'lucide-react';
-import { customerLinks } from '../../app/routing/customer-routing';
+import { customerLinks } from '../../app/customer-routing';
 const icons = [UserRound, MapPin, KeyRound, Package, Heart, Bell, ClipboardList];
 export default function CustomerLayout({ children, pathname, user, navigate }) {
   return <main className="customer-layout">

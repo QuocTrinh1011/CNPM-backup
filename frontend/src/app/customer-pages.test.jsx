@@ -4,7 +4,7 @@ import { render, screen, fireEvent, waitFor, cleanup, within } from '@testing-li
 import { beforeEach, afterEach, expect, it, vi } from 'vitest';
 import App, { OrdersPage } from './App';
 import { api, refreshSession, signIn } from '../api/api';
-import { safeReturn } from './routing/customer-routing';
+import { safeReturn } from './customer-routing';
 vi.mock('../api/api', async original => ({ ...(await original()), api: vi.fn(), refreshSession: vi.fn(), signIn: vi.fn() }));
 const customer = { id: 19, fullName: 'Khách kiểm thử', email: 'customer@example.com' };
 const product = { id: 4, name: 'Polo kiểm thử', stock: 8, price: 200000, sizes: 'M,L', colors: 'Đen', imageUrl: '/test.png' };
