@@ -2,12 +2,12 @@
 import React from 'react';
 import {render,screen,fireEvent,cleanup} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
-import ManagerOrderDetail from './ManagerOrderDetail';
-import {OrdersPage} from '../../app/App';
-import {adminApi} from '../../api/manager-api';
-import {api} from '../../api/api';
-vi.mock('../../api/manager-api',async original=>({...await original(),adminApi:vi.fn()}));
-vi.mock('../../api/api',async original=>({...await original(),api:vi.fn()}));
+import ManagerOrderDetail from '../features/manager/ManagerOrderDetail';
+import {OrdersPage} from './App';
+import {adminApi} from '../api/manager-api';
+import {api} from '../api/api';
+vi.mock('../api/manager-api',async original=>({...await original(),adminApi:vi.fn()}));
+vi.mock('../api/api',async original=>({...await original(),api:vi.fn()}));
 afterEach(()=>{cleanup();vi.resetAllMocks();});
 const order={id:9,orderCode:9009,status:'DELIVERED',returnStatus:'REQUESTED',returnReason:'Sai size',items:[]};
 it('approves then completes without modifying delivery status and shows the history',async()=>{

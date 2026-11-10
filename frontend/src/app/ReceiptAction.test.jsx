@@ -2,9 +2,9 @@
 import React from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { it, expect, vi, afterEach } from 'vitest';
-import { ReceiptAction } from '../../app/App';
-import { api } from '../../api/api';
-vi.mock('../../api/api', async original => ({ ...await original(), api: vi.fn() }));
+import { ReceiptAction } from './App';
+import { api } from '../api/api';
+vi.mock('../api/api', async original => ({ ...await original(), api: vi.fn() }));
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
 const order = { id: 1, orderCode: 100, status: 'DELIVERED', returnStatus: 'NONE' };
 it('confirms explicitly, keeps errors retryable and updates the order', async () => {

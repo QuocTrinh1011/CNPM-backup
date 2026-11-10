@@ -3,12 +3,12 @@ import React from 'react';
 import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
 import {beforeEach,afterEach,it,vi,expect} from 'vitest';
 import ManagerApp from './ManagerApp';
-import CustomerLifecycle from './CustomerLifecycle';
-import {adminApi,adminRefreshSession} from '../../api/manager-api';
-vi.mock('../../api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
+import CustomerLifecycle from '../features/manager/CustomerLifecycle';
+import {adminApi,adminRefreshSession} from '../api/manager-api';
+vi.mock('../api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
 const user={id:7,fullName:'Khách thân thiết A',email:'a@test.vn',locked:true,completedOrders:5,completedValue:5000000,lastCompletedOrderAt:'2026-09-01T00:00:00Z',segmentation:{stage:'LOYAL',dormant:true,daysSinceLastPurchase:35}};
 const page={content:[user],totalElements:25,totalPages:3};
-const flush=async()=>act(async()=>{await import('./CustomerProfile');await vi.advanceTimersByTimeAsync(0);});
+const flush=async()=>act(async()=>{await import('../features/manager/CustomerProfile');await vi.advanceTimersByTimeAsync(0);});
 beforeEach(()=>{
  vi.useFakeTimers();vi.spyOn(document,'visibilityState','get').mockReturnValue('visible');
  adminRefreshSession.mockResolvedValue({manager:{fullName:'Manager'}});adminApi.mockReset();adminApi.mockResolvedValue(page);

@@ -3,9 +3,9 @@ import React from 'react';
 import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
 import {beforeEach,afterEach,it,expect,vi} from 'vitest';
 import ManagerApp from './ManagerApp';
-import SurveyRecipientGroup,{groupSurveyRoute,groupSurveySource} from './SurveyRecipientGroup';
-import {adminApi,adminRefreshSession} from '../../api/manager-api';
-vi.mock('../../api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
+import SurveyRecipientGroup,{groupSurveyRoute,groupSurveySource} from '../features/manager/SurveyRecipientGroup';
+import {adminApi,adminRefreshSession} from '../api/manager-api';
+vi.mock('../api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
 const preview={totalMatched:14,eligibleCount:13,lockedCount:1,recipients:{content:[{id:1,fullName:'Customer A',email:'a@test.vn'}],totalPages:2}};
 const flush=async()=>act(async()=>{await vi.advanceTimersByTimeAsync(0);});
 const complete=()=>{

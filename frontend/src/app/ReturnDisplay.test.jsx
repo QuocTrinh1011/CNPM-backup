@@ -2,11 +2,11 @@
 import React from 'react';
 import { render, screen, fireEvent, cleanup, waitFor, within } from '@testing-library/react';
 import { afterEach, it, expect, vi } from 'vitest';
-import { OrdersPage } from '../../app/App';
-import ManagerOrderDetail from './ManagerOrderDetail';
-import { displayOrderLabel } from '../../shared/utils/order-display';
-import { api } from '../../api/api';
-vi.mock('../../api/api', async original => ({...await original(),api:vi.fn()}));
+import { OrdersPage } from './App';
+import ManagerOrderDetail from '../features/manager/ManagerOrderDetail';
+import { displayOrderLabel } from '../shared/utils/order-display';
+import { api } from '../api/api';
+vi.mock('../api/api', async original => ({...await original(),api:vi.fn()}));
 afterEach(()=>{cleanup();vi.resetAllMocks();});
 const label='Đã yêu cầu đổi trả — chờ xử lý';
 const order={id:9,orderCode:9009,status:'DELIVERED',returnStatus:'NONE',paymentMethod:'COD',items:[],totalAmount:100};

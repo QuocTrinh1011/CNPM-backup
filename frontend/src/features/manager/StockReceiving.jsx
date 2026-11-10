@@ -27,7 +27,6 @@ export default function StockReceiving() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [revision, setRevision] = useState(0);
-  const [year, setYear] = useState(String(new Date().getFullYear()));
   const [detailId, setDetailId] = useState(null);
 
   const loadSuppliers = useCallback(async () => {
@@ -52,8 +51,6 @@ export default function StockReceiving() {
 
   const historyEndpoint = useCallback(() => `/api/manager/stock-receipts?page=0&size=20&revision=${revision}`, [revision]);
   const { data: history, loading: historyLoading, error: historyError, load: reloadHistory } = useManagerList(historyEndpoint);
-  const reportEndpoint = useCallback(() => `/api/manager/reports/inventory-expenses?year=${encodeURIComponent(year)}`, [year, revision]);
-  const { data: report, loading: reportLoading, error: reportError, load: reloadReport } = useManagerList(reportEndpoint);
   const detailEndpoint = useCallback(() => `/api/manager/stock-receipts/${detailId}`, [detailId]);
   const { data: detail, loading: detailLoading, error: detailError } = useManagerList(detailEndpoint, { enabled: detailId !== null });
 
@@ -91,7 +88,7 @@ export default function StockReceiving() {
       });
       setNotice(`Đã xác nhận ${result.receiptCode}; đã cộng tồn kho và ghi nhận ${money(result.totalCost)} chi phí nhập hàng.`);
       setLines([newLine()]); setNote(''); setReceivedAt(today()); setRevision(value => value + 1);
-      await Promise.all([reloadHistory(true), reloadReport(true)]);
+      await reloadHistory(true);
     } catch (failure) { setError(failure.message); }
     finally { setSaving(false); }
   };
@@ -108,13 +105,6 @@ export default function StockReceiving() {
 
   return <section className="admin-panel stock-receiving-page">
     <div className="stock-page-heading"><div><span className="stock-kicker"><PackageCheck size={15}/> KHO HÀNG</span><h2>Nhập kho</h2><p>Tạo phiếu nhập theo nhà cung cấp. Xác nhận phiếu sẽ cộng tồn kho và ghi lại giá trị hàng nhập.</p></div></div>
-
-    <section className="stock-expense-card" aria-labelledby="stock-expense-title">
-      <div className="stock-section-heading"><div><h3 id="stock-expense-title">Chi phí nhập hàng theo quý</h3><p>Thống kê theo ngày nhận hàng, tính từ các phiếu đã xác nhận.</p></div><label>Năm <input type="number" min="2000" max={new Date().getFullYear() + 1} value={year} onChange={event => setYear(event.target.value)} /></label></div>
-      {reportError && <p className="stock-error" role="alert">{reportError}<button type="button" className="admin-action" onClick={() => reloadReport()}>Tải lại</button></p>}
-      <div className="stock-table-scroll"><table className="stock-quarter-table"><thead><tr><th>Năm {report?.year || year}</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Cả năm</th></tr></thead><tbody><tr><th>Tổng chi nhập kho</th>{[1, 2, 3, 4].map(q => <td key={q}>{reportLoading && !report ? '…' : money(report?.quarters?.find(row => row.quarter === q)?.totalCost)}</td>)}<td><strong>{reportLoading && !report ? '…' : money(report?.totalCost)}</strong></td></tr></tbody></table></div>
-      <small className="stock-note">Đây là giá trị hàng nhận theo phiếu, chưa trừ hàng trả nhà cung cấp và chưa tính chi phí vận hành. Chỉ số này chưa phải lợi nhuận.</small>
-    </section>
 
     <div className="stock-work-grid">
       <form className="stock-form-card" onSubmit={submit}>

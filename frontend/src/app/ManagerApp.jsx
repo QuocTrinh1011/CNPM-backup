@@ -1,27 +1,19 @@
-import { hasReturn, showReturn, displayOrderLabel, returnLabel } from '../../shared/utils/order-display';
-import {useManagerFilters,managerQuery,vietnamDateRange} from '../../shared/hooks/useManagerFilters';
-import ManagerOrderDetail from './ManagerOrderDetail';
-import SourceCareCreator from './SourceCareCreator';
-import ManagerMyTasks,{MyTaskSummary,CareTaskDetail} from './ManagerMyTasks';
-import ManagerNotificationBell from './ManagerNotificationBell';
-import CustomerLifecycle, {CustomerLifecycleFilters} from './CustomerLifecycle';
-import { useManagerResource, useManagerList, ManagerSyncStatus, useManagerReadPause } from "../../shared/hooks/useManagerResource";
-import {CustomerCreate,SurveyAudience} from './ManagerTools';
-import SurveyRecipientGroup,{groupSurveyRoute,groupSurveySource} from './SurveyRecipientGroup';
-import '../../shared/styles/internal-portal.css';
+import { hasReturn, showReturn, displayOrderLabel, returnLabel } from '../shared/utils/order-display';
+import {useManagerFilters,managerQuery,vietnamDateRange} from '../shared/hooks/useManagerFilters';
+import ManagerOrderDetail from '../features/manager/ManagerOrderDetail';
+import CustomerLifecycle, {CustomerLifecycleFilters} from '../features/manager/CustomerLifecycle';
+import { useManagerList, ManagerSyncStatus, useManagerReadPause } from "../shared/hooks/useManagerResource";
+import {CustomerCreate,SurveyAudience} from '../features/manager/ManagerTools';
+import SurveyRecipientGroup,{groupSurveyRoute,groupSurveySource} from '../features/manager/SurveyRecipientGroup';
+import '../shared/styles/internal-portal.css';
 import { TicketPercent } from "lucide-react";
-import { canAdvanceOrder, isFinalOrder } from './order-transitions';
-import SurveyRewardEditor, { RewardFields, emptyReward } from './SurveyRewardEditor';
+import { canAdvanceOrder, isFinalOrder } from '../features/manager/order-transitions';
+import SurveyRewardEditor, { RewardFields, emptyReward } from '../features/manager/SurveyRewardEditor';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-const AdminVouchers = React.lazy(() => import('../admin/AdminVouchers'));
-const CustomerProfile = React.lazy(() => import('./CustomerProfile'));
-const CustomerCare = React.lazy(() => import('./CustomerCare'));
-const CareDashboard = React.lazy(() => import('./CareDashboard'));
-const RetentionReport = React.lazy(() => import('./RetentionReport'));
-const SupportTickets = React.lazy(()=>import('../support-tickets/SupportTickets'));
-const SalesStatistics = React.lazy(()=>import('./SalesStatistics'));
-const StockReceiving = React.lazy(()=>import('./StockReceiving'));
-const ManagerInvoices = React.lazy(()=>import('./ManagerInvoices'));
+const AdminVouchers = React.lazy(() => import('../features/admin/AdminVouchers'));
+const CustomerProfile = React.lazy(() => import('../features/manager/CustomerProfile'));
+const StockReceiving = React.lazy(()=>import('../features/manager/StockReceiving'));
+const ManagerInvoices = React.lazy(()=>import('../features/manager/ManagerInvoices'));
 import {
   Activity,
   LayoutDashboard,
@@ -38,7 +30,6 @@ import {
   Sun,
   Moon,
   ExternalLink,
-  DollarSign,
   ArrowRight,
   RefreshCw,
   CircleAlert,
@@ -48,7 +39,6 @@ import {
   Filter,
   CheckCircle2,
   TrendingUp,
-  AlertTriangle,
   Eye,
   SlidersHorizontal,
   ChevronRight,
@@ -61,7 +51,7 @@ import {
   adminRefreshSession,
   adminSignIn,
   adminSignOut,
-} from "../../api/manager-api";
+} from "../api/manager-api";
 
 const money = (value) =>
   new Intl.NumberFormat("vi-VN", {
@@ -73,34 +63,24 @@ const pageData = (value) => value?.content || [];
 const navItems = [
   ["dashboard", "Tổng quan"],
   ["users", "Khách hàng"],
-  ["care", "Chăm sóc khách hàng"],
-  ["my-tasks", "Việc của tôi"],
-  ["care-dashboard", "Hiệu quả chăm sóc"],
   ["products", "Sản phẩm"],
   ["stock-receipts", "Nhập kho"],
   ["orders", "Đơn hàng"],
   ["invoices", "Hóa đơn"],
   ["feedback", "Phản hồi"],
-  ["support-tickets", "Phiếu hỗ trợ"],
   ["surveys", "Khảo sát"],
-  ["reports", "Báo cáo"],
   ["vouchers", "Mã giảm giá"],
 ];
 const validSections = new Set(navItems.map(([key]) => key));
 const navIcons = {
   dashboard: LayoutDashboard,
   users: UsersIcon,
-  care: ClipboardList,
-  'my-tasks': ClipboardList,
-  'care-dashboard': Activity,
   products: Package,
   'stock-receipts': Package,
   orders: ShoppingCart,
   invoices: ReceiptText,
   feedback: MessageSquare,
-  'support-tickets': MessageSquare,
   surveys: ClipboardList,
-  reports: Activity,
   vouchers: TicketPercent,
 };
 const statusLabels = {
@@ -353,7 +333,6 @@ export default function ManagerApp() {
             </span>
           </div>
           <div className="admin-topbar-actions">
-            <ManagerNotificationBell go={go} location={path}/>
             <span className="admin-live-dot">DỮ LIỆU TRỰC TIẾP</span>
             <button
               className="manager-theme-toggle"
@@ -394,10 +373,7 @@ export default function ManagerApp() {
           </p>
         </div>
         <ManagerSyncStatus />
-        {(section==='care'||section==='my-tasks')&&new URLSearchParams(path.split('?')[1]).get('taskId')&&<CareTaskDetail key={new URLSearchParams(path.split('?')[1]).get('taskId')} taskId={new URLSearchParams(path.split('?')[1]).get('taskId')} onOpenTask={id=>{const p=new URLSearchParams(path.split('?')[1]);p.set('taskId',id);go(`${section}?${p}`);}} onClose={()=>{const p=new URLSearchParams(path.split('?')[1]);p.delete('taskId');go(`${section}${p.size?'?'+p:''}`);}}/>}
         <React.Suspense fallback={<PanelLoading/>}>
-        {section === 'dashboard' && <MyTaskSummary go={go}/>}
-        {section === 'my-tasks' && <ManagerMyTasks go={go} location={path}/>}
         {section === "dashboard" && <Dashboard go={go} />}
         {section === "users" && (profileMatch ? <CustomerProfile key={profileMatch[1]} customerId={profileMatch[1]} location={path} go={go} /> : <Users notify={notify} location={path} go={go} />)}{" "}
         {section === "products" && <Products notify={notify} />}{" "}
@@ -405,12 +381,8 @@ export default function ManagerApp() {
         {section === "orders" && <Orders notify={notify} />}{" "}
         {section === "invoices" && <ManagerInvoices />}
         {section === "feedback" && <Feedback notify={notify} />}{" "}
-        {section==='support-tickets'&&<SupportTickets manager location={path} navigate={go}/>}
         {section === "surveys" && <Surveys notify={notify} location={path} go={go} />}
-        {section === "reports" && <Reports go={go} />}
         {section === "vouchers" && <AdminVouchers />}
-        {section === "care" && <CustomerCare go={go} location={path}/>}
-        {section === "care-dashboard" && <CareDashboard go={go} location={path}/>}
         </React.Suspense>
       </main>
       {notice && (
@@ -488,102 +460,8 @@ function AdminLogin({ theme, onAuthenticated, onNotice, error }) {
 const recentOrdersEndpoint = () => adminEndpoints.orders({ size: 100 });
 const orderSummaryEndpoint = () => '/api/manager/orders/summary';
 function Dashboard({ go }) {
-  const fetchDashboard = useCallback(async signal => {
-    const [revenue, users, surveys] = await Promise.all([
-      adminApi(adminEndpoints.revenue, { signal }),
-      adminApi(adminEndpoints.userReport, { signal }),
-      adminApi(adminEndpoints.surveyStats, { signal }),
-    ]);
-    return { revenue, users, surveys };
-  }, []);
-  const { data, error, refreshing, load } = useManagerResource(fetchDashboard);
-  if (error)
-    return (
-      <div className="admin-panel admin-error-state">
-        <span className="admin-state-icon">
-          <CircleAlert size={20} />
-        </span>
-        <h2>Không tải được dashboard</h2>
-        <p>{error}</p>
-        <button className="admin-primary" onClick={() => load()}>
-          THỬ LẠI
-        </button>
-      </div>
-    );
-  if (!data) return <PanelLoading />;
   return (
     <div className="admin-content">
-      {/* Dashboard Toolbar with Refresh & Status */}
-      <div className="admin-dashboard-toolbar">
-        <div className="admin-dashboard-toolbar-left">
-          <span className="admin-kpi-headline">CHỈ SỐ HOẠT ĐỘNG TOÀN HỆ THỐNG</span>
-        </div>
-        <div className="admin-dashboard-toolbar-right">
-          <button
-            type="button"
-            className="admin-btn-refresh"
-            disabled={refreshing}
-            onClick={() => load(true)}
-            title="Đồng bộ dữ liệu mới nhất"
-          >
-            <RefreshCw size={13} className={refreshing ? "admin-spinner" : ""} />
-            <span>{refreshing ? "Đang đồng bộ..." : "Cập nhật dữ liệu"}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* KPI Stat Cards */}
-      <div className="admin-stat-grid">
-        <Stat
-          label="Tổng khách hàng"
-          value={data.users.customers ?? "—"}
-          icon={UsersIcon}
-          color="blue"
-          detail="Tài khoản customer trong hệ thống"
-          onClick={() => go("users")}
-        />
-        <Stat
-          label="Giá trị đơn chưa hủy"
-          value={money(data.revenue.totalRevenue)}
-          icon={DollarSign}
-          color="green"
-          detail="Tổng giá trị đơn chưa hủy; không phải tiền đã thu"
-          onClick={() => go("reports")}
-        />
-        <Stat
-          label="Tổng đơn hàng"
-          value={data.revenue.orders ?? "—"}
-          icon={ShoppingCart}
-          color="violet"
-          detail="Tất cả trạng thái đơn hàng"
-          onClick={() => go("orders")}
-        />
-        <Stat
-          label="Khảo sát đã phát hành"
-          value={data.surveys.published ?? "—"}
-          icon={ClipboardList}
-          color="amber"
-          detail={`${data.surveys.total ?? 0} khảo sát trong hệ thống`}
-          onClick={() => go("surveys")}
-        />
-      </div>
-
-      {/* Operational Alert if Locked Customers Exist */}
-      {Number(data.users.lockedCustomers) > 0 && (
-        <div className="admin-operational-alert">
-          <div className="admin-operational-alert-icon">
-            <AlertTriangle size={18} />
-          </div>
-          <div className="admin-operational-alert-content">
-            <strong>Thông báo an toàn & tài khoản</strong>
-            <p>Hệ thống ghi nhận {data.users.lockedCustomers} tài khoản khách hàng đang bị khóa do vi phạm hoặc yêu cầu quản trị.</p>
-          </div>
-          <button type="button" className="admin-operational-alert-btn" onClick={() => go("users")}>
-            Kiểm tra tài khoản <ArrowRight size={13} />
-          </button>
-        </div>
-      )}
-
       {/* Quick Action Navigation Grid */}
       <section className="admin-panel admin-quick-actions-panel">
         <div className="admin-section-heading">
@@ -653,95 +531,9 @@ function Dashboard({ go }) {
             </div>
             <ChevronRight size={16} className="admin-quick-arrow" />
           </div>
-          <div className="admin-quick-card" role="button" tabIndex={0} onClick={() => go("reports")} title="Đến trang báo cáo khách hàng">
-            <div className="admin-quick-icon indigo">
-              <Activity size={18} />
-            </div>
-            <div className="admin-quick-text">
-              <b>Báo cáo khách hàng</b>
-              <small>Khách hàng, khảo sát & giữ chân</small>
-            </div>
-            <ChevronRight size={16} className="admin-quick-arrow" />
-          </div>
         </div>
       </section>
 
-      {/* Overview Grid: Surveys & Accounts */}
-      <div className="admin-overview-grid">
-        <section className="admin-panel admin-survey-overview">
-          <div className="admin-section-heading">
-            <div>
-              <h2>Tổng quan khảo sát</h2>
-              <p>Theo trạng thái phát hành</p>
-            </div>
-            <button className="admin-action" onClick={() => go("surveys")}>
-              Quản lý khảo sát <ArrowRight size={14} />
-            </button>
-          </div>
-          {[
-            ["Đã phát hành", data.surveys.published, "#3b82f6"],
-            ["Bản nháp", data.surveys.draft, "#8b5cf6"],
-          ].map(([label, count, color]) => {
-            const percent = data.surveys.total
-              ? Math.round((Number(count || 0) / data.surveys.total) * 100)
-              : 0;
-            return (
-              <div className="admin-metric-row" key={label}>
-                <div>
-                  <span className="admin-metric-label">
-                    <i style={{ background: color }} />
-                    {label}
-                  </span>
-                  <b>
-                    {count ?? 0}{" "}
-                    <small className="admin-metric-pct">({percent}%)</small>
-                  </b>
-                </div>
-                <div className="admin-progress">
-                  <span
-                    style={{
-                      width: `${percent}%`,
-                      background: color,
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-          <small className="admin-data-note">
-            Giá trị đơn chưa hủy không phải tiền đã thu; API hiện chưa cung cấp
-            giá trị đơn theo tháng.
-          </small>
-        </section>
-        <section className="admin-panel admin-account-overview">
-          <div className="admin-section-heading">
-            <div>
-              <h2>Tài khoản hệ thống</h2>
-              <p>Dữ liệu báo cáo hiện tại</p>
-            </div>
-            <button className="admin-action" onClick={() => go("users")}>
-              Quản lý tài khoản <ArrowRight size={14} />
-            </button>
-          </div>
-          <div className="admin-account-total">
-            <UsersIcon size={28} />
-            <strong>{data.users.customers ?? "—"}</strong>
-            <span>khách hàng</span>
-          </div>
-          <div className="admin-summary-line">
-            <span>Nhân viên quản lý</span>
-            <b>{data.users.admins ?? "—"}</b>
-          </div>
-          <div className="admin-summary-line">
-            <span>Tài khoản bị khóa</span>
-            <b style={{ color: Number(data.users.lockedCustomers) > 0 ? "#ef4444" : "inherit" }}>
-              {data.users.lockedCustomers ?? "—"}
-            </b>
-          </div>
-        </section>
-      </div>
-
-      {/* Recent Orders Component */}
       <RecentOrders go={go} />
     </div>
   );
@@ -823,27 +615,6 @@ function OrderBadge({ status, order }) {
     </span>
     {order?.finance?.reviewRequired&&<small className="payment-review-warning">Thanh toán cần kiểm tra</small>}
     </>
-  );
-}
-function Stat({ label, value, icon: Icon, color, detail, onClick }) {
-  return (
-    <div
-      className={`admin-stat ${onClick ? "is-clickable" : ""}`}
-      onClick={onClick}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      title={onClick ? `Xem chi tiết: ${label}` : undefined}
-    >
-      <div className={`admin-kpi-icon ${color}`}>
-        <Icon size={20} aria-hidden="true" />
-      </div>
-      <div className="admin-stat-body">
-        <span>{label}</span>
-        <strong>{value}</strong>
-        <small>{detail}</small>
-      </div>
-      {onClick && <ArrowRight size={14} className="admin-stat-arrow" aria-hidden="true" />}
-    </div>
   );
 }
 function PanelLoading() {
@@ -1046,7 +817,6 @@ function Users({ notify, location, go }) {
                 <CustomerCreate user={user} onSaved={load}/>
                 <button className="admin-action" onClick={() => go(`invoices?q=${encodeURIComponent(user.email || user.fullName)}`)}>Hóa đơn</button>
                 <button className="admin-action" onClick={() => go(`users/${user.id}?${new URLSearchParams({q:query,page:String(page),...Object.fromEntries(params)})}`)}>Xem hồ sơ</button>
-                {user.segmentation?.dormant&&<button className="admin-action" onClick={()=>go(`care?customerId=${user.id}`)}>Tạo chăm sóc</button>}
               </div>
             </td>
           </tr>
@@ -2126,7 +1896,6 @@ function Feedback({ notify }) {
             </td>
             <td>
               <div className="admin-feedback-actions">
-                {['NEW','IN_PROGRESS'].includes(item.status||'NEW')&&<SourceCareCreator key={item.id} type="FEEDBACK" id={item.id}/>}
                 <button
                   className="admin-action"
                   disabled={busy}
@@ -2793,236 +2562,6 @@ function Surveys({ notify, location = '', go }) {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function ReportBars({ items = [] }) {
-  return (
-    <div className="admin-report-bars">
-      {items.map((item, index) => (
-        <div key={index}>
-          <div className="admin-report-bar-label">
-            <span>{item.label}</span>
-            <b>
-              {item.count} · {item.percent}%
-            </b>
-          </div>
-          <div className="admin-report-track">
-            <div style={{ width: Math.min(100, item.percent) + "%" }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function CustomerReport() {
-  const endpoint = useCallback(() => "/api/manager/reports/customers", []);
-  const { data, loading, error, load } = useAdminList(endpoint);
-  if (loading) return <PanelLoading />;
-  if (error) return <ListError message={error} onRetry={load} />;
-  if (!data) return null;
-  return (
-    <>
-      <div className="admin-report-summary">
-        {[
-          ["Khách hàng", data.total],
-          ["Hoạt động", data.active],
-          ["Bị khóa", data.locked],
-          ["Đã khai báo tuổi", data.knownAge],
-          ["Đã khai báo sở thích", data.knownPreferences],
-        ].map(([label, value]) => (
-          <div key={label}>
-            <span>{label}</span>
-            <strong>{value}</strong>
-          </div>
-        ))}
-      </div>
-      {!data.total && <p>Chưa có dữ liệu khách hàng.</p>}
-      <div className="admin-report-columns">
-        <section>
-          <h3>Phân bố độ tuổi</h3>
-          <p>Tỷ lệ trên tổng khách hàng chưa xóa.</p>
-          <ReportBars items={data.ages} />
-        </section>
-        <section>
-          <h3>Sở thích đã khai báo</h3>
-          <p>
-            10 nội dung phổ biến nhất; gom nội dung giống nhau, không tự phân
-            loại.
-          </p>
-          <ReportBars items={data.preferences} />
-        </section>
-      </div>
-    </>
-  );
-}
-
-function TextAnswerReport({ surveyId, questionId }) {
-  const [page, setPage] = useState(0);
-  const endpoint = useCallback(
-    () =>
-      `/api/manager/reports/surveys/${surveyId}/questions/${questionId}/answers?page=${page}`,
-    [surveyId, questionId, page]
-  );
-  const { data, loading, error, load } = useAdminList(endpoint);
-  if (loading) return <PanelLoading />;
-  if (error) return <ListError message={error} onRetry={load} />;
-  return (
-    <>
-      <ul className="admin-text-answers">
-        {(data?.content || []).map((answer, i) => (
-          <li key={i}>{answer}</li>
-        ))}
-      </ul>
-      {!data?.content?.length && <p>Chưa có câu trả lời.</p>}
-      <PageControls
-        page={page}
-        totalPages={data?.totalPages || 0}
-        totalElements={data?.totalElements}
-        onPage={setPage}
-      />
-    </>
-  );
-}
-
-function SurveyResult({ id }) {
-  const endpoint = useCallback(
-    () => `/api/manager/reports/surveys/${id}/results`,
-    [id]
-  );
-  const { data, loading, error, load } = useAdminList(endpoint);
-  if (loading) return <PanelLoading />;
-  if (error) return <ListError message={error} onRetry={load} />;
-  if (!data) return null;
-  return (
-    <div>
-      <h3>{data.title}</h3>
-      <p>
-        {data.responses} lượt trả lời ·{" "}
-        {data.status === "PUBLISHED" ? "Đã phát hành" : "Bản nháp"}
-      </p>
-      {!data.responses && <p>Khảo sát chưa có người trả lời.</p>}
-      {(data.questions || []).map((q, i) => (
-        <section className="admin-report-question" key={q.id}>
-          <h4>
-            {i + 1}. {q.text}
-          </h4>
-          <p>
-            {q.type === "MULTIPLE_CHOICE"
-              ? "Chọn nhiều đáp án"
-              : ["SINGLE", "SINGLE_CHOICE"].includes(q.type)
-              ? "Chọn một đáp án"
-              : "Văn bản"}{" "}
-            · Đã trả lời: {q.answered} · Bỏ qua: {q.skipped}
-          </p>
-          {(q.invalid > 0 || q.invalidOptions) && (
-            <p className="danger-text">
-              Có {q.invalid} bài có đáp án không hợp lệ.
-              {q.invalidOptions && " Cấu hình phương án cũ không hợp lệ."}
-            </p>
-          )}
-          {["SINGLE", "SINGLE_CHOICE", "MULTIPLE_CHOICE"].includes(q.type) ? (
-            <>
-              <ReportBars items={q.options} />
-              <p>
-                Tỷ lệ trên {q.answered} người trả lời câu này.
-                {q.type === "MULTIPLE_CHOICE" &&
-                  " Tổng tỷ lệ có thể vượt 100%."}
-              </p>
-            </>
-          ) : (
-            <TextAnswerReport surveyId={id} questionId={q.id} />
-          )}
-        </section>
-      ))}
-    </div>
-  );
-}
-
-function SurveyReports() {
-  const [page, setPage] = useState(0);
-  const [selected, setSelected] = useState(null);
-  const endpoint = useCallback(
-    () => `/api/manager/reports/surveys?page=${page}`,
-    [page]
-  );
-  const { data, loading, error, load } = useAdminList(endpoint);
-  return (
-    <>
-      {loading ? (
-        <PanelLoading />
-      ) : error ? (
-        <ListError message={error} onRetry={load} />
-      ) : (
-        <>
-          <label className="admin-report-select">
-            Chọn khảo sát
-            <select
-              value={selected || ""}
-              onChange={(e) => setSelected(e.target.value || null)}
-            >
-              <option value="">Chọn khảo sát để xem kết quả</option>
-              {(data?.content || []).map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.title} ·{" "}
-                  {s.status === "PUBLISHED" ? "Đã phát hành" : "Bản nháp"} ·{" "}
-                  {s.responses} lượt
-                </option>
-              ))}
-            </select>
-          </label>
-          {!data?.content?.length && <p>Chưa có khảo sát.</p>}
-          <PageControls
-            page={page}
-            totalPages={data?.totalPages || 0}
-            totalElements={data?.totalElements}
-            onPage={(p) => {
-              setSelected(null);
-              setPage(p);
-            }}
-          />
-        </>
-      )}
-      {selected && <SurveyResult key={selected} id={selected} />}
-    </>
-  );
-}
-
-export function Reports({go}) {
-  const [filters, change] = useManagerFilters({tab:'customers'});
-  const tab = ['customers','surveys','retention','sales'].includes(filters.tab) ? filters.tab : 'customers';
-  const setTab = next => change({tab:next,page:''});
-  return (
-    <div className="admin-panel">
-      <PanelTitle
-        title="Báo cáo"
-        subtitle={tab==='sales'?'Tổng hợp thu, chi nhập kho và doanh thu theo nhân viên, sản phẩm.':'Dữ liệu tổng hợp toàn bộ thời gian.'}
-      />
-      <div className="admin-report-tabs">
-        <button
-          className={tab === "customers" ? "admin-primary" : "admin-action"}
-          aria-pressed={tab === "customers"}
-          onClick={() => setTab("customers")}
-        >
-          <UsersIcon size={15} aria-hidden="true" />
-          Khách hàng
-        </button>
-        <button
-          className={tab === "surveys" ? "admin-primary" : "admin-action"}
-          aria-pressed={tab === "surveys"}
-          onClick={() => setTab("surveys")}
-        >
-          <ClipboardList size={15} aria-hidden="true" />
-          Kết quả khảo sát
-        </button>
-        <button className={tab === 'retention' ? 'admin-primary' : 'admin-action'} aria-pressed={tab === 'retention'} onClick={() => setTab('retention')}>
-          <TrendingUp size={15} aria-hidden="true" />Giữ chân khách hàng
-        </button>
-        <button className={tab==='sales'?'admin-primary':'admin-action'} aria-pressed={tab==='sales'} onClick={()=>setTab('sales')}><TrendingUp size={15} aria-hidden="true"/>Thống kê doanh thu</button>
-      </div>
-      {tab === 'sales' ? <React.Suspense fallback={<PanelLoading/>}><SalesStatistics/></React.Suspense> : tab === 'customers' ? <CustomerReport /> : tab === 'surveys' ? <SurveyReports /> : tab === 'retention' ? <React.Suspense fallback={<PanelLoading />}><RetentionReport go={go} /></React.Suspense> : null}
     </div>
   );
 }

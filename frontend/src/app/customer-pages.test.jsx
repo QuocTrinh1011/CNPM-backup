@@ -4,7 +4,7 @@ import { render, screen, fireEvent, waitFor, cleanup, within } from '@testing-li
 import { beforeEach, afterEach, expect, it, vi } from 'vitest';
 import App, { OrdersPage } from './App';
 import { api, refreshSession, signIn } from '../api/api';
-import { safeReturn } from './customer-routing';
+import { safeReturn } from '../shared/routing/customer-routing';
 vi.mock('../api/api', async original => ({ ...(await original()), api: vi.fn(), refreshSession: vi.fn(), signIn: vi.fn() }));
 const customer = { id: 19, fullName: 'Khách kiểm thử', email: 'customer@example.com' };
 const product = { id: 4, name: 'Polo kiểm thử', stock: 8, price: 200000, sizes: 'M,L', colors: 'Đen', imageUrl: '/test.png' };
@@ -20,7 +20,6 @@ const respond = async path => {
   if (path === '/api/surveys/7') return survey;
   if (path === '/api/surveys/mine' || path === '/api/surveys') return [survey];
   if (path.startsWith('/api/orders?')) return { content: [], totalPages: 0, totalElements: 0 };
-  if (path.startsWith('/api/support-tickets?')) return {content:[],totalPages:0,totalElements:0};
   return {};
 };
 beforeEach(() => { vi.clearAllMocks(); localStorage.clear(); window.history.replaceState({}, '', '/'); window.scrollTo = vi.fn(); refreshSession.mockResolvedValue({ customer }); api.mockImplementation(respond); signIn.mockResolvedValue({ customer }); });
@@ -49,13 +48,19 @@ it.each([
   ['/tai-khoan', 'Khách kiểm thử'], ['/tai-khoan/dia-chi', 'Địa chỉ của tôi'],
   ['/tai-khoan/doi-mat-khau', 'Đổi mật khẩu'], ['/yeu-thich', 'Món đồ bạn thích.'],
   ['/thong-bao', 'Thông báo'], ['/khao-sat/7', 'Gu của bạn'], ['/don-hang', 'Đơn hàng của tôi'],
-  ['/ho-tro', 'Yêu cầu hỗ trợ của tôi'],
 ])('opens %s directly as a page with the shared account menu', async (path, heading) => {
   window.history.replaceState({}, '', path); render(<App/>);
   await screen.findByRole('heading', { name: heading });
   expect(screen.getByRole('navigation', { name: 'Chức năng tài khoản' })).toBeTruthy();
   expect(document.querySelector('.modal-backdrop,.drawer-backdrop')).toBeNull();
   expect(api.mock.calls.every(([url]) => !url.startsWith('/api/admin'))).toBe(true);
+});
+
+it('shows not found for the retired support route', async () => {
+  window.history.replaceState({}, '', '/ho-tro'); render(<App/>);
+  await screen.findByText('Không tìm thấy trang');
+  expect(screen.queryByText('Yêu cầu hỗ trợ')).toBeNull();
+  expect(api.mock.calls.every(([url]) => !url.startsWith('/api/support-tickets'))).toBe(true);
 });
 
 it('returns to the protected URL after login without losing its query', async () => {

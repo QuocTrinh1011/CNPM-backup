@@ -2,10 +2,10 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import AdminVouchers from "./AdminVouchers";
-import AdminApp from "../manager/ManagerApp";
-import { adminApi, adminRefreshSession } from "../../api/manager-api";
-vi.mock("../../api/manager-api",async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
+import AdminVouchers from "../features/admin/AdminVouchers";
+import ManagerApp from "./ManagerApp";
+import { adminApi, adminRefreshSession } from "../api/manager-api";
+vi.mock("../api/manager-api",async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
 const voucher={id:1,code:"SHOP10",description:"Khuyến mãi",discountType:"PERCENTAGE",discountValue:10,minOrderAmount:0,usedCount:1,usageLimit:10,active:true,state:"ACTIVE",totalDiscount:10000};
 beforeEach(()=>{vi.resetAllMocks();adminApi.mockResolvedValue({content:[voucher],totalPages:2});adminRefreshSession.mockResolvedValue({manager:{fullName:"Admin"}});});
 afterEach(cleanup);
@@ -13,7 +13,7 @@ it('defaults new vouchers to one use per customer but preserves old unlimited se
  render(<AdminVouchers/>);await screen.findByText('SHOP10');fireEvent.click(screen.getByText('Tạo mã'));expect(screen.getByLabelText('Tối đa mỗi khách').value).toBe('1');fireEvent.click(screen.getByText('Đóng'));fireEvent.click(screen.getByText('Sửa'));expect(screen.getByLabelText('Tối đa mỗi khách').value).toBe('');fireEvent.change(screen.getByLabelText('Tối đa mỗi khách'),{target:{value:'1'}});expect(screen.getByText(/Giảm giới hạn chỉ áp dụng/)).toBeTruthy();
 });
 it("renders via direct admin route, filters, searches and paginates",async()=>{
-  window.history.replaceState({},"","/manager/vouchers");render(<AdminApp/>);
+  window.history.replaceState({},"","/manager/vouchers");render(<ManagerApp/>);
   await screen.findByText("SHOP10");
   fireEvent.change(screen.getByLabelText("Tìm mã giảm giá"),{target:{value:"SHOP"}});
   fireEvent.click(screen.getByLabelText("Tìm kiếm"));

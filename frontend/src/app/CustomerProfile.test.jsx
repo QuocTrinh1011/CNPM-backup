@@ -3,11 +3,11 @@ import React from 'react';
 import { act, cleanup, render, screen, fireEvent, within } from '@testing-library/react';
 import { beforeEach, afterEach, it, vi, expect } from 'vitest';
 import ManagerApp from './ManagerApp';
-import { adminApi, adminRefreshSession } from '../../api/manager-api';
-vi.mock('../../api/manager-api', async original => ({ ...await original(), adminApi: vi.fn(), adminRefreshSession: vi.fn() }));
+import { adminApi, adminRefreshSession } from '../api/manager-api';
+vi.mock('../api/manager-api', async original => ({ ...await original(), adminApi: vi.fn(), adminRefreshSession: vi.fn() }));
 const profile = (name='Customer A') => ({ customer: { id: 1, fullName: name, email: 'customer@test.vn', locked: true, lockReason: 'Lý do thử nghiệm' }, summary: { totalOrders: 2, completedOrders: 1, cancelledOrders: 1, returnOrders: 0, completedValue: 90000 } });
 const page = (content=[]) => ({ content, totalElements: content.length, totalPages: content.length ? 1 : 0 });
-const flush = async () => { await act(async () => { await import('./CustomerProfile'); await vi.advanceTimersByTimeAsync(0); }); };
+const flush = async () => { await act(async () => { await import('../features/manager/CustomerProfile'); await vi.advanceTimersByTimeAsync(0); }); };
 it('loads the activity timeline on its own URL and opens linked orders',async()=>{
   window.history.replaceState({},'','/manager/users/1?tab=activities&q=Alice&page=2');
   adminApi.mockImplementation(async url=>url.endsWith('/profile')?profile():url.includes('/activities')?page([{id:'ORDER:9:CREATED',type:'ORDER',targetId:9,action:'CREATED',createdAt:'2026-10-16T01:00:00Z'}]):{id:9,orderCode:9009,status:'COMPLETED',items:[]});

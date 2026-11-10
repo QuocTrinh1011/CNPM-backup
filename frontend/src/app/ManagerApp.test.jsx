@@ -3,9 +3,9 @@ import React, { StrictMode } from "react";
 import { act, cleanup, configure, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ManagerApp, { useAdminList } from "./ManagerApp";
-import { adminApi, adminRefreshSession } from "../../api/manager-api";
+import { adminApi, adminRefreshSession } from "../api/manager-api";
 
-vi.mock("../../api/manager-api", async (importOriginal) => ({
+vi.mock("../api/manager-api", async (importOriginal) => ({
   ...(await importOriginal()),
   adminApi: vi.fn(),
   adminRefreshSession: vi.fn(),
@@ -26,6 +26,26 @@ beforeEach(() => {
   adminApi.mockResolvedValue({ content: [] });
 });
 afterEach(cleanup);
+it('hides retired care, support, task, and report modules', async () => {
+  window.history.replaceState({}, "", "/manager");
+  render(<ManagerApp />);
+  const navigation = await screen.findByRole("navigation", { name: "Chức năng quản lý" });
+  for (const label of ["Chăm sóc khách hàng", "Việc của tôi", "Hiệu quả chăm sóc", "Phiếu hỗ trợ", "Báo cáo"]) {
+    expect([...navigation.querySelectorAll("a,button")].some(item => item.textContent.includes(label))).toBe(false);
+  }
+  expect(screen.queryByRole("heading", { name: "Việc của tôi" })).toBeNull();
+  expect(screen.queryByRole("heading", { name: "Báo cáo khách hàng" })).toBeNull();
+});
+
+it.each(["care", "my-tasks", "care-dashboard", "support-tickets", "reports"])("redirects retired manager route /manager/%s", async section => {
+  window.history.replaceState({}, "", `/manager/${section}`);
+  render(<ManagerApp />);
+  await waitFor(() => expect(window.location.pathname).toBe("/manager"));
+  expect(screen.queryByText("Chăm sóc khách hàng")).toBeNull();
+  expect(screen.queryByText("Phiếu hỗ trợ")).toBeNull();
+  expect(screen.queryByText("Báo cáo")).toBeNull();
+});
+
 it('removes manager supplier tools and redirects the retired route', async () => {
   window.history.replaceState({}, '', '/manager/suppliers');
   render(<ManagerApp/>);
@@ -276,33 +296,15 @@ describe("manager navigation", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("loads customer analytics and switches to anonymous survey results", async () => {
-    window.history.replaceState({}, "", "/manager/reports");
-    adminApi.mockImplementation(async url => {
-      if (url.endsWith("/customers")) return { total: 4, active: 3, locked: 1, knownAge: 2, knownPreferences: 1, ages: [{ label: "18–24", count: 2, percent: 50 }], preferences: [] };
-      if (url.includes("/results")) return { title: "Khảo sát thử", responses: 2, questions: [{ id: 1, text: "Chọn màu", type: "MULTIPLE_CHOICE", answered: 2, skipped: 0, invalid: 0, options: [{ label: "Đen", count: 2, percent: 100 }] }] };
-      return { content: [{ id: 8, title: "Khảo sát thử", status: "PUBLISHED", responses: 2 }], totalPages: 1 };
-    });
-    render(<ManagerApp />, { wrapper });
-    await screen.findByText("Phân bố độ tuổi");
-    fireEvent.click(screen.getByRole("button", { name: "Kết quả khảo sát" }));
-    fireEvent.change(await screen.findByLabelText("Chọn khảo sát"), { target: { value: "8" } });
-    await screen.findByText("Đen");
-    expect(screen.getByText(/Tổng tỷ lệ có thể vượt 100%/)).toBeTruthy();
-    expect(adminApi.mock.calls.every(([url]) => url.startsWith("/api/manager/reports/") || url === '/api/manager/notifications/summary')).toBe(true);
-  });
-
-  it("renders actual report values and recent orders, and opens their management page", async () => {
+  it("renders recent orders without report metrics and opens their management page", async () => {
     adminApi.mockImplementation(async (url) => {
-      if (url.includes("reports/revenue")) return { totalRevenue: 1250000, orders: 7 };
-      if (url.includes("reports/users")) return { customers: 42, admins: 2, lockedCustomers: 1 };
-      if (url.includes("surveys/stats")) return { total: 4, published: 3, draft: 1 };
       return { content: [{ id: 11, orderCode: "ORDER-11", customer: { fullName: "Khách kiểm thử" }, totalAmount: 1250000, status: "CONFIRMED" }] };
     });
     render(<ManagerApp />, { wrapper });
     await screen.findByText("#ORDER-11");
     expect(screen.getByText("Khách kiểm thử")).toBeTruthy();
-    expect(screen.getByText("Tổng khách hàng")).toBeTruthy();
+    expect(adminApi.mock.calls.every(([url]) => !url.includes("/reports/") && !url.endsWith("/surveys/stats"))).toBe(true);
+    expect(screen.queryByText("Tổng khách hàng")).toBeNull();
     expect(screen.getByText("Phân bố trạng thái trong 1 đơn mới nhất")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Xem tất cả" }));
     expect(window.location.pathname).toBe("/manager/orders");

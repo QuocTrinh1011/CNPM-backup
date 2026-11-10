@@ -14,7 +14,6 @@ export default function AccountDropdown({ user, unreadCount = 0, onAction }) {
     ['profile', 'Hồ sơ của tôi', UserRound], ['orders', 'Đơn hàng của tôi', Package],
     ['wishlist', 'Sản phẩm yêu thích', Heart], ['notifications', 'Thông báo', Bell],
     ['addresses', 'Địa chỉ giao hàng', MapPin], ['surveys', 'Khảo sát phong cách', ClipboardList],
-    ['support', 'Yêu cầu hỗ trợ', ClipboardList],
     ['password', 'Bảo mật tài khoản', KeyRound], ['logout', 'Đăng xuất', LogOut],
   ] : [['login', 'Đăng nhập', LogIn], ['register', 'Tạo tài khoản', UserPlus]];
   return <div className="shop-account" ref={root}
