@@ -21,13 +21,13 @@ The design follows the existing customer sequence diagrams and treats payOS as a
 
 ## Diagram design
 
-Create one PlantUML use case diagram under `docs/diagrams/customer/` with a `Customer Portal` system boundary. The `Customer` actor is associated with all eight primary use cases. The payOS actor is associated with the payment sub-use case.
+Create one PlantUML use case diagram under `docs/archive/diagrams/customer/` with a `Customer Portal` system boundary. The `Customer` actor is associated with all eight primary use cases. The payOS actor is associated with the payment sub-use case.
 
 Use `include` for mandatory subflows such as authentication session handling, purchase eligibility verification before feedback, and payment processing during order placement. Use `extend` only for optional behavior such as search/filtering from catalog browsing and applying a promo code when the customer provides one. The diagram must remain readable and must not encode implementation-level SQL or API details.
 
 ## Word document design
 
-Create `docs/use-cases/customer-use-case-specifications.docx` in Vietnamese, matching the language of the existing PRD and project requirements. The document will contain:
+Create `docs/archive/use-cases/customer/customer-use-case-specifications.docx` in Vietnamese, matching the language of the existing PRD and project requirements. The document will contain:
 
 - A clear title and short scope introduction.
 - A traceability table mapping each use case to its FR/Issue identifiers, diagram, and sequence file.

@@ -5,7 +5,7 @@
 1. Sao lưu database, kiểm thử trên bản sao và đối soát các đơn đang mở.
 2. Chạy `database/migrations/010_refunds_abandoned_payos.sql` trước khi khởi động backend mới. File chỉ thêm một bảng `order_refunds` và các cột/chỉ mục liên quan; không tạo khoản hoàn hoặc xác nhận COD cho dữ liệu cũ.
 3. Khởi động backend với `DB_PASSWORD`, `JWT_SECRET` hợp lệ. Hibernate `validate` yêu cầu schema đã cập nhật.
-4. Tự hủy **mặc định tắt trong code**. Với cấu hình demo/nghiệm thu, bật tự hủy sau khi đã kiểm tra schema và dữ liệu. Spring Boot không tự đọc file `.env`; đặt biến trong môi trường của tiến trình backend, rồi khởi động lại. Cấu hình này bật kiểm tra định kỳ các đơn PayOS bỏ dở; chỉ giải phóng tồn kho và lượt voucher sau khi xác minh và hủy đơn thành công. Đơn chưa xác minh được vẫn giữ tồn kho/voucher và cần được đối chiếu. Tham khảo [mẫu biến môi trường demo/nghiệm thu](env-demo.md):
+4. Tự hủy **mặc định tắt trong code**. Với cấu hình demo/nghiệm thu, bật tự hủy sau khi đã kiểm tra schema và dữ liệu. Spring Boot không tự đọc file `.env`; đặt biến trong môi trường của tiến trình backend, rồi khởi động lại. Cấu hình này bật kiểm tra định kỳ các đơn PayOS bỏ dở; chỉ giải phóng tồn kho và lượt voucher sau khi xác minh và hủy đơn thành công. Đơn chưa xác minh được vẫn giữ tồn kho/voucher và cần được đối chiếu. Tham khảo [mẫu biến môi trường demo/nghiệm thu](../ops/env-demo.md):
 
 ```powershell
 $env:PAYOS_AUTO_CANCEL_ENABLED='true'

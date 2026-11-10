@@ -94,7 +94,7 @@ Các màn hình chính nằm dưới `/manager/*`. Dữ liệu màn hình đang 
 - Mỗi sản phẩm trong mỗi đơn hoàn thành chỉ đánh giá một lần; nhiều màu/size của cùng sản phẩm trong đơn dùng chung đánh giá. Bình luận tối đa 4.000 ký tự.
 - Đơn đã xác nhận nhận hàng và đã có đánh giá không được gửi yêu cầu đổi trả mới.
 - QR mặc định có hạn 15 phút. Trạng thái trả tiền do backend xác nhận qua PayOS; không tin tham số trên URL trình duyệt. Thử lại QR không tạo đơn mới hoặc trừ tồn kho lần nữa.
-- Có sổ hoàn tiền thủ công, xác nhận thu toàn bộ COD và cảnh báo đối soát PayOS. Tự hủy đơn PayOS bỏ dở sau hạn QR 24 giờ mặc định tắt; đọc [hướng dẫn migration, hoàn tiền và tự hủy](docs/refunds-auto-cancellation.md) trước khi bật. Không tự chuyển tiền hoặc xác nhận thu COD từ trạng thái giao hàng.
+- Có sổ hoàn tiền thủ công, xác nhận thu toàn bộ COD và cảnh báo đối soát PayOS. Tự hủy đơn PayOS bỏ dở sau hạn QR 24 giờ mặc định tắt; đọc [hướng dẫn migration, hoàn tiền và tự hủy](docs/features/refunds-auto-cancellation.md) trước khi bật. Không tự chuyển tiền hoặc xác nhận thu COD từ trạng thái giao hàng.
 - Mỗi đơn dùng một voucher. Voucher thưởng khảo sát thuộc đúng tài khoản, có giới hạn lượt; điều kiện được kiểm tra lại khi đặt hàng.
 - Xử lý đổi trả không tự hoàn tiền, cộng tồn kho hoặc thay trạng thái thanh toán. Việc xử lý thực tế bên ngoài cần được ghi nhận đúng nghiệp vụ.
 
@@ -142,7 +142,19 @@ database/
 ├── migrations/         Migration đánh số và README thứ tự chạy
 ├── maintenance/        Script bảo trì cấu trúc cũ
 └── backup/             Ghi chú backup/restore
-docs/                  Yêu cầu, thiết kế, sơ đồ và hướng dẫn chức năng CRM
+docs/
+├── README.md           Mục lục tài liệu
+├── requirements/       PRD, yêu cầu hệ thống và quyết định
+├── features/           Tài liệu chức năng CRM
+├── database/           Hướng dẫn database theo chức năng
+├── ops/                Cấu hình và hướng dẫn vận hành
+├── qa/                 Kịch bản QA và báo cáo hoàn thành
+├── design/
+│   ├── diagrams/       Sơ đồ hiện hành
+│   └── use-cases/      Đặc tả Use Case v2
+├── plans/              Kế hoạch triển khai
+├── specs/              Đặc tả thiết kế
+└── archive/            Tài liệu cũ được giữ để tra cứu
 tests/                 Tài liệu/kịch bản kiểm thử bổ sung
 .github/workflows/     Quy trình CI và kiểm tra mã nguồn
 ```
@@ -206,7 +218,7 @@ Lệnh trên giả định đã chạy schema/migration phù hợp. Mặc địn
 
 `DB_PASSWORD` và `JWT_SECRET` là bắt buộc, không có bí mật dự phòng. JWT secret phải có ít nhất 32 byte UTF-8, không dùng khóa mẫu. Ví dụ tạo khóa trên dùng PowerShell 7; hãy lưu khóa an toàn để tái sử dụng khi khởi động, không tạo lại mỗi lần chạy. Có thể đặt biến trong cấu hình chạy IDE. Spring Boot **không tự nạp `.env`**.
 
-Nếu từng dùng mật khẩu DB hoặc JWT secret đã có trên Git, cần đổi mật khẩu PostgreSQL (và nơi dùng chung), thay JWT secret và khởi động lại backend. Thay JWT secret vô hiệu access token cũ; để kết thúc cả phiên refresh, cần thu hồi refresh token theo quy trình vận hành. Không ghi bí mật vào Git/log. Xem [hướng dẫn bảo mật và hủy đơn](docs/security-order-cancellation.md).
+Nếu từng dùng mật khẩu DB hoặc JWT secret đã có trên Git, cần đổi mật khẩu PostgreSQL (và nơi dùng chung), thay JWT secret và khởi động lại backend. Thay JWT secret vô hiệu access token cũ; để kết thúc cả phiên refresh, cần thu hồi refresh token theo quy trình vận hành. Không ghi bí mật vào Git/log. Xem [hướng dẫn bảo mật và hủy đơn](docs/ops/security-order-cancellation.md).
 
 **Lưu ý cổng:** cấu hình backend trong repository mặc định là `8082`, còn frontend mặc định gọi `8080`. Ví dụ chủ động đặt backend về `8080`. Nếu giữ `8082` hoặc dùng cổng khác, phải đổi `VITE_API_BASE_URL` tương ứng ở cả ba terminal frontend.
 
@@ -256,7 +268,7 @@ Ví dụ CORS local: `http://localhost:5173,http://localhost:5174,http://localho
 
 ## Cấu hình môi trường demo/nghiệm thu
 
-Spring Boot không tự đọc file `.env`. Đặt các biến trong môi trường của tiến trình backend trước khi khởi động; ví dụ PowerShell và giá trị mẫu được ghi tại [docs/env-demo.md](docs/env-demo.md). Không đưa bí mật vào file mẫu hoặc Git.
+Spring Boot không tự đọc file `.env`. Đặt các biến trong môi trường của tiến trình backend trước khi khởi động; ví dụ PowerShell và giá trị mẫu được ghi tại [docs/ops/env-demo.md](docs/ops/env-demo.md). Không đưa bí mật vào file mẫu hoặc Git.
 
 | Biến | Giá trị demo/nghiệm thu | Mặc định code | Ghi chú |
 | --- | --- | --- | --- |
@@ -268,7 +280,7 @@ Spring Boot không tự đọc file `.env`. Đặt các biến trong môi trư�
 
 PayOS không có sandbox. COD là luồng smoke test mặc định; chỉ thử PayOS thật khi người phụ trách đã xác nhận tài khoản, số tiền giới hạn và thời điểm thực hiện. Không commit `PAYOS_CLIENT_ID`, `PAYOS_API_KEY` hoặc `PAYOS_CHECKSUM_KEY`.
 
-Code đã hỗ trợ khôi phục mật khẩu qua Resend khi cấu hình email hợp lệ; `DEV_PASSWORD_RESET_ENABLED=false` không tắt nhánh email. Bộ demo ở trên chủ động tắt cả hai cờ. Khi thử riêng luồng email, xem [cấu hình Resend](docs/resend-email.md); liên kết dùng token 43 ký tự, API không trả mã đặt lại trong chế độ email. Chưa xác nhận gửi email thật trong đợt rà soát tài liệu này.
+Code đã hỗ trợ khôi phục mật khẩu qua Resend khi cấu hình email hợp lệ; `DEV_PASSWORD_RESET_ENABLED=false` không tắt nhánh email. Bộ demo ở trên chủ động tắt cả hai cờ. Khi thử riêng luồng email, xem [cấu hình Resend](docs/ops/resend-email.md); liên kết dùng token 43 ký tự, API không trả mã đặt lại trong chế độ email. Chưa xác nhận gửi email thật trong đợt rà soát tài liệu này.
 
 ## Cấu hình thanh toán PayOS
 
@@ -319,25 +331,25 @@ GitHub Actions phân loại thay đổi để chạy backend `mvn verify`, front
 
 | Nội dung | Tài liệu |
 | --- | --- |
-| Yêu cầu và phạm vi | [PRD](docs/prd-htttdn-crm.md), [yêu cầu hệ thống](docs/requirements.md) |
-| Hồ sơ 360° và phân nhóm | [Hồ sơ khách hàng](docs/customer-profile-360.md), [vòng đời](docs/customer-lifecycle.md) |
-| Chăm sóc và việc kế tiếp | [Chăm sóc](docs/customer-care.md), [liên kết nguồn](docs/care-sources.md), [kết quả và theo dõi tiếp](docs/care-outcomes.md) |
-| Nhắc việc cá nhân | [Việc của tôi và thông báo](docs/care-reminders.md) |
-| Báo cáo | [Dashboard chăm sóc](docs/care-dashboard.md), [kết quả chăm sóc](docs/care-outcomes-report.md), [giữ chân khách hàng](docs/retention-report.md) |
-| Khảo sát theo nhóm | [Chốt người nhận từ bộ lọc](docs/survey-recipient-groups.md), [lọc theo khảo sát cụ thể](docs/customer-survey-filters.md) |
-| Hỗ trợ và đổi trả | [Phiếu hỗ trợ](docs/support-tickets.md), [xử lý đổi trả](docs/return-management.md) |
+| Yêu cầu và phạm vi | [PRD](docs/requirements/prd-htttdn-crm.md), [yêu cầu hệ thống](docs/requirements/requirements.md) |
+| Hồ sơ 360° và phân nhóm | [Hồ sơ khách hàng](docs/features/customer-profile-360.md), [vòng đời](docs/features/customer-lifecycle.md) |
+| Chăm sóc và việc kế tiếp | [Chăm sóc](docs/features/customer-care.md), [liên kết nguồn](docs/features/care-sources.md), [kết quả và theo dõi tiếp](docs/features/care-outcomes.md) |
+| Nhắc việc cá nhân | [Việc của tôi và thông báo](docs/features/care-reminders.md) |
+| Báo cáo | [Dashboard chăm sóc](docs/features/care-dashboard.md), [kết quả chăm sóc](docs/features/care-outcomes-report.md), [giữ chân khách hàng](docs/features/retention-report.md) |
+| Khảo sát theo nhóm | [Chốt người nhận từ bộ lọc](docs/features/survey-recipient-groups.md), [lọc theo khảo sát cụ thể](docs/features/customer-survey-filters.md) |
+| Hỗ trợ và đổi trả | [Phiếu hỗ trợ](docs/features/support-tickets.md), [xử lý đổi trả](docs/features/return-management.md) |
 | Quản lý portal | [Ba portal](docs/database/manager-portal.md) |
 | Voucher và đánh giá | [Voucher](docs/database/vouchers.md), [đánh giá và thưởng khảo sát](docs/database/reviews-rewards.md) |
-| Thu – hoàn tiền và giới hạn cá nhân | [Báo cáo, quy tắc voucher và migration](docs/cashflow-voucher-limits.md) |
-| Nhật ký và kiểm tra nghiệp vụ | [Audit log](docs/audit-logs.md), [ma trận QA](docs/crm-workflow-qa.md), [cấu hình demo](docs/env-demo.md), [quyết định và ghi nhận thay đổi](docs/decisions-changelog.md) |
-| Sơ đồ | [Thư mục sơ đồ](docs/diagrams/) |
+| Thu – hoàn tiền và giới hạn cá nhân | [Báo cáo, quy tắc voucher và migration](docs/features/cashflow-voucher-limits.md) |
+| Nhật ký và kiểm tra nghiệp vụ | [Audit log](docs/features/audit-logs.md), [ma trận QA](docs/qa/crm-workflow-qa.md), [cấu hình demo](docs/ops/env-demo.md), [quyết định và ghi nhận thay đổi](docs/requirements/decisions-changelog.md) |
+| Sơ đồ | [Thư mục sơ đồ](docs/design/diagrams/) |
 
 Tài liệu từng đợt có thể ghi kết quả kiểm tra ở thời điểm khác nhau. Khi có khác biệt, đối chiếu phiên bản mã nguồn và migration đang triển khai.
 
 ## Giới hạn và lưu ý triển khai
 
 - Đây là đồ án mô phỏng; cần rà soát bảo mật, cấu hình, hiệu năng, sao lưu/khôi phục và vận hành trước khi dùng thực tế.
-- Đã tích hợp email khôi phục mật khẩu và thông báo đơn qua Resend dưới cờ cấu hình. Bộ demo/nghiệm thu mặc định giữ `RESEND_ENABLED=false` và `DEV_PASSWORD_RESET_ENABLED=false`; nhánh mã sáu chữ số chỉ dành cho profile `development`. Việc gửi email thật và điều kiện triển khai được kiểm tra riêng theo [hướng dẫn Resend](docs/resend-email.md).
+- Đã tích hợp email khôi phục mật khẩu và thông báo đơn qua Resend dưới cờ cấu hình. Bộ demo/nghiệm thu mặc định giữ `RESEND_ENABLED=false` và `DEV_PASSWORD_RESET_ENABLED=false`; nhánh mã sáu chữ số chỉ dành cho profile `development`. Việc gửi email thật và điều kiện triển khai được kiểm tra riêng theo [hướng dẫn Resend](docs/ops/resend-email.md).
 - Chưa có email marketing, thông báo hệ điều hành, hoàn tiền tự động hoặc chiến dịch tự phát voucher. Nhắc việc và thông báo hiện tại nằm trong web.
 - Báo cáo mua lại toàn thời gian chưa phải phân tích giữ chân theo cohort; giá trị đơn không phải tiền thực thu hay lợi nhuận.
 - Giao diện quản lý nhà cung cấp không nằm trong menu hiện tại; database/API có thể còn thành phần tương thích từ các phiên bản trước.

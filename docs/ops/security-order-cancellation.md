@@ -13,7 +13,7 @@ Customer và Manager hoàn kho trong cùng transaction khóa đơn, gộp theo s
 
 Manager không hủy đơn đã chuyển `SHIPPED`/`DELIVERING` hoặc đã giao/hoàn thành. Vấn đề sau giao dùng luồng đổi trả.
 
-Đơn đã thanh toán được hủy khi còn đủ điều kiện, giữ `PAID` trên đơn, thanh toán và lịch sử lần thử. Hệ thống tạo khoản chờ trong sổ hoàn tiền; việc chuyển tiền vẫn thực hiện bên ngoài. Nếu PayOS vừa xác nhận đã trả trong lúc Customer yêu cầu hủy, lần gọi đó chỉ cập nhật thanh toán; khách có thể gửi lại yêu cầu hủy sau khi xem trạng thái mới. Đơn có cảnh báo thanh toán phải được đối chiếu trước khi hủy. Xem [sổ hoàn tiền và tự hủy](refunds-auto-cancellation.md).
+Đơn đã thanh toán được hủy khi còn đủ điều kiện, giữ `PAID` trên đơn, thanh toán và lịch sử lần thử. Hệ thống tạo khoản chờ trong sổ hoàn tiền; việc chuyển tiền vẫn thực hiện bên ngoài. Nếu PayOS vừa xác nhận đã trả trong lúc Customer yêu cầu hủy, lần gọi đó chỉ cập nhật thanh toán; khách có thể gửi lại yêu cầu hủy sau khi xem trạng thái mới. Đơn có cảnh báo thanh toán phải được đối chiếu trước khi hủy. Xem [sổ hoàn tiền và tự hủy](../features/refunds-auto-cancellation.md).
 
 ## Đối soát đơn cũ
 

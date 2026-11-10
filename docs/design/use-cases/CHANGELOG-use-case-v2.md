@@ -214,8 +214,8 @@ Các nội dung dưới đây không được trình bày như hành vi đang c�
 ## 10. Nguồn tài liệu
 
 - Code ưu tiên đối chiếu: `backend/src/main/java/com/htttdn/crm`.
-- PRD: `docs/prd-htttdn-crm.md`, nhất là mục 3.1–3.2, bảng role và FR-09–FR-20.
-- Tài liệu cũ được giữ nguyên: `docs/use-cases/admin/admin-use-case-specifications.docx`, `docs/use-cases/customer/customer-use-case-specifications.docx`.
+- PRD: `docs/requirements/prd-htttdn-crm.md`, nhất là mục 3.1–3.2, bảng role và FR-09–FR-20.
+- Tài liệu cũ được giữ nguyên: `docs/archive/use-cases/admin/admin-use-case-specifications.docx`, `docs/archive/use-cases/customer/customer-use-case-specifications.docx`.
 
 ## 11. Cập nhật theo nhận xét review
 

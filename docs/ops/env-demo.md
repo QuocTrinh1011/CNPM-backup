@@ -22,7 +22,7 @@ $env:APP_PAYOS_AUTO_CANCEL_MS='300000'
 
 Các biến này chỉ có hiệu lực trong tiến trình được khởi động từ terminal đó. Khởi động lại backend sau khi thay đổi. Không đưa thông tin xác thực PayOS vào file mẫu hoặc repository. PayOS không có sandbox; COD là luồng smoke test mặc định. Chỉ thử PayOS thật sau khi người phụ trách xác nhận tài khoản, số tiền giới hạn và thời điểm thực hiện.
 
-Cờ tự hủy mặc định `false` trong code. Bật cờ ở demo/nghiệm thu với thời gian chờ 24 giờ để kiểm tra định kỳ các đơn PayOS bỏ dở; chỉ giải phóng tồn kho và lượt voucher sau khi xác minh và hủy đơn thành công. Đơn chưa xác minh được vẫn giữ tồn kho/voucher và cần được đối chiếu. Xem thêm [hướng dẫn hoàn tiền và tự hủy](refunds-auto-cancellation.md).
+Cờ tự hủy mặc định `false` trong code. Bật cờ ở demo/nghiệm thu với thời gian chờ 24 giờ để kiểm tra định kỳ các đơn PayOS bỏ dở; chỉ giải phóng tồn kho và lượt voucher sau khi xác minh và hủy đơn thành công. Đơn chưa xác minh được vẫn giữ tồn kho/voucher và cần được đối chiếu. Xem thêm [hướng dẫn hoàn tiền và tự hủy](../features/refunds-auto-cancellation.md).
 
 ## Khôi phục mật khẩu và email tùy chọn
 

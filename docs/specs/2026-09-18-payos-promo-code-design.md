@@ -6,7 +6,7 @@ Extend the customer checkout sequence so an optional promotion code is validated
 
 ## Scope
 
-- Update `docs/diagrams/customer/III-07-shopping-cart-order-payos.puml` only.
+- Update `docs/archive/diagrams/customer/sequence/plantuml/III-07-shopping-cart-order-payos.puml` only.
 - Add an optional `promoCode` to the existing order request; keep `cart`, `address`, and `paymentMethod` unchanged. `promoCode` is the only client-supplied promotion field.
 - Show backend validation of the promotion's validity period, eligibility conditions, and remaining usage limit.
 - Show server-side calculation of `subtotal`, `discountAmount`, and `finalAmount`.

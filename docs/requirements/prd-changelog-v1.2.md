@@ -35,7 +35,7 @@ Phiên bản trước: v1.1
 - Email Resend là khả năng tùy chọn đã có code; token 43 ký tự, không trả mã email. Fallback sáu chữ số chỉ ở development. Demo/nghiệm thu giữ `RESEND_ENABLED=false` và `DEV_PASSWORD_RESET_ENABLED=false`; chưa xác minh gửi/nhận email hoặc production.
 - Chỉ Admin tra cứu audit log. Không có endpoint/điều hướng audit Manager. Hoạt động Customer xem riêng ở hồ sơ 360°.
 - Demo/nghiệm thu bật `PAYOS_AUTO_CANCEL_ENABLED=true` với grace 24 giờ; mặc định code vẫn `false`.
-- Dữ liệu lịch sử trong bảng `audit_logs` chưa được kiểm tra; truy vấn đề xuất được ghi trong `docs/decisions-changelog.md`.
+- Dữ liệu lịch sử trong bảng `audit_logs` chưa được kiểm tra; truy vấn đề xuất được ghi trong `docs/requirements/decisions-changelog.md`.
 
 ## Bổ sung v1.4 — 26/10/2026
 

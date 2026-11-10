@@ -7,7 +7,7 @@ from docx.shared import Pt
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "docs" / "use-cases" / "admin" / "admin-use-case-specifications.docx"
+OUTPUT = ROOT / "docs" / "archive" / "use-cases" / "admin" / "admin-use-case-specifications.docx"
 CUSTOMER_BUILDER = ROOT / "tools" / "build_customer_usecase_specifications.py"
 
 
@@ -456,7 +456,7 @@ def build_document():
         "Báo cáo chỉ dùng dữ liệu đã được xác nhận theo trạng thái nghiệp vụ chính thức và phải hiển thị phạm vi số liệu.",
         "Khi thay đổi trạng thái, schema hoặc quy tắc nghiệp vụ, phải cập nhật ERD/data dictionary và sequence tương ứng trước khi merge.",
     ])
-    helper.add_paragraph(doc, "Tài liệu này là bộ đặc tả Admin tương ứng với các diagram trong thư mục docs/diagrams/admin và được thiết kế để dùng chung quy ước với đặc tả Customer.", italic=True)
+    helper.add_paragraph(doc, "Tài liệu này là bộ đặc tả Admin tương ứng với các diagram trong thư mục docs/design/diagrams/sequence-new/admin và được thiết kế để dùng chung quy ước với đặc tả Customer.", italic=True)
 
     doc.core_properties.title = "Đặc tả Use Case Admin CRM và Sales"
     doc.core_properties.subject = "Part III Admin CRM and Sales"

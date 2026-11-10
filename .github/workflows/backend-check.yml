@@ -220,7 +220,7 @@ jobs:
               re.compile(r"\bDELETE\s+FROM\b", re.IGNORECASE),
               re.compile(r"\bFOR\s+UPDATE\b", re.IGNORECASE),
           )
-          customer_dir = Path("docs/diagrams/customer")
+          customer_dir = Path("docs/design/diagrams/sequence-new/customer")
 
           if not files:
               errors.append("no docs/**/*.puml files found")

@@ -29,7 +29,7 @@
 
 - [ ] **Step 4: Add the conditional Docs job**
 
-  Use stable name `Docs / lint`. Check out with `fetch-depth: 0`. Run `git diff --check` over `base.sha...sha` for pull requests, `before...sha` for pushes (falling back to `HEAD^...HEAD` when the before SHA is unavailable), and `HEAD^...HEAD` for manual dispatch. Run a Python structural lint over all 30 `docs/**/*.puml` sources: exactly one anchored `@startuml` and `@enduml`, balanced anchored block tokens (`alt`, `opt`, `loop`, `par`, `break`, `critical`, `group`, `end`), and no SQL-shaped syntax such as `SELECT ... FROM`, `INSERT INTO`, `UPDATE ... SET`, `DELETE FROM`, or `FOR UPDATE`. Check sibling PNG pairing only for `docs/diagrams/customer/*.puml`; preview sources without PNGs are intentional.
+  Use stable name `Docs / lint`. Check out with `fetch-depth: 0`. Run `git diff --check` over `base.sha...sha` for pull requests, `before...sha` for pushes (falling back to `HEAD^...HEAD` when the before SHA is unavailable), and `HEAD^...HEAD` for manual dispatch. Run a Python structural lint over all 30 `docs/**/*.puml` sources: exactly one anchored `@startuml` and `@enduml`, balanced anchored block tokens (`alt`, `opt`, `loop`, `par`, `break`, `critical`, `group`, `end`), and no SQL-shaped syntax such as `SELECT ... FROM`, `INSERT INTO`, `UPDATE ... SET`, `DELETE FROM`, or `FOR UPDATE`. Check sibling PNG pairing only for `docs/design/diagrams/sequence-new/customer/*.puml`; preview sources without PNGs are intentional.
 
 - [ ] **Step 5: Add the always-running gate**
 
@@ -71,14 +71,14 @@
 **Files:**
 - Modify: `.github/workflows/backend-check.yml`
 - Verify only: `.github/workflows/codeql.yml`
-- Create: `docs/superpowers/specs/2026-09-18-domain-ci-gate-design.md`
-- Create: `docs/superpowers/plans/2026-09-18-domain-ci-gate.md`
+- Create: `docs/specs/2026-09-18-domain-ci-gate-design.md`
+- Create: `docs/plans/2026-09-18-domain-ci-gate.md`
 
 - [ ] **Step 1: Confirm status contains only planned files**
 
 - [ ] **Step 2: Commit**
 
   ```powershell
-  git add .github/workflows/backend-check.yml docs/superpowers/specs/2026-09-18-domain-ci-gate-design.md docs/superpowers/plans/2026-09-18-domain-ci-gate.md
+  git add .github/workflows/backend-check.yml docs/specs/2026-09-18-domain-ci-gate-design.md docs/plans/2026-09-18-domain-ci-gate.md
   git commit -m "ci: add domain checks and merge gate"
   ```
