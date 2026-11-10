@@ -1,6 +1,6 @@
 # Đánh giá theo đơn và thưởng khảo sát
 
-Chạy `migration_review_survey_rewards.sql` trên PostgreSQL trước khi khởi động backend mới. Script chạy trong transaction, chạy lại được; giữ nguyên feedback cũ với `order_id` rỗng. Không chạy lại migration feedback cũ sau migration này vì ràng buộc customer/product đã được thay bằng order/product.
+Chạy `database/migrations/006_review_survey_rewards.sql` trên PostgreSQL trước khi khởi động backend mới. Script chạy trong transaction, chạy lại được; giữ nguyên feedback cũ với `order_id` rỗng. Không chạy lại migration feedback cũ sau migration này vì ràng buộc customer/product đã được thay bằng order/product.
 
 - Customer chỉ gửi đánh giá khi đơn `COMPLETED`, qua `POST /api/products/{id}/feedback` với `{orderId,rating,comment}`. `GET /api/orders/{id}/reviews` trả quyền đánh giá và trạng thái đã đánh giá từng sản phẩm cho chủ đơn.
 - Admin tạo khảo sát với trường `reward` hoặc đổi cấu hình bằng `PATCH /api/admin/surveys/{id}/reward`. Các trường: `enabled`, `discountType`, `discountValue`, `minOrderAmount`, `maxDiscountAmount`, `validDays`.

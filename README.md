@@ -326,7 +326,8 @@ GitHub Actions phân loại thay đổi để chạy backend `mvn verify`, front
 | Báo cáo | [Dashboard chăm sóc](docs/care-dashboard.md), [kết quả chăm sóc](docs/care-outcomes-report.md), [giữ chân khách hàng](docs/retention-report.md) |
 | Khảo sát theo nhóm | [Chốt người nhận từ bộ lọc](docs/survey-recipient-groups.md), [lọc theo khảo sát cụ thể](docs/customer-survey-filters.md) |
 | Hỗ trợ và đổi trả | [Phiếu hỗ trợ](docs/support-tickets.md), [xử lý đổi trả](docs/return-management.md) |
-| Voucher và đánh giá | [Voucher](database/VOUCHERS.md), [đánh giá và thưởng khảo sát](database/REVIEWS_REWARDS.md) |
+| Quản lý portal | [Ba portal](docs/database/manager-portal.md) |
+| Voucher và đánh giá | [Voucher](docs/database/vouchers.md), [đánh giá và thưởng khảo sát](docs/database/reviews-rewards.md) |
 | Thu – hoàn tiền và giới hạn cá nhân | [Báo cáo, quy tắc voucher và migration](docs/cashflow-voucher-limits.md) |
 | Nhật ký và kiểm tra nghiệp vụ | [Audit log](docs/audit-logs.md), [ma trận QA](docs/crm-workflow-qa.md), [cấu hình demo](docs/env-demo.md), [quyết định và ghi nhận thay đổi](docs/decisions-changelog.md) |
 | Sơ đồ | [Thư mục sơ đồ](docs/diagrams/) |
