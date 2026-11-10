@@ -24,10 +24,10 @@ class CustomerCarePostgresTest {
  @BeforeTransaction void installAdditiveMigration() throws Exception {
   try(var connection=db.getDataSource().getConnection()){
    if(!connection.getMetaData().getDatabaseProductName().equals("PostgreSQL"))throw new IllegalStateException("QA requires PostgreSQL");
-   ScriptUtils.executeSqlScript(connection,new FileSystemResource("../database/migration_customer_care.sql"));
-   ScriptUtils.executeSqlScript(connection,new FileSystemResource("../database/migration_customer_care.sql")); // rerun is safe
-   ScriptUtils.executeSqlScript(connection,new FileSystemResource("../database/migration_care_sources.sql"));
-   ScriptUtils.executeSqlScript(connection,new FileSystemResource("../database/migration_care_outcomes.sql"));
+   ScriptUtils.executeSqlScript(connection,new FileSystemResource("../database/migrations/012_customer_care.sql"));
+   ScriptUtils.executeSqlScript(connection,new FileSystemResource("../database/migrations/012_customer_care.sql")); // rerun is safe
+   ScriptUtils.executeSqlScript(connection,new FileSystemResource("../database/migrations/013_care_sources.sql"));
+   ScriptUtils.executeSqlScript(connection,new FileSystemResource("../database/migrations/014_care_outcomes.sql"));
   }
  }
  User user(String name,String role){var u=new User();u.setFullName(name);u.setEmail(name+"@example.test");u.setPasswordHash("qa-not-a-login");u.setRole(role);em.persist(u);em.flush();return u;}

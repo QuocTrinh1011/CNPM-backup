@@ -23,8 +23,8 @@ class CareOutcomePostgresTest {
         try(var connection=db.getDataSource().getConnection()){assertTrue(connection.getMetaData().getURL().startsWith("jdbc:postgresql:"));}
         var customer=user("CUSTOMER");var manager=user("MANAGER");var now=Timestamp.from(Instant.now());
         Long legacy=db.queryForObject("insert into customer_care_tasks(customer_id,assignee_id,title,description,status,due_at,created_by,updated_by,created_at,updated_at,completed_at) values (?,?,'Legacy','', 'COMPLETED',?,?,?,?,?,?) returning id",Long.class,customer.getId(),manager.getId(),now,manager.getId(),manager.getId(),now,now,now);
-        for(String file:new String[]{"migration_care_sources.sql","migration_care_outcomes.sql"}){
-            String sql=Files.readString(Path.of("../database/"+file)).replace("BEGIN;","").replace("COMMIT;","");
+        for(String file:new String[]{"013_care_sources.sql","014_care_outcomes.sql"}){
+            String sql=Files.readString(Path.of("../database/migrations/"+file)).replace("BEGIN;","").replace("COMMIT;","");
             for(int i=0;i<2;i++)for(String statement:sql.split(";"))if(!statement.isBlank())db.execute(statement);
         }
         assertNull(service.detail(legacy).outcome());assertNull(service.detail(legacy).resultNote());
