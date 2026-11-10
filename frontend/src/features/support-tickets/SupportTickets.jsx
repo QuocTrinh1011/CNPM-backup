@@ -3,7 +3,7 @@ import {api} from '../../api/api';
 import {adminApi} from '../../api/manager-api';
 import {useManagerResource,useManagerReadPause} from '../../shared/hooks/useManagerResource';
 import {managerQuery} from '../../shared/hooks/useManagerFilters';
-import {Picker,AssigneeFilter} from '../../CustomerCare';
+import {Picker,AssigneeFilter} from '../manager/CustomerCare';
 import './support-tickets.css';
 
 export const supportLabels={NEW:'Mới tiếp nhận',IN_PROGRESS:'Đang xử lý',WAITING_CUSTOMER:'Chờ khách',RESOLVED:'Đã giải quyết'};
