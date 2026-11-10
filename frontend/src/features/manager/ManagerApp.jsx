@@ -21,6 +21,7 @@ const RetentionReport = React.lazy(() => import('./RetentionReport'));
 const SupportTickets = React.lazy(()=>import('../support-tickets/SupportTickets'));
 const SalesStatistics = React.lazy(()=>import('./SalesStatistics'));
 const StockReceiving = React.lazy(()=>import('./StockReceiving'));
+const ManagerInvoices = React.lazy(()=>import('./ManagerInvoices'));
 import {
   Activity,
   LayoutDashboard,
@@ -51,7 +52,8 @@ import {
   Eye,
   SlidersHorizontal,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  ReceiptText
 } from "lucide-react";
 import {
   adminApi,
@@ -77,6 +79,7 @@ const navItems = [
   ["products", "Sản phẩm"],
   ["stock-receipts", "Nhập kho"],
   ["orders", "Đơn hàng"],
+  ["invoices", "Hóa đơn"],
   ["feedback", "Phản hồi"],
   ["support-tickets", "Phiếu hỗ trợ"],
   ["surveys", "Khảo sát"],
@@ -93,6 +96,7 @@ const navIcons = {
   products: Package,
   'stock-receipts': Package,
   orders: ShoppingCart,
+  invoices: ReceiptText,
   feedback: MessageSquare,
   'support-tickets': MessageSquare,
   surveys: ClipboardList,
@@ -399,6 +403,7 @@ export default function ManagerApp() {
         {section === "products" && <Products notify={notify} />}{" "}
         {section === "stock-receipts" && <StockReceiving />}
         {section === "orders" && <Orders notify={notify} />}{" "}
+        {section === "invoices" && <ManagerInvoices />}
         {section === "feedback" && <Feedback notify={notify} />}{" "}
         {section==='support-tickets'&&<SupportTickets manager location={path} navigate={go}/>}
         {section === "surveys" && <Surveys notify={notify} location={path} go={go} />}
@@ -1039,6 +1044,7 @@ function Users({ notify, location, go }) {
                   Xóa
                 </button>
                 <CustomerCreate user={user} onSaved={load}/>
+                <button className="admin-action" onClick={() => go(`invoices?q=${encodeURIComponent(user.email || user.fullName)}`)}>Hóa đơn</button>
                 <button className="admin-action" onClick={() => go(`users/${user.id}?${new URLSearchParams({q:query,page:String(page),...Object.fromEntries(params)})}`)}>Xem hồ sơ</button>
                 {user.segmentation?.dormant&&<button className="admin-action" onClick={()=>go(`care?customerId=${user.id}`)}>Tạo chăm sóc</button>}
               </div>
