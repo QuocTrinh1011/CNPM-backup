@@ -2,11 +2,11 @@
 import React from 'react';
 import {act,render,screen,fireEvent,cleanup,within} from '@testing-library/react';
 import {it,expect,vi,beforeEach,afterEach} from 'vitest';
-import ManagerMyTasks,{CareTaskDetail,MyTaskSummary} from './features/manager/ManagerMyTasks';
-import ManagerNotificationBell from './features/manager/ManagerNotificationBell';
-import ManagerApp from './features/manager/ManagerApp';
-import {adminApi,adminRefreshSession} from './api/manager-api';
-vi.mock('./api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
+import ManagerMyTasks,{CareTaskDetail,MyTaskSummary} from './ManagerMyTasks';
+import ManagerNotificationBell from './ManagerNotificationBell';
+import ManagerApp from './ManagerApp';
+import {adminApi,adminRefreshSession} from '../../api/manager-api';
+vi.mock('../../api/manager-api',async original=>({...await original(),adminApi:vi.fn(),adminRefreshSession:vi.fn()}));
 const task={id:42,customerId:2,customerName:'Khách A',assigneeId:3,assigneeName:'Quản lý',assigneeActive:true,title:'Liên hệ đơn đổi trả',description:'Nội dung chăm sóc',status:'TODO',dueAt:'2026-10-15T05:00:00Z',overdue:true,version:0};
 const page={content:[task],totalElements:11,totalPages:2,page:0,size:10};
 const summary={counts:{OPEN:11,TODAY:2,UPCOMING:3,OVERDUE:4,FOLLOW_UP:1}};
