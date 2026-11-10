@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MapPin, Plus, X, Pencil, Check } from "lucide-react";
 import { api, endpoints } from "../../api/api";
-import ShippingFields, { PhoneField, prepareAddress, shippingErrors } from "../storefront/ShippingFields";
-import "../storefront/styles/checkout-page.css";
+import ShippingFields, { PhoneField, prepareAddress, shippingErrors } from "./ShippingFields";
+import "./checkout-page.css";
 
 export const addressText = address => [address.addressLine, address.ward, address.district, address.province].filter(Boolean).join(", ");
 export const deliveryText = address => [address.recipientName?.trim(), address.phone, address.addressLine?.trim(), address.ward, address.province].filter(Boolean).join(", ");

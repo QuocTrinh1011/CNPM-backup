@@ -2,12 +2,12 @@
 import React, { StrictMode } from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import App from "../../app/App";
-import CheckoutPage from "./CheckoutPage";
-import AddressModal from "../customer/CustomerAddresses";
-import { api, refreshSession, signIn } from "../../api/api";
-import { saveSelection, cartLineKey } from "./cart-selection";
-vi.mock("../../api/api", async original => ({ ...await original(), api:vi.fn(), refreshSession:vi.fn(), signIn:vi.fn() }));
+import App from "./App";
+import CheckoutPage from "../features/storefront/CheckoutPage";
+import AddressModal from "../shared/address/AddressBook";
+import { api, refreshSession, signIn } from "../api/api";
+import { saveSelection, cartLineKey } from "../features/storefront/cart-selection";
+vi.mock("../api/api", async original => ({ ...await original(), api:vi.fn(), refreshSession:vi.fn(), signIn:vi.fn() }));
 const home = {id:1,recipientName:"Khách ở nhà",phone:"0912345678",addressLine:"12 Đường Nhà",ward:"Phường Ba Đình",province:"Thành phố Hà Nội",defaultAddress:true};
 const office = {...home,id:2,recipientName:"Khách văn phòng",addressLine:"34 Đường Công Ty",defaultAddress:false};
 const cart = {items:[{productId:1,name:"Áo kiểm thử",stock:10,quantity:1,size:"M",color:"Đen",unitPrice:100000,lineTotal:100000}],subtotal:100000,itemCount:1};

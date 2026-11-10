@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { api, endpoints } from "../../api/api";
-import CustomerVouchers from '../customer/CustomerVouchers';
 
 export function useCheckoutVoucher(cart) {
   const [code, setCode] = useState(""), [result, setResult] = useState(null), [busy, setBusy] = useState(false), [error, setError] = useState("");
@@ -33,7 +32,7 @@ export function useCheckoutVoucher(cart) {
   return { code, voucher, busy, error, apply, change, subtotal:cart.subtotal, remove: () => change("") };
 }
 
-export default function VoucherField({ model, disabled }) {
+export default function VoucherField({ model, disabled, VoucherWallet }) {
   const [wallet,setWallet]=useState(false);
   return <div className="shop-voucher-field"><label>MÃ GIẢM GIÁ<div className="voucher-input">
     <input maxLength={40} value={model.code} disabled={disabled} onChange={e => model.change(e.target.value)} placeholder="Nhập mã voucher" />
@@ -43,6 +42,6 @@ export default function VoucherField({ model, disabled }) {
   {model.voucher && <div className="shop-voucher-applied"><span role="status">Đã áp dụng {model.voucher.code}</span><button type="button" disabled={disabled} onClick={model.remove}>Bỏ mã</button></div>}
   <small>Mỗi đơn dùng một mã. Ưu đãi được kiểm tra lại khi đặt hàng.</small>
   <button type="button" className="button button-light" disabled={disabled} onClick={()=>setWallet(v=>!v)}>{wallet?'Đóng danh sách mã':'Chọn voucher của tôi'}</button>
-  {wallet&&<CustomerVouchers subtotal={model.subtotal} onSelect={code=>{model.change(code);setWallet(false);}}/>}
+  {wallet&&VoucherWallet&&<VoucherWallet subtotal={model.subtotal} onSelect={code=>{model.change(code);setWallet(false);}}/>}
   </div>;
 }

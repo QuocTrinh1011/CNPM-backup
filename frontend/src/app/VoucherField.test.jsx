@@ -2,15 +2,16 @@
 import React from "react";
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import VoucherField, { useCheckoutVoucher } from "./VoucherField";
-import { api } from "../../api/api";
-vi.mock("../../api/api",async original=>({...await original(),api:vi.fn()}));
+import VoucherField, { useCheckoutVoucher } from "../features/storefront/VoucherField";
+import CustomerVouchers from "../features/customer/CustomerVouchers";
+import { api } from "../api/api";
+vi.mock("../api/api",async original=>({...await original(),api:vi.fn()}));
 const cart = {subtotal:100000,items:[{productId:1,quantity:1,lineTotal:100000}]};
 it("selects a general voucher alongside rewards then explicitly applies it",async()=>{
   api.mockImplementation(async path=>path.startsWith('/api/customers/me/vouchers')
     ? {content:[{code:'SHOP10',source:'GENERAL',state:'ACTIVE',discountType:'PERCENTAGE',discountValue:10},{code:'KS-1',source:'SURVEY',state:'USED',discountType:'PERCENTAGE',discountValue:20}],totalPages:1}
     : {code:'SHOP10',discountAmount:10000});
-  function Form(){const model=useCheckoutVoucher(cart);return <VoucherField model={model}/>;}
+  function Form(){const model=useCheckoutVoucher(cart);return <VoucherField model={model} VoucherWallet={CustomerVouchers}/>;}
   render(<Form/>);
   fireEvent.click(screen.getByText('Chọn voucher của tôi'));
   await screen.findByText('Ưu đãi cửa hàng');expect(screen.getByText('Thưởng khảo sát')).toBeTruthy();
