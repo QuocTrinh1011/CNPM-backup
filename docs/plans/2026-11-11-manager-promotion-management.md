@@ -84,7 +84,7 @@
 - Create: `frontend/src/features/manager/promotion-campaigns.css`
 - Modify: `frontend/src/app/ManagerApp.jsx`
 - Modify: `frontend/src/api/manager-api.js`
-- Reference: `frontend/src/features/admin/AdminVouchers.jsx`, `frontend/src/features/manager/StockReceiving.jsx`, `frontend/src/shared/hooks/useManagerResource.js`
+- Reference: `frontend/src/features/admin/AdminVouchers.jsx`, `frontend/src/features/manager/StockReceiving.jsx`, `frontend/src/shared/hooks/useManagerResource.jsx`
 
 **Interfaces:**
 - Export one default `PromotionCampaigns` page component.

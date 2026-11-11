@@ -14,6 +14,7 @@ const AdminVouchers = React.lazy(() => import('../features/admin/AdminVouchers')
 const CustomerProfile = React.lazy(() => import('../features/manager/CustomerProfile'));
 const StockReceiving = React.lazy(()=>import('../features/manager/StockReceiving'));
 const ManagerInvoices = React.lazy(()=>import('../features/manager/ManagerInvoices'));
+const PromotionCampaigns = React.lazy(() => import('../features/manager/PromotionCampaigns'));
 import {
   Activity,
   LayoutDashboard,
@@ -70,6 +71,7 @@ const navItems = [
   ["feedback", "Phản hồi"],
   ["surveys", "Khảo sát"],
   ["vouchers", "Mã giảm giá"],
+  ["promotions", "Chiến dịch khuyến mãi"],
 ];
 const validSections = new Set(navItems.map(([key]) => key));
 const navIcons = {
@@ -82,6 +84,7 @@ const navIcons = {
   feedback: MessageSquare,
   surveys: ClipboardList,
   vouchers: TicketPercent,
+  promotions: TicketPercent,
 };
 const statusLabels = {
   PENDING_PAYMENT: "Chờ thanh toán",
@@ -383,6 +386,7 @@ export default function ManagerApp() {
         {section === "feedback" && <Feedback notify={notify} />}{" "}
         {section === "surveys" && <Surveys notify={notify} location={path} go={go} />}
         {section === "vouchers" && <AdminVouchers />}
+        {section === "promotions" && <PromotionCampaigns />}
         </React.Suspense>
       </main>
       {notice && (
