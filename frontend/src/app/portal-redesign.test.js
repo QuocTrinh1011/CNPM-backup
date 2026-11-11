@@ -6,7 +6,10 @@ const userStyles = readFileSync('src/features/storefront/styles/user-redesign.cs
 const managerStyles = readFileSync('src/features/manager/styles/manager-redesign.css', 'utf8');
 const newFormStyles = readFileSync('src/features/storefront/styles/customer-new-form.css', 'utf8');
 const cockpitStyles = readFileSync('src/features/manager/styles/manager-cockpit.css', 'utf8');
-const adminStyles = ['features/admin/styles/admin-governance.css','features/admin/styles/admin-aurora.css'].map(file => readFileSync(`src/${file}`, 'utf8'));
+const adminStyles = [
+  'features/admin/styles/admin-governance.css',
+  'features/admin/styles/admin-aurora.css',
+].map(file => readFileSync(`src/${file}`, 'utf8'));
 
 function rules(css) {
   const style = document.createElement('style');
@@ -27,7 +30,8 @@ function rules(css) {
 describe('portal redesign isolation', () => {
   it('scopes Aurora to the system Admin without restyling Manager or User', () => {
     for (const css of adminStyles) {
-      for (const selector of rules(css)) expect(selector).toMatch(/^\.admin-shell\.internal-portal/);
+      for (const selector of rules(css))
+        expect(selector).toMatch(/^\.admin-shell\.internal-portal/);
       expect(css).not.toContain('@import');
     }
     expect(adminStyles[1]).toContain('font-family: "Manrope"');
@@ -41,10 +45,13 @@ describe('portal redesign isolation', () => {
     expect(adminStyles[1]).toContain('.internal-directory-panel { min-width: 0; width: 100%;');
   });
   it('keeps the Manager cockpit isolated from User and system Admin', () => {
-    for (const selector of rules(cockpitStyles)) expect(selector).toMatch(/^\.manager-(shell|login)/);
+    for (const selector of rules(cockpitStyles))
+      expect(selector).toMatch(/^\.manager-(shell|login)/);
     expect(cockpitStyles).not.toContain('@import');
     expect(cockpitStyles).toContain('font-family: "Manrope"');
-    expect(cockpitStyles).toContain('.admin-primary { background: var(--admin-primary); color: #07100d; }');
+    expect(cockpitStyles).toContain(
+      '.admin-primary { background: var(--admin-primary); color: #07100d; }',
+    );
     expect(cockpitStyles).toContain('max-height: 90dvh;');
     expect(cockpitStyles).not.toContain('.manager-login.admin-login-card');
   });
@@ -78,7 +85,9 @@ describe('portal redesign isolation', () => {
     expect(managerStyles).toContain('[data-theme="dark"]');
   });
   it('keeps both purchase actions aligned and checkout single-column on small screens', () => {
-    expect(userStyles).toMatch(/product-modal-actions \{[^}]*grid-template-columns: repeat\(2,minmax\(0,1fr\)\)/);
+    expect(userStyles).toMatch(
+      /product-modal-actions \{[^}]*grid-template-columns: repeat\(2,minmax\(0,1fr\)\)/,
+    );
     expect(userStyles).toMatch(/shop-checkout-grid \{ grid-template-columns: minmax\(0,1fr\)/);
     expect(userStyles).toContain('prefers-reduced-motion');
   });
@@ -86,7 +95,13 @@ describe('portal redesign isolation', () => {
     const entry = readFileSync('index.html', 'utf8');
     expect(entry).toContain('family=Manrope');
     expect(entry.match(/fonts.googleapis.com\/css2/g)).toHaveLength(1);
-    for (const file of ['styles/styles.css', 'features/storefront/styles/storefront.css', 'shared/styles/admin-design.css', 'features/storefront/styles/user-redesign.css', 'features/manager/styles/manager-redesign.css']) {
+    for (const file of [
+      'styles/styles.css',
+      'features/storefront/styles/storefront.css',
+      'shared/styles/admin-design.css',
+      'features/storefront/styles/user-redesign.css',
+      'features/manager/styles/manager-redesign.css',
+    ]) {
       expect(readFileSync(`src/${file}`, 'utf8')).not.toContain('@import url');
     }
     expect(managerStyles).toContain('--mono: var(--sans)');
@@ -95,7 +110,9 @@ describe('portal redesign isolation', () => {
   it('keeps mobile input text readable and stacks the Admin hero', () => {
     expect(userStyles).toContain('textarea) { font-size: 16px; }');
     expect(managerStyles).toContain('.manager-login input { font-size: 16px; }');
-    expect(readFileSync('src/shared/styles/internal-portal.css', 'utf8')).toContain('.internal-hero-banner { flex-direction: column;');
+    expect(readFileSync('src/shared/styles/internal-portal.css', 'utf8')).toContain(
+      '.internal-hero-banner { flex-direction: column;',
+    );
   });
   it('keeps notices content-sized instead of stretching between top and bottom', () => {
     expect(userStyles).toMatch(/\.toast \{[^}]*top: auto;[^}]*height: auto;/);
@@ -105,7 +122,10 @@ describe('portal redesign isolation', () => {
     expect(app).toContain('window.clearTimeout(timer)');
   });
   it('aligns the Manager drawer and toggle at the tablet breakpoint', () => {
-    const tablet = managerStyles.slice(managerStyles.indexOf('@media (max-width: 900px)'), managerStyles.indexOf('@media (max-width: 600px)'));
+    const tablet = managerStyles.slice(
+      managerStyles.indexOf('@media (max-width: 900px)'),
+      managerStyles.indexOf('@media (max-width: 600px)'),
+    );
     expect(tablet).toContain('.admin-mobile-toggle { display: grid;');
     expect(tablet).toContain('transform: translateX(-105%)');
     expect(tablet).toContain('.admin-sidebar.is-open { transform: translateX(0); }');

@@ -1,8 +1,37 @@
-.manager-shell .survey-recipient-group {min-width:0;border:1px solid var(--admin-border);padding:16px;border-radius:12px;color:var(--admin-text)}
-.manager-shell .survey-recipient-group p {line-height:1.6}
-.manager-shell .survey-recipient-group dl {display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
-.manager-shell .survey-recipient-group dt {color:var(--admin-muted);font-size:12px}
-.manager-shell .survey-recipient-group dd {margin:4px 0;overflow-wrap:anywhere}
-.manager-shell .survey-recipient-group li {margin:6px 0;overflow-wrap:anywhere}
-.manager-shell .survey-recipient-group nav {display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0}
-.manager-shell .survey-recipient-group > button {margin:8px 8px 0 0}
+.manager-shell .survey-recipient-group {
+  min-width: 0;
+  border: 1px solid var(--admin-border);
+  padding: 16px;
+  border-radius: 12px;
+  color: var(--admin-text);
+}
+.manager-shell .survey-recipient-group p {
+  line-height: 1.6;
+}
+.manager-shell .survey-recipient-group dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+.manager-shell .survey-recipient-group dt {
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+.manager-shell .survey-recipient-group dd {
+  margin: 4px 0;
+  overflow-wrap: anywhere;
+}
+.manager-shell .survey-recipient-group li {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.manager-shell .survey-recipient-group nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.manager-shell .survey-recipient-group > button {
+  margin: 8px 8px 0 0;
+}

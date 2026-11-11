@@ -1,11 +1,68 @@
-.site-shell .shop-payment-qr { margin: 20px 0; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); color: var(--ink); font-family: var(--sans); text-align: center; }
-.site-shell .shop-payment-qr-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; text-align: left; }
-.site-shell .shop-payment-qr-head h3 { margin: 0; font-size: 18px; }
-.site-shell .shop-payment-qr-head p { margin: 4px 0 0; color: var(--muted); }
-.site-shell .shop-payment-qr-head button { border: 1px solid var(--line); border-radius: 10px; background: var(--white); color: var(--ink); min-width: 40px; min-height: 40px; cursor: pointer; }
-.site-shell .shop-payment-qr-status { display: inline-block; margin: 12px 0; padding: 6px 12px; border-radius: 99px; background: var(--soft); color: var(--ink); font-weight: 700; }
-.site-shell .shop-payment-qr-image { display: inline-flex; padding: 12px; background: #fff; border-radius: 10px; max-width: 100%; }
-.site-shell .shop-payment-qr-image svg { max-width: 100%; height: auto; }
-.site-shell .shop-payment-qr > strong { display: block; margin: 12px 0; font-size: 23px; }
-.site-shell .shop-payment-qr > p { overflow-wrap: anywhere; }
-.site-shell .shop-payment-qr .button { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; }
+.site-shell .shop-payment-qr {
+  margin: 20px 0;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--sans);
+  text-align: center;
+}
+.site-shell .shop-payment-qr-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+}
+.site-shell .shop-payment-qr-head h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.site-shell .shop-payment-qr-head p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+.site-shell .shop-payment-qr-head button {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--ink);
+  min-width: 40px;
+  min-height: 40px;
+  cursor: pointer;
+}
+.site-shell .shop-payment-qr-status {
+  display: inline-block;
+  margin: 12px 0;
+  padding: 6px 12px;
+  border-radius: 99px;
+  background: var(--soft);
+  color: var(--ink);
+  font-weight: 700;
+}
+.site-shell .shop-payment-qr-image {
+  display: inline-flex;
+  padding: 12px;
+  background: #fff;
+  border-radius: 10px;
+  max-width: 100%;
+}
+.site-shell .shop-payment-qr-image svg {
+  max-width: 100%;
+  height: auto;
+}
+.site-shell .shop-payment-qr > strong {
+  display: block;
+  margin: 12px 0;
+  font-size: 23px;
+}
+.site-shell .shop-payment-qr > p {
+  overflow-wrap: anywhere;
+}
+.site-shell .shop-payment-qr .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}

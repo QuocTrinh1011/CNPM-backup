@@ -7,5 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 public class CrmApplication {
-  public static void main(String[] args) { SpringApplication.run(CrmApplication.class, args); }
+  public static void main(String[] args) {
+    SpringApplication.run(CrmApplication.class, args);
+  }
 }

@@ -1,24 +1,110 @@
-.manager-shell, .manager-login { --admin-mono: 'Manrope', sans-serif; font-family: 'Manrope', sans-serif; }
-.manager-shell :is(button,input,textarea,select), .manager-login :is(button,input) { font-family: inherit; }
-.manager-shell :is(button,a,input,textarea,select):focus-visible, .manager-login :focus-visible { outline: 3px solid #6098ff; outline-offset: 3px; }
-.manager-shell .admin-panel { border-radius: 16px; box-shadow: 0 3px 16px #18376305; }
-.manager-shell .manager-advanced-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; padding: 16px; margin-block: 12px; border: 1px solid var(--admin-border); border-radius: 12px; }
-.manager-shell .manager-advanced-filters label { display: grid; gap: 6px; flex: 1 1 140px; font-size: 12px; }
-.manager-shell .manager-advanced-filters :is(input,select) { min-height: 42px; width: 100%; min-width: 0; box-sizing: border-box; background: var(--admin-input); color: var(--admin-text); border: 1px solid var(--admin-border); border-radius: 8px; padding: 8px 10px; }
-.manager-shell .admin-table td { vertical-align: middle; }
-.manager-shell .admin-quick-tabs { flex-wrap: wrap; }
-.manager-shell .admin-btn { min-height: 36px; }
+.manager-shell,
+.manager-login {
+  --admin-mono: 'Manrope', sans-serif;
+  font-family: 'Manrope', sans-serif;
+}
+.manager-shell :is(button, input, textarea, select),
+.manager-login :is(button, input) {
+  font-family: inherit;
+}
+.manager-shell :is(button, a, input, textarea, select):focus-visible,
+.manager-login :focus-visible {
+  outline: 3px solid #6098ff;
+  outline-offset: 3px;
+}
+.manager-shell .admin-panel {
+  border-radius: 16px;
+  box-shadow: 0 3px 16px #18376305;
+}
+.manager-shell .manager-advanced-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  padding: 16px;
+  margin-block: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+}
+.manager-shell .manager-advanced-filters label {
+  display: grid;
+  gap: 6px;
+  flex: 1 1 140px;
+  font-size: 12px;
+}
+.manager-shell .manager-advanced-filters :is(input, select) {
+  min-height: 42px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--admin-input);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.manager-shell .admin-table td {
+  vertical-align: middle;
+}
+.manager-shell .admin-quick-tabs {
+  flex-wrap: wrap;
+}
+.manager-shell .admin-btn {
+  min-height: 36px;
+}
 @media (max-width: 768px) {
-  .manager-shell .manager-advanced-filters { padding: 12px; gap: 10px; }
-  .manager-shell .manager-advanced-filters label { flex-basis: calc(50% - 10px); min-width: 0; }
-  .manager-shell .admin-order-toolbar { flex-wrap: wrap; gap: 10px; }
-  .manager-shell .admin-order-search, .manager-shell .admin-order-filter-select { width: 100%; }
-  .manager-shell .manager-product-table { border: none; overflow: visible; }
-  .manager-shell .manager-product-table table { min-width: 0; width: 100%; }
-  .manager-shell .manager-product-table thead { display: none; }
-  .manager-shell .manager-product-table tbody { display: grid; gap: 12px; }
-  .manager-shell .manager-product-table tr { display: grid; border: 1px solid var(--admin-border); border-radius: 12px; padding: 12px; background: var(--admin-card); }
-  .manager-shell .manager-product-table td { display: flex; align-items: center; justify-content: space-between; gap: 10px; white-space: normal; padding: 8px 0; border: none; }
-  .manager-shell .manager-product-table td:not(:first-child):not(:last-child)::before { content: attr(data-label); color: var(--admin-muted); }
-  .manager-shell .manager-product-table td:last-child { justify-content: flex-end; }
+  .manager-shell .manager-advanced-filters {
+    padding: 12px;
+    gap: 10px;
+  }
+  .manager-shell .manager-advanced-filters label {
+    flex-basis: calc(50% - 10px);
+    min-width: 0;
+  }
+  .manager-shell .admin-order-toolbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .manager-shell .admin-order-search,
+  .manager-shell .admin-order-filter-select {
+    width: 100%;
+  }
+  .manager-shell .manager-product-table {
+    border: none;
+    overflow: visible;
+  }
+  .manager-shell .manager-product-table table {
+    min-width: 0;
+    width: 100%;
+  }
+  .manager-shell .manager-product-table thead {
+    display: none;
+  }
+  .manager-shell .manager-product-table tbody {
+    display: grid;
+    gap: 12px;
+  }
+  .manager-shell .manager-product-table tr {
+    display: grid;
+    border: 1px solid var(--admin-border);
+    border-radius: 12px;
+    padding: 12px;
+    background: var(--admin-card);
+  }
+  .manager-shell .manager-product-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    white-space: normal;
+    padding: 8px 0;
+    border: none;
+  }
+  .manager-shell .manager-product-table td:not(:first-child):not(:last-child)::before {
+    content: attr(data-label);
+    color: var(--admin-muted);
+  }
+  .manager-shell .manager-product-table td:last-child {
+    justify-content: flex-end;
+  }
 }

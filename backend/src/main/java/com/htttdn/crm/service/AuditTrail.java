@@ -3,46 +3,140 @@ package com.htttdn.crm.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htttdn.crm.entity.*;
 import com.htttdn.crm.repository.AuditLogRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.web.context.request.*;
 import java.util.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.*;
 
 @Service
 public class AuditTrail {
-    public static final String ACTOR_ATTRIBUTE="com.htttdn.crm.service.AuditTrail.actor";
-    public record Actor(Long id,String name,String role) {}
-    private final AuditLogRepository logs; private final ObjectMapper mapper;
-    public AuditTrail(AuditLogRepository logs,ObjectMapper mapper){this.logs=logs;this.mapper=mapper;}
-    public static Actor actor(){
-        var context=RequestContextHolder.getRequestAttributes();
-        return context instanceof ServletRequestAttributes request ? (Actor)request.getRequest().getAttribute(ACTOR_ATTRIBUTE) : null;
+  public static final String ACTOR_ATTRIBUTE = "com.htttdn.crm.service.AuditTrail.actor";
+
+  public record Actor(Long id, String name, String role) {}
+
+  private final AuditLogRepository logs;
+  private final ObjectMapper mapper;
+
+  public AuditTrail(AuditLogRepository logs, ObjectMapper mapper) {
+    this.logs = logs;
+    this.mapper = mapper;
+  }
+
+  public static Actor actor() {
+    var context = RequestContextHolder.getRequestAttributes();
+    return context instanceof ServletRequestAttributes request
+        ? (Actor) request.getRequest().getAttribute(ACTOR_ATTRIBUTE)
+        : null;
+  }
+
+  // Explicit allowlist: never serialize entities, requests, tokens, addresses or free-text customer
+  // content.
+  public static Map<String, Object> snapshot(Object item) {
+    var m = new TreeMap<String, Object>();
+    if (item instanceof User u) {
+      m.put("role", u.getRole());
+      m.put("locked", u.isLocked());
+      m.put("deleted", u.getDeletedAt() != null);
+    } else if (item instanceof Order o) {
+      m.put("orderCode", o.getOrderCode());
+      m.put("status", o.getStatus());
+      m.put("returnStatus", o.getReturnStatus());
+      m.put("paymentStatus", o.getPaymentStatus());
+      m.put("salespersonId", o.getSalespersonId());
+    } else if (item instanceof StockReceipt r) {
+      m.put("receiptCode", r.getReceiptCode());
+      m.put("supplierId", r.getSupplier() == null ? null : r.getSupplier().id);
+      m.put("supplierName", r.getSupplierName());
+      m.put("totalCost", r.getTotalCost());
+      m.put("receivedAt", r.getReceivedAt());
+      m.put("status", r.getStatus());
+    } else if (item instanceof Product p) {
+      m.put("name", p.getName());
+      m.put("price", p.getPrice());
+      m.put("stock", p.getStock());
+      m.put("active", p.isActive());
+      m.put("category", p.getCategory());
+    } else if (item instanceof StoreVoucher v) {
+      m.put("code", v.getCode());
+      m.put("discountType", v.getDiscountType());
+      m.put("discountValue", v.getDiscountValue());
+      m.put("minOrderAmount", v.getMinOrderAmount());
+      m.put("maxDiscountAmount", v.getMaxDiscountAmount());
+      m.put("usageLimit", v.getUsageLimit());
+      m.put("perCustomerLimit", v.getPerCustomerLimit());
+      m.put("startsAt", v.getStartsAt());
+      m.put("expiresAt", v.getExpiresAt());
+      m.put("active", v.isActive());
+    } else if (item instanceof Feedback f) {
+      m.put("status", f.getStatus());
+      m.put("hidden", f.isHidden());
+      m.put("deleted", f.getDeletedAt() != null);
+      m.put("hasShopResponse", f.getAdminResponse() != null && !f.getAdminResponse().isBlank());
+    } else if (item instanceof Survey s) {
+      m.put("title", s.getTitle());
+      m.put("status", s.getStatus());
+      m.put("audience", s.getAudience());
+      m.put("deleted", s.getDeletedAt() != null);
+      var r = s.getReward();
+      if (r != null) {
+        m.put("rewardEnabled", r.isEnabled());
+        m.put("rewardType", r.getDiscountType());
+        m.put("rewardValue", r.getDiscountValue());
+        m.put("rewardMinimum", r.getMinOrderAmount());
+        m.put("rewardMaximum", r.getMaxDiscountAmount());
+        m.put("rewardDays", r.getValidDays());
+      }
+    } else if (item instanceof CustomerCareTask t) {
+      m.put("customerId", t.customerId);
+      m.put("assigneeId", t.assigneeId);
+      m.put("status", t.status);
+      m.put("dueAt", t.dueAt);
+      m.put("completedAt", t.completedAt);
+      m.put("outcome", t.outcome);
+      m.put("sourceType", t.sourceType);
+      m.put("sourceId", t.sourceId);
+      m.put("parentTaskId", t.parentTaskId);
+      m.put("version", t.version);
+    } else if (item instanceof CustomerCareNote n) {
+      m.put("customerId", n.customerId);
+      m.put("authorId", n.authorId);
+    } else throw new IllegalArgumentException("Unsupported audit snapshot");
+    return m;
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public void record(
+      String action, String type, Long id, Map<String, Object> before, Map<String, Object> after) {
+    recordAs(actor(), action, type, id, before, after);
+  }
+
+  /**
+   * Service callers may pass an actor only after authenticating and checking current database
+   * access.
+   */
+  @Transactional(propagation = Propagation.MANDATORY)
+  public void recordAs(
+      Actor actor,
+      String action,
+      String type,
+      Long id,
+      Map<String, Object> before,
+      Map<String, Object> after) {
+    if (actor == null) throw new IllegalStateException("Verified audit actor required");
+    try {
+      logs.save(
+          new AuditLog(
+              actor.id(),
+              actor.name(),
+              actor.role(),
+              action,
+              type,
+              id,
+              mapper.writeValueAsString(before),
+              mapper.writeValueAsString(after)));
+    } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+      throw new IllegalStateException("Cannot encode audit data", e);
     }
-    // Explicit allowlist: never serialize entities, requests, tokens, addresses or free-text customer content.
-    public static Map<String,Object> snapshot(Object item){
-        var m=new TreeMap<String,Object>();
-        if(item instanceof User u){m.put("role",u.getRole());m.put("locked",u.isLocked());m.put("deleted",u.getDeletedAt()!=null);}
-        else if(item instanceof Order o){m.put("orderCode",o.getOrderCode());m.put("status",o.getStatus());m.put("returnStatus",o.getReturnStatus());m.put("paymentStatus",o.getPaymentStatus());m.put("salespersonId",o.getSalespersonId());}
-        else if(item instanceof StockReceipt r){m.put("receiptCode",r.getReceiptCode());m.put("supplierId",r.getSupplier()==null?null:r.getSupplier().id);m.put("supplierName",r.getSupplierName());m.put("totalCost",r.getTotalCost());m.put("receivedAt",r.getReceivedAt());m.put("status",r.getStatus());}
-        else if(item instanceof Product p){m.put("name",p.getName());m.put("price",p.getPrice());m.put("stock",p.getStock());m.put("active",p.isActive());m.put("category",p.getCategory());}
-        else if(item instanceof StoreVoucher v){m.put("code",v.getCode());m.put("discountType",v.getDiscountType());m.put("discountValue",v.getDiscountValue());m.put("minOrderAmount",v.getMinOrderAmount());m.put("maxDiscountAmount",v.getMaxDiscountAmount());m.put("usageLimit",v.getUsageLimit());m.put("perCustomerLimit",v.getPerCustomerLimit());m.put("startsAt",v.getStartsAt());m.put("expiresAt",v.getExpiresAt());m.put("active",v.isActive());}
-        else if(item instanceof Feedback f){m.put("status",f.getStatus());m.put("hidden",f.isHidden());m.put("deleted",f.getDeletedAt()!=null);m.put("hasShopResponse",f.getAdminResponse()!=null&&!f.getAdminResponse().isBlank());}
-        else if(item instanceof Survey s){m.put("title",s.getTitle());m.put("status",s.getStatus());m.put("audience",s.getAudience());m.put("deleted",s.getDeletedAt()!=null);var r=s.getReward();if(r!=null){m.put("rewardEnabled",r.isEnabled());m.put("rewardType",r.getDiscountType());m.put("rewardValue",r.getDiscountValue());m.put("rewardMinimum",r.getMinOrderAmount());m.put("rewardMaximum",r.getMaxDiscountAmount());m.put("rewardDays",r.getValidDays());}}
-        else if(item instanceof CustomerCareTask t){m.put("customerId",t.customerId);m.put("assigneeId",t.assigneeId);m.put("status",t.status);m.put("dueAt",t.dueAt);m.put("completedAt",t.completedAt);m.put("outcome",t.outcome);m.put("sourceType",t.sourceType);m.put("sourceId",t.sourceId);m.put("parentTaskId",t.parentTaskId);m.put("version",t.version);}
-        else if(item instanceof CustomerCareNote n){m.put("customerId",n.customerId);m.put("authorId",n.authorId);}
-        else throw new IllegalArgumentException("Unsupported audit snapshot");
-        return m;
-    }
-    @Transactional(propagation=Propagation.MANDATORY)
-    public void record(String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
-        recordAs(actor(),action,type,id,before,after);
-    }
-    /** Service callers may pass an actor only after authenticating and checking current database access. */
-    @Transactional(propagation=Propagation.MANDATORY)
-    public void recordAs(Actor actor,String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
-        if(actor==null)throw new IllegalStateException("Verified audit actor required");
-        try {logs.save(new AuditLog(actor.id(),actor.name(),actor.role(),action,type,id,mapper.writeValueAsString(before),mapper.writeValueAsString(after)));}
-        catch(com.fasterxml.jackson.core.JsonProcessingException e){throw new IllegalStateException("Cannot encode audit data",e);}
-    }
+  }
 }

@@ -6,9 +6,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RetentionReportController {
-    private final RetentionReportService service;
-    public RetentionReportController(RetentionReportService service) { this.service = service; }
+  private final RetentionReportService service;
 
-    @GetMapping("/api/manager/reports/retention")
-    public RetentionReportService.Report report() { return service.report(); }
+  public RetentionReportController(RetentionReportService service) {
+    this.service = service;
+  }
+
+  @GetMapping("/api/manager/reports/retention")
+  public RetentionReportService.Report report() {
+    return service.report();
+  }
 }

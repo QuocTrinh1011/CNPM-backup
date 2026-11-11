@@ -1,32 +1,178 @@
-.manager-shell .customer-care{display:grid;gap:20px;min-width:0}
-.manager-shell .customer-care h2{margin-top:0}
-.manager-shell .care-filters,.manager-shell .care-actions{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:18px 0}
-.manager-shell fieldset.care-filters{border:0;padding:0;min-width:0}
-.manager-shell .customer-care label{display:grid;gap:6px;font-size:13px;min-width:0}
-.manager-shell .customer-care :is(input,select,textarea){width:100%;background:var(--admin-input);color:var(--admin-text);border:1px solid var(--admin-border);border-radius:8px;padding:10px;font:inherit;min-height:42px}
-.manager-shell .customer-care textarea{min-height:110px;resize:vertical}
-.manager-shell .care-form{margin:20px 0;padding:20px;border:1px solid var(--admin-primary);border-radius:12px;background:var(--admin-card)}
-.manager-shell .care-form>fieldset{display:grid;gap:14px;border:0;padding:0;margin:0;min-width:0}
-.manager-shell .care-picker{min-width:0;padding:12px;border:1px solid var(--admin-border);border-radius:8px;display:grid;gap:8px}
-.manager-shell .care-task-list{display:grid;gap:14px}
-.manager-shell .care-task,.manager-shell .care-note{padding:16px;border:1px solid var(--admin-border);border-radius:12px;min-width:0}
-.manager-shell .care-task-heading{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.manager-shell .care-task-heading h3{margin:0;flex:1;overflow-wrap:anywhere}
-.manager-shell .care-content{white-space:pre-wrap;overflow-wrap:anywhere}
-.manager-shell .care-task>button,.manager-shell .care-notes form>button{margin:12px 8px 0 0}
-.manager-shell .care-notes form{display:grid;gap:8px;margin-bottom:20px}
-.manager-shell .care-notes small,.manager-shell .care-task small{color:var(--admin-muted);display:block}
-.manager-shell .care-warning{color:#b45309;font-weight:600}
-.manager-shell[data-theme="dark"] .care-warning{color:#fcd34d}
-@media(max-width:600px){.manager-shell .care-filters{display:grid;grid-template-columns:1fr}.manager-shell .care-form{padding:12px}.manager-shell .care-task-heading{align-items:start}.manager-shell .care-task-heading h3{flex-basis:100%}}
-.manager-shell .care-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:20px 0}
-.manager-shell .care-metrics button{text-align:left;color:var(--admin-text);background:var(--admin-card);cursor:pointer;font:inherit}
-.manager-shell .care-metrics button:hover{border-color:var(--admin-primary)}
-.manager-shell .care-metrics button:focus-visible{outline:2px solid var(--admin-primary);outline-offset:3px}
-.manager-shell .care-metrics strong{display:block;font-size:28px;margin-top:8px}
-.manager-shell .care-source{min-width:0;max-width:100%;overflow-wrap:anywhere}
-.manager-shell .care-source a{color:var(--admin-primary);text-decoration:underline;text-underline-offset:3px}
-.manager-shell .care-source :is(a,button,input,textarea,select):focus-visible{outline:2px solid var(--admin-primary);outline-offset:3px}
-.manager-shell .admin-feedback-actions .care-source:has(.care-form){width:min(440px,80vw)}
-.manager-shell .care-result{border-top:1px solid var(--admin-border);margin-top:14px;padding-top:10px;overflow-wrap:anywhere}
-.manager-shell .care-result button:focus-visible{outline:2px solid var(--admin-primary);outline-offset:3px}
+.manager-shell .customer-care {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.manager-shell .customer-care h2 {
+  margin-top: 0;
+}
+.manager-shell .care-filters,
+.manager-shell .care-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin: 18px 0;
+}
+.manager-shell fieldset.care-filters {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.manager-shell .customer-care label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  min-width: 0;
+}
+.manager-shell .customer-care :is(input, select, textarea) {
+  width: 100%;
+  background: var(--admin-input);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  padding: 10px;
+  font: inherit;
+  min-height: 42px;
+}
+.manager-shell .customer-care textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+.manager-shell .care-form {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid var(--admin-primary);
+  border-radius: 12px;
+  background: var(--admin-card);
+}
+.manager-shell .care-form > fieldset {
+  display: grid;
+  gap: 14px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.manager-shell .care-picker {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+}
+.manager-shell .care-task-list {
+  display: grid;
+  gap: 14px;
+}
+.manager-shell .care-task,
+.manager-shell .care-note {
+  padding: 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  min-width: 0;
+}
+.manager-shell .care-task-heading {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.manager-shell .care-task-heading h3 {
+  margin: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.manager-shell .care-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.manager-shell .care-task > button,
+.manager-shell .care-notes form > button {
+  margin: 12px 8px 0 0;
+}
+.manager-shell .care-notes form {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.manager-shell .care-notes small,
+.manager-shell .care-task small {
+  color: var(--admin-muted);
+  display: block;
+}
+.manager-shell .care-warning {
+  color: #b45309;
+  font-weight: 600;
+}
+.manager-shell[data-theme='dark'] .care-warning {
+  color: #fcd34d;
+}
+@media (max-width: 600px) {
+  .manager-shell .care-filters {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .manager-shell .care-form {
+    padding: 12px;
+  }
+  .manager-shell .care-task-heading {
+    align-items: start;
+  }
+  .manager-shell .care-task-heading h3 {
+    flex-basis: 100%;
+  }
+}
+.manager-shell .care-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.manager-shell .care-metrics button {
+  text-align: left;
+  color: var(--admin-text);
+  background: var(--admin-card);
+  cursor: pointer;
+  font: inherit;
+}
+.manager-shell .care-metrics button:hover {
+  border-color: var(--admin-primary);
+}
+.manager-shell .care-metrics button:focus-visible {
+  outline: 2px solid var(--admin-primary);
+  outline-offset: 3px;
+}
+.manager-shell .care-metrics strong {
+  display: block;
+  font-size: 28px;
+  margin-top: 8px;
+}
+.manager-shell .care-source {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.manager-shell .care-source a {
+  color: var(--admin-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.manager-shell .care-source :is(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--admin-primary);
+  outline-offset: 3px;
+}
+.manager-shell .admin-feedback-actions .care-source:has(.care-form) {
+  width: min(440px, 80vw);
+}
+.manager-shell .care-result {
+  border-top: 1px solid var(--admin-border);
+  margin-top: 14px;
+  padding-top: 10px;
+  overflow-wrap: anywhere;
+}
+.manager-shell .care-result button:focus-visible {
+  outline: 2px solid var(--admin-primary);
+  outline-offset: 3px;
+}

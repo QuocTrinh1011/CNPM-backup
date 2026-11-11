@@ -1,16 +1,87 @@
-.manager-shell .retention-report { min-width: 0; color: var(--admin-text); }
-.manager-shell .admin-report-tabs { flex-wrap: wrap; }
-.manager-shell .retention-report p { color: var(--admin-muted); line-height: 1.65; overflow-wrap: anywhere; }
-.manager-shell .retention-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 16px; margin: 20px 0; }
-.manager-shell .retention-metrics article, .manager-shell .retention-distribution, .manager-shell .retention-report aside { background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 16px; padding: 18px; min-width: 0; }
-.manager-shell .retention-metrics h4 { margin: 0 0 12px; }
-.manager-shell .retention-metrics strong, .manager-shell .retention-count { font: inherit; font-size: 1.65rem; font-weight: 800; overflow-wrap: anywhere; }
-.manager-shell .retention-count { background: transparent; border: 0; color: var(--admin-primary); padding: 4px; cursor: pointer; text-decoration: underline; text-underline-offset: 5px; }
-.manager-shell .retention-report button:focus-visible { outline: 3px solid var(--admin-primary); outline-offset: 3px; }
-.manager-shell .retention-group { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; margin: 20px 0; }
-.manager-shell .retention-group button { justify-self: start; white-space: normal; text-align: left; }
-.manager-shell .retention-track { grid-column: 1 / -1; height: 12px; background: var(--admin-input); border-radius: 8px; overflow: hidden; }
-.manager-shell .retention-track > div { height: 100%; background: var(--admin-primary); border-radius: inherit; }
-.manager-shell .retention-report aside { margin-top: 20px; }
-.manager-shell .retention-warning { padding: 12px; border: 1px solid var(--admin-border); border-radius: 10px; }
-@media (max-width: 480px) { .manager-shell .retention-group { grid-template-columns: 1fr; } }
+.manager-shell .retention-report {
+  min-width: 0;
+  color: var(--admin-text);
+}
+.manager-shell .admin-report-tabs {
+  flex-wrap: wrap;
+}
+.manager-shell .retention-report p {
+  color: var(--admin-muted);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.manager-shell .retention-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+.manager-shell .retention-metrics article,
+.manager-shell .retention-distribution,
+.manager-shell .retention-report aside {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+  padding: 18px;
+  min-width: 0;
+}
+.manager-shell .retention-metrics h4 {
+  margin: 0 0 12px;
+}
+.manager-shell .retention-metrics strong,
+.manager-shell .retention-count {
+  font: inherit;
+  font-size: 1.65rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+.manager-shell .retention-count {
+  background: transparent;
+  border: 0;
+  color: var(--admin-primary);
+  padding: 4px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.manager-shell .retention-report button:focus-visible {
+  outline: 3px solid var(--admin-primary);
+  outline-offset: 3px;
+}
+.manager-shell .retention-group {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+.manager-shell .retention-group button {
+  justify-self: start;
+  white-space: normal;
+  text-align: left;
+}
+.manager-shell .retention-track {
+  grid-column: 1 / -1;
+  height: 12px;
+  background: var(--admin-input);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.manager-shell .retention-track > div {
+  height: 100%;
+  background: var(--admin-primary);
+  border-radius: inherit;
+}
+.manager-shell .retention-report aside {
+  margin-top: 20px;
+}
+.manager-shell .retention-warning {
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+}
+@media (max-width: 480px) {
+  .manager-shell .retention-group {
+    grid-template-columns: 1fr;
+  }
+}

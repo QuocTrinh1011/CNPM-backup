@@ -22,7 +22,7 @@ import {
   Lock,
   ArrowRight,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
 } from 'lucide-react';
 
 const menu = {
@@ -48,15 +48,13 @@ export default function SystemAdminApp() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem('admin-theme') || 'dark');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(
-    () => {
-      try {
-        return localStorage.getItem('admin-sidebar-collapsed') === 'true';
-      } catch {
-        return false;
-      }
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('admin-sidebar-collapsed') === 'true';
+    } catch {
+      return false;
     }
-  );
+  });
   const [form, setForm] = useState({ email: 'admin@shop.com', password: '' });
   const [overview, setOverview] = useState(null);
   const [retry, setRetry] = useState(0);
@@ -65,8 +63,9 @@ export default function SystemAdminApp() {
     window.history[replace ? 'replaceState' : 'pushState']({}, '', url);
     setPath(url);
   };
-  const followInternalLink = (event) => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const followInternalLink = event => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+      return;
     event.preventDefault();
     go(event.currentTarget.getAttribute('href'));
   };
@@ -82,10 +81,10 @@ export default function SystemAdminApp() {
     setChecking(true);
     setError('');
     adminRefreshSession()
-      .then((s) => {
+      .then(s => {
         if (alive) setSession(s?.admin || null);
       })
-      .catch((e) => {
+      .catch(e => {
         if (alive) setError(e.message);
       })
       .finally(() => {
@@ -126,10 +125,10 @@ export default function SystemAdminApp() {
     if (!session) return;
     let alive = true;
     adminApi('/api/admin/overview')
-      .then((d) => {
+      .then(d => {
         if (alive) setOverview(d);
       })
-      .catch((e) => {
+      .catch(e => {
         if (alive) setError(e.message);
       });
     return () => {
@@ -155,16 +154,38 @@ export default function SystemAdminApp() {
   return (
     <div className="admin-shell internal-portal" data-theme={theme}>
       {checking ? (
-        <div className="internal-loading-wrap" style={{ margin: 'auto', padding: '60px', textAlign: 'center' }}>
+        <div
+          className="internal-loading-wrap"
+          style={{ margin: 'auto', padding: '60px', textAlign: 'center' }}
+        >
           <p>Đang kiểm tra phiên làm việc...</p>
         </div>
       ) : !session ? (
         <main className="admin-card internal-login">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-            <span style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--admin-primary)', color: '#fff', display: 'grid', placeItems: 'center' }}>
+            <span
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                background: 'var(--admin-primary)',
+                color: '#fff',
+                display: 'grid',
+                placeItems: 'center',
+              }}
+            >
               <ShieldCheck size={18} />
             </span>
-            <span style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.08em', color: 'var(--admin-primary)' }}>SYSTEM ADMIN</span>
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: '700',
+                letterSpacing: '0.08em',
+                color: 'var(--admin-primary)',
+              }}
+            >
+              SYSTEM ADMIN
+            </span>
           </div>
           <h1>Admin hệ thống</h1>
           <p>Quản trị tài khoản nội bộ và tra cứu sản phẩm.</p>
@@ -175,7 +196,7 @@ export default function SystemAdminApp() {
                 type="email"
                 required
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onChange={e => setForm({ ...form, email: e.target.value })}
               />
             </label>
             <label>
@@ -184,7 +205,7 @@ export default function SystemAdminApp() {
                 type="password"
                 required
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={e => setForm({ ...form, password: e.target.value })}
               />
             </label>
             <button disabled={busy} type="submit">
@@ -194,7 +215,10 @@ export default function SystemAdminApp() {
         </main>
       ) : (
         <>
-          <aside id="admin-sidebar" className={`internal-sidebar${sidebarCollapsed ? ' is-collapsed' : ''}`}>
+          <aside
+            id="admin-sidebar"
+            className={`internal-sidebar${sidebarCollapsed ? ' is-collapsed' : ''}`}
+          >
             <div className="internal-brand">
               <span className="internal-brand-icon">
                 <ShieldCheck size={20} />
@@ -206,11 +230,13 @@ export default function SystemAdminApp() {
               <button
                 type="button"
                 className="internal-collapse-toggle"
-                aria-label={sidebarCollapsed ? 'Mở rộng thanh điều hướng' : 'Thu gọn thanh điều hướng'}
+                aria-label={
+                  sidebarCollapsed ? 'Mở rộng thanh điều hướng' : 'Thu gọn thanh điều hướng'
+                }
                 aria-expanded={!sidebarCollapsed}
                 aria-controls="admin-sidebar"
                 title={sidebarCollapsed ? 'Mở rộng thanh điều hướng' : 'Thu gọn thanh điều hướng'}
-                onClick={() => setSidebarCollapsed((value) => !value)}
+                onClick={() => setSidebarCollapsed(value => !value)}
               >
                 {sidebarCollapsed ? (
                   <PanelLeftOpen size={16} aria-hidden="true" />
@@ -230,7 +256,7 @@ export default function SystemAdminApp() {
                     aria-current={section === key ? 'page' : undefined}
                     title={sidebarCollapsed ? label : undefined}
                     href={`/admin${key === 'dashboard' ? '' : '/' + key}`}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       go(e.currentTarget.getAttribute('href'));
                     }}
@@ -247,7 +273,11 @@ export default function SystemAdminApp() {
               <a
                 className="internal-nav-link external"
                 href={managerUrl}
-                title={sidebarCollapsed ? 'Cổng quản lý (Manager)' : 'Mở cổng quản lý đơn hàng & khách hàng'}
+                title={
+                  sidebarCollapsed
+                    ? 'Cổng quản lý (Manager)'
+                    : 'Mở cổng quản lý đơn hàng & khách hàng'
+                }
               >
                 <Layers size={17} aria-hidden="true" />
                 <span>Cổng quản lý (Manager)</span>
@@ -304,7 +334,7 @@ export default function SystemAdminApp() {
                   type="button"
                   className="internal-theme-toggle"
                   aria-label={theme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối'}
-                  onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+                  onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
                 >
                   {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
                   <span>{theme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối'}</span>
@@ -319,13 +349,16 @@ export default function SystemAdminApp() {
                   <div className="internal-hero-text">
                     <span className="internal-eyebrow">BẢNG ĐIỀU KHIỂN HẠ TẦNG</span>
                     <h2>Xin chào, {session.email?.split('@')[0] || 'Admin'}!</h2>
-                    <p>Giám sát và phân quyền tài khoản quản trị, danh mục sản phẩm và đối tác cung ứng kết nối.</p>
+                    <p>
+                      Giám sát và phân quyền tài khoản quản trị, danh mục sản phẩm và đối tác cung
+                      ứng kết nối.
+                    </p>
                   </div>
                   <div className="internal-hero-actions">
                     <button
                       type="button"
                       className="internal-sync-btn"
-                      onClick={() => setRetry((n) => n + 1)}
+                      onClick={() => setRetry(n => n + 1)}
                       title="Tải lại số liệu mới nhất"
                     >
                       <RefreshCw size={13} />
@@ -349,7 +382,9 @@ export default function SystemAdminApp() {
                         <ShieldCheck size={20} />
                       </div>
                     </div>
-                    <div className="internal-kpi-value">{overview ? overview.accounts ?? 0 : '—'}</div>
+                    <div className="internal-kpi-value">
+                      {overview ? (overview.accounts ?? 0) : '—'}
+                    </div>
                     <div className="internal-kpi-footer">
                       <span>Phân quyền Admin & Manager</span>
                       <ArrowRight size={14} className="internal-kpi-arrow" />
@@ -369,7 +404,9 @@ export default function SystemAdminApp() {
                         <Package size={20} />
                       </div>
                     </div>
-                    <div className="internal-kpi-value">{overview ? overview.products ?? 0 : '—'}</div>
+                    <div className="internal-kpi-value">
+                      {overview ? (overview.products ?? 0) : '—'}
+                    </div>
                     <div className="internal-kpi-footer">
                       <span>Sản phẩm trong cơ sở dữ liệu</span>
                       <ArrowRight size={14} className="internal-kpi-arrow" />
@@ -443,7 +480,9 @@ export default function SystemAdminApp() {
                       </div>
                       <div className="internal-action-text">
                         <b>Cổng quản lý cửa hàng</b>
-                        <small>Chuyển sang Manager Portal để xử lý đơn hàng, khách hàng, voucher</small>
+                        <small>
+                          Chuyển sang Manager Portal để xử lý đơn hàng, khách hàng, voucher
+                        </small>
                       </div>
                       <ChevronRight size={16} className="internal-action-arrow" />
                     </a>
@@ -498,35 +537,55 @@ export default function SystemAdminApp() {
                       <div className="tip-item">
                         <CheckCircle2 size={16} className="tip-icon" />
                         <p>
-                          <strong>Phân quyền tối thiểu:</strong> Chỉ cấp quyền <code>ADMIN</code> cho người quản trị cấp cao. Nhân viên vận hành cấp quyền <code>MANAGER</code>.
+                          <strong>Phân quyền tối thiểu:</strong> Chỉ cấp quyền <code>ADMIN</code>{' '}
+                          cho người quản trị cấp cao. Nhân viên vận hành cấp quyền{' '}
+                          <code>MANAGER</code>.
                         </p>
                       </div>
                       <div className="tip-item">
                         <CheckCircle2 size={16} className="tip-icon" />
                         <p>
-                          <strong>Khóa tài khoản kịp thời:</strong> Khi nhân viên nghỉ việc hoặc có dấu hiệu bất thường, sử dụng tính năng <em>Khóa tài khoản</em> trong trang Tài khoản nội bộ.
+                          <strong>Khóa tài khoản kịp thời:</strong> Khi nhân viên nghỉ việc hoặc có
+                          dấu hiệu bất thường, sử dụng tính năng <em>Khóa tài khoản</em> trong trang
+                          Tài khoản nội bộ.
                         </p>
                       </div>
                       <div className="tip-item">
                         <CheckCircle2 size={16} className="tip-icon" />
                         <p>
-                          <strong>Đổi mật khẩu định kỳ:</strong> Sử dụng mật khẩu phức tạp trên 8 ký tự gồm chữ hoa, chữ thường, số và ký tự đặc biệt.
+                          <strong>Đổi mật khẩu định kỳ:</strong> Sử dụng mật khẩu phức tạp trên 8 ký
+                          tự gồm chữ hoa, chữ thường, số và ký tự đặc biệt.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+            ) : section === 'audit-logs' ? (
+              <AuditLogs />
             ) : (
-              section === 'audit-logs' ? <AuditLogs /> : menu[section] && <InternalDirectory key={section} kind={section} />
+              menu[section] && <InternalDirectory key={section} kind={section} />
             )}
           </main>
         </>
       )}
       {error && (
-        <div className="admin-card" role="alert" style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 100, borderLeft: '4px solid #ef4444', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div
+          className="admin-card"
+          role="alert"
+          style={{
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            zIndex: 100,
+            borderLeft: '4px solid #ef4444',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
           <span>{error}</span>
-          <button type="button" onClick={() => setRetry((n) => n + 1)}>
+          <button type="button" onClick={() => setRetry(n => n + 1)}>
             Thử lại
           </button>
         </div>

@@ -1,9 +1,64 @@
-.manager-shell .manager-notification-bell{position:relative}
-.manager-shell .manager-notification-panel{position:absolute;right:0;top:calc(100% + 12px);z-index:60;width:min(430px,calc(100vw - 32px));max-height:75vh;overflow:auto;padding:18px;background:var(--admin-card);color:var(--admin-text);border:1px solid var(--admin-border);border-radius:14px;box-shadow:0 12px 30px #0003}
-.manager-shell .manager-notification-panel h2{font-size:18px;margin:0 0 12px}
-.manager-shell .manager-notification-panel ul{list-style:none;margin:12px 0;padding:0}
-.manager-shell .manager-notification-item{display:grid;gap:8px;text-align:left;width:100%;padding:14px 0;border:0;border-bottom:1px solid var(--admin-border);background:transparent;color:inherit;font:inherit;cursor:pointer;overflow-wrap:anywhere}
-.manager-shell .manager-notification-item small{color:var(--admin-muted)}
-.manager-shell .manager-care-detail{margin-bottom:20px;overflow-wrap:anywhere}
-.manager-shell :is(.manager-notification-bell,.manager-care-detail,.manager-my-task-summary) button:focus-visible{outline:3px solid var(--admin-primary);outline-offset:3px}
-@media(max-width:600px){.manager-shell .manager-notification-panel{position:fixed;top:80px;left:16px;right:16px;width:auto;max-height:calc(100dvh - 110px)}}
+.manager-shell .manager-notification-bell {
+  position: relative;
+}
+.manager-shell .manager-notification-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  z-index: 60;
+  width: min(430px, calc(100vw - 32px));
+  max-height: 75vh;
+  overflow: auto;
+  padding: 18px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px #0003;
+}
+.manager-shell .manager-notification-panel h2 {
+  font-size: 18px;
+  margin: 0 0 12px;
+}
+.manager-shell .manager-notification-panel ul {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+}
+.manager-shell .manager-notification-item {
+  display: grid;
+  gap: 8px;
+  text-align: left;
+  width: 100%;
+  padding: 14px 0;
+  border: 0;
+  border-bottom: 1px solid var(--admin-border);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.manager-shell .manager-notification-item small {
+  color: var(--admin-muted);
+}
+.manager-shell .manager-care-detail {
+  margin-bottom: 20px;
+  overflow-wrap: anywhere;
+}
+.manager-shell
+  :is(.manager-notification-bell, .manager-care-detail, .manager-my-task-summary)
+  button:focus-visible {
+  outline: 3px solid var(--admin-primary);
+  outline-offset: 3px;
+}
+@media (max-width: 600px) {
+  .manager-shell .manager-notification-panel {
+    position: fixed;
+    top: 80px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-height: calc(100dvh - 110px);
+  }
+}

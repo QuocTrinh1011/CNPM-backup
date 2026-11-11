@@ -12,8 +12,16 @@ export function normalizeSearchText(text) {
     .trim();
 }
 
-const normalized = text => String(text || '').normalize('NFC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('vi');
-const unique = (items, name) => { const matches = items.filter(item => normalized(item.name) === normalized(name)); return matches.length === 1 ? matches[0] : null; };
+const normalized = text =>
+  String(text || '')
+    .normalize('NFC')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLocaleLowerCase('vi');
+const unique = (items, name) => {
+  const matches = items.filter(item => normalized(item.name) === normalized(name));
+  return matches.length === 1 ? matches[0] : null;
+};
 export const phoneDigits = value => String(value || '').replace(/[^0-9]/g, '');
 export const validPhone = value => /^0[0-9]{9}$/.test(value || '');
 export function matchAddress(address) {
@@ -30,12 +38,36 @@ export function shippingErrors(form) {
   if (!validPhone(form.phone)) errors.phone = 'Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0.';
   const { province, ward } = matchAddress(form);
   if (!province || !ward) errors.location = 'Vui lòng chọn Tỉnh/Thành phố và Phường/Xã hợp lệ.';
-  if (!form.recipientName?.trim() || !form.addressLine?.trim()) errors.details = 'Vui lòng nhập người nhận và số nhà, tên đường.';
+  if (!form.recipientName?.trim() || !form.addressLine?.trim())
+    errors.details = 'Vui lòng nhập người nhận và số nhà, tên đường.';
   return errors;
 }
 export function PhoneField({ value, onChange, error, disabled }) {
   const id = useId();
-  return <div className="shop-shipping-field"><label htmlFor={id}>SỐ ĐIỆN THOẠI</label><input id={id} type="tel" inputMode="numeric" autoComplete="tel-national" required pattern="0[0-9]{9}" value={value ?? ''} disabled={disabled} aria-invalid={!!error} aria-describedby={error ? `${id}-error` : undefined} onChange={event => onChange(phoneDigits(event.target.value))} placeholder="Ví dụ: 0912345678"/>{error && <p className="shop-field-error" id={`${id}-error`} role="alert">{error}</p>}</div>;
+  return (
+    <div className="shop-shipping-field">
+      <label htmlFor={id}>SỐ ĐIỆN THOẠI</label>
+      <input
+        id={id}
+        type="tel"
+        inputMode="numeric"
+        autoComplete="tel-national"
+        required
+        pattern="0[0-9]{9}"
+        value={value ?? ''}
+        disabled={disabled}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        onChange={event => onChange(phoneDigits(event.target.value))}
+        placeholder="Ví dụ: 0912345678"
+      />
+      {error && (
+        <p className="shop-field-error" id={`${id}-error`} role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
 }
 
 function SearchableSelect({
@@ -62,12 +94,12 @@ function SearchableSelect({
       inputRef.current?.focus();
     }, 50);
 
-    const handleClickOutside = (e) => {
+    const handleClickOutside = e => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
         setOpen(false);
       }
     };
-    const handleKeyDown = (e) => {
+    const handleKeyDown = e => {
       if (e.key === 'Escape') setOpen(false);
     };
 
@@ -122,7 +154,7 @@ function SearchableSelect({
               <button
                 type="button"
                 className="shop-searchable-clear"
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   setSearchQuery('');
                   inputRef.current?.focus();
@@ -136,9 +168,7 @@ function SearchableSelect({
 
           <div className="shop-searchable-options">
             {filteredItems.length === 0 ? (
-              <div className="shop-searchable-empty">
-                Không tìm thấy kết quả phù hợp
-              </div>
+              <div className="shop-searchable-empty">Không tìm thấy kết quả phù hợp</div>
             ) : (
               filteredItems.map(item => {
                 const isSelected = String(item.code) === String(selectedCode);
@@ -170,66 +200,85 @@ function SearchableSelect({
 export default function ShippingFields({ form, onChange, error, legacy, disabled }) {
   const id = useId();
   const { province, ward } = matchAddress(form);
-  return <div className="shop-shipping-location">
-    {legacy && <p className="shop-address-note">Địa chỉ đã lưu: {legacy}. Vui lòng kiểm tra và chọn lại tỉnh/phường theo danh mục mới; địa chỉ đã lưu chỉ thay đổi khi anh/chị bấm lưu.</p>}
-    <div className="form-two-columns">
-      <label htmlFor={`${id}-province`}>
-        TỈNH/THÀNH PHỐ
-        <select
-          id={`${id}-province`}
-          required
-          disabled={disabled}
-          value={province?.code || ''}
-          aria-invalid={!!error}
-          onChange={event => {
-            const selected = provinces.find(p => String(p.code) === event.target.value);
-            onChange({ province: selected?.name || '', ward: '', district: '' });
-          }}
-          className="shop-address-hidden-select"
-        >
-          <option value="">Chọn Tỉnh/Thành phố</option>
-          {provinces.map(p => <option key={p.code} value={p.code}>{p.name}</option>)}
-        </select>
-        <SearchableSelect
-          placeholder="Chọn Tỉnh/Thành phố"
-          searchPlaceholder="Tìm kiếm tỉnh, thành phố..."
-          items={provinces}
-          selectedCode={province?.code || ''}
-          disabled={disabled}
-          onSelect={selected => {
-            onChange({ province: selected?.name || '', ward: '', district: '' });
-          }}
-        />
-      </label>
-      <label htmlFor={`${id}-ward`}>
-        PHƯỜNG/XÃ
-        <select
-          id={`${id}-ward`}
-          required
-          disabled={disabled || !province}
-          value={ward?.code || ''}
-          aria-invalid={!!error}
-          onChange={event => {
-            const selected = province?.wards.find(w => String(w.code) === event.target.value);
-            onChange({ ward: selected?.name || '', district: '' });
-          }}
-          className="shop-address-hidden-select"
-        >
-          <option value="">{province ? 'Chọn Phường/Xã' : 'Chọn tỉnh trước'}</option>
-          {province?.wards.map(w => <option key={w.code} value={w.code}>{w.name}</option>)}
-        </select>
-        <SearchableSelect
-          placeholder={province ? 'Chọn Phường/Xã' : 'Chọn tỉnh trước'}
-          searchPlaceholder="Tìm kiếm phường, xã..."
-          items={province?.wards || []}
-          selectedCode={ward?.code || ''}
-          disabled={disabled || !province}
-          onSelect={selected => {
-            onChange({ ward: selected?.name || '', district: '' });
-          }}
-        />
-      </label>
+  return (
+    <div className="shop-shipping-location">
+      {legacy && (
+        <p className="shop-address-note">
+          Địa chỉ đã lưu: {legacy}. Vui lòng kiểm tra và chọn lại tỉnh/phường theo danh mục mới; địa
+          chỉ đã lưu chỉ thay đổi khi anh/chị bấm lưu.
+        </p>
+      )}
+      <div className="form-two-columns">
+        <label htmlFor={`${id}-province`}>
+          TỈNH/THÀNH PHỐ
+          <select
+            id={`${id}-province`}
+            required
+            disabled={disabled}
+            value={province?.code || ''}
+            aria-invalid={!!error}
+            onChange={event => {
+              const selected = provinces.find(p => String(p.code) === event.target.value);
+              onChange({ province: selected?.name || '', ward: '', district: '' });
+            }}
+            className="shop-address-hidden-select"
+          >
+            <option value="">Chọn Tỉnh/Thành phố</option>
+            {provinces.map(p => (
+              <option key={p.code} value={p.code}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+          <SearchableSelect
+            placeholder="Chọn Tỉnh/Thành phố"
+            searchPlaceholder="Tìm kiếm tỉnh, thành phố..."
+            items={provinces}
+            selectedCode={province?.code || ''}
+            disabled={disabled}
+            onSelect={selected => {
+              onChange({ province: selected?.name || '', ward: '', district: '' });
+            }}
+          />
+        </label>
+        <label htmlFor={`${id}-ward`}>
+          PHƯỜNG/XÃ
+          <select
+            id={`${id}-ward`}
+            required
+            disabled={disabled || !province}
+            value={ward?.code || ''}
+            aria-invalid={!!error}
+            onChange={event => {
+              const selected = province?.wards.find(w => String(w.code) === event.target.value);
+              onChange({ ward: selected?.name || '', district: '' });
+            }}
+            className="shop-address-hidden-select"
+          >
+            <option value="">{province ? 'Chọn Phường/Xã' : 'Chọn tỉnh trước'}</option>
+            {province?.wards.map(w => (
+              <option key={w.code} value={w.code}>
+                {w.name}
+              </option>
+            ))}
+          </select>
+          <SearchableSelect
+            placeholder={province ? 'Chọn Phường/Xã' : 'Chọn tỉnh trước'}
+            searchPlaceholder="Tìm kiếm phường, xã..."
+            items={province?.wards || []}
+            selectedCode={ward?.code || ''}
+            disabled={disabled || !province}
+            onSelect={selected => {
+              onChange({ ward: selected?.name || '', district: '' });
+            }}
+          />
+        </label>
+      </div>
+      {error && (
+        <p className="shop-field-error" role="alert">
+          {error}
+        </p>
+      )}
     </div>
-    {error && <p className="shop-field-error" role="alert">{error}</p>}
-  </div>;
+  );
 }

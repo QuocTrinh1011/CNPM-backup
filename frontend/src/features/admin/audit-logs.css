@@ -1,15 +1,83 @@
-.admin-shell .audit-logs { min-width: 0; color: var(--admin-text); }
-.admin-shell .audit-logs p { color: var(--admin-muted); line-height: 1.6; }
-.admin-shell .audit-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin: 20px 0; }
-.admin-shell .audit-filters label { display: grid; gap: 6px; flex: 1 1 180px; min-width: 0; }
-.admin-shell .audit-filters input, .admin-shell .audit-filters select { width: 100%; min-width: 0; padding: 10px; background: var(--admin-input); border: 1px solid var(--admin-border); color: var(--admin-text); border-radius: 8px; font: inherit; }
-.admin-shell .audit-summary, .admin-shell .audit-list header, .admin-shell .audit-logs nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
-.admin-shell .audit-list { display: grid; gap: 14px; margin: 18px 0; }
-.admin-shell .audit-list article { padding: 18px; border: 1px solid var(--admin-border); border-radius: 12px; background: var(--admin-card); min-width: 0; overflow-wrap: anywhere; }
-.admin-shell .audit-list time { color: var(--admin-muted); }
-.admin-shell .audit-list summary { cursor: pointer; padding: 8px 0; }
-.admin-shell .audit-table-wrap { overflow-x: auto; }
-.admin-shell .audit-table-wrap table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-.admin-shell .audit-table-wrap th, .admin-shell .audit-table-wrap td { padding: 10px; text-align: left; border-bottom: 1px solid var(--admin-border); overflow-wrap: anywhere; }
-.admin-shell .audit-changed { background: var(--admin-input); }
-.admin-shell .audit-logs :is(button,input,select,summary):focus-visible { outline: 3px solid var(--admin-primary); outline-offset: 3px; }
+.admin-shell .audit-logs {
+  min-width: 0;
+  color: var(--admin-text);
+}
+.admin-shell .audit-logs p {
+  color: var(--admin-muted);
+  line-height: 1.6;
+}
+.admin-shell .audit-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin: 20px 0;
+}
+.admin-shell .audit-filters label {
+  display: grid;
+  gap: 6px;
+  flex: 1 1 180px;
+  min-width: 0;
+}
+.admin-shell .audit-filters input,
+.admin-shell .audit-filters select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  background: var(--admin-input);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+  border-radius: 8px;
+  font: inherit;
+}
+.admin-shell .audit-summary,
+.admin-shell .audit-list header,
+.admin-shell .audit-logs nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.admin-shell .audit-list {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+}
+.admin-shell .audit-list article {
+  padding: 18px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-card);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-shell .audit-list time {
+  color: var(--admin-muted);
+}
+.admin-shell .audit-list summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.admin-shell .audit-table-wrap {
+  overflow-x: auto;
+}
+.admin-shell .audit-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.admin-shell .audit-table-wrap th,
+.admin-shell .audit-table-wrap td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--admin-border);
+  overflow-wrap: anywhere;
+}
+.admin-shell .audit-changed {
+  background: var(--admin-input);
+}
+.admin-shell .audit-logs :is(button, input, select, summary):focus-visible {
+  outline: 3px solid var(--admin-primary);
+  outline-offset: 3px;
+}

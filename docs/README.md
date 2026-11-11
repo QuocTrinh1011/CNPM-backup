@@ -9,4 +9,5 @@ Mục lục các tài liệu theo nhóm:
 - [QA](qa/): quy trình CRM, báo cáo hoàn thành và ghi chú kiểm thử frontend.
 - [Thiết kế](design/): [sơ đồ](design/diagrams/) và [Use Case v2](design/use-cases/).
 - [Kế hoạch](plans/) và [đặc tả thiết kế](specs/).
+- [Hướng dẫn đọc code backend](guides/backend-code-reading-guide.md): bản đồ các nghiệp vụ Java/database và thứ tự lần theo luồng.
 - [Lưu trữ](archive/): sơ đồ và Use Case cũ được giữ để tham khảo.

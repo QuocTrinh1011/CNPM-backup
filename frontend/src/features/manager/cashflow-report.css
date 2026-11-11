@@ -1,1 +1,103 @@
-.cashflow-report{min-width:0}.cashflow-filters{display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0}.cashflow-filters label{display:grid;gap:.4rem}.cashflow-filters input,.cashflow-filters select{font:inherit;color:inherit;background:transparent;border:1px solid var(--admin-border,#94a3b8);padding:.65rem;border-radius:8px}.cashflow-filters option{background:Canvas;color:CanvasText}.cashflow-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}.cashflow-metrics article{padding:1rem;border:1px solid var(--admin-border,#94a3b866);border-radius:12px;overflow-wrap:anywhere}.cashflow-metrics strong{font-size:1.25rem}.cashflow-warning{padding:1rem;margin:1rem 0;border-inline-start:4px solid #d97706}.cashflow-series{display:grid;gap:.7rem;max-height:24rem;overflow:auto;padding:.4rem}.cashflow-series>div{display:grid;grid-template-columns:6rem minmax(4rem,1fr);gap:.3rem 1rem}.cashflow-series small{grid-column:2}.cashflow-series i{display:block;height:7px;min-width:0;background:#16a34a;border-radius:4px;margin:.25rem 0}.cashflow-series i.is-refund{background:#ea580c}.cashflow-table{overflow:auto;margin:1rem 0}.cashflow-table table{width:100%;border-collapse:collapse;min-width:480px}.cashflow-table th,.cashflow-table td{text-align:start;padding:.7rem;border-bottom:1px solid var(--admin-border,#94a3b866)}.cashflow-report :focus-visible{outline:3px solid #3b82f6;outline-offset:3px}@media(max-width:800px){.cashflow-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:450px){.cashflow-metrics{grid-template-columns:1fr}.cashflow-filters>label{width:100%}}
+.cashflow-report {
+  min-width: 0;
+}
+.cashflow-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.cashflow-filters label {
+  display: grid;
+  gap: 0.4rem;
+}
+.cashflow-filters input,
+.cashflow-filters select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--admin-border, #94a3b8);
+  padding: 0.65rem;
+  border-radius: 8px;
+}
+.cashflow-filters option {
+  background: Canvas;
+  color: CanvasText;
+}
+.cashflow-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.cashflow-metrics article {
+  padding: 1rem;
+  border: 1px solid var(--admin-border, #94a3b866);
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+.cashflow-metrics strong {
+  font-size: 1.25rem;
+}
+.cashflow-warning {
+  padding: 1rem;
+  margin: 1rem 0;
+  border-inline-start: 4px solid #d97706;
+}
+.cashflow-series {
+  display: grid;
+  gap: 0.7rem;
+  max-height: 24rem;
+  overflow: auto;
+  padding: 0.4rem;
+}
+.cashflow-series > div {
+  display: grid;
+  grid-template-columns: 6rem minmax(4rem, 1fr);
+  gap: 0.3rem 1rem;
+}
+.cashflow-series small {
+  grid-column: 2;
+}
+.cashflow-series i {
+  display: block;
+  height: 7px;
+  min-width: 0;
+  background: #16a34a;
+  border-radius: 4px;
+  margin: 0.25rem 0;
+}
+.cashflow-series i.is-refund {
+  background: #ea580c;
+}
+.cashflow-table {
+  overflow: auto;
+  margin: 1rem 0;
+}
+.cashflow-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 480px;
+}
+.cashflow-table th,
+.cashflow-table td {
+  text-align: start;
+  padding: 0.7rem;
+  border-bottom: 1px solid var(--admin-border, #94a3b866);
+}
+.cashflow-report :focus-visible {
+  outline: 3px solid #3b82f6;
+  outline-offset: 3px;
+}
+@media (max-width: 800px) {
+  .cashflow-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 450px) {
+  .cashflow-metrics {
+    grid-template-columns: 1fr;
+  }
+  .cashflow-filters > label {
+    width: 100%;
+  }
+}

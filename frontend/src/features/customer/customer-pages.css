@@ -91,13 +91,13 @@
   transform: translateX(2px);
 }
 
-.site-shell .customer-sidebar a[aria-current="page"] {
+.site-shell .customer-sidebar a[aria-current='page'] {
   color: var(--accent) !important;
   background: var(--accent-tint) !important;
   border-color: var(--accent-soft) !important;
 }
 
-.site-shell[data-shop-theme="dark"] .customer-sidebar a[aria-current="page"] {
+.site-shell[data-shop-theme='dark'] .customer-sidebar a[aria-current='page'] {
   color: var(--accent) !important;
   background: var(--accent-soft) !important;
   border-color: rgba(249, 115, 22, 0.4) !important;
@@ -123,7 +123,17 @@
   padding: 0;
 }
 
-.site-shell .customer-page-body > :is(.wide-modal, .auth-modal, .survey-modal, .product-modal, .cart-drawer, .shop-address-dialog, .profile-modal) {
+.site-shell
+  .customer-page-body
+  > :is(
+    .wide-modal,
+    .auth-modal,
+    .survey-modal,
+    .product-modal,
+    .cart-drawer,
+    .shop-address-dialog,
+    .profile-modal
+  ) {
   position: relative;
   inset: auto;
   width: 100%;
@@ -257,7 +267,7 @@
   font-size: 13px;
 }
 
-.site-shell .shop-orders-search button[type="button"] {
+.site-shell .shop-orders-search button[type='button'] {
   border: 0;
   background: transparent;
   color: var(--muted);
@@ -310,7 +320,7 @@
   box-shadow: var(--shadow-xs);
 }
 
-.site-shell[data-shop-theme="dark"] .shop-order-tabs button.active {
+.site-shell[data-shop-theme='dark'] .shop-order-tabs button.active {
   background: var(--accent) !important;
   border-color: var(--accent) !important;
   color: #fff !important;
@@ -996,7 +1006,17 @@
     padding: 0 12px;
     margin: 18px auto 80px;
   }
-  .site-shell .customer-page-body > :is(.wide-modal, .auth-modal, .survey-modal, .product-modal, .cart-drawer, .shop-address-dialog, .profile-modal) {
+  .site-shell
+    .customer-page-body
+    > :is(
+      .wide-modal,
+      .auth-modal,
+      .survey-modal,
+      .product-modal,
+      .cart-drawer,
+      .shop-address-dialog,
+      .profile-modal
+    ) {
     padding: 20px;
     border-radius: var(--radius-lg);
   }

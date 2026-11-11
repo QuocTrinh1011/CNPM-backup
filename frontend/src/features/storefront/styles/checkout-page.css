@@ -265,8 +265,8 @@
   box-shadow: 0 0 0 1px var(--accent) inset;
 }
 
-.site-shell[data-shop-theme="dark"] .shop-checkout-methods .is-selected,
-.site-shell[data-shop-theme="dark"] .shop-address-option.is-selected {
+.site-shell[data-shop-theme='dark'] .shop-checkout-methods .is-selected,
+.site-shell[data-shop-theme='dark'] .shop-address-option.is-selected {
   background: var(--accent-soft) !important;
 }
 
@@ -439,7 +439,7 @@
   color: var(--accent);
 }
 
-.site-shell[data-shop-theme="dark"] .shop-voucher-applied {
+.site-shell[data-shop-theme='dark'] .shop-voucher-applied {
   background: var(--accent-soft);
   color: #fff;
 }
@@ -587,7 +587,7 @@
   color: var(--muted);
 }
 
-.site-shell .shop-address-editor :is(input:not([type=checkbox]), select) {
+.site-shell .shop-address-editor :is(input:not([type='checkbox']), select) {
   min-height: 46px;
   width: 100%;
   border: 1px solid var(--line);
@@ -631,7 +631,9 @@
   border: 0;
 }
 
-.site-shell :is(.shop-checkout-page, .shop-address-dialog) :is(button, a, input, select):focus-visible {
+.site-shell
+  :is(.shop-checkout-page, .shop-address-dialog)
+  :is(button, a, input, select):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }

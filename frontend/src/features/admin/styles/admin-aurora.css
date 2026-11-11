@@ -18,11 +18,10 @@
   background:
     radial-gradient(circle at 10% 8%, rgb(39 197 210 / 13%), transparent 28rem),
     radial-gradient(circle at 92% 4%, rgb(99 91 255 / 16%), transparent 32rem),
-    radial-gradient(circle at 80% 90%, rgb(255 128 109 / 10%), transparent 30rem),
-    var(--admin-bg);
+    radial-gradient(circle at 80% 90%, rgb(255 128 109 / 10%), transparent 30rem), var(--admin-bg);
 }
 
-.admin-shell.internal-portal[data-theme="dark"] {
+.admin-shell.internal-portal[data-theme='dark'] {
   --admin-bg: #0c1221;
   --admin-card: rgb(20 29 49 / 84%);
   --admin-sidebar-bg: rgb(16 24 42 / 84%);
@@ -37,8 +36,7 @@
   --internal-warning: #f3bd77;
   background:
     radial-gradient(circle at 10% 8%, rgb(39 197 210 / 13%), transparent 28rem),
-    radial-gradient(circle at 92% 4%, rgb(99 91 255 / 18%), transparent 32rem),
-    #0c1221;
+    radial-gradient(circle at 92% 4%, rgb(99 91 255 / 18%), transparent 32rem), #0c1221;
 }
 
 .admin-shell.internal-portal .internal-sidebar {
@@ -54,7 +52,7 @@
   box-shadow: 0 24px 70px rgb(35 55 90 / 13%);
   backdrop-filter: blur(24px) saturate(150%);
 }
-.admin-shell.internal-portal[data-theme="dark"] .internal-sidebar {
+.admin-shell.internal-portal[data-theme='dark'] .internal-sidebar {
   border-color: rgb(255 255 255 / 8%);
 }
 
@@ -68,11 +66,15 @@
   background: linear-gradient(145deg, var(--admin-primary), var(--aurora-cyan));
   box-shadow: 0 10px 28px rgb(99 91 255 / 25%);
 }
-.admin-shell.internal-portal .internal-brand-title h2 { color: var(--admin-text); }
-.admin-shell.internal-portal .internal-brand-title small { color: var(--admin-primary); }
+.admin-shell.internal-portal .internal-brand-title h2 {
+  color: var(--admin-text);
+}
+.admin-shell.internal-portal .internal-brand-title small {
+  color: var(--admin-primary);
+}
 
 .admin-shell.internal-portal .internal-nav::before {
-  content: "ADMIN SPACE";
+  content: 'ADMIN SPACE';
   color: var(--admin-muted);
 }
 .admin-shell.internal-portal .internal-nav-link {
@@ -86,17 +88,25 @@
   color: var(--admin-text);
 }
 .admin-shell.internal-portal .internal-nav-link.active,
-.admin-shell.internal-portal .internal-nav-link[aria-current="page"] {
+.admin-shell.internal-portal .internal-nav-link[aria-current='page'] {
   border-color: rgb(99 91 255 / 15%);
   background: linear-gradient(90deg, var(--admin-primary-soft), rgb(39 197 210 / 9%));
   color: var(--admin-primary);
   box-shadow: none;
 }
-.admin-shell.internal-portal .internal-sidebar-divider { border-color: var(--admin-border); }
-.admin-shell.internal-portal .internal-sidebar-section-title { color: var(--admin-muted); }
-.admin-shell.internal-portal .internal-nav-link.external { color: var(--admin-muted); }
+.admin-shell.internal-portal .internal-sidebar-divider {
+  border-color: var(--admin-border);
+}
+.admin-shell.internal-portal .internal-sidebar-section-title {
+  color: var(--admin-muted);
+}
+.admin-shell.internal-portal .internal-nav-link.external {
+  color: var(--admin-muted);
+}
 
-.admin-shell.internal-portal .internal-sidebar-footer { border-top-color: var(--admin-border); }
+.admin-shell.internal-portal .internal-sidebar-footer {
+  border-top-color: var(--admin-border);
+}
 .admin-shell.internal-portal .internal-user-card {
   border-color: var(--admin-border);
   background: var(--admin-input);
@@ -105,8 +115,12 @@
   background: linear-gradient(145deg, var(--admin-primary), #8b82ff);
   color: #fff;
 }
-.admin-shell.internal-portal .internal-user-info b { color: var(--admin-text); }
-.admin-shell.internal-portal .internal-user-info small { color: var(--admin-muted); }
+.admin-shell.internal-portal .internal-user-info b {
+  color: var(--admin-text);
+}
+.admin-shell.internal-portal .internal-user-info small {
+  color: var(--admin-muted);
+}
 .admin-shell.internal-portal .internal-logout-btn {
   border-color: var(--admin-border);
   color: var(--internal-danger);
@@ -131,12 +145,16 @@
   box-shadow: 0 12px 36px rgb(35 55 90 / 8%);
   backdrop-filter: blur(22px) saturate(160%);
 }
-.admin-shell.internal-portal[data-theme="dark"] .internal-header {
+.admin-shell.internal-portal[data-theme='dark'] .internal-header {
   border-color: rgb(255 255 255 / 8%);
   background: rgb(20 29 49 / 76%);
 }
-.admin-shell.internal-portal .internal-header h1 { font-size: 21px; }
-.admin-shell.internal-portal .internal-breadcrumb { font-size: 9px; }
+.admin-shell.internal-portal .internal-header h1 {
+  font-size: 21px;
+}
+.admin-shell.internal-portal .internal-breadcrumb {
+  font-size: 9px;
+}
 .admin-shell.internal-portal .internal-live-badge {
   border: 0;
   background: color-mix(in srgb, var(--internal-success) 12%, var(--admin-card));
@@ -169,7 +187,7 @@
   border: 62px solid rgb(255 255 255 / 7%);
 }
 .admin-shell.internal-portal .internal-hero-banner::after {
-  content: "";
+  content: '';
   position: absolute;
   right: 23%;
   bottom: 34px;
@@ -183,13 +201,17 @@
   max-width: 780px;
   font-size: clamp(32px, 4.2vw, 50px);
 }
-.admin-shell.internal-portal .internal-hero-text p { max-width: 680px; }
+.admin-shell.internal-portal .internal-hero-text p {
+  max-width: 680px;
+}
 .admin-shell.internal-portal .internal-sync-btn {
   min-height: 44px;
   border-radius: 13px;
 }
 
-.admin-shell.internal-portal .internal-kpi-grid { gap: 12px; }
+.admin-shell.internal-portal .internal-kpi-grid {
+  gap: 12px;
+}
 .admin-shell.internal-portal .internal-kpi-card {
   position: relative;
   min-height: 174px;
@@ -200,11 +222,11 @@
   box-shadow: 0 14px 38px rgb(35 55 90 / 7%);
   backdrop-filter: blur(18px);
 }
-.admin-shell.internal-portal[data-theme="dark"] .internal-kpi-card {
+.admin-shell.internal-portal[data-theme='dark'] .internal-kpi-card {
   border-color: rgb(255 255 255 / 7%);
 }
 .admin-shell.internal-portal .internal-kpi-card::after {
-  content: "";
+  content: '';
   position: absolute;
   right: -34px;
   bottom: -48px;
@@ -220,11 +242,25 @@
 .admin-shell.internal-portal .internal-kpi-icon {
   border-radius: 14px;
 }
-.admin-shell.internal-portal .internal-kpi-icon.blue { background: #ecebff; color: #635bff; }
-.admin-shell.internal-portal .internal-kpi-icon.green { background: #dff7ef; color: #16896e; }
-.admin-shell.internal-portal .internal-kpi-icon.violet { background: #f0e8ff; color: #8b5bd1; }
-.admin-shell.internal-portal .internal-kpi-icon.emerald { background: #dcf7f8; color: #1597a3; }
-.admin-shell.internal-portal .internal-kpi-value { font-size: 38px; }
+.admin-shell.internal-portal .internal-kpi-icon.blue {
+  background: #ecebff;
+  color: #635bff;
+}
+.admin-shell.internal-portal .internal-kpi-icon.green {
+  background: #dff7ef;
+  color: #16896e;
+}
+.admin-shell.internal-portal .internal-kpi-icon.violet {
+  background: #f0e8ff;
+  color: #8b5bd1;
+}
+.admin-shell.internal-portal .internal-kpi-icon.emerald {
+  background: #dcf7f8;
+  color: #1597a3;
+}
+.admin-shell.internal-portal .internal-kpi-value {
+  font-size: 38px;
+}
 
 .admin-shell.internal-portal .internal-section-card,
 .admin-shell.internal-portal .admin-card {
@@ -234,10 +270,12 @@
   box-shadow: 0 14px 38px rgb(35 55 90 / 6%);
   backdrop-filter: blur(18px);
 }
-.admin-shell.internal-portal[data-theme="dark"] :is(.internal-section-card, .admin-card) {
+.admin-shell.internal-portal[data-theme='dark'] :is(.internal-section-card, .admin-card) {
   border-color: rgb(255 255 255 / 7%);
 }
-.admin-shell.internal-portal .internal-card-head { border-bottom-color: var(--admin-border); }
+.admin-shell.internal-portal .internal-card-head {
+  border-bottom-color: var(--admin-border);
+}
 .admin-shell.internal-portal .internal-action-item {
   border-color: var(--admin-border);
   border-radius: 16px;
@@ -247,8 +285,12 @@
   border-color: color-mix(in srgb, var(--admin-primary) 35%, var(--admin-border));
   box-shadow: 0 12px 28px rgb(35 55 90 / 8%);
 }
-.admin-shell.internal-portal .internal-action-icon { border-radius: 13px; }
-.admin-shell.internal-portal .tip-item { border-radius: 14px; }
+.admin-shell.internal-portal .internal-action-icon {
+  border-radius: 13px;
+}
+.admin-shell.internal-portal .tip-item {
+  border-radius: 14px;
+}
 
 .admin-shell.internal-portal .internal-directory-panel {
   margin-top: 22px;
@@ -291,12 +333,12 @@
   box-shadow: 0 40px 100px rgb(48 57 119 / 20%);
   backdrop-filter: blur(26px) saturate(150%);
 }
-.admin-shell.internal-portal[data-theme="dark"] .internal-login {
+.admin-shell.internal-portal[data-theme='dark'] .internal-login {
   border-color: rgb(255 255 255 / 8%);
   background: rgb(20 29 49 / 82%);
 }
 .admin-shell.internal-portal .internal-login::before {
-  content: "";
+  content: '';
   position: absolute;
   right: -80px;
   top: -80px;
@@ -305,7 +347,9 @@
   border-radius: 50%;
   background: linear-gradient(145deg, rgb(99 91 255 / 28%), rgb(39 197 210 / 24%));
 }
-.admin-shell.internal-portal .internal-login h1 { font-size: 40px; }
+.admin-shell.internal-portal .internal-login h1 {
+  font-size: 40px;
+}
 .admin-shell.internal-portal .internal-login input {
   border-radius: 12px;
   background: var(--admin-input);
@@ -316,8 +360,12 @@
 }
 
 @media (max-width: 1100px) {
-  .admin-shell.internal-portal .internal-sidebar { width: 225px; }
-  .admin-shell.internal-portal .internal-main { padding-inline: 22px; }
+  .admin-shell.internal-portal .internal-sidebar {
+    width: 225px;
+  }
+  .admin-shell.internal-portal .internal-main {
+    padding-inline: 22px;
+  }
 }
 
 @media (max-width: 760px) {
@@ -327,7 +375,9 @@
     margin: 12px;
     border-radius: 20px;
   }
-  .admin-shell.internal-portal .internal-main { padding: 0 12px 40px; }
+  .admin-shell.internal-portal .internal-main {
+    padding: 0 12px 40px;
+  }
   .admin-shell.internal-portal .internal-header {
     top: 8px;
     margin: 0;
@@ -339,65 +389,236 @@
 }
 
 @media (max-width: 480px) {
-  .admin-shell.internal-portal .internal-login { padding: 34px 24px; }
-  .admin-shell.internal-portal .internal-login h1 { font-size: 34px; }
-  .admin-shell.internal-portal .internal-kpi-card { min-height: 148px; }
+  .admin-shell.internal-portal .internal-login {
+    padding: 34px 24px;
+  }
+  .admin-shell.internal-portal .internal-login h1 {
+    font-size: 34px;
+  }
+  .admin-shell.internal-portal .internal-kpi-card {
+    min-height: 148px;
+  }
 }
 
 /* Current system-only routes: accessible actions and no hidden mobile controls. */
-.admin-shell.internal-portal { --admin-muted: #54647f; --admin-mono: "Manrope", system-ui, sans-serif; font-family: "Manrope", system-ui, sans-serif; }
-.admin-shell.internal-portal[data-theme]:not(.manager-shell) { --admin-mono: "Manrope", system-ui, sans-serif; font-family: "Manrope", system-ui, sans-serif; }
-.admin-shell.internal-portal[data-theme="light"]:not(.manager-shell) { --admin-bg: #eef3fb; --admin-card: rgb(255 255 255 / 82%); --admin-sidebar-bg: rgb(255 255 255 / 76%); --admin-text: #172033; --admin-muted: #54647f; --admin-border: #d9e2f0; --admin-primary: #635bff; --admin-primary-soft: #ecebff; --admin-input: #f5f8fc; }
-.admin-shell.internal-portal[data-theme="dark"] { --admin-muted: #b3bfd4; }
-.admin-shell.internal-portal[data-theme="dark"]:not(.manager-shell) { --admin-bg: #0c1221; --admin-card: rgb(20 29 49 / 84%); --admin-sidebar-bg: rgb(16 24 42 / 84%); --admin-text: #f3f6fc; --admin-muted: #b3bfd4; --admin-border: #2a3853; --admin-primary: #9c96ff; --admin-primary-soft: #332f68; --admin-input: #18243a; }
-.admin-shell.internal-portal .internal-sidebar { flex-shrink: 0; overflow-y: auto; }
-.admin-shell.internal-portal .internal-main { min-width: 0; width: auto; flex: 1; }
-.admin-shell.internal-portal .internal-directory-panel { min-width: 0; width: 100%; box-sizing: border-box; }
-.admin-shell.internal-portal .internal-header { z-index: 20; gap: 16px; flex-wrap: wrap; padding-block: 12px; }
-.admin-shell.internal-portal .internal-nav::before { content: "ADMIN HỆ THỐNG"; font-size: 10px; letter-spacing: .08em; }
-.admin-shell.internal-portal .internal-breadcrumb { font-size: 11px; }
-.admin-shell.internal-portal .internal-hero-text h2 { line-height: 1.2; letter-spacing: -.035em; }
-.admin-shell.internal-portal .internal-hero-text p { color: #e4eafa; line-height: 1.7; }
-.admin-shell.internal-portal .internal-hero-actions { flex-shrink: 0; position: relative; z-index: 1; }
-.admin-shell.internal-portal .internal-hero-text { position: relative; z-index: 1; min-width: 0; }
-.admin-shell.internal-portal .internal-nav-link.active { background: linear-gradient(90deg,var(--admin-primary-soft),rgb(39 197 210 / 9%)) !important; color: var(--admin-primary) !important; }
-.admin-shell.internal-portal .internal-hero-banner::before { background: transparent; z-index: 0; pointer-events: none; }
-.admin-shell.internal-portal .internal-hero-banner::before { left: auto; }
-.admin-shell.internal-portal .internal-hero-banner::after { pointer-events: none; }
-.admin-shell.internal-portal .internal-kpi-card::after { pointer-events: none; }
-.admin-shell.internal-portal :is(.internal-kpi-value,td) { font-variant-numeric: tabular-nums; }
-.admin-shell.internal-portal .internal-action-text { min-width: 0; }
-.admin-shell.internal-portal .internal-user-info b { overflow-wrap: anywhere; }
-.admin-shell.internal-portal .internal-logout-btn { background: transparent; color: var(--internal-danger); box-shadow: none; }
-.admin-shell.internal-portal .internal-theme-toggle { color: var(--admin-text); box-shadow: none; }
-.admin-shell.internal-portal[data-theme="dark"] :is(.admin-primary-btn,.internal-filters button) { color: #11192e; }
-.admin-shell.internal-portal .internal-sync-btn { color: #fff; background: #ffffff18; box-shadow: none; }
-.admin-shell.internal-portal .internal-sync-btn:hover:not(:disabled) { background: #fff; color: #35316c; }
-.admin-shell.internal-portal .internal-filters label { min-width: 0; }
-.admin-shell.internal-portal .internal-filters :is(input:not([type="checkbox"]):not([type="radio"]),select) { width: 100%; min-width: 0; }
-.admin-shell.internal-portal .internal-filters input:is([type="checkbox"],[type="radio"]) { width: 18px; height: 18px; min-height: 0; accent-color: var(--admin-primary); }
-.admin-shell.internal-portal .internal-filters button { min-height: 44px; }
-.admin-shell.internal-portal .admin-table-wrap { max-width: 100%; overflow-x: auto; }
-.admin-shell.internal-portal td { overflow-wrap: anywhere; }
-.admin-shell.internal-portal :is(button,a,input,select,textarea):focus-visible { outline: 3px solid var(--admin-primary); outline-offset: 3px; }
-.admin-shell.internal-portal .internal-login { margin: auto; max-width: 500px; }
-.admin-shell.internal-portal .internal-login::before { pointer-events: none; }
-.admin-shell.internal-portal .internal-login button { color: #fff; }
-.admin-shell.internal-portal .internal-login :is(input,select) { color: var(--admin-text); }
+.admin-shell.internal-portal {
+  --admin-muted: #54647f;
+  --admin-mono: 'Manrope', system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
+}
+.admin-shell.internal-portal[data-theme]:not(.manager-shell) {
+  --admin-mono: 'Manrope', system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
+}
+.admin-shell.internal-portal[data-theme='light']:not(.manager-shell) {
+  --admin-bg: #eef3fb;
+  --admin-card: rgb(255 255 255 / 82%);
+  --admin-sidebar-bg: rgb(255 255 255 / 76%);
+  --admin-text: #172033;
+  --admin-muted: #54647f;
+  --admin-border: #d9e2f0;
+  --admin-primary: #635bff;
+  --admin-primary-soft: #ecebff;
+  --admin-input: #f5f8fc;
+}
+.admin-shell.internal-portal[data-theme='dark'] {
+  --admin-muted: #b3bfd4;
+}
+.admin-shell.internal-portal[data-theme='dark']:not(.manager-shell) {
+  --admin-bg: #0c1221;
+  --admin-card: rgb(20 29 49 / 84%);
+  --admin-sidebar-bg: rgb(16 24 42 / 84%);
+  --admin-text: #f3f6fc;
+  --admin-muted: #b3bfd4;
+  --admin-border: #2a3853;
+  --admin-primary: #9c96ff;
+  --admin-primary-soft: #332f68;
+  --admin-input: #18243a;
+}
+.admin-shell.internal-portal .internal-sidebar {
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+.admin-shell.internal-portal .internal-main {
+  min-width: 0;
+  width: auto;
+  flex: 1;
+}
+.admin-shell.internal-portal .internal-directory-panel {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.admin-shell.internal-portal .internal-header {
+  z-index: 20;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-block: 12px;
+}
+.admin-shell.internal-portal .internal-nav::before {
+  content: 'ADMIN HỆ THỐNG';
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.admin-shell.internal-portal .internal-breadcrumb {
+  font-size: 11px;
+}
+.admin-shell.internal-portal .internal-hero-text h2 {
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+.admin-shell.internal-portal .internal-hero-text p {
+  color: #e4eafa;
+  line-height: 1.7;
+}
+.admin-shell.internal-portal .internal-hero-actions {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.admin-shell.internal-portal .internal-hero-text {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+.admin-shell.internal-portal .internal-nav-link.active {
+  background: linear-gradient(90deg, var(--admin-primary-soft), rgb(39 197 210 / 9%)) !important;
+  color: var(--admin-primary) !important;
+}
+.admin-shell.internal-portal .internal-hero-banner::before {
+  background: transparent;
+  z-index: 0;
+  pointer-events: none;
+}
+.admin-shell.internal-portal .internal-hero-banner::before {
+  left: auto;
+}
+.admin-shell.internal-portal .internal-hero-banner::after {
+  pointer-events: none;
+}
+.admin-shell.internal-portal .internal-kpi-card::after {
+  pointer-events: none;
+}
+.admin-shell.internal-portal :is(.internal-kpi-value, td) {
+  font-variant-numeric: tabular-nums;
+}
+.admin-shell.internal-portal .internal-action-text {
+  min-width: 0;
+}
+.admin-shell.internal-portal .internal-user-info b {
+  overflow-wrap: anywhere;
+}
+.admin-shell.internal-portal .internal-logout-btn {
+  background: transparent;
+  color: var(--internal-danger);
+  box-shadow: none;
+}
+.admin-shell.internal-portal .internal-theme-toggle {
+  color: var(--admin-text);
+  box-shadow: none;
+}
+.admin-shell.internal-portal[data-theme='dark'] :is(.admin-primary-btn, .internal-filters button) {
+  color: #11192e;
+}
+.admin-shell.internal-portal .internal-sync-btn {
+  color: #fff;
+  background: #ffffff18;
+  box-shadow: none;
+}
+.admin-shell.internal-portal .internal-sync-btn:hover:not(:disabled) {
+  background: #fff;
+  color: #35316c;
+}
+.admin-shell.internal-portal .internal-filters label {
+  min-width: 0;
+}
+.admin-shell.internal-portal
+  .internal-filters
+  :is(input:not([type='checkbox']):not([type='radio']), select) {
+  width: 100%;
+  min-width: 0;
+}
+.admin-shell.internal-portal .internal-filters input:is([type='checkbox'], [type='radio']) {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  accent-color: var(--admin-primary);
+}
+.admin-shell.internal-portal .internal-filters button {
+  min-height: 44px;
+}
+.admin-shell.internal-portal .admin-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.admin-shell.internal-portal td {
+  overflow-wrap: anywhere;
+}
+.admin-shell.internal-portal :is(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid var(--admin-primary);
+  outline-offset: 3px;
+}
+.admin-shell.internal-portal .internal-login {
+  margin: auto;
+  max-width: 500px;
+}
+.admin-shell.internal-portal .internal-login::before {
+  pointer-events: none;
+}
+.admin-shell.internal-portal .internal-login button {
+  color: #fff;
+}
+.admin-shell.internal-portal .internal-login :is(input, select) {
+  color: var(--admin-text);
+}
 @media (max-width: 760px) {
-  .admin-shell.internal-portal .internal-sidebar-footer { display: block; padding: 12px 0 0; }
-  .admin-shell.internal-portal .internal-user-card { padding: 10px; }
-  .admin-shell.internal-portal .internal-nav { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
-  .admin-shell.internal-portal .internal-nav-link.external { display: inline-flex; }
-  .admin-shell.internal-portal .internal-header { position: static; padding: 16px; }
-  .admin-shell.internal-portal .internal-header-right { flex-wrap: wrap; gap: 10px; }
-  .admin-shell.internal-portal .internal-hero-banner { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .admin-shell.internal-portal .internal-hero-text h2 { font-size: clamp(28px,7vw,38px); }
-  .admin-shell.internal-portal .internal-directory-panel { padding: 18px; }
-  .admin-shell.internal-portal .internal-filters { gap: 12px; }
-  .admin-shell.internal-portal .internal-filters label { flex: 1 1 160px; }
-  .admin-shell.internal-portal .internal-login { width: calc(100% - 32px); margin: 32px 16px; }
-  .admin-shell.internal-portal :is(input,select,textarea) { font-size: 16px; }
+  .admin-shell.internal-portal .internal-sidebar-footer {
+    display: block;
+    padding: 12px 0 0;
+  }
+  .admin-shell.internal-portal .internal-user-card {
+    padding: 10px;
+  }
+  .admin-shell.internal-portal .internal-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .admin-shell.internal-portal .internal-nav-link.external {
+    display: inline-flex;
+  }
+  .admin-shell.internal-portal .internal-header {
+    position: static;
+    padding: 16px;
+  }
+  .admin-shell.internal-portal .internal-header-right {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .admin-shell.internal-portal .internal-hero-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .admin-shell.internal-portal .internal-hero-text h2 {
+    font-size: clamp(28px, 7vw, 38px);
+  }
+  .admin-shell.internal-portal .internal-directory-panel {
+    padding: 18px;
+  }
+  .admin-shell.internal-portal .internal-filters {
+    gap: 12px;
+  }
+  .admin-shell.internal-portal .internal-filters label {
+    flex: 1 1 160px;
+  }
+  .admin-shell.internal-portal .internal-login {
+    width: calc(100% - 32px);
+    margin: 32px 16px;
+  }
+  .admin-shell.internal-portal :is(input, select, textarea) {
+    font-size: 16px;
+  }
 }
 .admin-shell.internal-portal .internal-brand .internal-collapse-toggle {
   display: grid;
@@ -451,7 +672,9 @@
   .admin-shell.internal-portal .internal-sidebar.is-collapsed .internal-nav::before {
     display: none;
   }
-  .admin-shell.internal-portal .internal-sidebar.is-collapsed :is(.internal-sidebar-divider, .internal-sidebar-section-title) {
+  .admin-shell.internal-portal
+    .internal-sidebar.is-collapsed
+    :is(.internal-sidebar-divider, .internal-sidebar-section-title) {
     display: none;
   }
   .admin-shell.internal-portal .internal-sidebar.is-collapsed .internal-nav-link {
@@ -494,7 +717,9 @@
 }
 @media (min-width: 761px) and (prefers-reduced-motion: no-preference) {
   .admin-shell.internal-portal .internal-sidebar {
-    transition: width .22s ease, padding .22s ease;
+    transition:
+      width 0.22s ease,
+      padding 0.22s ease;
   }
 }
 @media (max-width: 760px) {
@@ -503,5 +728,11 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .admin-shell.internal-portal *, .admin-shell.internal-portal *::before, .admin-shell.internal-portal *::after { animation: none; transition: none; scroll-behavior: auto; }
+  .admin-shell.internal-portal *,
+  .admin-shell.internal-portal *::before,
+  .admin-shell.internal-portal *::after {
+    animation: none;
+    transition: none;
+    scroll-behavior: auto;
+  }
 }

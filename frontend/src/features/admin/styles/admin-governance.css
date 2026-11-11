@@ -18,14 +18,16 @@
   min-height: 100dvh;
   background:
     radial-gradient(circle at 78% -10%, rgb(86 101 232 / 13%), transparent 30rem),
-    linear-gradient(90deg, rgb(86 101 232 / 3%) 1px, transparent 1px),
-    var(--admin-bg);
-  background-size: auto, 72px 100%, auto;
+    linear-gradient(90deg, rgb(86 101 232 / 3%) 1px, transparent 1px), var(--admin-bg);
+  background-size:
+    auto,
+    72px 100%,
+    auto;
   color: var(--admin-text);
-  font-family: "Manrope", system-ui, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
 }
 
-.admin-shell.internal-portal[data-theme="dark"] {
+.admin-shell.internal-portal[data-theme='dark'] {
   --admin-bg: #0d1020;
   --admin-card: #151a2e;
   --admin-sidebar-bg: #090c19;
@@ -41,9 +43,11 @@
   --admin-shadow: 0 18px 48px rgb(0 0 0 / 28%);
   background:
     radial-gradient(circle at 78% -10%, rgb(86 101 232 / 20%), transparent 30rem),
-    linear-gradient(90deg, rgb(255 255 255 / 2%) 1px, transparent 1px),
-    var(--admin-bg);
-  background-size: auto, 72px 100%, auto;
+    linear-gradient(90deg, rgb(255 255 255 / 2%) 1px, transparent 1px), var(--admin-bg);
+  background-size:
+    auto,
+    72px 100%,
+    auto;
 }
 
 .admin-shell.internal-portal .internal-sidebar {
@@ -70,19 +74,27 @@
   color: #fff;
   box-shadow: 0 10px 28px rgb(86 101 232 / 35%);
 }
-.admin-shell.internal-portal .internal-brand-title h2 { color: #fff; font-size: 15px; }
-.admin-shell.internal-portal .internal-brand-title small { color: #929cff; }
+.admin-shell.internal-portal .internal-brand-title h2 {
+  color: #fff;
+  font-size: 15px;
+}
+.admin-shell.internal-portal .internal-brand-title small {
+  color: #929cff;
+}
 
 .admin-shell.internal-portal .internal-nav {
   gap: 5px;
   padding: 20px 0;
 }
 .admin-shell.internal-portal .internal-nav::before {
-  content: "SYSTEM GOVERNANCE";
+  content: 'SYSTEM GOVERNANCE';
   padding: 0 12px 9px;
   color: #666f91;
-  font: 600 10px/1 "Manrope", system-ui, sans-serif;
-  letter-spacing: .15em;
+  font:
+    600 10px/1 'Manrope',
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.15em;
 }
 .admin-shell.internal-portal .internal-nav-link {
   min-height: 45px;
@@ -95,7 +107,7 @@
   color: #fff;
 }
 .admin-shell.internal-portal .internal-nav-link.active,
-.admin-shell.internal-portal .internal-nav-link[aria-current="page"] {
+.admin-shell.internal-portal .internal-nav-link[aria-current='page'] {
   background: linear-gradient(90deg, rgb(137 148 255 / 22%), rgb(137 148 255 / 8%));
   color: #aeb5ff;
   box-shadow: inset 3px 0 0 #8994ff;
@@ -103,8 +115,12 @@
 .admin-shell.internal-portal .internal-sidebar-divider {
   border-top-color: rgb(255 255 255 / 8%);
 }
-.admin-shell.internal-portal .internal-sidebar-section-title { color: #626b89; }
-.admin-shell.internal-portal .internal-nav-link.external { color: #7e87a4; }
+.admin-shell.internal-portal .internal-sidebar-section-title {
+  color: #626b89;
+}
+.admin-shell.internal-portal .internal-nav-link.external {
+  color: #7e87a4;
+}
 
 .admin-shell.internal-portal .internal-sidebar-footer {
   border-top-color: rgb(255 255 255 / 8%);
@@ -119,8 +135,12 @@
   background: #30385d;
   color: #aeb5ff;
 }
-.admin-shell.internal-portal .internal-user-info b { color: #f3f5ff; }
-.admin-shell.internal-portal .internal-user-info small { color: #7f89a7; }
+.admin-shell.internal-portal .internal-user-info b {
+  color: #f3f5ff;
+}
+.admin-shell.internal-portal .internal-user-info small {
+  color: #7f89a7;
+}
 .admin-shell.internal-portal .internal-logout-btn {
   border-color: rgb(255 255 255 / 9%);
   border-radius: 11px;
@@ -153,7 +173,7 @@
 .admin-shell.internal-portal .internal-header h1 {
   margin-top: 6px;
   font-size: 25px;
-  letter-spacing: -.04em;
+  letter-spacing: -0.04em;
 }
 .admin-shell.internal-portal .internal-live-badge {
   border: 1px solid color-mix(in srgb, var(--internal-success) 35%, var(--admin-border));
@@ -195,13 +215,13 @@
 }
 .admin-shell.internal-portal .internal-hero-text .internal-eyebrow {
   color: #d8dcff;
-  letter-spacing: .15em;
+  letter-spacing: 0.15em;
 }
 .admin-shell.internal-portal .internal-hero-text h2 {
   margin-top: 12px;
   color: #fff;
   font-size: clamp(29px, 4vw, 44px);
-  letter-spacing: -.05em;
+  letter-spacing: -0.05em;
 }
 .admin-shell.internal-portal .internal-hero-text p {
   max-width: 700px;
@@ -219,14 +239,18 @@
   color: #5665e8;
 }
 
-.admin-shell.internal-portal .internal-kpi-grid { gap: 14px; }
+.admin-shell.internal-portal .internal-kpi-grid {
+  gap: 14px;
+}
 .admin-shell.internal-portal .internal-kpi-card {
   min-height: 168px;
   padding: 22px;
   border: 1px solid var(--admin-border);
   border-radius: 19px;
   background: var(--admin-card);
-  box-shadow: 0 1px 2px rgb(24 32 54 / 3%), 0 12px 30px rgb(24 32 54 / 5%);
+  box-shadow:
+    0 1px 2px rgb(24 32 54 / 3%),
+    0 12px 30px rgb(24 32 54 / 5%);
 }
 .admin-shell.internal-portal .internal-kpi-card:hover {
   border-color: color-mix(in srgb, var(--admin-primary) 42%, var(--admin-border));
@@ -238,17 +262,41 @@
   height: 42px;
   border-radius: 13px;
 }
-.admin-shell.internal-portal .internal-kpi-icon.blue { background: #e7ebff; color: #5665e8; }
-.admin-shell.internal-portal .internal-kpi-icon.green { background: #def5e9; color: #248b6d; }
-.admin-shell.internal-portal .internal-kpi-icon.violet { background: #eee7ff; color: #8057c8; }
-.admin-shell.internal-portal .internal-kpi-icon.emerald { background: #dcf6f2; color: #168e84; }
-.admin-shell.internal-portal[data-theme="dark"] .internal-kpi-icon.blue { background: #2a3266; color: #aab2ff; }
-.admin-shell.internal-portal[data-theme="dark"] .internal-kpi-icon.green { background: #1b4539; color: #72d4b4; }
-.admin-shell.internal-portal[data-theme="dark"] .internal-kpi-icon.violet { background: #3c2e60; color: #c2a7ff; }
-.admin-shell.internal-portal[data-theme="dark"] .internal-kpi-icon.emerald { background: #164844; color: #70ddd3; }
+.admin-shell.internal-portal .internal-kpi-icon.blue {
+  background: #e7ebff;
+  color: #5665e8;
+}
+.admin-shell.internal-portal .internal-kpi-icon.green {
+  background: #def5e9;
+  color: #248b6d;
+}
+.admin-shell.internal-portal .internal-kpi-icon.violet {
+  background: #eee7ff;
+  color: #8057c8;
+}
+.admin-shell.internal-portal .internal-kpi-icon.emerald {
+  background: #dcf6f2;
+  color: #168e84;
+}
+.admin-shell.internal-portal[data-theme='dark'] .internal-kpi-icon.blue {
+  background: #2a3266;
+  color: #aab2ff;
+}
+.admin-shell.internal-portal[data-theme='dark'] .internal-kpi-icon.green {
+  background: #1b4539;
+  color: #72d4b4;
+}
+.admin-shell.internal-portal[data-theme='dark'] .internal-kpi-icon.violet {
+  background: #3c2e60;
+  color: #c2a7ff;
+}
+.admin-shell.internal-portal[data-theme='dark'] .internal-kpi-icon.emerald {
+  background: #164844;
+  color: #70ddd3;
+}
 .admin-shell.internal-portal .internal-kpi-value {
   font-size: 36px;
-  letter-spacing: -.05em;
+  letter-spacing: -0.05em;
 }
 
 .admin-shell.internal-portal .internal-section-card,
@@ -256,7 +304,9 @@
   border: 1px solid var(--admin-border);
   border-radius: 20px;
   background: var(--admin-card);
-  box-shadow: 0 1px 2px rgb(24 32 54 / 3%), 0 10px 28px rgb(24 32 54 / 4%);
+  box-shadow:
+    0 1px 2px rgb(24 32 54 / 3%),
+    0 10px 28px rgb(24 32 54 / 4%);
 }
 .admin-shell.internal-portal .internal-card-head {
   padding-bottom: 18px;
@@ -276,7 +326,9 @@
 .admin-shell.internal-portal .internal-action-icon {
   border-radius: 12px;
 }
-.admin-shell.internal-portal .internal-info-grid { gap: 14px; }
+.admin-shell.internal-portal .internal-info-grid {
+  gap: 14px;
+}
 .admin-shell.internal-portal .internal-spec-row {
   border-bottom-color: var(--admin-border);
 }
@@ -325,7 +377,10 @@
   top: 0;
   background: var(--admin-input);
 }
-.admin-shell.internal-portal td { padding-top: 15px; padding-bottom: 15px; }
+.admin-shell.internal-portal td {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
 .admin-shell.internal-portal tbody tr:hover {
   background: color-mix(in srgb, var(--admin-primary) 5%, var(--admin-card));
 }
@@ -346,7 +401,7 @@
 }
 .admin-shell.internal-portal .internal-login h1 {
   font-size: 38px;
-  letter-spacing: -.05em;
+  letter-spacing: -0.05em;
 }
 .admin-shell.internal-portal .internal-login input {
   min-height: 48px;
@@ -362,15 +417,25 @@
 }
 
 @media (max-width: 1100px) {
-  .admin-shell.internal-portal .internal-sidebar { width: 230px; }
-  .admin-shell.internal-portal .internal-main { padding-inline: 24px; }
-  .admin-shell.internal-portal .internal-header { margin-inline: -24px; padding-inline: 24px; }
+  .admin-shell.internal-portal .internal-sidebar {
+    width: 230px;
+  }
+  .admin-shell.internal-portal .internal-main {
+    padding-inline: 24px;
+  }
+  .admin-shell.internal-portal .internal-header {
+    margin-inline: -24px;
+    padding-inline: 24px;
+  }
 }
 
 @media (max-width: 760px) {
   .admin-shell.internal-portal {
     display: block;
-    background-size: auto, 48px 100%, auto;
+    background-size:
+      auto,
+      48px 100%,
+      auto;
   }
   .admin-shell.internal-portal .internal-sidebar {
     position: relative;
@@ -378,7 +443,9 @@
     height: auto;
     padding: 13px;
   }
-  .admin-shell.internal-portal .internal-brand { min-height: 58px; }
+  .admin-shell.internal-portal .internal-brand {
+    min-height: 58px;
+  }
   .admin-shell.internal-portal .internal-nav {
     display: flex;
     overflow-x: auto;
@@ -388,21 +455,33 @@
   .admin-shell.internal-portal .internal-sidebar-divider,
   .admin-shell.internal-portal .internal-sidebar-section-title,
   .admin-shell.internal-portal .internal-sidebar-footer,
-  .admin-shell.internal-portal .internal-nav-link.external { display: none; }
+  .admin-shell.internal-portal .internal-nav-link.external {
+    display: none;
+  }
   .admin-shell.internal-portal .internal-nav-link {
     flex: 0 0 auto;
     padding-inline: 14px;
   }
-  .admin-shell.internal-portal .internal-main { padding: 0 16px 42px; }
+  .admin-shell.internal-portal .internal-main {
+    padding: 0 16px 42px;
+  }
   .admin-shell.internal-portal .internal-header {
     min-height: 68px;
     margin-inline: -16px;
     padding-inline: 16px;
   }
-  .admin-shell.internal-portal .internal-header h1 { font-size: 20px; }
-  .admin-shell.internal-portal .internal-live-badge { display: none; }
-  .admin-shell.internal-portal .internal-hero-banner { padding: 28px 24px; }
-  .admin-shell.internal-portal .internal-kpi-card { min-height: 145px; }
+  .admin-shell.internal-portal .internal-header h1 {
+    font-size: 20px;
+  }
+  .admin-shell.internal-portal .internal-live-badge {
+    display: none;
+  }
+  .admin-shell.internal-portal .internal-hero-banner {
+    padding: 28px 24px;
+  }
+  .admin-shell.internal-portal .internal-kpi-card {
+    min-height: 145px;
+  }
   .admin-shell.internal-portal .internal-directory-panel {
     margin-top: 20px;
     padding: 18px;
@@ -410,10 +489,22 @@
 }
 
 @media (max-width: 480px) {
-  .admin-shell.internal-portal .internal-theme-toggle span { display: none; }
-  .admin-shell.internal-portal .internal-kpi-grid { grid-template-columns: 1fr; }
-  .admin-shell.internal-portal .internal-actions-grid { grid-template-columns: 1fr; }
-  .admin-shell.internal-portal .internal-info-grid { grid-template-columns: 1fr; }
-  .admin-shell.internal-portal .internal-login { padding: 32px 23px; }
-  .admin-shell.internal-portal .internal-login h1 { font-size: 32px; }
+  .admin-shell.internal-portal .internal-theme-toggle span {
+    display: none;
+  }
+  .admin-shell.internal-portal .internal-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-shell.internal-portal .internal-actions-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-shell.internal-portal .internal-info-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-shell.internal-portal .internal-login {
+    padding: 32px 23px;
+  }
+  .admin-shell.internal-portal .internal-login h1 {
+    font-size: 32px;
+  }
 }

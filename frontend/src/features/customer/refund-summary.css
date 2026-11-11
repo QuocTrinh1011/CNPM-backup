@@ -1,1 +1,9 @@
-.refund-summary{padding:.8rem;border-inline-start:3px solid #10b981;margin:.7rem 0;overflow-wrap:anywhere}.refund-summary p{margin:.35rem 0}
+.refund-summary {
+  padding: 0.8rem;
+  border-inline-start: 3px solid #10b981;
+  margin: 0.7rem 0;
+  overflow-wrap: anywhere;
+}
+.refund-summary p {
+  margin: 0.35rem 0;
+}
