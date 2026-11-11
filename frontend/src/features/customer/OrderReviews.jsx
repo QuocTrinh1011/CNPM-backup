@@ -2,10 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Star, X } from 'lucide-react';
 import { api } from '../../api/api';
 import { useShopResource } from '../../shared/hooks/storefront-hooks';
+import { getProductImage, shouldContainProductImage } from '../storefront/product-images';
 
 const STAR_LABELS = { 1: 'Tệ', 2: 'Không hài lòng', 3: 'Bình thường', 4: 'Hài lòng', 5: 'Tuyệt vời' };
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=85';
-const imgSrc = v => typeof v === 'string' && v.trim() ? v : FALLBACK_IMG;
+const FALLBACK_IMG = '/images/catalog/product-placeholder.svg';
+const imgSrc = (value, product, color) =>
+  getProductImage(product, color) ||
+  (typeof value === 'string' && value.startsWith('/images/catalog/') ? value : FALLBACK_IMG);
 
 function StarRating({ value, hover, disabled, onChange, onHover, onLeave }) {
   return (
@@ -129,7 +132,8 @@ export default function OrderReviews({ order, autoOpen = false, onAutoOpened, on
             return (
               <div className="review-product-card" key={item.productId}>
                 <img
-                  src={imgSrc(item.imageUrl)}
+                  src={imgSrc(item.imageUrl, item, item.color)}
+                  style={shouldContainProductImage(item, item.color) ? { objectFit: 'contain' } : undefined}
                   alt={item.name}
                   onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG; }}
                 />
@@ -170,7 +174,8 @@ export default function OrderReviews({ order, autoOpen = false, onAutoOpened, on
 
             <div className="review-dialog-product">
               <img
-                src={imgSrc(product.imageUrl)}
+                src={imgSrc(product.imageUrl, product, product.color)}
+                style={shouldContainProductImage(product, product.color) ? { objectFit: 'contain' } : undefined}
                 alt={product.name}
                 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG; }}
               />

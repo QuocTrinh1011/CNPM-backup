@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-label="Hình minh họa sản phẩm">
+  <rect width="400" height="500" rx="20" fill="#f3eee7"/>
+  <path d="m142 112 35-20h46l35 20 52 39-31 50-29-20v197H150V181l-29 20-31-50 52-39Z" fill="#e8e2d8" stroke="#26362e" stroke-width="7" stroke-linejoin="round"/>
+  <path d="m177 92 23 30 23-30M200 122v34" fill="none" stroke="#26362e" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M168 337h64" stroke="#d4c9bb" stroke-width="7" stroke-linecap="round"/>
+</svg>

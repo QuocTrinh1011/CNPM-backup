@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useStorefrontDialogs, useShopResource } from '../shared/hooks/storefront-hooks';
 import AccountDropdown from '../features/customer/AccountDropdown';
 import StorefrontHome from '../features/storefront/StorefrontHome';
+import { getProductImage, shouldContainProductImage } from '../features/storefront/product-images';
 import AddressModal from "../shared/address/AddressBook";
 import CheckoutPage, { CheckoutState } from "../features/storefront/CheckoutPage";
 import PaymentQr from "../features/storefront/PaymentQr";
@@ -90,9 +91,10 @@ const discount = (product) =>
     ? Math.round((1 - product.salePrice / product.price) * 100)
     : 0;
 const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=85";
-const imageSrc = (value) =>
-  typeof value === "string" && value.trim() ? value : FALLBACK_IMAGE;
+  "/images/catalog/product-placeholder.svg";
+const imageSrc = (value, product, color) =>
+  getProductImage(product, color) ||
+  (typeof value === "string" && value.startsWith("/images/catalog/") ? value : FALLBACK_IMAGE);
 const protectImage = (event) => {
   event.currentTarget.onerror = null;
   event.currentTarget.src = FALLBACK_IMAGE;
@@ -1655,7 +1657,8 @@ function ProductCard({ product, onOpen, onAdd, isWishlisted, onWishlist }) {
     <article className="product-card">
       <div className="product-image">
         <img
-          src={imageSrc(product.imageUrl)}
+          src={imageSrc(product.imageUrl, product, csv(product.colors)[0])}
+          style={shouldContainProductImage(product, csv(product.colors)[0]) ? { objectFit: "contain" } : undefined}
           onError={protectImage}
           alt={product.name}
           loading="lazy"
@@ -1754,7 +1757,8 @@ function ProductModal({ page = false, data, user, onClose, onAdd, onBuyNow, isWi
         </button>
         <div className="product-modal-image">
           <img
-            src={imageSrc(product.imageUrl)}
+            src={imageSrc(product.imageUrl, product, color)}
+            style={shouldContainProductImage(product, color) ? { objectFit: "contain" } : undefined}
             onError={protectImage}
             alt={product.name}
           />
@@ -2102,7 +2106,8 @@ export function CartDrawer({ page = false, cart, onClose, onUpdate, updatingKeys
               >
                 {selection && <input className="cart-line-checkbox" type="checkbox" aria-label={`Chọn ${item.name} ${item.color || ''} ${item.size || ''}`} checked={selection.selected.has(cartLineKey(item))} disabled={!canBuyLine(item) || !!updatingKeys.length} onChange={() => selection.toggle(item)}/>}
                 <img
-                  src={imageSrc(item.imageUrl)}
+                  src={imageSrc(item.imageUrl, item, item.color)}
+                  style={shouldContainProductImage(item, item.color) ? { objectFit: "contain" } : undefined}
                   onError={protectImage}
                   alt={item.name}
                 />
@@ -2413,7 +2418,7 @@ export function OrdersPage({ route, onNavigate, onNotice, onChanged }) {
       {error ? <div className="shop-inline-error" role="alert"><p>{error}</p><button className="button button-light" onClick={() => load()}>Thử lại</button></div> : orders === null ? <div className="shop-orders-loading" role="status">Đang tải đơn hàng...</div> : orders.length ? <div className="shop-order-cards">
         {orders.map(order => <article className="shop-order-card" key={order.id}>
           <header><div><b>Mã đơn #{order.orderCode}</b><time dateTime={order.createdAt}>{date(order.createdAt)}</time></div><div className="shop-order-badges"><Status value={order.status} order={order}/>{order.paymentMethod === "PAYOS" ? <span className={order.paymentStatus === "PAID" ? "shop-payment-label is-paid" : "shop-payment-label"}>{order.paymentStatus === "PAID" ? "Đã thanh toán" : "Chưa thanh toán"}</span> : <span className="shop-payment-label">Thanh toán khi nhận hàng</span>}</div></header>
-          <div className="shop-order-products">{(order.items || []).slice(0, 3).map((item, index) => <div className="shop-order-product" key={`${item.productId}-${item.size || ""}-${item.color || ""}-${index}`}><img src={imageSrc(item.imageUrl)} onError={protectImage} alt=""/><div><b>{item.name}</b><small>{[item.size, item.color].filter(Boolean).join(" · ") || "Phân loại tiêu chuẩn"} · SL: {item.quantity}</small></div><strong>{money(item.lineTotal)}</strong></div>)}{(order.items?.length || 0) > 3 && <p className="shop-order-more">Còn {order.items.length - 3} sản phẩm khác</p>}</div>
+          <div className="shop-order-products">{(order.items || []).slice(0, 3).map((item, index) => <div className="shop-order-product" key={`${item.productId}-${item.size || ""}-${item.color || ""}-${index}`}><img src={imageSrc(item.imageUrl, item, item.color)} style={shouldContainProductImage(item, item.color) ? { objectFit: "contain" } : undefined} onError={protectImage} alt=""/><div><b>{item.name}</b><small>{[item.size, item.color].filter(Boolean).join(" · ") || "Phân loại tiêu chuẩn"} · SL: {item.quantity}</small></div><strong>{money(item.lineTotal)}</strong></div>)}{(order.items?.length || 0) > 3 && <p className="shop-order-more">Còn {order.items.length - 3} sản phẩm khác</p>}</div>
           <footer><span>{order.items?.length || 0} sản phẩm</span><div><span>Thành tiền</span><strong>{money(order.totalAmount)}</strong><ReceiptAction order={order} onChanged={receiptConfirmed} onNotice={onNotice}/>{order.status === 'COMPLETED' && <button type="button" className="button button-light review-card-btn" onClick={() => openOrder(order.id)}><Star size={14}/> Đánh giá</button>}<button type="button" className="button button-dark" onClick={() => openOrder(order.id)}>Chi tiết đơn <ChevronRight size={16}/></button></div></footer>
         </article>)}
       </div> : <div className="shop-orders-empty"><PackageOpen size={38}/><h2>{activeRoute.keyword ? "Không tìm thấy đơn phù hợp" : activeRoute.tab === "ALL" ? "Bạn chưa có đơn hàng" : "Chưa có đơn trong mục này"}</h2><p>{activeRoute.keyword ? "Thử mã đơn hoặc tên sản phẩm khác." : "Đơn hàng của bạn sẽ xuất hiện tại đây sau khi đặt hàng."}</p>{(activeRoute.keyword || activeRoute.tab !== "ALL") && <button className="button button-light" onClick={() => move({ ...DEFAULT_ORDERS_ROUTE })}>Xem tất cả đơn hàng</button>}</div>}
@@ -2522,7 +2527,8 @@ export function OrderView({ order, onNotice, onChanged, onPaymentChanged, onRece
       {order.items?.map((item) => (
         <div className="order-item" key={`${item.productId}-${item.size || ""}-${item.color || ""}`}>
           <img
-            src={imageSrc(item.imageUrl)}
+            src={imageSrc(item.imageUrl, item, item.color)}
+            style={shouldContainProductImage(item, item.color) ? { objectFit: "contain" } : undefined}
             onError={protectImage}
             alt={item.name}
           />
@@ -2553,7 +2559,7 @@ export function OrderView({ order, onNotice, onChanged, onPaymentChanged, onRece
   );
 }
 function WishlistModal({ page = false, items, onClose, onRemove, onOpen, onNotice }) {
-  return <div className={page ? "customer-page-body" : "modal-backdrop"}><div className="wide-modal wishlist-modal"><button className="close-button" aria-label="Đóng yêu thích" onClick={onClose}><X size={20} /></button><p className="kicker">TÀI KHOẢN / YÊU THÍCH</p><h2>Món đồ bạn thích.</h2>{items.length ? <div className="wishlist-grid">{items.map((item) => <article className="wishlist-card" key={item.productId}><button className="wishlist-image" onClick={() => onOpen({ id: item.productId })}><img src={imageSrc(item.imageUrl)} onError={protectImage} alt={item.name} /></button><div className="wishlist-card-content"><b>{item.name}</b><small>{item.category || "HÀNG NAM"}</small><strong>{money(item.salePrice || item.price)}</strong></div><button className="wishlist-remove" onClick={() => onRemove({ id: item.productId })}>Bỏ thích</button></article>)}</div> : <div className="empty-state compact"><Heart size={34} /><h3>Chưa có món đồ yêu thích</h3><p>Chạm vào biểu tượng trái tim để lưu sản phẩm.</p></div>}</div></div>;
+  return <div className={page ? "customer-page-body" : "modal-backdrop"}><div className="wide-modal wishlist-modal"><button className="close-button" aria-label="Đóng yêu thích" onClick={onClose}><X size={20} /></button><p className="kicker">TÀI KHOẢN / YÊU THÍCH</p><h2>Món đồ bạn thích.</h2>{items.length ? <div className="wishlist-grid">{items.map((item) => <article className="wishlist-card" key={item.productId}><button className="wishlist-image" onClick={() => onOpen({ id: item.productId })}><img src={imageSrc(item.imageUrl, item, item.color)} style={shouldContainProductImage(item, item.color) ? { objectFit: "contain" } : undefined} onError={protectImage} alt={item.name} /></button><div className="wishlist-card-content"><b>{item.name}</b><small>{item.category || "HÀNG NAM"}</small><strong>{money(item.salePrice || item.price)}</strong></div><button className="wishlist-remove" onClick={() => onRemove({ id: item.productId })}>Bỏ thích</button></article>)}</div> : <div className="empty-state compact"><Heart size={34} /><h3>Chưa có món đồ yêu thích</h3><p>Chạm vào biểu tượng trái tim để lưu sản phẩm.</p></div>}</div></div>;
 }
 
 
