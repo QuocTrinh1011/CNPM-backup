@@ -23,3 +23,16 @@ it('filters care history and labels metadata',async()=>{
  adminApi.mockResolvedValue({...data,content:[{...data.content[0],entityType:'CARE_TASK',action:'UPDATE',targetId:42,beforeData:{assigneeId:2,status:'TODO'},afterData:{assigneeId:3,status:'COMPLETED',outcome:'RESOLVED',parentTaskId:10}}]});
  render(<AuditLogs/>);await flush();expect(screen.getByText('Cập nhật · Công việc chăm sóc #42')).toBeTruthy();expect(screen.getByText('ID người phụ trách')).toBeTruthy();expect(screen.getByText('Công việc trước')).toBeTruthy();fireEvent.change(screen.getByLabelText('Chức năng'),{target:{value:'CARE_TASK'}});await flush();expect(adminApi.mock.calls.at(-1)[0]).toContain('type=CARE_TASK');
 });
+it('allows filtering promotion campaign history',async()=>{
+ adminApi.mockResolvedValue({...data,content:[{...data.content[0],entityType:'PROMOTION_CAMPAIGN',action:'CREATE',targetId:12,beforeData:{},afterData:{code:'SUMMER26',name:'Summer sale',startDate:'2026-11-01',endDate:'2026-11-30',productRules:[{productId:7,discountPercent:10}],invoiceRules:[],voucherRules:[]}}]});
+ render(<AuditLogs/>);await flush();
+ expect(screen.getByRole('option',{name:'Chiến dịch khuyến mãi'})).toBeTruthy();
+ fireEvent.change(screen.getByLabelText('Chức năng'),{target:{value:'PROMOTION_CAMPAIGN'}});await flush();
+ expect(screen.getByText('Tạo mới · Chiến dịch khuyến mãi #12')).toBeTruthy();
+ expect(adminApi.mock.calls.at(-1)[0]).toContain('type=PROMOTION_CAMPAIGN');
+ fireEvent.click(screen.getByText('Xem dữ liệu trước / sau'));
+ expect(screen.getByText('Mã chiến dịch')).toBeTruthy();
+ expect(screen.getByText('Tên chiến dịch')).toBeTruthy();
+ expect(screen.getByText('Quy tắc sản phẩm')).toBeTruthy();
+ expect(screen.getByText('[{"productId":7,"discountPercent":10}]')).toBeTruthy();
+});

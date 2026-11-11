@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc @Transactional
 class AuditLogIntegrationTest {
     @Autowired EntityManager em;@Autowired MockMvc mvc;@Autowired JwtTokenService jwt;@Autowired AuditLogRepository logs;
+    @Autowired PromotionCampaignService promotionCampaigns;
     @Autowired AuditTrail trail;@Autowired PlatformTransactionManager transactions;
     User user(String name,String role){var u=new User();u.setFullName(name);u.setEmail(name+"@audit.test");u.setRole(role);u.setPasswordHash("never-log-this-hash");em.persist(u);em.flush();return u;}
     String token(User u){return "Bearer "+jwt.issue(u.getId(),u.getRole());}
@@ -50,6 +51,26 @@ class AuditLogIntegrationTest {
         mvc.perform(get("/api/admin/audit-logs").header("Authorization",token(admin))).andExpect(jsonPath("$.totalElements").value(4));
         for(String filter:new String[]{"page=-1","size=101","type=BAD","action=BAD","from=2026-10-16T00:00:00Z&to=2026-10-15T00:00:00Z"})mvc.perform(get("/api/admin/audit-logs?"+filter).header("Authorization",token(admin))).andExpect(status().isBadRequest());
         mvc.perform(delete("/api/admin/audit-logs/1").header("Authorization",token(admin))).andExpect(status().is4xxClientError());assertEquals(4,logs.count());
+    }
+    @Test void filtersPromotionCampaignHistory() throws Exception {
+        var admin=user("Admin","ADMIN");
+        logs.save(new AuditLog(admin.getId(),"Admin","ADMIN","CREATE","PROMOTION_CAMPAIGN",12L,"{}","{}"));em.flush();
+        mvc.perform(get("/api/admin/audit-logs?type=PROMOTION_CAMPAIGN").header("Authorization",token(admin)))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.content[0].entityType").value("PROMOTION_CAMPAIGN"));
+    }
+    @Test void campaignListUsesGroupedRuleCounts() {
+        var campaign=new PromotionCampaign();campaign.setCode("GROUPED_COUNTS");campaign.setName("Grouped counts");
+        campaign.setStartDate(java.time.LocalDate.parse("2026-11-01"));campaign.setEndDate(java.time.LocalDate.parse("2026-11-30"));
+        em.persist(campaign);em.flush();
+        var invoiceRule=new PromotionInvoiceRule();invoiceRule.setCampaignId(campaign.getId());
+        invoiceRule.setMinimumInvoiceAmount(new BigDecimal("10000.00"));invoiceRule.setDiscountPercent(new BigDecimal("10.00"));
+        em.persist(invoiceRule);em.flush();
+
+        var summary=promotionCampaigns.list("GROUPED_COUNTS",0,10).getContent().getFirst();
+
+        assertEquals(campaign.getId(),summary.id());assertEquals(0,summary.productRuleCount());
+        assertEquals(1,summary.invoiceRuleCount());assertEquals(0,summary.voucherRuleCount());
     }
     @Test void orderNoOpDoesNotDuplicateAndFailedTransitionDoesNotLog() throws Exception {
         var manager=user("Manager","MANAGER");var customer=user("Buyer","CUSTOMER");

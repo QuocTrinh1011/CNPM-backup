@@ -85,6 +85,11 @@ export const adminEndpoints = {
   surveys: ({ status = '', page = 0, size = 10 } = {}) => `/api/manager/surveys${status ? `?status=${encodeURIComponent(status)}&page=${page}&size=${size}` : `?page=${page}&size=${size}`}`,
   survey: id => `/api/manager/surveys/${id}`,
   surveyPublish: id => `/api/manager/surveys/${id}/publish`,
+  promotions: ({ search = '', page = 0, size = 10 } = {}) => `/api/manager/promotions?${new URLSearchParams({ search, page: String(page), size: String(size) })}`,
+  promotion: id => `/api/manager/promotions/${id}`,
+  createPromotion: () => '/api/manager/promotions',
+  updatePromotion: id => `/api/manager/promotions/${id}`,
+  deletePromotion: id => `/api/manager/promotions/${id}`,
 };
 
 export const currentApiBase = API_BASE;
