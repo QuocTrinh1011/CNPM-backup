@@ -5,6 +5,7 @@ import com.htttdn.crm.entity.PromotionInvoiceRule;
 import com.htttdn.crm.entity.PromotionProductRule;
 import com.htttdn.crm.entity.PromotionVoucherRule;
 import com.htttdn.crm.exception.ApiException;
+import com.htttdn.crm.repository.CampaignRuleCount;
 import com.htttdn.crm.repository.ProductRepository;
 import com.htttdn.crm.repository.PromotionCampaignRepository;
 import com.htttdn.crm.repository.PromotionInvoiceRuleRepository;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class PromotionCampaignService extends AdminServiceSupport {
@@ -63,7 +66,11 @@ public class PromotionCampaignService extends AdminServiceSupport {
         Page<PromotionCampaign> results = term.isEmpty()
                 ? campaigns.findAll(pageable)
                 : campaigns.findByCodeContainingIgnoreCaseOrNameContainingIgnoreCase(term, term, pageable);
-        return results.map(this::summary);
+        List<Long> campaignIds = results.getContent().stream().map(PromotionCampaign::getId).toList();
+        Map<Long, Long> productCounts = groupedCounts(campaignIds, productRules::countGroupedByCampaignIds);
+        Map<Long, Long> invoiceCounts = groupedCounts(campaignIds, invoiceRules::countGroupedByCampaignIds);
+        Map<Long, Long> voucherCounts = groupedCounts(campaignIds, voucherRules::countGroupedByCampaignIds);
+        return results.map(campaign -> summary(campaign, productCounts, invoiceCounts, voucherCounts));
     }
 
     @Transactional(readOnly = true)
@@ -243,10 +250,18 @@ public class PromotionCampaignService extends AdminServiceSupport {
                 campaign.getEndDate(), productViews, invoiceViews, voucherViews);
     }
 
-    private CampaignSummary summary(PromotionCampaign campaign) {
+    private Map<Long, Long> groupedCounts(List<Long> campaignIds,
+            Function<List<Long>, List<CampaignRuleCount>> query) {
+        if (campaignIds.isEmpty()) return Map.of();
+        return query.apply(campaignIds).stream().collect(Collectors.toMap(
+                CampaignRuleCount::getCampaignId, CampaignRuleCount::getRuleCount));
+    }
+
+    private CampaignSummary summary(PromotionCampaign campaign, Map<Long, Long> productCounts,
+            Map<Long, Long> invoiceCounts, Map<Long, Long> voucherCounts) {
         return new CampaignSummary(campaign.getId(), campaign.getCode(), campaign.getName(), campaign.getStartDate(),
-                campaign.getEndDate(), productRules.countByCampaignId(campaign.getId()),
-                invoiceRules.countByCampaignId(campaign.getId()), voucherRules.countByCampaignId(campaign.getId()));
+                campaign.getEndDate(), productCounts.getOrDefault(campaign.getId(), 0L),
+                invoiceCounts.getOrDefault(campaign.getId(), 0L), voucherCounts.getOrDefault(campaign.getId(), 0L));
     }
 
     private AuditTrail.PromotionCampaignSnapshot auditSnapshot(CampaignDetail detail) {
