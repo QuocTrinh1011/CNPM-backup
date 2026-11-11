@@ -7,16 +7,21 @@ import './manager-invoices.css';
 
 const paymentMethods = { COD: 'Thanh toán khi nhận hàng', PAYOS: 'PayOS / VietQR' };
 
-export default function ManagerInvoiceDetail({ orderId, onClose }) {
+export default function ManagerInvoiceDetail({ orderId, onClose, focusTarget }) {
   const endpoint = useCallback(() => adminEndpoints.order(orderId), [orderId]);
   const { data: order, loading, error, load } = useManagerList(endpoint);
   const panel = useRef(null);
+  const returnFocus = useRef(focusTarget);
+  returnFocus.current = focusTarget || returnFocus.current;
   const close = () => onClose?.();
 
   useEffect(() => {
-    const previous = document.activeElement;
     panel.current?.querySelector('button')?.focus();
-    return () => { if (previous?.isConnected) previous.focus(); };
+  }, [orderId, focusTarget]);
+
+  useEffect(() => () => {
+    const target = returnFocus.current;
+    if (target?.isConnected) target.focus();
   }, []);
 
   const keyboard = event => {

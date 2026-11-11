@@ -20,7 +20,8 @@ const methodLabels = { COD: 'COD', PAYOS: 'PayOS / VietQR' };
 export default function ManagerInvoices() {
   const [filters, changeFilters] = useManagerFilters({ q: '', paymentStatus: '', fromDate: '', toDate: '', page: '0' });
   const [search, setSearch] = useState(filters.q);
-  const [invoiceId, setInvoiceId] = useState(null);
+  const [invoiceSelection, setInvoiceSelection] = useState(null);
+  const invoiceId = invoiceSelection?.id ?? null;
   useEffect(() => setSearch(filters.q), [filters.q]);
   const page = Math.max(0, Number(filters.page) || 0);
   const range = vietnamDateRange(filters.fromDate, filters.toDate);
@@ -138,7 +139,7 @@ export default function ManagerInvoices() {
                             </span>
                           </td>
                           <td data-label="Thao tác">
-                            <button className="admin-action" onClick={() => setInvoiceId(invoice.id)}>Xem hóa đơn</button>
+                            <button className="admin-action" onClick={event => setInvoiceSelection({ id: invoice.id, opener: event.currentTarget })}>Xem hóa đơn</button>
                           </td>
                         </tr>
                       );
@@ -161,7 +162,13 @@ export default function ManagerInvoices() {
             </>
           )}
         </div>
-        {invoiceId !== null && <ManagerInvoiceDetail orderId={invoiceId} onClose={() => setInvoiceId(null)} />}
+        {invoiceSelection && (
+          <ManagerInvoiceDetail
+            orderId={invoiceSelection.id}
+            focusTarget={invoiceSelection.opener}
+            onClose={() => setInvoiceSelection(null)}
+          />
+        )}
       </div>
     </div>
   );
