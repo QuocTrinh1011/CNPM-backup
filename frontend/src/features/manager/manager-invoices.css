@@ -1,3 +1,18 @@
+.invoice-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.invoice-layout.has-detail {
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.8fr);
+}
+
+.invoice-list {
+  min-width: 0;
+}
+
 .manager-invoices .admin-order-toolbar {
   margin-bottom: 12px;
 }
@@ -22,8 +37,34 @@
   white-space: nowrap;
 }
 
-.invoice-dialog {
-  width: min(760px, 96vw);
+.invoice-detail-panel {
+  width: auto;
+  min-width: 0;
+  max-height: min(80vh, 900px);
+  overflow: auto;
+  padding: 20px;
+  color: var(--admin-text);
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-xl);
+  box-shadow: var(--admin-shadow-lg);
+}
+
+.invoice-detail-panel .admin-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.invoice-detail-panel .admin-detail-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.invoice-detail-panel .admin-detail-grid .admin-detail-wide {
+  grid-column: 1;
 }
 
 .invoice-head {
@@ -149,9 +190,16 @@
   gap: 12px;
 }
 
+@media (max-width: 1120px) {
+  .invoice-layout.has-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 700px) {
-  .invoice-dialog {
-    width: 100%;
+  .invoice-detail-panel {
+    max-height: none;
+    padding: 16px;
   }
 
   .invoice-filters label {

@@ -50,7 +50,7 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.restoreAllMocks(); });
 
-it('renders the invoice page and opens a read-only invoice dialog', async () => {
+it('renders the invoice page and keeps it visible beside a read-only detail panel', async () => {
   render(<ManagerApp />);
   await flush();
   expect(window.location.pathname).toBe('/manager/invoices');
@@ -60,19 +60,27 @@ it('renders the invoice page and opens a read-only invoice dialog', async () => 
 
   fireEvent.click(screen.getByRole('button', { name: 'Xem hóa đơn' }));
   await flush();
-  const dialog = screen.getByRole('dialog');
-  expect(adminApi.mock.calls.some(([url]) => url === '/api/manager/orders/1')).toBe(true);
-  expect(within(dialog).getByText('Hóa đơn #1001')).toBeTruthy();
-  expect(within(dialog).getByText('Áo sơ mi')).toBeTruthy();
-  expect(within(dialog).getByText('Tạm tính')).toBeTruthy();
-  expect(within(dialog).getByText('Giảm giá · SALE10')).toBeTruthy();
-  expect(within(dialog).getByText('Tổng thanh toán')).toBeTruthy();
-  expect(within(dialog).getByText('Đã thanh toán')).toBeTruthy();
-  expect(within(dialog).getByText('GHN123')).toBeTruthy();
-
-  fireEvent.keyDown(dialog, { key: 'Escape' });
-  await flush();
+  const panel = screen.getByRole('region', { name: 'Chi tiết hóa đơn' });
   expect(screen.queryByRole('dialog')).toBeNull();
+  expect(screen.getByRole('button', { name: 'Xem hóa đơn' })).toBeTruthy();
+  expect(adminApi.mock.calls.some(([url]) => url === '/api/manager/orders/1')).toBe(true);
+  expect(within(panel).getByText('Hóa đơn #1001')).toBeTruthy();
+  expect(within(panel).getByText('Áo sơ mi')).toBeTruthy();
+  expect(within(panel).getByText('Tạm tính')).toBeTruthy();
+  expect(within(panel).getByText('Giảm giá · SALE10')).toBeTruthy();
+  expect(within(panel).getByText('Tổng thanh toán')).toBeTruthy();
+  expect(within(panel).getByText('Đã thanh toán')).toBeTruthy();
+  expect(within(panel).getByText('GHN123')).toBeTruthy();
+
+  fireEvent.click(within(panel).getByRole('button', { name: 'Đóng hóa đơn' }));
+  await flush();
+  expect(screen.queryByRole('region', { name: 'Chi tiết hóa đơn' })).toBeNull();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Xem hóa đơn' }));
+  await flush();
+  fireEvent.keyDown(screen.getByRole('region', { name: 'Chi tiết hóa đơn' }), { key: 'Escape' });
+  await flush();
+  expect(screen.queryByRole('region', { name: 'Chi tiết hóa đơn' })).toBeNull();
 });
 
 it('sends the customer search to the server and keeps it in the URL', async () => {

@@ -83,82 +83,86 @@ export default function ManagerInvoices() {
           <RefreshCw size={16} className={refreshing ? 'admin-spinner' : ''} /> Tải lại
         </button>
       </div>
-      {loading && !data ? (
-        <div className="invoice-loading" role="status"><RefreshCw size={18} className="admin-spinner" /> Đang tải hóa đơn...</div>
-      ) : error && !data ? (
-        <div className="admin-list-error" role="alert"><p>{error}</p><button className="admin-action" onClick={() => load()}>Thử lại</button></div>
-      ) : (
-        <>
-          <div className="admin-table-wrap invoice-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Mã hóa đơn</th>
-                  <th>Khách hàng</th>
-                  <th>Tạm tính</th>
-                  <th>Giảm giá</th>
-                  <th>Tổng thanh toán</th>
-                  <th>Thanh toán</th>
-                  <th>Trạng thái đơn</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoices.map(invoice => {
-                  const discount = Number(invoice.discountAmount || 0);
-                  const subtotal = Number(invoice.totalAmount || 0) + discount;
-                  return (
-                    <tr key={invoice.id}>
-                      <td data-label="Mã hóa đơn">
-                        <span className="admin-order-code-badge">#{invoice.orderCode}</span>
-                        <small className="admin-table-subline">{date(invoice.createdAt)}</small>
-                      </td>
-                      <td data-label="Khách hàng">
-                        <b>{invoice.customer?.fullName || '—'}</b>
-                        <small className="admin-table-subline">{invoice.customer?.email || ''}</small>
-                      </td>
-                      <td data-label="Tạm tính">{money(subtotal)}</td>
-                      <td data-label="Giảm giá">
-                        {discount > 0 ? `-${money(discount)}` : '—'}
-                        {invoice.voucherCode && <small className="admin-table-subline">{invoice.voucherCode}</small>}
-                      </td>
-                      <td data-label="Tổng thanh toán"><strong>{money(invoice.totalAmount)}</strong></td>
-                      <td data-label="Thanh toán">
-                        <span>{methodLabels[invoice.paymentMethod] || invoice.paymentMethod || '—'}</span>
-                        <small className={`admin-table-subline admin-payment-status-pill ${invoice.paymentStatus === 'PAID' ? 'is-paid' : invoice.paymentStatus === 'PENDING' ? 'is-pending' : ''}`}>
-                          {paymentLabels[invoice.paymentStatus] || invoice.paymentStatus || '—'}
-                        </small>
-                      </td>
-                      <td data-label="Trạng thái đơn">
-                        <span className={`admin-status admin-status-${(invoice.status || '').toLowerCase()}`}>
-                          <span className="admin-badge-dot" />
-                          {orderLabels[invoice.status] || invoice.status}
-                        </span>
-                      </td>
-                      <td data-label="Thao tác">
-                        <button className="admin-action" onClick={() => setInvoiceId(invoice.id)}>Xem hóa đơn</button>
-                      </td>
+      <div className={`invoice-layout${invoiceId !== null ? ' has-detail' : ''}`}>
+        <div className="invoice-list">
+          {loading && !data ? (
+            <div className="invoice-loading" role="status"><RefreshCw size={18} className="admin-spinner" /> Đang tải hóa đơn...</div>
+          ) : error && !data ? (
+            <div className="admin-list-error" role="alert"><p>{error}</p><button className="admin-action" onClick={() => load()}>Thử lại</button></div>
+          ) : (
+            <>
+              <div className="admin-table-wrap invoice-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Mã hóa đơn</th>
+                      <th>Khách hàng</th>
+                      <th>Tạm tính</th>
+                      <th>Giảm giá</th>
+                      <th>Tổng thanh toán</th>
+                      <th>Thanh toán</th>
+                      <th>Trạng thái đơn</th>
+                      <th>Thao tác</th>
                     </tr>
-                  );
-                })}
-                {!invoices.length && (
-                  <tr><td colSpan={8} className="admin-table-empty"><b>Không có hóa đơn phù hợp.</b><small>Thử đổi từ khóa, trạng thái thanh toán hoặc khoảng ngày.</small></td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          {(totalPages > 1 || page > 0) && (
-            <div className="admin-pagination invoice-pagination">
-              <span>Trang {page + 1}/{Math.max(1, totalPages)} · {totalElements} hóa đơn</span>
-              <div>
-                <button disabled={page <= 0 || loading} onClick={() => setPage(page - 1)}>Trước</button>
-                <button disabled={page + 1 >= totalPages || loading} onClick={() => setPage(page + 1)}>Sau</button>
+                  </thead>
+                  <tbody>
+                    {invoices.map(invoice => {
+                      const discount = Number(invoice.discountAmount || 0);
+                      const subtotal = Number(invoice.totalAmount || 0) + discount;
+                      return (
+                        <tr key={invoice.id}>
+                          <td data-label="Mã hóa đơn">
+                            <span className="admin-order-code-badge">#{invoice.orderCode}</span>
+                            <small className="admin-table-subline">{date(invoice.createdAt)}</small>
+                          </td>
+                          <td data-label="Khách hàng">
+                            <b>{invoice.customer?.fullName || '—'}</b>
+                            <small className="admin-table-subline">{invoice.customer?.email || ''}</small>
+                          </td>
+                          <td data-label="Tạm tính">{money(subtotal)}</td>
+                          <td data-label="Giảm giá">
+                            {discount > 0 ? `-${money(discount)}` : '—'}
+                            {invoice.voucherCode && <small className="admin-table-subline">{invoice.voucherCode}</small>}
+                          </td>
+                          <td data-label="Tổng thanh toán"><strong>{money(invoice.totalAmount)}</strong></td>
+                          <td data-label="Thanh toán">
+                            <span>{methodLabels[invoice.paymentMethod] || invoice.paymentMethod || '—'}</span>
+                            <small className={`admin-table-subline admin-payment-status-pill ${invoice.paymentStatus === 'PAID' ? 'is-paid' : invoice.paymentStatus === 'PENDING' ? 'is-pending' : ''}`}>
+                              {paymentLabels[invoice.paymentStatus] || invoice.paymentStatus || '—'}
+                            </small>
+                          </td>
+                          <td data-label="Trạng thái đơn">
+                            <span className={`admin-status admin-status-${(invoice.status || '').toLowerCase()}`}>
+                              <span className="admin-badge-dot" />
+                              {orderLabels[invoice.status] || invoice.status}
+                            </span>
+                          </td>
+                          <td data-label="Thao tác">
+                            <button className="admin-action" onClick={() => setInvoiceId(invoice.id)}>Xem hóa đơn</button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {!invoices.length && (
+                      <tr><td colSpan={8} className="admin-table-empty"><b>Không có hóa đơn phù hợp.</b><small>Thử đổi từ khóa, trạng thái thanh toán hoặc khoảng ngày.</small></td></tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
-            </div>
+              {(totalPages > 1 || page > 0) && (
+                <div className="admin-pagination invoice-pagination">
+                  <span>Trang {page + 1}/{Math.max(1, totalPages)} · {totalElements} hóa đơn</span>
+                  <div>
+                    <button disabled={page <= 0 || loading} onClick={() => setPage(page - 1)}>Trước</button>
+                    <button disabled={page + 1 >= totalPages || loading} onClick={() => setPage(page + 1)}>Sau</button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
-        </>
-      )}
-      {invoiceId !== null && <ManagerInvoiceDetail orderId={invoiceId} onClose={() => setInvoiceId(null)} />}
+        </div>
+        {invoiceId !== null && <ManagerInvoiceDetail orderId={invoiceId} onClose={() => setInvoiceId(null)} />}
+      </div>
     </div>
   );
 }
