@@ -61,6 +61,15 @@ export default function PromotionCampaigns() {
   const [detailError, setDetailError] = useState('');
   const [deletingId, setDeletingId] = useState(null);
   const saveLock = useRef(false);
+  const detailRequest = useRef(0);
+
+  const closeDetail = useCallback(() => {
+    detailRequest.current += 1;
+    setDetailId(null);
+    setDetail(null);
+    setDetailLoading(false);
+    setDetailError('');
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -100,13 +109,14 @@ export default function PromotionCampaigns() {
       if (event.key === 'Escape' && !saving && deletingId === null) {
         setEditor(null);
         setEditingId(null);
-        setDetailId(null);
-        setDetail(null);
+        closeDetail();
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [editor, detailId, saving, deletingId]);
+  }, [editor, detailId, saving, deletingId, closeDetail]);
+
+  useEffect(() => () => { detailRequest.current += 1; }, []);
 
   const productNames = useMemo(() => new Map(products.map(product => [String(product.id), product.name])), [products]);
   const voucherCodes = useMemo(() => new Map(vouchers.map(voucher => [String(voucher.id), voucher.code])), [vouchers]);
@@ -137,13 +147,20 @@ export default function PromotionCampaigns() {
   };
 
   const openDetail = async id => {
+    const requestId = detailRequest.current + 1;
+    detailRequest.current = requestId;
     setDetailId(id);
     setDetail(null);
     setDetailError('');
     setDetailLoading(true);
-    try { setDetail(await adminApi(adminEndpoints.promotion(id))); }
-    catch (error) { setDetailError(error.message); }
-    finally { setDetailLoading(false); }
+    try {
+      const result = await adminApi(adminEndpoints.promotion(id));
+      if (requestId === detailRequest.current) setDetail(result);
+    } catch (error) {
+      if (requestId === detailRequest.current) setDetailError(error.message);
+    } finally {
+      if (requestId === detailRequest.current) setDetailLoading(false);
+    }
   };
 
   const updateRule = (key, index, patch) => setEditor(current => ({
@@ -283,9 +300,9 @@ export default function PromotionCampaigns() {
       </section>
     </div>}
 
-    {detailId !== null && <div className="admin-dialog-backdrop promotion-backdrop" onMouseDown={event => { if (event.currentTarget === event.target) { setDetailId(null); setDetail(null); } }}>
+    {detailId !== null && <div className="admin-dialog-backdrop promotion-backdrop" onMouseDown={event => { if (event.currentTarget === event.target) closeDetail(); }}>
       <section className="admin-dialog promotion-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="promotion-detail-title">
-        <div className="promotion-dialog-heading"><div><span className="promotion-kicker"><BadgePercent size={15} /> CHI TIẾT CHIẾN DỊCH</span><h3 id="promotion-detail-title">{detail?.name || 'Thông tin chiến dịch'}</h3></div><button type="button" className="admin-action" aria-label="Đóng" onClick={() => { setDetailId(null); setDetail(null); }}><X size={17} /></button></div>
+        <div className="promotion-dialog-heading"><div><span className="promotion-kicker"><BadgePercent size={15} /> CHI TIẾT CHIẾN DỊCH</span><h3 id="promotion-detail-title">{detail?.name || 'Thông tin chiến dịch'}</h3></div><button type="button" className="admin-action" aria-label="Đóng" onClick={closeDetail}><X size={17} /></button></div>
         {detailLoading && <p role="status">Đang tải chi tiết...</p>}
         {detailError && <p className="promotion-error" role="alert">{detailError}</p>}
         {detail && <>

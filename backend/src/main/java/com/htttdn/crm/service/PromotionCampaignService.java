@@ -100,6 +100,7 @@ public class PromotionCampaignService extends AdminServiceSupport {
         productRules.deleteByCampaignId(id);
         invoiceRules.deleteByCampaignId(id);
         voucherRules.deleteByCampaignId(id);
+        productRules.flush();
         saveRules(id, value);
 
         CampaignDetail saved = detail(campaign);
@@ -121,7 +122,7 @@ public class PromotionCampaignService extends AdminServiceSupport {
         String code = existingCode == null ? normalizeCode(input.code()) : existingCode;
         if (existingCode == null && code.isEmpty()) throw invalid("Vui lòng nhập mã chiến dịch.");
         if (existingCode != null && input.code() != null && !input.code().isBlank()
-                && !normalizeCode(input.code()).equals(existingCode)) {
+                && !normalizeCode(input.code()).equals(normalizeCode(existingCode))) {
             throw invalid("Không được đổi mã chiến dịch đã tạo.");
         }
         if (code.length() > 40) throw invalid("Mã chiến dịch tối đa 40 ký tự.");
