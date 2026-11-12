@@ -4,6 +4,7 @@ import { api } from "../../api/api";
 import VoucherField, { useCheckoutVoucher } from "./VoucherField";
 import { useAddresses, AddressPicker, AddressSummary, preferredAddress, addressValid, deliveryText } from "../../shared/address/AddressBook";
 import PaymentQr from "./PaymentQr";
+import { getProductImage, shouldContainProductImage } from "./product-images";
 import "../../shared/address/checkout-page.css";
 
 const money = value => Number(value || 0).toLocaleString("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 });
@@ -57,7 +58,7 @@ export default function CheckoutPage({ cart, onPlaced, onShop, onOrders, onCart,
         {resource.loading ? <p role="status">Đang tải địa chỉ...</p> : resource.error ? <div className="shop-inline-error" role="alert">{resource.error}<button className="button button-light" onClick={resource.load}>Thử lại địa chỉ</button></div> : selected ? <AddressSummary address={selected}/> : <div><p>Bạn chưa có địa chỉ nhận hàng.</p><button className="button button-light" disabled={busy} onClick={() => setPicker(true)}>Thêm địa chỉ nhận hàng</button></div>}
       </section>
       <section className="shop-checkout-card"><h2><Package size={21}/> Sản phẩm <small>({cart.items.length})</small></h2><div className="shop-checkout-products">{cart.items.map(item => <article className="shop-checkout-product" key={[item.productId,item.size,item.color].join("-")}>
-        {item.imageUrl ? <img src={item.imageUrl} alt={item.name} /> : <span className="shop-checkout-image-placeholder"><Package size={24}/></span>}
+        <img src={getProductImage(item, item.color) || "/images/catalog/product-placeholder.svg"} style={shouldContainProductImage(item, item.color) ? { objectFit: "contain" } : undefined} alt={item.name} />
         <div><strong>{item.name}</strong><p>{[item.color,item.size && "Size "+item.size].filter(Boolean).join(" · ")}</p><small>Số lượng: {item.quantity}</small></div><b>{money(item.lineTotal)}</b>
       </article>)}</div></section>
       <section className="shop-checkout-card"><h2><CreditCard size={21}/> Phương thức thanh toán</h2><fieldset className="shop-checkout-methods" disabled={busy}><legend className="shop-sr-only">Chọn phương thức thanh toán</legend>

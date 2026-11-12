@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowUpRight, ArrowRight, Shirt, Layers, MoveUpRight, Sparkles, Zap } from 'lucide-react';
 
-const EDITORIAL_IMAGE = '/images/figma/daily-uniform.png';
+const EDITORIAL_IMAGE = '/images/catalog/product-placeholder.svg';
 
 export default function StorefrontHome({ products = [], onCatalog, onProduct, imageSrc = value => value }) {
   const featured = products.find(product => product.imageUrl) || null;
@@ -22,7 +22,7 @@ export default function StorefrontHome({ products = [], onCatalog, onProduct, im
       <div className="shop-editorial-visual">
         <img
           className="shop-editorial-image"
-          src={featured ? imageSrc(featured.imageUrl) : EDITORIAL_IMAGE}
+          src={featured ? imageSrc(featured.imageUrl, featured, String(featured.colors || '').split(',')[0]?.trim()) : EDITORIAL_IMAGE}
           alt={featured ? featured.name : 'Phong cách menswear tối giản của Anh Lớn Shop'}
           fetchPriority="high"
           onError={event => {
