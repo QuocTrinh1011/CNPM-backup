@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 @Service
 public class AdminSurveyService extends AdminServiceSupport {
@@ -29,7 +32,9 @@ public class AdminSurveyService extends AdminServiceSupport {
    s.getRecipients().addAll(ids);
   } else if("SELECTED".equals(audience)){
    if(r.customerIds()==null||r.customerIds().isEmpty())throw SurveyValidation.invalid("Hãy chọn ít nhất một khách hàng.");
-   for(Long id:r.customerIds()){User u=users.findById(id).orElseThrow(()->SurveyValidation.invalid("Không tìm thấy khách hàng."));if(!"CUSTOMER".equals(u.getRole())||u.isLocked()||u.getDeletedAt()!=null)throw SurveyValidation.invalid("Khách hàng không hoạt động.");s.getRecipients().add(id);}
+   var selectedIds=new ArrayList<Long>(r.customerIds().size());for(Long id:r.customerIds())if(id!=null)selectedIds.add(id);
+   Map<Long,User> selectedUsers=new HashMap<>();if(!selectedIds.isEmpty())for(User u:users.findAllById(selectedIds))selectedUsers.put(u.getId(),u);
+   for(Long id:r.customerIds()){if(id==null)throw new IllegalArgumentException("The given id must not be null");User u=selectedUsers.get(id);if(u==null)throw SurveyValidation.invalid("Không tìm thấy khách hàng.");if(!"CUSTOMER".equals(u.getRole())||u.isLocked()||u.getDeletedAt()!=null)throw SurveyValidation.invalid("Khách hàng không hoạt động.");s.getRecipients().add(id);}
   }
   SurveyRewardService.validate(r.reward());s.setReward(r.reward()==null?new SurveyReward():r.reward());
   if(r.description()!=null&&r.description().length()>4000)throw SurveyValidation.invalid("Mô tả tối đa 4.000 ký tự.");
