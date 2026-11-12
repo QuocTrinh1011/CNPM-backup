@@ -259,6 +259,7 @@ npm run dev:manager
 | `JWT_SECRET` | Bí mật ký token; phải thay giá trị phát triển trước khi triển khai |
 | `CORS_ORIGINS` | Danh sách origin frontend được phép, phân cách bằng dấu phẩy; cần đủ ba portal |
 | `SECURE_REFRESH_COOKIE` | Đặt `true` khi triển khai qua HTTPS |
+| `TRUSTED_PROXIES` | IP chính xác, phân cách dấu phẩy, của reverse proxy; để trống nếu backend nhận kết nối trực tiếp |
 | `VITE_API_BASE_URL` | URL backend mà từng portal gọi |
 | `VITE_USER_ORIGIN`, `VITE_ADMIN_ORIGIN`, `VITE_MANAGER_ORIGIN` | Origin các portal để tạo liên kết điều hướng |
 | `CRM_CARE_REMINDERS_ENABLED` | Bật/tắt scheduler nhắc việc; mặc định bật |
