@@ -6,20 +6,13 @@ import AccountDropdown from '../features/customer/AccountDropdown';
 import StorefrontHome from '../features/storefront/StorefrontHome';
 import { ProductModal } from '../features/storefront/ProductDetails';
 import CatalogSection from '../features/storefront/CatalogSection';
-import { CartDrawer } from '../features/storefront/CartDrawer';
-import AddressModal from "../shared/address/AddressBook";
-import CheckoutPage, { CheckoutState } from "../features/storefront/CheckoutPage";
+import CheckoutState from "../features/storefront/CheckoutState";
 import CustomerLayout from '../features/customer/CustomerLayout';
-import CustomerVouchers from '../features/customer/CustomerVouchers';
-import CustomerPassword from '../features/customer/CustomerPassword';
-import { AuthModal, WishlistModal, NotificationsModal, ProfileModal, SurveyModal } from '../features/customer/CustomerDialogs';
 import { useCartSelection, transferGuestSelection, subtractPurchased } from '../features/storefront/cart-selection';
 import { useCustomerRouter, actionPaths, isAccountPath, needsCustomer, isKnownPath, safeReturn } from '../shared/routing/customer-routing';
+import '../shared/address/checkout-page.css';
 import '../features/customer/customer-pages.css';
-export { default as AddressModal } from "../shared/address/AddressBook";
-export { CartDrawer } from "../features/storefront/CartDrawer";
-import { OrdersPage, DEFAULT_ORDERS_ROUTE } from "./CustomerOrders";
-export { OrdersPage, OrdersModal, ReceiptAction, OrderView } from "./CustomerOrders";
+import { DEFAULT_ORDERS_ROUTE } from "./customer-orders-route";
 import {
   api,
   endpoints,
@@ -52,6 +45,19 @@ import {
   UserRound,
   X,
 } from "lucide-react";
+
+const lazyNamed = (load, name) => React.lazy(() => load().then(module => ({ default: module[name] })));
+const OrdersPage = lazyNamed(() => import("./CustomerOrders"), "OrdersPage");
+const CheckoutPage = React.lazy(() => import("../features/storefront/CheckoutPage"));
+const CartDrawer = lazyNamed(() => import("../features/storefront/CartDrawer"), "CartDrawer");
+const AddressModal = React.lazy(() => import("../shared/address/AddressBook"));
+const CustomerVouchers = React.lazy(() => import("../features/customer/CustomerVouchers"));
+const CustomerPassword = React.lazy(() => import("../features/customer/CustomerPassword"));
+const AuthModal = lazyNamed(() => import("../features/customer/CustomerDialogs"), "AuthModal");
+const WishlistModal = lazyNamed(() => import("../features/customer/CustomerDialogs"), "WishlistModal");
+const NotificationsModal = lazyNamed(() => import("../features/customer/CustomerDialogs"), "NotificationsModal");
+const ProfileModal = lazyNamed(() => import("../features/customer/CustomerDialogs"), "ProfileModal");
+const SurveyModal = lazyNamed(() => import("../features/customer/CustomerDialogs"), "SurveyModal");
 
 const GUEST_CART_KEY = "anh-lon-shop-guest-cart";
 const emptyCart = () => ({ items: [], subtotal: 0, itemCount: 0 });
@@ -1073,13 +1079,16 @@ function App() {
         {sessionChecking ? <CheckoutState title="Đang mở đơn hàng" message="Đang khôi phục phiên đăng nhập..." loading/> :
          sessionError ? <CheckoutState title="Chưa kết nối được tài khoản" message={sessionError} action="Thử lại" onAction={retrySession}/> :
          !user ? <CheckoutState title="Đăng nhập để xem đơn hàng" message="Đăng nhập để theo dõi trạng thái, thanh toán hoặc quản lý đơn đã đặt." action="Đăng nhập" onAction={() => openAuth()}/> :
-         <OrdersPage key={user.id} route={ordersRoute} onNavigate={navigateOrders} onNotice={showNotice} onChanged={reloadNotifications}/>}
+         <React.Suspense fallback={<CheckoutState title="Đang mở đơn hàng" message="Đang tải lịch sử đơn hàng..." loading/>}>
+           <OrdersPage key={user.id} route={ordersRoute} onNavigate={navigateOrders} onNotice={showNotice} onChanged={reloadNotifications}/>
+         </React.Suspense>}
       </CustomerLayout> : checkoutPage ? (
         sessionChecking ? <CheckoutState title="Chuẩn bị đặt hàng" message="Đang khôi phục phiên đăng nhập..." loading/> :
         sessionError ? <CheckoutState title="Chưa kết nối được tài khoản" message={sessionError} action="Thử lại" onAction={retrySession}/> :
         !user ? <CheckoutState title="Đăng nhập để đặt hàng" message="Đăng nhập để sử dụng địa chỉ đã lưu và theo dõi đơn hàng." action="Đăng nhập" onAction={() => openAuth("checkout")}/> :
         cartError ? <CheckoutState title="Chưa tải được giỏ hàng" message={cartError} action="Thử lại giỏ hàng" onAction={loadCart}/> :
         cartLoading || cartOwner !== user.id ? <CheckoutState title="Chuẩn bị đặt hàng" message="Đang tải và đồng bộ giỏ hàng..." loading/> :
+        <React.Suspense fallback={<CheckoutState title="Chuẩn bị đặt hàng" message="Đang tải trang thanh toán..." loading/>}>
         <CheckoutPage key={user.id} cart={selection.cart} onShop={() => openCatalog("")} onCart={() => navigate('/gio-hang')} onOrders={() => navigateOrders()} VoucherWallet={CustomerVouchers}
           onPlaced={async (response, purchased) => {
             if (userRef.current?.id !== user.id) return;
@@ -1087,6 +1096,7 @@ function App() {
             try { const remaining = await api(endpoints.cart); if (userRef.current?.id === user.id) setCart(remaining); }
             catch { showNotice('Đơn đã tạo thành công. Chưa tải lại được giỏ hàng; vui lòng mở giỏ và thử lại.', 'error'); }
           }}/>
+        </React.Suspense>
       ) : extraPage ? null : <main id="top">
         {sessionError && <div className="shop-connection" role="alert"><CircleAlert size={20} /><span>{sessionError}</span><button onClick={retrySession}>Thử lại</button></div>}
         {!catalogPage && <StorefrontHome products={products.content || []} onCatalog={openCatalog} onProduct={openProduct} imageSrc={imageSrc}/>}
@@ -1373,7 +1383,9 @@ function App() {
 }
 
 function CustomerPageFrame({ account, pathname, user, navigate, children }) {
-  return account ? <CustomerLayout pathname={pathname} user={user} navigate={navigate}>{children}</CustomerLayout> : <main className="customer-standalone">{children}</main>;
+  return <React.Suspense fallback={<CheckoutState title="Đang tải trang" message="Đang chuẩn bị nội dung..." loading/>}>
+    {account ? <CustomerLayout pathname={pathname} user={user} navigate={navigate}>{children}</CustomerLayout> : <main className="customer-standalone">{children}</main>}
+  </React.Suspense>;
 }
 
 

@@ -2,7 +2,8 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor, cleanup, within } from '@testing-library/react';
 import { beforeEach, afterEach, expect, it, vi } from 'vitest';
-import App, { OrdersPage } from './App';
+import App from './App';
+import { OrdersPage } from './CustomerOrders';
 import { api, refreshSession, signIn } from '../api/api';
 import { safeReturn } from '../shared/routing/customer-routing';
 vi.mock('../api/api', async original => ({ ...(await original()), api: vi.fn(), refreshSession: vi.fn(), signIn: vi.fn() }));

@@ -5,8 +5,9 @@ import OrderReviews from "../features/customer/OrderReviews";
 import PaymentQr from "../features/storefront/PaymentQr";
 import { showReturn, returnLabel, displayOrderLabel, deliveryLabel } from "../shared/utils/order-display";
 import { date, imageSrc, protectImage, money } from "../shared/utils/storefront-display";
+import { DEFAULT_ORDERS_ROUTE } from "./customer-orders-route";
 
-export const DEFAULT_ORDERS_ROUTE = { orderId: null, tab: "ALL", keyword: "", page: 0 };
+export { DEFAULT_ORDERS_ROUTE } from "./customer-orders-route";
 
 const ORDER_TABS = [
   ["ALL", "Tất cả"], ["TO_PAY", "Chờ thanh toán"], ["TO_CONFIRM", "Chờ xác nhận"],

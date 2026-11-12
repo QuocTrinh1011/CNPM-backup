@@ -4,7 +4,10 @@ import { api } from "../../api/api";
 import VoucherField, { useCheckoutVoucher } from "./VoucherField";
 import { useAddresses, AddressPicker, AddressSummary, preferredAddress, addressValid, deliveryText } from "../../shared/address/AddressBook";
 import PaymentQr from "./PaymentQr";
+import CheckoutState from "./CheckoutState";
 import "../../shared/address/checkout-page.css";
+
+export { CheckoutState };
 
 const money = value => Number(value || 0).toLocaleString("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 });
 
@@ -72,8 +75,3 @@ export default function CheckoutPage({ cart, onPlaced, onShop, onOrders, onCart,
     {picker && <AddressPicker resource={resource} selected={selected} onSelect={address => { setSelected(address); setPicker(false); }} onClose={() => setPicker(false)}/>}
   </main>;
 }
-
-export function CheckoutState({ title, message, action, onAction, loading = false }) {
-  return <main className="shop-checkout-page"><section className="shop-checkout-state"><ShoppingStateIcon/><h1>{title}</h1><p role={loading ? "status" : undefined}>{message}</p>{action && <button className="button button-dark" onClick={onAction}>{action}</button>}</section></main>;
-}
-function ShoppingStateIcon(){return <Package size={36} aria-hidden="true"/>;}

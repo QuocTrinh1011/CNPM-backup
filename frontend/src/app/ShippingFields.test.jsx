@@ -4,7 +4,7 @@ import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/re
 import { it, expect, afterEach, beforeEach, vi } from 'vitest';
 import ShippingFields, { PhoneField, phoneDigits, validPhone, prepareAddress, shippingErrors } from '../shared/address/ShippingFields';
 import provinces from '../data/vietnam-addresses.json';
-import { AddressModal } from './App';
+import AddressModal from '../shared/address/AddressBook';
 import CheckoutPage from '../features/storefront/CheckoutPage';
 import { api } from '../api/api';
 vi.mock('../api/api', async original => ({...(await original()), api:vi.fn()}));
