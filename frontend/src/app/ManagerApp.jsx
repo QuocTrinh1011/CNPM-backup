@@ -1,4 +1,4 @@
-import { hasReturn, showReturn, displayOrderLabel, returnLabel } from '../shared/utils/order-display';
+import { hasReturn, showReturn, returnLabel } from '../shared/utils/order-display';
 import {useManagerFilters,managerQuery,vietnamDateRange} from '../shared/hooks/useManagerFilters';
 import ManagerOrderDetail from '../features/manager/ManagerOrderDetail';
 import CustomerLifecycle, {CustomerLifecycleFilters} from '../features/manager/CustomerLifecycle';
@@ -9,6 +9,7 @@ import '../shared/styles/internal-portal.css';
 import { TicketPercent } from "lucide-react";
 import { isFinalOrder } from '../features/manager/order-transitions';
 import { money, pageData, statusLabels, statusColors, orderStatuses, orderStatusOptions, paymentMethodLabels, paymentStatusLabels, formatDate } from '../features/manager/manager-data';
+import { OrderBadge, PanelLoading, Table, ListError, PageControls, PanelTitle } from '../features/manager/ManagerComponents';
 import SurveyRewardEditor, { RewardFields, emptyReward } from '../features/manager/SurveyRewardEditor';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 const AdminVouchers = React.lazy(() => import('../features/admin/AdminVouchers'));
@@ -34,8 +35,6 @@ import {
   ExternalLink,
   ArrowRight,
   RefreshCw,
-  CircleAlert,
-  Inbox,
   Search,
   Plus,
   ChevronRight,
@@ -553,74 +552,7 @@ function RecentOrders({ go }) {
     </section>
   );
 }
-function OrderBadge({ status, order }) {
-  return (
-    <>
-    <span className="admin-badge" style={{ color: showReturn(order) ? "var(--order-return-color, #c2410c)" : statusColors[status] }}>
-      <span className="admin-badge-dot" />
-      {order ? displayOrderLabel(order, statusLabels) : statusLabels[status] || status}
-    </span>
-    {order?.finance?.reviewRequired&&<small className="payment-review-warning">Thanh toán cần kiểm tra</small>}
-    </>
-  );
-}
-function PanelLoading() {
-  return (
-    <div className="admin-panel admin-loading-panel" role="status">
-      <RefreshCw size={20} className="admin-spinner" aria-hidden="true" />
-      <p>Đang tải dữ liệu...</p>
-    </div>
-  );
-}
 export const useAdminList = useManagerList;
-
-function Table({ headers, children, className = '' }) {
-  const hasRows = React.Children.count(children) > 0;
-  return (
-    <div className={`admin-table-wrap ${className}`}>
-      <table>
-        <thead>
-          <tr>
-            {headers.map((header) => (
-              <th key={header}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {hasRows ? (
-            React.Children.map(children,row=>React.isValidElement(row)?React.cloneElement(row,{},React.Children.map(row.props.children,(cell,index)=>React.isValidElement(cell)?React.cloneElement(cell,{'data-label':headers[index]}):cell)):row)
-          ) : (
-            <tr>
-              <td className="admin-table-empty" colSpan={headers.length}>
-                <span className="admin-state-icon">
-                  <Inbox size={20} />
-                </span>
-                <b>Chưa có dữ liệu</b>
-                <small>Dữ liệu sẽ hiển thị tại đây khi có bản ghi.</small>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-function ListError({ message, onRetry }) {
-  return (
-    <div className="admin-list-error">
-      <span className="admin-state-icon">
-        <CircleAlert size={20} />
-      </span>
-      <div>
-        <b>Không tải được dữ liệu</b>
-        <p>{message}</p>
-      </div>
-      <button className="admin-action" onClick={onRetry}>
-        Thử lại
-      </button>
-    </div>
-  );
-}
 
 function Users({ notify, location, go }) {
   const params = new URLSearchParams(location.split('?')[1]);
@@ -1683,37 +1615,6 @@ function Orders({ notify }) {
   );
 }
 
-function PageControls({
-  page,
-  totalPages,
-  totalElements,
-  onPage,
-  disabled = false,
-}) {
-  if (totalPages <= 1) return null;
-  return (
-    <div className="admin-pagination">
-      <span>
-        Tổng {totalElements ?? 0} bản ghi · Trang {page + 1}/{totalPages}
-      </span>
-      <div>
-        <button
-          disabled={disabled || page <= 0}
-          onClick={() => onPage(page - 1)}
-        >
-          Trước
-        </button>
-        <button
-          disabled={disabled || page + 1 >= totalPages}
-          onClick={() => onPage(page + 1)}
-        >
-          Sau
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function Feedback({ notify }) {
   const [page, setPage] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -2509,18 +2410,6 @@ function Surveys({ notify, location = '', go }) {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function PanelTitle({ title, subtitle }) {
-  return (
-    <div className="admin-panel-title">
-      <div>
-        <span className="admin-eyebrow">QUẢN LÝ CỬA HÀNG</span>
-        <h2>{title}</h2>
-        <p>{subtitle}</p>
-      </div>
     </div>
   );
 }
