@@ -1,5 +1,7 @@
 package com.htttdn.crm.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htttdn.crm.entity.*;
 import com.htttdn.crm.repository.*;
 import com.htttdn.crm.security.JwtTokenService;
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PaymentLifecycleIntegrationTest {
     @Autowired UserRepository users;@Autowired OrderRepository orders;@Autowired PaymentRepository payments;@Autowired PaymentAttemptRepository attempts;
     @Autowired AdminOrderService adminOrders;@Autowired AbandonedOrderWorker worker;@Autowired OrderService customerOrders;@Autowired JwtTokenService jwt;@Autowired MockMvc mvc;@Autowired PlatformTransactionManager tm;
+    @Autowired ObjectMapper mapper;
     @MockitoBean PayosService payos;
     User customer,manager;String token;TransactionTemplate tx;
     @BeforeEach void setup(){tx=new TransactionTemplate(tm);customer=user("CUSTOMER");manager=user("MANAGER");token="Bearer "+jwt.issue(manager.getId(),"MANAGER");}
@@ -45,6 +48,24 @@ class PaymentLifecycleIntegrationTest {
     @Test void paidCancellationKeepsPaymentEvidence(){
         Order o=order("PAYOS","PENDING","PAID");adminOrders.updateStatus(o.getId(),new StatusRequest("CANCELLED","Test"));adminOrders.updateStatus(o.getId(),new StatusRequest("CANCELLED","Test"));
         assertEquals("PAID",payments.findByOrderId(o.getId()).orElseThrow().getStatus());
+    }
+    @Test void webhookUsesOnlyTheSignedPaymentResult() throws Exception {
+        when(payos.verifyWebhook(any(JsonNode.class),eq("signed"))).thenReturn(true);
+        Order failed=order("PAYOS","PENDING","EXPIRED");
+        String failedPayload="""
+                {"success":true,"code":"00","data":{"code":"01","orderCode":%d,"amount":100000,"paymentLinkId":"link-%d","transactionDateTime":"2026-11-12T01:00:00Z"}}
+                """.formatted(failed.getOrderCode(),failed.getId());
+        customerOrders.webhook(mapper.readTree(failedPayload),"signed");
+        assertNotEquals("PAID",payments.findByOrderId(failed.getId()).orElseThrow().getStatus());
+        assertNotEquals("PAID",orders.findById(failed.getId()).orElseThrow().getPaymentStatus());
+
+        Order paid=order("PAYOS","PENDING","EXPIRED");
+        String paidPayload="""
+                {"success":false,"code":"01","data":{"code":"00","orderCode":%d,"amount":100000,"paymentLinkId":"link-%d","transactionDateTime":"2026-11-12T02:00:00Z"}}
+                """.formatted(paid.getOrderCode(),paid.getId());
+        customerOrders.webhook(mapper.readTree(paidPayload),"signed");
+        assertEquals("PAID",payments.findByOrderId(paid.getId()).orElseThrow().getStatus());
+        assertEquals("PAID",orders.findById(paid.getId()).orElseThrow().getPaymentStatus());
     }
     @Test void codCollectionIsIdempotent()throws Exception{
         Order o=order("COD","DELIVERED","COD");

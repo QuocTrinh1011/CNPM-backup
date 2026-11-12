@@ -322,7 +322,7 @@ public class OrderService {
 
     @Transactional public boolean webhook(JsonNode payload, String signature) {
         JsonNode data = payload == null ? null : payload.path("data"); if (data == null || data.isMissingNode()) throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_WEBHOOK", "Webhook không có dữ liệu thanh toán."); if (!payos.verifyWebhook(data, signature)) throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_WEBHOOK", "Chữ ký webhook không hợp lệ.");
-        long code = data.path("orderCode").asLong(0); String providerCode = data.path("code").asText(payload.path("code").asText("")); boolean success = payload.path("success").asBoolean(false);
+        long code = data.path("orderCode").asLong(0); String providerCode = data.path("code").asText(""); boolean success = "00".equals(providerCode) && (!data.has("success") || data.path("success").asBoolean(false));
         PaymentAttempt attempt = attempts.findByProviderOrderCode(code).orElse(null);
         Long orderId = attempt == null ? orders.findIdByOrderCode(code).orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "INVALID_WEBHOOK", "Không tìm thấy đơn hàng tương ứng.")) : attempt.getOrder().getId();
         // Load order state only after acquiring the lock, including legacy links without attempts.
