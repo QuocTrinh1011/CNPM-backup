@@ -181,7 +181,7 @@ psql -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/schema.sql
 psql -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/seed/seed_data.sql
 ```
 
-`schema.sql` là cấu trúc khởi tạo hiện tại; `seed_data.sql` thêm dữ liệu minh họa để demo. Không chạy seed tùy tiện trên dữ liệu thật.
+`schema.sql` là cấu trúc khởi tạo hiện tại; `seed_data.sql` thêm dữ liệu minh họa cho local/demo. Tuyệt đối không chạy seed trên production. Nếu lỡ nạp vào môi trường thật, đổi mật khẩu của tất cả tài khoản mẫu ngay.
 
 Tài khoản Admin minh họa do seed tạo là `admin@shop.com`, mật khẩu mẫu được ghi trong chính script seed. Chỉ dùng tài khoản mẫu ở local, đổi mật khẩu trước khi triển khai. Đăng nhập Admin để tạo tài khoản `MANAGER` với mật khẩu riêng; **không có tài khoản Manager mặc định**. Khách có thể đăng ký trên website.
 
@@ -346,6 +346,7 @@ Tài liệu từng đợt có thể ghi kết quả kiểm tra ở thời điể
 ## Giới hạn và lưu ý triển khai
 
 - Đây là đồ án mô phỏng; cần rà soát bảo mật, cấu hình, hiệu năng, sao lưu/khôi phục và vận hành trước khi dùng thực tế.
+- `database/seed/seed_data.sql` chỉ dùng cho local/demo, tuyệt đối không nạp vào production; nếu lỡ nạp, đổi ngay mật khẩu của mọi tài khoản mẫu.
 - Đã tích hợp email khôi phục mật khẩu và thông báo đơn qua Resend dưới cờ cấu hình. Bộ demo/nghiệm thu mặc định giữ `RESEND_ENABLED=false` và `DEV_PASSWORD_RESET_ENABLED=false`; nhánh mã sáu chữ số chỉ dành cho profile `development`. Việc gửi email thật và điều kiện triển khai được kiểm tra riêng theo [hướng dẫn Resend](docs/ops/resend-email.md).
 - Chưa có email marketing, thông báo hệ điều hành hoặc chiến dịch tự phát voucher.
 - Giao diện quản lý nhà cung cấp không nằm trong menu hiện tại; database/API có thể còn thành phần tương thích từ các phiên bản trước.
