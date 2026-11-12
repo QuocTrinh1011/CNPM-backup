@@ -22,8 +22,9 @@ public class RateLimitConfig {
     @Bean
     RateLimitFilter rateLimitFilter(RateLimitStore store, ObjectMapper mapper,
             @Value("${app.rate-limit.enabled:true}") boolean enabled,
-            @Value("${app.request.max-body-bytes:1048576}") int maxBodyBytes) {
-        return new RateLimitFilter(store, mapper, enabled, maxBodyBytes);
+            @Value("${app.request.max-body-bytes:1048576}") int maxBodyBytes,
+            @Value("${app.rate-limit.trusted-proxies:}") String trustedProxies) {
+        return new RateLimitFilter(store, mapper, enabled, maxBodyBytes, trustedProxies);
     }
 
     @Bean

@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets; import java.security.*; import java.ti
 
 @Service
 public class AuthService {
+    private static final String DUMMY_PASSWORD_HASH = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
     @org.springframework.beans.factory.annotation.Autowired private TransactionalMail mail;
     @org.springframework.beans.factory.annotation.Autowired private org.springframework.core.env.Environment environment;
     @Value("${DEV_PASSWORD_RESET_ENABLED:false}") private boolean developmentResetEnabled;
@@ -29,7 +30,10 @@ public class AuthService {
     public void validatePassword(String password){if(password==null || password.length()<8 || !password.matches(".*[A-Za-z].*") || !password.matches(".*\\d.*")) throw new ApiException(HttpStatus.BAD_REQUEST,"VALIDATION_ERROR","Mật khẩu cần ít nhất 8 ký tự, gồm chữ và số.");}
     @Transactional public Session login(String email,String password){
         User user=users.findByEmailIgnoreCase(email==null?"":email.trim()).orElse(null);
-        if(user==null || !"CUSTOMER".equals(user.getRole()) || user.getPasswordHash()==null || !encoder.matches(password==null?"":password,user.getPasswordHash())) throw new ApiException(HttpStatus.UNAUTHORIZED,"INVALID_CREDENTIALS","Email hoặc mật khẩu không đúng.");
+        boolean customerWithPassword=user!=null && "CUSTOMER".equals(user.getRole()) && user.getPasswordHash()!=null && !user.getPasswordHash().isBlank();
+        String passwordHash=customerWithPassword ? user.getPasswordHash() : DUMMY_PASSWORD_HASH;
+        boolean passwordMatches=encoder.matches(password==null?"":password,passwordHash);
+        if(!customerWithPassword || !passwordMatches) throw new ApiException(HttpStatus.UNAUTHORIZED,"INVALID_CREDENTIALS","Email hoặc mật khẩu không đúng.");
         if(user.getDeletedAt()!=null) throw new ApiException(HttpStatus.FORBIDDEN,"ACCOUNT_REMOVED","Tài khoản này đã bị vô hiệu hóa.");
         if(user.isLocked()) throw locked(user);
         return issue(user,UUID.randomUUID().toString());

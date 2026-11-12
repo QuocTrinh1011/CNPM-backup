@@ -87,7 +87,7 @@ it('shows deleted survey participation and both private voucher and historical u
   render(<ManagerApp/>);await flush();
   fireEvent.click(within(screen.getByRole('navigation',{name:'Nội dung hồ sơ'})).getByRole('button',{name:'Khảo sát',exact:true}));await flush();
   expect(screen.getByText('Old survey')).toBeTruthy();expect(screen.getByText('Đã xóa')).toBeTruthy();
-  fireEvent.click(screen.getByRole('button',{name:'Voucher',exact:true}));await flush();
+  fireEvent.click(within(screen.getByRole('navigation',{name:'Nội dung hồ sơ'})).getByRole('button',{name:'Voucher',exact:true}));await flush();
   expect(screen.getByText('OWN')).toBeTruthy();expect(screen.getByText('OLD')).toBeTruthy();
   expect(screen.getByText(/Chưa có dữ liệu hoàn lượt/)).toBeTruthy();
 });

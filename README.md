@@ -211,7 +211,6 @@ cd backend
 $env:DB_URL='jdbc:postgresql://localhost:5432/htttdn'
 $env:DB_USERNAME='postgres'
 $env:DB_PASSWORD='<mat-khau-postgresql-cua-ban>'
-$env:SERVER_PORT='8080'
 $env:JWT_SECRET=[Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
 mvn spring-boot:run
 ```
@@ -221,8 +220,6 @@ Lệnh trên giả định đã chạy schema/migration phù hợp. Mặc địn
 `DB_PASSWORD` và `JWT_SECRET` là bắt buộc, không có bí mật dự phòng. JWT secret phải có ít nhất 32 byte UTF-8, không dùng khóa mẫu. Ví dụ tạo khóa trên dùng PowerShell 7; hãy lưu khóa an toàn để tái sử dụng khi khởi động, không tạo lại mỗi lần chạy. Có thể đặt biến trong cấu hình chạy IDE. Spring Boot **không tự nạp `.env`**.
 
 Nếu từng dùng mật khẩu DB hoặc JWT secret đã có trên Git, cần đổi mật khẩu PostgreSQL (và nơi dùng chung), thay JWT secret và khởi động lại backend. Thay JWT secret vô hiệu access token cũ; để kết thúc cả phiên refresh, cần thu hồi refresh token theo quy trình vận hành. Không ghi bí mật vào Git/log. Xem [hướng dẫn bảo mật và hủy đơn](docs/ops/security-order-cancellation.md).
-
-**Lưu ý cổng:** cấu hình backend trong repository mặc định là `8082`, còn frontend mặc định gọi `8080`. Ví dụ chủ động đặt backend về `8080`. Nếu giữ `8082` hoặc dùng cổng khác, phải đổi `VITE_API_BASE_URL` tương ứng ở cả ba terminal frontend.
 
 ### 5. Chạy ba portal frontend
 

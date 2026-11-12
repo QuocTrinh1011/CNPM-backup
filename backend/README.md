@@ -22,9 +22,10 @@ com.htttdn.crm
 $env:DB_URL='jdbc:postgresql://localhost:5432/htttdn'
 $env:DB_USERNAME='postgres'
 $env:DB_PASSWORD='mat-khau-postgres-cua-ban'
-$env:SERVER_PORT='8080'
 mvn spring-boot:run
 ```
+
+The backend defaults to port `8080`, matching the frontend API base URL. Set `SERVER_PORT` only when a different local port is needed.
 
 Customer APIs follow the sequence diagrams: `/api/auth/*`, `/api/customers/me`, `/api/products`, `/api/cart`, `/api/orders`, `/api/payments/payos/*`, `/api/products/{id}/feedback`, and `/api/surveys/*`.
 
