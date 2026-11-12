@@ -70,7 +70,7 @@ const navItems = [
   ["invoices", "Hóa đơn"],
   ["feedback", "Phản hồi"],
   ["surveys", "Khảo sát"],
-  ["vouchers", "Mã giảm giá"],
+  ["vouchers", "Voucher"],
   ["promotions", "Chiến dịch khuyến mãi"],
 ];
 const validSections = new Set(navItems.map(([key]) => key));
@@ -84,7 +84,7 @@ const navIcons = {
   feedback: MessageSquare,
   surveys: ClipboardList,
   vouchers: TicketPercent,
-  promotions: TicketPercent,
+  promotions: Sparkles,
 };
 const statusLabels = {
   PENDING_PAYMENT: "Chờ thanh toán",
@@ -243,6 +243,22 @@ export default function ManagerApp() {
         error={notice?.message}
       />
     );
+  const renderNavItem = ([key, label]) => {
+    const Icon = navIcons[key];
+    return (
+      <button
+        key={key}
+        className={section === key ? "active" : ""}
+        aria-current={section === key ? "page" : undefined}
+        title={sidebarCollapsed ? label : undefined}
+        onClick={() => go(key)}
+      >
+        <Icon size={17} aria-hidden="true" />
+        <span className="admin-nav-label">{label}</span>
+      </button>
+    );
+  };
+  const promotionNavItems = navItems.filter(([key]) => key === "vouchers" || key === "promotions");
   return (
     <div className={`admin-shell manager-shell${profileMatch ? ' manager-profile-page' : ''}`} data-theme={theme} onKeyDown={event=>{if(['DIV','SPAN'].includes(event.target.tagName)&&event.target.getAttribute('role')==='button'&&['Enter',' '].includes(event.key)){event.preventDefault();event.target.click();}}}>
       <button
@@ -286,21 +302,11 @@ export default function ManagerApp() {
           </button>
         </div>
         <nav aria-label="Chức năng quản lý">
-          {navItems.map(([key, label]) => {
-            const Icon = navIcons[key];
-            return (
-              <button
-                key={key}
-                className={section === key ? "active" : ""}
-                aria-current={section === key ? "page" : undefined}
-                title={sidebarCollapsed ? label : undefined}
-                onClick={() => go(key)}
-              >
-                <Icon size={17} aria-hidden="true" />
-                <span className="admin-nav-label">{label}</span>
-              </button>
-            );
-          })}
+          {navItems.filter(([key]) => key !== "vouchers" && key !== "promotions").map(renderNavItem)}
+          <div className="manager-nav-group" role="group" aria-label="Khuyến mãi">
+            <span className="manager-nav-group-label" aria-hidden="true">Khuyến mãi</span>
+            {promotionNavItems.map(renderNavItem)}
+          </div>
         </nav>
         <div className="manager-sidebar-footer">
         <div className="admin-profile">
@@ -495,13 +501,13 @@ function Dashboard({ go }) {
             </div>
             <ChevronRight size={16} className="admin-quick-arrow" />
           </div>
-          <div className="admin-quick-card" role="button" tabIndex={0} onClick={() => go("vouchers")} title="Đến trang mã giảm giá">
+          <div className="admin-quick-card" role="button" tabIndex={0} onClick={() => go("vouchers")} title="Đến trang Voucher">
             <div className="admin-quick-icon violet">
               <TicketPercent size={18} />
             </div>
             <div className="admin-quick-text">
-              <b>Mã giảm giá shop</b>
-              <small>Khuyến mãi & voucher ưu đãi</small>
+              <b>Voucher cửa hàng</b>
+              <small>Quản lý mã và lượt sử dụng</small>
             </div>
             <ChevronRight size={16} className="admin-quick-arrow" />
           </div>
