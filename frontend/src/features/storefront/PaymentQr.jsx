@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { ArrowUpRight, RefreshCw } from "lucide-react";
 import { api, endpoints } from "../../api/api";
@@ -10,12 +10,14 @@ export default function PaymentQr({ orderId, initial = null, onPaid }) {
   const [payment, setPayment] = useState(initial), [error, setError] = useState(""), [loading, setLoading] = useState(!initial);
   const [retrying, setRetrying] = useState(false);
   const [now, setNow] = useState(Date.now());
+  const initialRef = useRef(initial);
+  initialRef.current = initial;
   const sequence = useRef(0);
   const active=useRef(null),alive=useRef(false),callback=useRef(onPaid);
   callback.current=onPaid;
   const paidNotified = useRef(initial?.paymentStatus === "PAID");
   const paymentStatusRef = useRef(initial?.paymentStatus);
-  const load = async (sync = false) => {
+  const load = useCallback(async (sync = false) => {
     if(!alive.current || active.current)return;
     const controller=new AbortController();active.current=controller;
     const request = ++sequence.current;
@@ -30,17 +32,23 @@ export default function PaymentQr({ orderId, initial = null, onPaid }) {
       }
     } catch (cause) { if (request === sequence.current) setError(cause.message); }
     finally { if (request === sequence.current) {active.current=null;setLoading(false);} }
-  };
+  }, [orderId]);
   useEffect(() => {
-    alive.current=true;paymentStatusRef.current=initial?.paymentStatus;setPayment(initial);setError('');setLoading(!initial);setRetrying(false);
-    paidNotified.current = initial?.paymentStatus === "PAID";
+    const currentInitial = initialRef.current;
+    alive.current=true;paymentStatusRef.current=currentInitial?.paymentStatus;setPayment(currentInitial);setError('');setLoading(!currentInitial);setRetrying(false);
+    paidNotified.current = currentInitial?.paymentStatus === "PAID";
     void load();
     const poll = window.setInterval(() => { if (!document.hidden && paymentStatusRef.current !== "PAID") void load(true); }, 10000);
     const tick = window.setInterval(() => setNow(Date.now()), 1000);
     const visible=()=>{if(!document.hidden && paymentStatusRef.current!=='PAID')void load(true);};
     document.addEventListener('visibilitychange',visible);
-    return () => { alive.current=false;sequence.current++;active.current?.abort();active.current=null;window.clearInterval(poll);window.clearInterval(tick);document.removeEventListener('visibilitychange',visible); };
-  }, [orderId]);
+    return () => {
+      alive.current=false;
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- Advance the sequence during cleanup so late polling responses cannot update a replaced payment.
+      sequence.current++;
+      active.current?.abort();active.current=null;window.clearInterval(poll);window.clearInterval(tick);document.removeEventListener('visibilitychange',visible);
+    };
+  }, [orderId, load]);
 
   const retry = async () => {
     if (!alive.current || retrying || active.current?.retry) return;

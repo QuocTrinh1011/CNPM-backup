@@ -297,7 +297,7 @@ describe("manager navigation", () => {
   });
 
   it("renders recent orders without report metrics and opens their management page", async () => {
-    adminApi.mockImplementation(async (url) => {
+    adminApi.mockImplementation(async (_url) => {
       return { content: [{ id: 11, orderCode: "ORDER-11", customer: { fullName: "Khách kiểm thử" }, totalAmount: 1250000, status: "CONFIRMED" }] };
     });
     render(<ManagerApp />, { wrapper });

@@ -38,7 +38,7 @@ export function useCartSelection({ owner, cart, ready, initialize }) {
     if (!ready) return;
     setState({ owner, value });
     if (value) saveSelection(owner, value);
-  }, [owner, ready, signature]);
+  }, [owner, ready, signature]); // eslint-disable-line react-hooks/exhaustive-deps -- signature tracks semantic value changes; depending on the freshly created object would loop after setState.
   const commit = next => { setState({ owner, value: next }); saveSelection(owner, next); };
   const selected = ready ? new Set(value?.selected || []) : new Set();
   return {

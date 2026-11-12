@@ -18,7 +18,14 @@ export function useShopResource(path) {
     catch (error) { if (id === generation.current) setError(error.message); }
     finally {if(id===generation.current)setLoading(false);}
   }, [path]);
-  useEffect(() => { load(); return () => { generation.current++;active.current?.abort(); }; }, [load]);
+  useEffect(() => {
+    load();
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- Invalidate this path's pending response during cleanup.
+      generation.current++;
+      active.current?.abort();
+    };
+  }, [load]);
   return { data:loadedPath===path?data:null, setData, error, load, loading:loading || loadedPath!==path };
 }
 

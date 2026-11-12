@@ -1,5 +1,7 @@
 -- Dữ liệu mẫu cho website thời trang nam ANH LỚN SHOP.
 -- Mật khẩu tài khoản mẫu là: password
+-- CHỈ dùng cho local/demo; tuyệt đối không chạy seed này trên production.
+-- Nếu lỡ nạp vào production, phải đổi mật khẩu của tất cả tài khoản mẫu ngay.
 
 -- Tương thích với database cũ còn cột products.stock.
 -- Backend hiện dùng products.quantity_remaining nên chuyển dữ liệu tồn kho

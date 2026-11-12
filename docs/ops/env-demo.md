@@ -9,6 +9,7 @@ Spring Boot không tự đọc file `.env`. Các giá trị dưới đây phải
 | `DEV_PASSWORD_RESET_ENABLED` | `false` | `false` | Tắt nhánh mã đặt lại sáu chữ số dành cho profile development. |
 | `RESEND_ENABLED` | `false` | `false` | Tắt khôi phục mật khẩu qua email và email đơn hàng trong bộ demo này. |
 | `APP_PAYOS_AUTO_CANCEL_MS` | `300000` | `300000` | Chạy chu kỳ kiểm tra tự hủy mỗi 5 phút cho thuộc tính `app.payos.auto-cancel-ms`. |
+| `TRUSTED_PROXIES` | *(để trống khi chạy local trực tiếp)* | *(rỗng)* | Chỉ đặt IP chính xác của reverse proxy khi backend nhận request qua proxy; xem [hướng dẫn rate limit](rate-limiting.md#cấu-hình-trusted_proxies). |
 
 Ví dụ đặt biến cho backend trong PowerShell:
 

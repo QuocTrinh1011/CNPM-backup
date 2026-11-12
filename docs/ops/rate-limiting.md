@@ -45,6 +45,12 @@ Backend áp dụng 2 tầng giới hạn lượng request qua filter `security/R
 | `app.rate-limit.trusted-proxies` | `TRUSTED_PROXIES` | *(rỗng; không tin `X-Forwarded-For`)* |
 | `app.request.max-body-bytes` | `MAX_BODY_BYTES` | `1048576` |
 
+### Cấu hình `TRUSTED_PROXIES`
+
+Chỉ đặt biến này khi backend nhận request qua reverse proxy. Giá trị là các địa chỉ IP **chính xác** của proxy mà backend nhìn thấy ở `remoteAddr`, phân cách bằng dấu phẩy; hỗ trợ IPv4 và IPv6, không hỗ trợ CIDR. Để trống nếu backend nhận kết nối trực tiếp.
+
+Chỉ cho phép proxy tin cậy truy cập trực tiếp vào backend và cấu hình proxy ghi/chuyển tiếp `X-Forwarded-For` đúng cách. Nếu thêm địa chỉ không thuộc proxy, client từ địa chỉ đó có thể giả mạo IP trong header để né giới hạn theo IP. Khi danh sách trống, hệ thống bỏ qua `X-Forwarded-For`.
+
 ## Lưu ý
 
 - Single-node: nếu scale nhiều instance, cần đổi sang Redis/bucket tập trung.

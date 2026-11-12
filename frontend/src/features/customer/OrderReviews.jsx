@@ -84,6 +84,7 @@ export default function OrderReviews({ order, autoOpen = false, onAutoOpened, on
     if (!product) return;
     const previous = document.activeElement;
     const dialog = dialogRef.current;
+    const section = sectionRef.current;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     dialog.focus();
@@ -101,7 +102,7 @@ export default function OrderReviews({ order, autoOpen = false, onAutoOpened, on
       document.body.style.overflow = overflow;
       dialog.removeEventListener('keydown', keydown);
       if (previous?.isConnected && previous !== document.body) previous.focus();
-      else sectionRef.current?.focus();
+      else section?.focus();
     };
   }, [product]);
 
