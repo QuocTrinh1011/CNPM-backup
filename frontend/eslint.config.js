@@ -30,6 +30,7 @@ export default [
     },
     rules: {
       ...reactWarnings,
+      'react/prop-types': 'off',
       'no-undef': 'error',
       'no-unused-vars': 'warn',
       'react-hooks/rules-of-hooks': 'error',
