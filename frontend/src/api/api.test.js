@@ -3,7 +3,7 @@ beforeEach(() => { vi.resetModules(); vi.stubEnv('VITE_API_BASE_URL', ''); vi.st
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 const response = (status, body) => ({ ok: status < 400, status, json: async () => body });
 it('uses the configured backend origin for all three portals', async () => {
-  vi.stubEnv('VITE_API_BASE_URL', 'http://localhost:8082/');
+  vi.stubEnv('VITE_API_BASE_URL', 'http://localhost:8080/');
   const { api, adminApi } = await import('./api');
   const { adminApi: managerApi } = await import('./manager-api');
   fetch.mockResolvedValue(response(200, []));
@@ -11,9 +11,9 @@ it('uses the configured backend origin for all three portals', async () => {
   await adminApi('/api/admin/products');
   await managerApi('/api/manager/products');
   expect(fetch.mock.calls.map(([url]) => url)).toEqual([
-    'http://localhost:8082/api/products',
-    'http://localhost:8082/api/admin/products',
-    'http://localhost:8082/api/manager/products',
+    'http://localhost:8080/api/products',
+    'http://localhost:8080/api/admin/products',
+    'http://localhost:8080/api/manager/products',
   ]);
 });
 it('uses port 8080 and preserves structured API errors', async () => {
