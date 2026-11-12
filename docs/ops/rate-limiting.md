@@ -5,7 +5,8 @@ Backend áp dụng 2 tầng giới hạn lượng request qua filter `security/R
 ## Tầng 1 — Toàn bộ API
 
 - Token bucket theo **IP**: mặc định **120 request/phút/IP**, refill dần theo thờI gian.
-- IP được lấy từ hop đầu header `X-Forwarded-For` (Render proxy), fallback `remoteAddr`.
+- Mặc định IP lấy từ `remoteAddr`; `X-Forwarded-For` chỉ được dùng khi `remoteAddr` thuộc `app.rate-limit.trusted-proxies`.
+- Với proxy tin cậy, hệ thống đọc từ phải sang trái và chọn IP hợp lệ đầu tiên không nằm trong danh sách proxy tin cậy. Không cấu hình proxy nếu ứng dụng nhận kết nối trực tiếp.
 - Khi hết token: `429` + header `Retry-After` (giây).
 
 ## Tầng 2 — Route xác thực
@@ -41,6 +42,7 @@ Backend áp dụng 2 tầng giới hạn lượng request qua filter `security/R
 | `app.rate-limit.per-minute` | `RATE_LIMIT_PER_MINUTE` | `120` |
 | `app.rate-limit.auth-max-attempts` | `AUTH_MAX_ATTEMPTS` | `5` |
 | `app.rate-limit.auth-window-minutes` | `AUTH_WINDOW_MINUTES` | `15` |
+| `app.rate-limit.trusted-proxies` | `TRUSTED_PROXIES` | *(rỗng; không tin `X-Forwarded-For`)* |
 | `app.request.max-body-bytes` | `MAX_BODY_BYTES` | `1048576` |
 
 ## Lưu ý

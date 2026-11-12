@@ -10,8 +10,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /** Two-tier rate limiter: a per-IP token bucket on every API request, and a per-IP+account limit on failed auth attempts. */
 final class RateLimitFilter extends OncePerRequestFilter {
@@ -25,12 +29,17 @@ final class RateLimitFilter extends OncePerRequestFilter {
     private final ObjectMapper mapper;
     private final boolean enabled;
     private final int maxBodyBytes;
+    private final Set<String> trustedProxyIps;
 
-    RateLimitFilter(RateLimitStore store, ObjectMapper mapper, boolean enabled, int maxBodyBytes) {
+    RateLimitFilter(RateLimitStore store, ObjectMapper mapper, boolean enabled, int maxBodyBytes, String trustedProxies) {
         this.store = store;
         this.mapper = mapper;
         this.enabled = enabled;
         this.maxBodyBytes = maxBodyBytes;
+        this.trustedProxyIps = Arrays.stream(trustedProxies.split(","))
+                .map(RateLimitFilter::canonicalIp)
+                .filter(ip -> ip != null)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -67,13 +76,50 @@ final class RateLimitFilter extends OncePerRequestFilter {
         return ipHash + ":" + AuthService.hash(email.trim().toLowerCase(Locale.ROOT));
     }
 
-    private static String clientIp(HttpServletRequest request) {
+    private String clientIp(HttpServletRequest request) {
+        String remoteAddress = request.getRemoteAddr();
+        String canonicalRemoteAddress = canonicalIp(remoteAddress);
+        if (canonicalRemoteAddress != null) remoteAddress = canonicalRemoteAddress;
+        if (remoteAddress == null) remoteAddress = "unknown";
+        if (!trustedProxyIps.contains(remoteAddress)) return remoteAddress;
+
         String forwarded = request.getHeader("X-Forwarded-For");
         if (forwarded != null && !forwarded.isBlank()) {
-            int comma = forwarded.indexOf(',');
-            return (comma >= 0 ? forwarded.substring(0, comma) : forwarded).trim();
+            String[] addresses = forwarded.split(",");
+            for (int index = addresses.length - 1; index >= 0; index--) {
+                String candidate = canonicalIp(addresses[index].trim());
+                if (candidate != null && !trustedProxyIps.contains(candidate)) return candidate;
+            }
         }
-        return request.getRemoteAddr();
+        return remoteAddress;
+    }
+
+    private static String canonicalIp(String value) {
+        if (value == null || value.isBlank()) return null;
+        String address = value.trim();
+        String[] octets = address.split("\\.", -1);
+        if (octets.length == 4) {
+            StringBuilder canonical = new StringBuilder();
+            for (String octet : octets) {
+                if (!octet.matches("[0-9]{1,3}") || (octet.length() > 1 && octet.charAt(0) == '0')) return null;
+                int number;
+                try {
+                    number = Integer.parseInt(octet);
+                } catch (NumberFormatException ignored) {
+                    return null;
+                }
+                if (number < 0 || number > 255) return null;
+                if (!canonical.isEmpty()) canonical.append('.');
+                canonical.append(number);
+            }
+            return canonical.toString();
+        }
+        if (!address.contains(":") || !address.matches("[0-9a-fA-F:.]+")) return null;
+        try {
+            return InetAddress.getByName(address).getHostAddress().toLowerCase(Locale.ROOT);
+        } catch (UnknownHostException ignored) {
+            return null;
+        }
     }
 
     private static void write429(HttpServletResponse response, long retryAfterSeconds) throws IOException {

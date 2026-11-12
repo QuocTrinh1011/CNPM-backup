@@ -26,3 +26,5 @@ app:
     checksum-key: ${PAYOS_CHECKSUM_KEY:}
     return-url: ${PAYOS_RETURN_URL:http://localhost:5173/thanh-toan}
     cancel-url: ${PAYOS_CANCEL_URL:http://localhost:5173/thanh-toan}
+  rate-limit:
+    trusted-proxies: ${TRUSTED_PROXIES:}
