@@ -7,7 +7,8 @@ import {CustomerCreate,SurveyAudience} from '../features/manager/ManagerTools';
 import SurveyRecipientGroup,{groupSurveyRoute,groupSurveySource} from '../features/manager/SurveyRecipientGroup';
 import '../shared/styles/internal-portal.css';
 import { TicketPercent } from "lucide-react";
-import { canAdvanceOrder, isFinalOrder } from '../features/manager/order-transitions';
+import { isFinalOrder } from '../features/manager/order-transitions';
+import { money, pageData, statusLabels, statusColors, orderStatuses, orderStatusOptions, paymentMethodLabels, paymentStatusLabels, formatDate } from '../features/manager/manager-data';
 import SurveyRewardEditor, { RewardFields, emptyReward } from '../features/manager/SurveyRewardEditor';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 const AdminVouchers = React.lazy(() => import('../features/admin/AdminVouchers'));
@@ -49,13 +50,6 @@ import {
   adminSignOut,
 } from "../api/manager-api";
 
-const money = (value) =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(Number(value || 0));
-const pageData = (value) => value?.content || [];
 const navItems = [
   ["dashboard", "Tổng quan"],
   ["users", "Khách hàng"],
@@ -81,58 +75,6 @@ const navIcons = {
   vouchers: TicketPercent,
   promotions: Sparkles,
 };
-const statusLabels = {
-  PENDING_PAYMENT: "Chờ thanh toán",
-  PENDING: "Chờ xác nhận",
-  CONFIRMED: "Đã xác nhận",
-  SHIPPED: "Đang giao",
-  DELIVERED: "Đã giao — chờ khách xác nhận",
-  COMPLETED: "Khách đã nhận hàng",
-  CANCELLED: "Đã hủy",
-};
-const statusColors = {
-  PENDING_PAYMENT: "#f59e0b",
-  PENDING: "#d97706",
-  CONFIRMED: "#8b5cf6",
-  SHIPPED: "#3b82f6",
-  DELIVERED: "#10b981",
-  COMPLETED: "#14b8a6",
-  CANCELLED: "#ef4444",
-};
-const orderStatuses = Object.entries(statusLabels);
-const orderStatusOptions = (current,order) => [
-  [
-    current,
-    statusLabels[current] ||
-      ({
-        PENDING: "Chờ xác nhận",
-        PREPARING: "Đang chuẩn bị",
-        DELIVERING: "Đang giao",
-      })[current] ||
-      current,
-  ],
-  ...orderStatuses.filter(
-    ([value]) => value !== current && canAdvanceOrder(current, value) && !(value==='CANCELLED'&&order?.finance?.reviewRequired)
-  ),
-];
-const paymentMethodLabels = {
-  COD: "Thanh toán khi nhận hàng",
-  PAYOS: "Thanh toán trực tuyến",
-};
-const paymentStatusLabels = {
-  COD: "Thanh toán khi nhận hàng",
-  PENDING: "Chờ thanh toán",
-  PAID: "Đã thanh toán",
-  CANCELLED: "Đã hủy",
-  EXPIRED: "Hết hạn",
-};
-const formatDate = (value) =>
-  value
-    ? new Date(value).toLocaleString("vi-VN", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      })
-    : "—";
 const userOrigin = import.meta.env.VITE_USER_ORIGIN || "http://localhost:5173";
 const normalizeAdminPath = (value) => {
   if (value === "/manager/login") return value;
