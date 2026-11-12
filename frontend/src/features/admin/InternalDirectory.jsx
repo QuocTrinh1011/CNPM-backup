@@ -2,18 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../api/api';
 import { adminApi as managerApi } from '../../api/manager-api';
 import {
-  Search,
   Plus,
   Edit2,
   Trash2,
-  Filter,
   CheckCircle2,
   XCircle,
   ShieldCheck,
   Package,
   Truck,
-  RotateCw,
-  X,
   Lock
 } from 'lucide-react';
 

@@ -46,7 +46,6 @@ it('filters at server, resets page, restores popstate and keeps all filters retu
  fireEvent.change(screen.getByLabelText('Mua lại'),{target:{value:'true'}});await flush();
  fireEvent.change(screen.getByLabelText('Giá trị tối thiểu (đ)'),{target:{value:'5000000'}});await flush();
  expect(window.location.search).toContain('page=0');expect(adminApi.mock.calls.at(-1)[0]).toContain('stage=LOYAL');expect(adminApi.mock.calls.at(-1)[0]).toContain('dormant=true');
- const previous=window.location.search;
  fireEvent.click(screen.getByText('Xem hồ sơ'));await flush();expect(screen.getByText(/35 ngày/)).toBeTruthy();
  fireEvent.click(screen.getByText('← Danh sách khách hàng'));await flush();expect(new URLSearchParams(window.location.search).get('minCompletedValue')).toBe('5000000');
  window.history.replaceState({},'','/manager/users?q=B&page=1&stage=RETURNING&sort=completedOrders&direction=asc');fireEvent.popState(window);await flush();

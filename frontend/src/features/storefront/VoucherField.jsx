@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { api, endpoints } from "../../api/api";
 
 export function useCheckoutVoucher(cart) {
@@ -6,8 +6,15 @@ export function useCheckoutVoucher(cart) {
   const version = useRef(0), alive = useRef(true), latest = useRef(null);
   const fingerprint = JSON.stringify([cart.subtotal, cart.items.map(item => [item.productId, item.quantity, item.size, item.color, item.lineTotal])]);
   latest.current = { fingerprint, code };
-  useEffect(() => { alive.current = true; return () => { alive.current = false; ++version.current; }; }, []);
-  const apply = async () => {
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- Invalidate voucher validation responses after unmount.
+      ++version.current;
+    };
+  }, []);
+  const apply = useCallback(async () => {
     const normalized = code.trim().toUpperCase();
     if (!normalized) { setError("Vui lòng nhập mã giảm giá."); return; }
     const request = ++version.current, key = fingerprint;
@@ -18,7 +25,7 @@ export function useCheckoutVoucher(cart) {
       if (current()) setResult({ data, fingerprint: key });
     } catch (err) { if (current()) setError(err.message); }
     finally { if (alive.current && version.current === request) setBusy(false); }
-  };
+  }, [code, fingerprint, cart.subtotal]);
   const previous = useRef(fingerprint);
   useEffect(() => {
     if (previous.current === fingerprint) return;
@@ -26,7 +33,7 @@ export function useCheckoutVoucher(cart) {
     ++version.current; setBusy(false);
     if (result) { void apply(); }
     else { setResult(null); if (code.trim()) setError("Giỏ hàng đã thay đổi. Vui lòng áp dụng lại mã."); }
-  }, [fingerprint]);
+  }, [fingerprint, apply, code, result]);
   const change = value => { ++version.current; setBusy(false); setCode(value.toUpperCase()); setResult(null); setError(""); };
   const voucher = result?.fingerprint === fingerprint ? result.data : null;
   return { code, voucher, busy, error, apply, change, subtotal:cart.subtotal, remove: () => change("") };

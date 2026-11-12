@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MapPin, Plus, X, Pencil, Check } from "lucide-react";
+import { Plus, X, Pencil, Check } from "lucide-react";
 import { api, endpoints } from "../../api/api";
 import ShippingFields, { PhoneField, prepareAddress, shippingErrors } from "./ShippingFields";
 import "./checkout-page.css";
@@ -27,7 +27,15 @@ export function useAddresses() {
     const rest = (current || []).filter(value => value.id !== item.id).map(value => item.defaultAddress ? { ...value, defaultAddress: false } : value);
     return [item, ...rest];
   });
-  useEffect(() => { alive.current = true; void load(); return () => { alive.current = false; generation.current++; }; }, []);
+  useEffect(() => {
+    alive.current = true;
+    void load();
+    return () => {
+      alive.current = false;
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- Invalidate an address request after the component unmounts.
+      generation.current++;
+    };
+  }, []);
   return { items, error, loading, load, saved };
 }
 

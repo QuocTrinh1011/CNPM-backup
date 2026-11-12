@@ -16,8 +16,6 @@ async function request(url, options) {
   }
   finally { clearTimeout(timer); options?.signal?.removeEventListener('abort', cancel); }
 }
-let accessToken = null;
-let refreshing = null;
 let adminAccessToken = null;
 let adminRefreshing = null;
 

@@ -37,11 +37,6 @@ import {
   Inbox,
   Search,
   Plus,
-  Filter,
-  CheckCircle2,
-  TrendingUp,
-  Eye,
-  SlidersHorizontal,
   ChevronRight,
   Sparkles,
   ReceiptText
@@ -1412,7 +1407,7 @@ function Orders({ notify }) {
     setUpdatingId(id);
     setCancelError("");
     try {
-      const updated = await adminApi(adminEndpoints.orderStatus(id), {
+      await adminApi(adminEndpoints.orderStatus(id), {
         method: "PATCH",
         body: {
           status,
@@ -2092,11 +2087,11 @@ function Surveys({ notify, location = '', go }) {
     setDialogOpen(true);
   };
 
-  const closeDialog = () => {
+  const closeDialog = useCallback(() => {
     if (busy) return;
     setDialogOpen(false);
     setFormError("");
-  };
+  }, [busy]);
 
   useEffect(() => {
     if (!dialogOpen) return;
@@ -2105,7 +2100,7 @@ function Surveys({ notify, location = '', go }) {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [dialogOpen, busy]);
+  }, [dialogOpen, busy, closeDialog]);
 
   const change = (key, patch) =>
     setQuestions((current) =>

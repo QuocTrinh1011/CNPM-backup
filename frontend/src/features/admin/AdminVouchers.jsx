@@ -20,7 +20,7 @@ export default function AdminVouchers() {
   const [form, setForm] = useState(null), [editing, setEditing] = useState(null), [busy, setBusy] = useState(false), [formError, setFormError] = useState(""), [notice, setNotice] = useState("");
   const lock = useRef(false);
   const endpoint = useCallback(() => "/api/manager/vouchers?" +
-    new URLSearchParams({ page, size: 10, search: query, state }), [page, query, state, revision]);
+    new URLSearchParams({ page, size: 10, search: query, state }), [page, query, state, revision]); // eslint-disable-line react-hooks/exhaustive-deps -- revision deliberately changes callback identity so useManagerList reloads after mutations.
   const { data, loading, error: loadError } = useManagerList(endpoint);
   const error = actionError || loadError;
   useEffect(() => {

@@ -1,10 +1,16 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
+const readFilters = defaults => {
+  const params = new URLSearchParams(window.location.search);
+  return Object.fromEntries(Object.entries(defaults).map(([key, value]) => [key, params.get(key) ?? value]));
+};
+
 export function useManagerFilters(defaults){
-  const read=()=>{const params=new URLSearchParams(window.location.search);return Object.fromEntries(Object.entries(defaults).map(([key,value])=>[key,params.get(key)??value]));};
-  const [filters,setFilters]=useState(read);
+  const defaultsRef = useRef(defaults);
+  defaultsRef.current = defaults;
+  const [filters,setFilters]=useState(() => readFilters(defaults));
   const current=useRef(filters);
-  useEffect(()=>{const update=()=>{current.current=read();setFilters(current.current);};window.addEventListener('popstate',update);window.addEventListener('manager:navigation',update);return()=>{window.removeEventListener('popstate',update);window.removeEventListener('manager:navigation',update);};},[]);
-  const change=useCallback(patch=>{const next={...current.current,...patch,...(!Object.hasOwn(patch,'page')?{page:'0'}:{})};const params=new URLSearchParams();for(const [key,value]of Object.entries(next))if(String(value)!==String(defaults[key])&&value!=='')params.set(key,value);const target=window.location.pathname+(params.size?'?'+params:'');if(target!==window.location.pathname+window.location.search)window.history.pushState({},'',target);current.current=next;setFilters(next);},[]);
+  useEffect(()=>{const update=()=>{current.current=readFilters(defaultsRef.current);setFilters(current.current);};window.addEventListener('popstate',update);window.addEventListener('manager:navigation',update);return()=>{window.removeEventListener('popstate',update);window.removeEventListener('manager:navigation',update);};},[]);
+  const change=useCallback(patch=>{const next={...current.current,...patch,...(!Object.hasOwn(patch,'page')?{page:'0'}:{})};const params=new URLSearchParams();for(const [key,value]of Object.entries(next))if(String(value)!==String(defaultsRef.current[key])&&value!=='')params.set(key,value);const target=window.location.pathname+(params.size?'?'+params:'');if(target!==window.location.pathname+window.location.search)window.history.pushState({},'',target);current.current=next;setFilters(next);},[]);
   return [filters,change];
 }
 export const managerQuery=params=>{const query=new URLSearchParams();for(const [key,value]of Object.entries(params||{}))if(value!==''&&value!==null&&value!==undefined)query.set(key,String(value));return query.toString();};

@@ -32,7 +32,7 @@ export default [
       ...reactWarnings,
       'react/prop-types': 'off',
       'no-undef': 'error',
-      'no-unused-vars': 'warn',
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
     },

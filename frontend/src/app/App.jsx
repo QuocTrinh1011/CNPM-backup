@@ -1,6 +1,6 @@
 import { showReturn, returnLabel, displayOrderLabel, deliveryLabel } from '../shared/utils/order-display';
 import '../shared/styles/order-display.css';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useStorefrontDialogs, useShopResource } from '../shared/hooks/storefront-hooks';
 import AccountDropdown from '../features/customer/AccountDropdown';
 import StorefrontHome from '../features/storefront/StorefrontHome';
@@ -17,7 +17,6 @@ import '../features/customer/customer-pages.css';
 export { default as AddressModal } from "../shared/address/AddressBook";
 import {
   api,
-  currentApiBase,
   endpoints,
   refreshSession,
   signIn,
@@ -206,15 +205,21 @@ function App() {
   const [wishlistError, setWishlistError] = useState('');
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const wishlistRequest = useRef(0);
-  const loadWishlist = async () => {
+  const loadWishlist = useCallback(async () => {
     const request = ++wishlistRequest.current;
-    if (!user) return;
+    if (!user?.id) return;
     setWishlistLoading(true); setWishlistError('');
     try { const items = await api(endpoints.wishlist); if (request === wishlistRequest.current) setWishlist(items); }
     catch (error) { if (request === wishlistRequest.current) setWishlistError(error.message); }
     finally { if (request === wishlistRequest.current) setWishlistLoading(false); }
-  };
-  useEffect(() => { if (user) void loadWishlist(); return () => { wishlistRequest.current++; }; }, [user?.id, wishlistOpen]);
+  }, [user?.id]);
+  const userId = user?.id;
+  useEffect(() => { if (userId) void loadWishlist();
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- Invalidate an in-flight request when the user or wishlist route changes.
+      wishlistRequest.current++;
+    };
+  }, [userId, wishlistOpen, loadWishlist]);
   const [notificationCount, setNotificationCount] = useState(0);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -240,7 +245,7 @@ function App() {
     };
     window.addEventListener('shop-session-expired', expire);
     return () => window.removeEventListener('shop-session-expired', expire);
-  }, []);
+  }, [setProfileOpen, setAddressesOpen, setNotificationsOpen, setPasswordOpen, setWishlistOpen]);
 
   const buyNow = async (product, variant, quantity) => {
     const next = await addToCart(product, variant, quantity);
@@ -340,7 +345,11 @@ function App() {
   }, []);
   useEffect(() => {
     loadProducts();
-    return () => { catalogRequest.current++; };
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- Invalidate the pending catalog request when the tracked query changes.
+      catalogRequest.current++;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- The effect intentionally tracks only catalog query fields; loadProducts is recreated each render and would refetch on unrelated state updates.
   }, [
     catalogPage,
     filters.keyword,
@@ -375,6 +384,7 @@ function App() {
       const customerId = user.id;
       api(endpoints.notifications).then((data) => { if (userRef.current?.id === customerId) setNotificationCount(data.unreadCount || 0); }).catch(() => null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- This effect runs on account changes; loadCart is recreated during render and would duplicate cart and notification requests.
   }, [user]);
 
   const chooseCategory = (category) =>
@@ -404,14 +414,6 @@ function App() {
       navigate(`/san-pham${keyword ? `?keyword=${encodeURIComponent(keyword)}` : ""}`);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  };
-  const focusSearch = () => {
-    setMobileMenuOpen(false);
-    if (checkoutPage || ordersRoute || extraPage) openCatalog("");
-    window.setTimeout(() => {
-      document.getElementById("catalog")?.scrollIntoView?.({ behavior: "smooth", block: "start" });
-      searchRef.current?.focus();
-    }, 0);
   };
   const openCatalog = (category = "", options = {}) => {
     const nextFilters = {
@@ -501,7 +503,10 @@ function App() {
     }
     };
     void load();
-    return () => { productRequest.current++; };
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- Invalidate the product request when its route or reload key changes.
+      productRequest.current++;
+    };
   }, [productId, productReload]);
   const localCart = (product, quantity = 1, variant = {}) => {
     const existing = cart.items.find(
@@ -1436,10 +1441,7 @@ function App() {
               addToCart(selectedProduct.product, variant, quantity)
             }
             onBuyNow={(variant, quantity) => buyNow(selectedProduct.product, variant, quantity)}
-            isWishlisted={wishlist.some(item => item.productId === selectedProduct.product.id)}
-            onWishlist={() => toggleWishlist(selectedProduct.product)}
             onLogin={() => openAuth()}
-            onNotice={showNotice}
           />
       )}
       {cartOpen && (sessionChecking ? <CheckoutState title="Đang tải giỏ hàng" loading/> : sessionError || cartError ? <CheckoutState title="Chưa tải được giỏ hàng" message={sessionError || cartError} action="Thử lại" onAction={sessionError ? retrySession : loadCart}/> : cartLoading || user && cartOwner !== user.id ? <CheckoutState title="Đang đồng bộ giỏ hàng" loading/> :
@@ -1513,9 +1515,9 @@ function App() {
           onNotice={showNotice}
         />
       )}
-      {wishlistOpen && (wishlistError ? <CheckoutState title="Chưa tải được yêu thích" message={wishlistError} action="Thử lại" onAction={loadWishlist}/> : wishlistLoading ? <CheckoutState title="Đang tải yêu thích" loading/> : <WishlistModal page items={wishlist} onClose={() => navigate('/tai-khoan')} onRemove={(item) => toggleWishlist(item)} onOpen={openProduct} onNotice={showNotice} />)}
+      {wishlistOpen && (wishlistError ? <CheckoutState title="Chưa tải được yêu thích" message={wishlistError} action="Thử lại" onAction={loadWishlist}/> : wishlistLoading ? <CheckoutState title="Đang tải yêu thích" loading/> : <WishlistModal page items={wishlist} onClose={() => navigate('/tai-khoan')} onRemove={(item) => toggleWishlist(item)} onOpen={openProduct} />)}
       {addressesOpen && <AddressModal page onClose={() => navigate('/tai-khoan')} onNotice={showNotice} />}
-      {notificationsOpen && <NotificationsModal page onClose={() => navigate('/tai-khoan')} onNotice={showNotice} onCount={setNotificationCount} />}
+      {notificationsOpen && <NotificationsModal page onClose={() => navigate('/tai-khoan')} onCount={setNotificationCount} />}
       {passwordOpen && <CustomerPassword initialMode={pathname === '/quen-mat-khau' ? 'forgot' : pathname === '/dat-lai-mat-khau' ? 'reset' : 'change'} onNavigate={navigate} onNotice={showNotice} />}
       </>}
       </CustomerPageFrame>}
@@ -1709,7 +1711,7 @@ const formatReviewDate = (val) => {
   }
 };
 
-function ProductModal({ page = false, data, user, onClose, onAdd, onBuyNow, isWishlisted, onWishlist, onLogin, onNotice }) {
+function ProductModal({ page = false, data, user, onClose, onAdd, onBuyNow, onLogin }) {
   const product = data.product;
   const [size, setSize] = useState(
     csv(product.sizes)[1] || csv(product.sizes)[0] || "M",
@@ -2367,7 +2369,10 @@ export function OrdersPage({ route, onNavigate, onNotice, onChanged }) {
   }, [activeRoute.orderId, activeRoute.page, activeRoute.tab, activeRoute.keyword]);
   useEffect(() => {
     void load();
-    return () => { generation.current++; };
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- Invalidate requests from the previous order route before cleanup.
+      generation.current++;
+    };
   }, [load]);
   useEffect(() => setSearchInput(activeRoute.keyword || ""), [activeRoute.keyword]);
   useEffect(() => {
@@ -2552,13 +2557,13 @@ export function OrderView({ order, onNotice, onChanged, onPaymentChanged, onRece
     </div>
   );
 }
-function WishlistModal({ page = false, items, onClose, onRemove, onOpen, onNotice }) {
+function WishlistModal({ page = false, items, onClose, onRemove, onOpen }) {
   return <div className={page ? "customer-page-body" : "modal-backdrop"}><div className="wide-modal wishlist-modal"><button className="close-button" aria-label="Đóng yêu thích" onClick={onClose}><X size={20} /></button><p className="kicker">TÀI KHOẢN / YÊU THÍCH</p><h2>Món đồ bạn thích.</h2>{items.length ? <div className="wishlist-grid">{items.map((item) => <article className="wishlist-card" key={item.productId}><button className="wishlist-image" onClick={() => onOpen({ id: item.productId })}><img src={imageSrc(item.imageUrl)} onError={protectImage} alt={item.name} /></button><div className="wishlist-card-content"><b>{item.name}</b><small>{item.category || "HÀNG NAM"}</small><strong>{money(item.salePrice || item.price)}</strong></div><button className="wishlist-remove" onClick={() => onRemove({ id: item.productId })}>Bỏ thích</button></article>)}</div> : <div className="empty-state compact"><Heart size={34} /><h3>Chưa có món đồ yêu thích</h3><p>Chạm vào biểu tượng trái tim để lưu sản phẩm.</p></div>}</div></div>;
 }
 
 
 
-function NotificationsModal({ page = false, onClose, onNotice, onCount }) {
+function NotificationsModal({ page = false, onClose, onCount }) {
   const alive=useRef(true);useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
   const { data, error: listError, load } = useShopResource(endpoints.notifications);
   const lock = useRef(false);
