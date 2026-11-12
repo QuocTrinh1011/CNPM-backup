@@ -17,9 +17,9 @@ public class ApiExceptionHandler {
     @ExceptionHandler(ApiException.class)
     ResponseEntity<?> api(ApiException e){return ResponseEntity.status(e.status()).body(Map.of("code",e.code(),"message",e.getMessage()));}
     @ExceptionHandler(NoSuchElementException.class)
-    ResponseEntity<?> notFound(Exception e){return ResponseEntity.status(404).body(Map.of("code","NOT_FOUND","message",Objects.toString(e.getMessage(),"Không tìm thấy dữ liệu.")));}
+    ResponseEntity<?> notFound(Exception e){log.debug("Unhandled lookup detail: {}",e.getMessage());return ResponseEntity.status(404).body(Map.of("code","NOT_FOUND","message","Không tìm thấy dữ liệu."));}
     @ExceptionHandler(IllegalArgumentException.class)
-    ResponseEntity<?> bad(Exception e){return ResponseEntity.badRequest().body(Map.of("code","VALIDATION_ERROR","message",Objects.toString(e.getMessage(),"Dữ liệu không hợp lệ.")));}
+    ResponseEntity<?> bad(Exception e){log.debug("Invalid argument detail: {}",e.getMessage());return ResponseEntity.badRequest().body(Map.of("code","VALIDATION_ERROR","message","Dữ liệu không hợp lệ."));}
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<?> invalid(MethodArgumentNotValidException e){
         Map<String,String> fields=new LinkedHashMap<>(); e.getBindingResult().getFieldErrors().forEach(x->fields.put(x.getField(),x.getDefaultMessage()));
