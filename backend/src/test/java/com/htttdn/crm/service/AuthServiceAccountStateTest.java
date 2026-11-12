@@ -39,6 +39,12 @@ class AuthServiceAccountStateTest {
         assertFalse(error.getMessage().contains("Lý do riêng"));
     }
 
+    @Test void unknownEmailStillChecksPasswordAgainstDummyHash() {
+        ApiException error = assertThrows(ApiException.class, () -> service.login("missing@example.com", "guess"));
+        assertEquals("INVALID_CREDENTIALS", error.code());
+        verify(encoder).matches(eq("guess"), argThat(hash -> hash != null && hash.startsWith("$2") && hash.length() == 60));
+    }
+
     @Test void correctPasswordShowsLockReason() {
         customer.setLocked(true); customer.setLockReason("Vi phạm quy định");
         when(encoder.matches("correct", "hashed")).thenReturn(true);

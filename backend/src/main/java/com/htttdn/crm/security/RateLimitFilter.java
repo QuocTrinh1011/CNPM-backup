@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /** Two-tier rate limiter: a per-IP token bucket on every API request, and a per-IP+account limit on failed auth attempts. */
 final class RateLimitFilter extends OncePerRequestFilter {
     private static final Set<String> AUTH_PATHS = Set.of(
-            "/api/auth/login", "/api/auth/register", "/api/auth/forgot-password",
+            "/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/forgot-password",
             "/api/auth/reset-password", "/api/auth/change-password",
             "/api/admin/auth/login", "/api/manager/auth/login");
     private static final String WEBHOOK_PATH = "/api/payments/payos/webhook";

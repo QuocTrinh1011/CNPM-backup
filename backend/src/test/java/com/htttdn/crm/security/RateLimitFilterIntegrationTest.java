@@ -1,6 +1,7 @@
 package com.htttdn.crm.security;
 
 import com.htttdn.crm.entity.User;
+import jakarta.servlet.http.Cookie;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -85,6 +87,20 @@ class RateLimitFilterIntegrationTest {
         for (int attempt = 1; attempt <= 6; attempt++)
             mvc.perform(post(url).with(from("10.0.6.1")).header("X-Forwarded-For", "192.0.2.250, 198.51.100." + attempt + ", 10.0.6.2, invalid, 10.0.6.3").contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isUnauthorized());
+    }
+
+    @Test void refreshEndpointIsRateLimitedAndStillAcceptsAValidSession() throws Exception {
+        customer();
+        String body = "{\"email\":\"" + EMAIL + "\",\"password\":\"" + PASSWORD + "\"}";
+        var login = mvc.perform(post("/api/auth/login").with(from("10.0.8.1")).contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isOk()).andReturn();
+        Cookie refreshCookie = login.getResponse().getCookie("refreshToken");
+        assertNotNull(refreshCookie);
+        mvc.perform(post("/api/auth/refresh").with(from("10.0.8.1")).cookie(refreshCookie)).andExpect(status().isOk());
+
+        for (int attempt = 0; attempt < 5; attempt++)
+            mvc.perform(post("/api/auth/refresh").with(from("10.0.8.2"))).andExpect(status().isUnauthorized());
+        mvc.perform(post("/api/auth/refresh").with(from("10.0.8.2"))).andExpect(status().isTooManyRequests());
     }
 
     @Test void payosWebhookIsExemptFromRateLimiting() throws Exception {
