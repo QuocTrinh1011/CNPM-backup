@@ -2,6 +2,7 @@ import { showReturn, returnLabel, displayOrderLabel, deliveryLabel } from '../sh
 import '../shared/styles/order-display.css';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useStorefrontDialogs, useShopResource } from '../shared/hooks/storefront-hooks';
+import { csv, date, discount, imageSrc, money, protectImage, surveyOptions } from '../shared/utils/storefront-display';
 import AccountDropdown from '../features/customer/AccountDropdown';
 import StorefrontHome from '../features/storefront/StorefrontHome';
 import AddressModal from "../shared/address/AddressBook";
@@ -57,45 +58,6 @@ import {
   X,
 } from "lucide-react";
 
-const money = (value) =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(Number(value || 0));
-const date = (value) =>
-  value
-    ? new Date(value).toLocaleDateString("vi-VN", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-    : "—";
-const csv = (value) =>
-  String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-const surveyOptions = (value) => {
-  try {
-    const parsed = JSON.parse(value || "[]");
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-const discount = (product) =>
-  product?.salePrice && product.salePrice < product.price
-    ? Math.round((1 - product.salePrice / product.price) * 100)
-    : 0;
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=85";
-const imageSrc = (value) =>
-  typeof value === "string" && value.trim() ? value : FALLBACK_IMAGE;
-const protectImage = (event) => {
-  event.currentTarget.onerror = null;
-  event.currentTarget.src = FALLBACK_IMAGE;
-};
 const GUEST_CART_KEY = "anh-lon-shop-guest-cart";
 const emptyCart = () => ({ items: [], subtotal: 0, itemCount: 0 });
 const readGuestCart = () => {
