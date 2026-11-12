@@ -64,6 +64,7 @@ public class CustomerProfileService {
         return new Profile(customer, summary, CustomerLifecycle.calculate(summary.completedOrders(), summary.completedValue(),
             summary.lastCompletedOrderAt(), java.time.LocalDate.now(CustomerLifecycle.ZONE)));
     }
+    // select, from, and order are trusted SQL fragments supplied as code constants; never pass request data here.
     private <T> Page<T> page(long id, int page, int size, String select, String from, String order, RowMapper<T> mapper) {
         customer(id);
         if (page < 0 || size < 1 || size > 100) throw new ApiException(HttpStatus.BAD_REQUEST,"INVALID_PAGE","Phân trang không hợp lệ.");
