@@ -51,6 +51,24 @@ it('filters at server, resets page, restores popstate and keeps all filters retu
  window.history.replaceState({},'','/manager/users?q=B&page=1&stage=RETURNING&sort=completedOrders&direction=asc');fireEvent.popState(window);await flush();
  expect(screen.getByLabelText('Nhóm khách hàng').value).toBe('RETURNING');expect(adminApi.mock.calls.at(-1)[0]).toContain('page=1');
 });
+it('restores customer filters on Back and Forward popstate events',async()=>{
+ window.history.replaceState({},'','/manager/users?page=1&stage=LOYAL');
+ render(<ManagerApp/>);await flush();
+ expect(screen.getByLabelText('Nhóm khách hàng').value).toBe('LOYAL');
+
+ fireEvent.change(screen.getByLabelText('Mua lại'),{target:{value:'true'}});await flush();
+ expect(new URLSearchParams(window.location.search).get('dormant')).toBe('true');
+
+ window.history.replaceState({},'','/manager/users?page=1&stage=LOYAL');window.dispatchEvent(new PopStateEvent('popstate'));await flush();
+ expect(new URLSearchParams(window.location.search).get('page')).toBe('1');
+ expect(screen.getByLabelText('Nhóm khách hàng').value).toBe('LOYAL');
+ expect(screen.getByLabelText('Mua lại').value).toBe('');
+
+ window.history.replaceState({},'','/manager/users?page=0&stage=LOYAL&dormant=true');window.dispatchEvent(new PopStateEvent('popstate'));await flush();
+ expect(new URLSearchParams(window.location.search).get('dormant')).toBe('true');
+ expect(screen.getByLabelText('Mua lại').value).toBe('true');
+ expect(adminApi.mock.calls.at(-1)[0]).toContain('dormant=true');
+});
 it('keeps previous data on network failure and stale list is not actionable when filters change',async()=>{
  render(<ManagerApp/>);await flush();fireEvent.click(screen.getByText('Mở khóa'));await flush();
  // A network failure keeps the last successful list and exposes retry, not a logout.
