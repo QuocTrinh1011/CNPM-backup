@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "main": "electron/main.mjs",
   "scripts": {
     "dev": "vite --mode user --port 5173 --strictPort",
     "dev:user": "vite --mode user --port 5173 --strictPort",
@@ -10,6 +11,7 @@
     "dev:manager": "vite --mode manager --port 5175 --strictPort",
     "build": "vite build",
     "test": "vitest run",
+    "desktop:test:auth-prototype": "node scripts/desktop-auth-prototype.e2e.mjs",
     "lint": "eslint src",
     "preview": "vite preview"
   },
@@ -23,11 +25,13 @@
   },
   "devDependencies": {
     "@testing-library/react": "^16.3.3",
+    "electron": "^45.3.1",
     "eslint": "^9.39.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.14.0",
     "jsdom": "^30.1.0",
+    "playwright": "^1.65.0",
     "vitest": "^5.0.1"
   }
 }
