@@ -1,0 +1,102 @@
+.desktop-config {
+  align-items: center;
+  background: #f4f6f4;
+  color: #18221e;
+  display: flex;
+  font-family: Inter, sans-serif;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.desktop-config__card {
+  background: #fff;
+  border: 1px solid #dce5df;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgb(21 47 36 / 10%);
+  max-width: 520px;
+  padding: 36px;
+  width: 100%;
+}
+
+.desktop-config__eyebrow {
+  color: #27856a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  margin: 0 0 12px;
+}
+
+.desktop-config h1 {
+  font-size: clamp(24px, 4vw, 32px);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.desktop-config__description,
+.desktop-config__hint {
+  color: #5d6b64;
+  line-height: 1.55;
+}
+
+.desktop-config__description {
+  margin: 12px 0 26px;
+}
+
+.desktop-config form {
+  display: grid;
+  gap: 10px;
+}
+
+.desktop-config label {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.desktop-config input {
+  border: 1px solid #b9c9c0;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font: inherit;
+  min-height: 46px;
+  padding: 0 13px;
+  width: 100%;
+}
+
+.desktop-config input:focus-visible,
+.desktop-config button:focus-visible {
+  outline: 3px solid rgb(39 133 106 / 30%);
+  outline-offset: 2px;
+}
+
+.desktop-config__hint {
+  font-size: 13px;
+  margin: 0;
+}
+
+.desktop-config__error {
+  color: #a32626;
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.desktop-config button {
+  background: #176b51;
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  margin-top: 8px;
+  min-height: 46px;
+}
+
+.desktop-config button:disabled {
+  cursor: wait;
+  opacity: .7;
+}
+
+@media (max-width: 520px) {
+  .desktop-config__card { padding: 26px 22px; }
+}

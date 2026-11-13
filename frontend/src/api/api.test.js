@@ -23,6 +23,19 @@ it('uses port 8080 and preserves structured API errors', async () => {
   await expect(api('/api/orders')).rejects.toMatchObject({ status:409, code:'OUT_OF_STOCK' });
   expect(fetch.mock.calls[0][0]).toBe('http://localhost:8080/api/orders');
 });
+it('uses the same-origin desktop API base without duplicating /api', async () => {
+  vi.stubEnv('MODE', 'desktop');
+  vi.stubEnv('VITE_DESKTOP_API_BASE_URL', '/api');
+  vi.stubEnv('VITE_API_BASE_URL', 'http://must-not-be-used:9999');
+  const { api } = await import('./api');
+  const { adminApi } = await import('./manager-api');
+  fetch.mockResolvedValue(response(200, []));
+
+  await api('/api/products');
+  await adminApi('/api/manager/users');
+
+  expect(fetch.mock.calls.map(([url]) => url)).toEqual(['/api/products', '/api/manager/users']);
+});
 it('does not treat network failure during refresh as logout or discard token', async () => {
   const { signIn, refreshSession, api } = await import('./api');
   fetch.mockResolvedValueOnce(response(200, {accessToken:'customer-token'}));

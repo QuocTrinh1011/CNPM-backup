@@ -27,6 +27,9 @@ try {
   app = await launchApp();
   const window = await app.firstWindow();
   await window.waitForFunction(() => typeof window.runAuthFlows === 'function');
+  assert.deepEqual(await window.evaluate(() => Object.keys(window.desktopConfig).sort()), ['load', 'saveApiBaseUrl']);
+  assert.equal(await window.evaluate(() => window.desktopConfig.load()), null, 'a fresh profile must start unconfigured');
+  assert.equal(await window.evaluate(() => typeof window.require), 'undefined', 'Node APIs must not be exposed to renderer code');
   const result = await window.evaluate(() => window.runAuthFlows());
 
   assert.deepEqual(result.flows.map(flow => [flow.name, flow.login.status, flow.refresh.status, flow.logout.status]), [

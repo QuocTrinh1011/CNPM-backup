@@ -1,4 +1,8 @@
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080').replace(/\/$/, '');
+import { buildApiUrl } from './api-url';
+
+const API_BASE = import.meta.env.MODE === 'desktop'
+  ? (import.meta.env.VITE_DESKTOP_API_BASE_URL || '/api')
+  : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080').replace(/\/$/, '');
 async function request(url, options) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 15000);
@@ -33,7 +37,7 @@ export async function api(path, options = {}, canRefresh = true) {
   const headers = { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) };
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
   const body = options.body && typeof options.body !== 'string' ? JSON.stringify(options.body) : options.body;
-  const response = await request(`${API_BASE}${path}`, { ...options, headers, body, credentials: 'include' });
+  const response = await request(buildApiUrl(API_BASE, path), { ...options, headers, body, credentials: 'include' });
   if (response.status === 401 && canRefresh && !path.startsWith('/api/auth/')) {
     const session = await refreshSession();
     if (session) return api(path, options, false);
@@ -43,7 +47,7 @@ export async function api(path, options = {}, canRefresh = true) {
 
 export async function refreshSession() {
   if (!refreshing) {
-    refreshing = request(`${API_BASE}/api/auth/refresh`, { method: 'POST', credentials: 'include' })
+    refreshing = request(buildApiUrl(API_BASE, '/api/auth/refresh'), { method: 'POST', credentials: 'include' })
       .then(parseResponse)
       .then(data => { accessToken = data.accessToken; return data; })
       .catch(error => { if (error.status === 401 || error.status === 403 || error.status === 423) { const hadSession = Boolean(accessToken); accessToken = null; if (hadSession && typeof window !== 'undefined') window.dispatchEvent(new Event('shop-session-expired')); return null; } throw error; })
@@ -67,7 +71,7 @@ export async function signOut() {
 
 export async function adminRefreshSession() {
   if (!adminRefreshing) {
-    adminRefreshing = request(`${API_BASE}/api/admin/auth/refresh`, { method: 'POST', credentials: 'include' })
+    adminRefreshing = request(buildApiUrl(API_BASE, '/api/admin/auth/refresh'), { method: 'POST', credentials: 'include' })
       .then(parseResponse)
       .then(data => { adminAccessToken = data.accessToken; return data; })
       .catch(error => { if ([401,403,423].includes(error.status)) { adminAccessToken=null; return null; } throw error; })
@@ -80,7 +84,7 @@ export async function adminApi(path, options = {}, canRefresh = true) {
   const headers = { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) };
   if (adminAccessToken) headers.Authorization = `Bearer ${adminAccessToken}`;
   const body = options.body && typeof options.body !== 'string' ? JSON.stringify(options.body) : options.body;
-  const response = await request(`${API_BASE}${path}`, { ...options, headers, body, credentials: 'include' });
+  const response = await request(buildApiUrl(API_BASE, path), { ...options, headers, body, credentials: 'include' });
   if (response.status === 401 && canRefresh && !path.startsWith('/api/admin/auth/')) {
     const session = await adminRefreshSession();
     if (session) return adminApi(path, options, false);

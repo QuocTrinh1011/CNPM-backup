@@ -1,8 +1,11 @@
-import { app, BrowserWindow, Menu, net, protocol, session } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, net, protocol, session } from 'electron';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { proxyApiRequest } from './api-proxy.mjs';
+import { createActiveApiConfig } from './api-config.mjs';
+import { registerDesktopConfigIpc } from './config-ipc.mjs';
+import { createConfigStore } from './config-store.mjs';
 import { createRefreshCookieStore } from './refresh-cookie-store.mjs';
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
@@ -17,8 +20,15 @@ protocol.registerSchemesAsPrivileged([{
 }]);
 
 const cookieStore = createRefreshCookieStore();
-const apiBaseUrl = testFixture ? process.env.DESKTOP_E2E_API_URL : 'http://localhost:8080';
 const authCookieObservations = [];
+let desktopSession = null;
+const configStore = createConfigStore(path.join(app.getPath('userData'), 'desktop-config.json'));
+const apiConfig = createActiveApiConfig(configStore, {
+  clearAuthCookies: async () => {
+    cookieStore.clearAll();
+    if (desktopSession) await desktopSession.clearStorageData({ storages: ['cookies'] });
+  },
+});
 
 function testPage() {
   return readFile(path.join(currentDir, 'test', 'auth-fixture.html'), 'utf8');
@@ -33,6 +43,10 @@ async function appProtocolResponse(request) {
   if (url.pathname.startsWith('/api/')) {
     if (testFixture && url.pathname.endsWith('/refresh')) {
       authCookieObservations.push({ pathname: url.pathname, browserCookiePresent: Boolean(request.headers.get('cookie')) });
+    }
+    const apiBaseUrl = testFixture ? process.env.DESKTOP_E2E_API_URL : apiConfig.current();
+    if (!apiBaseUrl) {
+      return Response.json({ code: 'DESKTOP_CONFIG_REQUIRED' }, { status: 503 });
     }
     return proxyApiRequest(request, { apiBaseUrl, cookieStore, fetchImpl: net.fetch });
   }
@@ -63,6 +77,7 @@ function createWindow() {
     height: 860,
     webPreferences: {
       partition: 'desktop-session',
+      preload: path.join(currentDir, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: true,
@@ -85,8 +100,13 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
-  const desktopSession = session.fromPartition('desktop-session');
+  desktopSession = session.fromPartition('desktop-session');
   await desktopSession.protocol.handle('app', appProtocolResponse);
+  await apiConfig.initialize();
+  registerDesktopConfigIpc(ipcMain, {
+    apiConfig,
+    onSaved: event => BrowserWindow.fromWebContents(event.sender)?.webContents.reload(),
+  });
   createWindow();
 });
 

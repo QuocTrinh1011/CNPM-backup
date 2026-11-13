@@ -100,17 +100,17 @@
 - `ActiveApiConfig.current()` returns the startup/save-validated origin held in memory; `ActiveApiConfig.save(value)` validates, persists, updates that origin, and clears all auth cookies if it changed.
 - `window.desktopConfig.load()` and `window.desktopConfig.saveApiBaseUrl(value)` are the only renderer bridge methods; neither returns cookies, tokens, paths, or generic IPC access.
 
-- [ ] **Step 1: Write API URL tests.** Assert web base `http://localhost:8080` plus `/api/products` stays unchanged; desktop base `/api` plus `/api/products` and `/api/manager/users` produces one `/api` prefix.
-- [ ] **Step 2: Run `npx vitest run src/api/api-url.test.js src/api/api.test.js` and verify the desktop cases fail.**
-- [ ] **Step 3: Implement `buildApiUrl` and update both API modules.** In desktop mode use only `VITE_DESKTOP_API_BASE_URL`; otherwise preserve the existing `VITE_API_BASE_URL` fallback and web request behavior.
-- [ ] **Step 4: Run the API tests and verify all prior web URL assertions plus the new desktop assertions pass.**
-- [ ] **Step 5: Write API config validation tests.** Accept `http://localhost:8080`, `http://127.0.0.1:8080`, `http://[::1]:8080`, and HTTPS remote origins; reject remote HTTP, credentials, malformed URLs, query strings, fragments, and non-origin paths.
-- [ ] **Step 6: Implement and test the config store plus active in-memory endpoint.** Validate on startup and save; external edits to the JSON file do not change `current()` until a new runtime loads and validates the file. Invalid startup values stay unconfigured.
-- [ ] **Step 7: Add the minimal preload bridge and validate IPC sender origin in main.** Saving a changed origin clears all fallback and Chromium auth cookies, updates the active endpoint, then reloads the renderer. Add tests that renderer config calls cannot request or receive a cookie/token.
-- [ ] **Step 8: Write the edited-config-after-startup test.** Start with origin A, edit the persisted file to origin B externally, and assert the active runtime still returns A; construct a new runtime and assert it validates/uses B.
-- [ ] **Step 9: Add the first-launch configuration screen.** Prefill the input with `http://localhost:8080`, require explicit Save/Continue, show validation errors, and reload the current route after a successful save.
-- [ ] **Step 10: Run `npx vitest run src/api/api-url.test.js src/api/api.test.js src/desktop/DesktopConfigScreen.test.jsx electron/api-config.test.mjs electron/config-store.test.mjs`; verify URL composition and edited-config tests pass.**
-- [ ] **Step 11: Commit.** `git add frontend/src/api frontend/src/desktop frontend/electron frontend/src/main.jsx` then `git commit -m "feat(frontend-desktop): configure the API endpoint"`.
+- [x] **Step 1: Write API URL tests.** Assert web base `http://localhost:8080` plus `/api/products` stays unchanged; desktop base `/api` plus `/api/products` and `/api/manager/users` produces one `/api` prefix.
+- [x] **Step 2: Run `npx vitest run src/api/api-url.test.js src/api/api.test.js` and verify the desktop cases fail.**
+- [x] **Step 3: Implement `buildApiUrl` and update both API modules.** In desktop mode use only `VITE_DESKTOP_API_BASE_URL`; otherwise preserve the existing `VITE_API_BASE_URL` fallback and web request behavior.
+- [x] **Step 4: Run the API tests and verify all prior web URL assertions plus the new desktop assertions pass.**
+- [x] **Step 5: Write API config validation tests.** Accept `http://localhost:8080`, `http://127.0.0.1:8080`, `http://[::1]:8080`, and HTTPS remote origins; reject remote HTTP, credentials, malformed URLs, query strings, fragments, and non-origin paths.
+- [x] **Step 6: Implement and test the config store plus active in-memory endpoint.** Validate on startup and save; external edits to the JSON file do not change `current()` until a new runtime loads and validates the file. Invalid startup values stay unconfigured.
+- [x] **Step 7: Add the minimal preload bridge and validate IPC sender origin in main.** Saving a changed origin clears all fallback and Chromium auth cookies, updates the active endpoint, then reloads the renderer. Add tests that renderer config calls cannot request or receive a cookie/token.
+- [x] **Step 8: Write the edited-config-after-startup test.** Start with origin A, edit the persisted file to origin B externally, and assert the active runtime still returns A; construct a new runtime and assert it validates/uses B.
+- [x] **Step 9: Add the first-launch configuration screen.** Prefill the input with `http://localhost:8080`, require explicit Save/Continue, show validation errors, and reload the current route after a successful save.
+- [x] **Step 10: Run `npx vitest run src/api/api-url.test.js src/api/api.test.js src/desktop/DesktopConfigScreen.test.jsx electron/api-config.test.mjs electron/config-store.test.mjs`; verify URL composition and edited-config tests pass.**
+- [x] **Step 11: Commit.** `git add frontend/src/api frontend/src/desktop frontend/electron frontend/src/main.jsx` then `git commit -m "feat(frontend-desktop): configure the API endpoint"`.
 
 ### Task 3: Harden the main-process API proxy
 

@@ -1,6 +1,10 @@
 import { beginManagerMutation } from './manager-sync';
 import {managerQuery} from '../shared/hooks/useManagerFilters';
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080').replace(/\/$/, '');
+import { buildApiUrl } from './api-url';
+
+const API_BASE = import.meta.env.MODE === 'desktop'
+  ? (import.meta.env.VITE_DESKTOP_API_BASE_URL || '/api')
+  : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080').replace(/\/$/, '');
 async function request(url, options) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 15000);
@@ -31,7 +35,7 @@ async function parseResponse(response) {
 
 export async function adminRefreshSession() {
   if (!adminRefreshing) {
-    adminRefreshing = request(`${API_BASE}/api/manager/auth/refresh`, { method: 'POST', credentials: 'include' })
+    adminRefreshing = request(buildApiUrl(API_BASE, '/api/manager/auth/refresh'), { method: 'POST', credentials: 'include' })
       .then(parseResponse)
       .then(data => { adminAccessToken = data.accessToken; return data; })
       .catch(error => { if ([401,403,423].includes(error.status)) { adminAccessToken=null; return null; } throw error; })
@@ -47,7 +51,7 @@ export async function adminApi(path, options = {}, canRefresh = true) {
   const headers = { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) };
   if (adminAccessToken) headers.Authorization = `Bearer ${adminAccessToken}`;
   const body = options.body && typeof options.body !== 'string' ? JSON.stringify(options.body) : options.body;
-  const response = await request(`${API_BASE}${path}`, { ...options, headers, body, credentials: 'include' });
+  const response = await request(buildApiUrl(API_BASE, path), { ...options, headers, body, credentials: 'include' });
   if (response.status === 401 && canRefresh && !path.startsWith('/api/manager/auth/')) {
     const session = await adminRefreshSession();
     if (session) return await adminApi(path, options, false);
