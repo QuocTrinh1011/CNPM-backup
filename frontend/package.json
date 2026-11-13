@@ -1,7 +1,10 @@
 {
   "name": "crm-admin-frontend",
+  "productName": "AnhLonShop",
   "private": true,
   "version": "0.1.0",
+  "author": "ANH LỚN SHOP",
+  "description": "Ứng dụng desktop Windows cho hệ thống CRM ANH LỚN SHOP",
   "type": "module",
   "main": "electron/main.mjs",
   "scripts": {
@@ -12,11 +15,16 @@
     "build": "vite build",
     "test": "vitest run",
     "desktop:test:auth-prototype": "node scripts/desktop-auth-prototype.e2e.mjs",
+    "desktop:build": "node scripts/build-desktop.mjs",
+    "desktop:start": "npm run desktop:build && electron .",
+    "desktop:make": "npm run desktop:build && electron-forge make",
+    "desktop:verify-package": "node scripts/verify-desktop-package.mjs",
     "lint": "eslint src",
     "preview": "vite preview"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^6.1.1",
+    "electron-squirrel-startup": "1.0.1",
     "lucide-react": "^1.47.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.3.0",
@@ -24,6 +32,9 @@
     "vite": "^8.3.0"
   },
   "devDependencies": {
+    "@electron-forge/cli": "8.0.1",
+    "@electron-forge/maker-squirrel": "8.0.1",
+    "@electron/asar": "4.3.1",
     "@testing-library/react": "^16.3.3",
     "electron": "^45.3.1",
     "eslint": "^9.39.5",
@@ -33,5 +44,11 @@
     "jsdom": "^30.1.0",
     "playwright": "^1.65.0",
     "vitest": "^5.0.1"
+  },
+  "allowScripts": {
+    "electron-winstaller@5.4.4": true
+  },
+  "config": {
+    "forge": "./electron-forge.config.mjs"
   }
 }

@@ -12,6 +12,21 @@ npm run dev
 
 The default API base URL is `http://localhost:8080`. Copy `.env.example` to `.env.local` to override it, then restart Vite. Run `npm run dev:user` on port 5173, `npm run dev:admin` on port 5174, and `npm run dev:manager` on port 5175 in separate terminals. All three connect to the same backend and use separate sessions. Admin list screens call `/api/admin/users`, `/products`, `/orders`, `/feedback`, and `/surveys`; dashboard cards call the revenue, user, and survey report endpoints.
 
+## Windows desktop app
+
+The Electron app opens the customer, Admin, and Manager portals from one native menu. The Spring Boot backend and PostgreSQL must run separately.
+
+```powershell
+npm ci
+npm run desktop:start
+npm run desktop:make
+npm run desktop:verify-package
+```
+
+On first launch, enter the API origin. HTTP is accepted only for `localhost`, `127.0.0.1`, or `::1`; remote hosts must use HTTPS. The refresh cookie fallback stays in the main process memory only, so sign in again after every app restart. The Squirrel.Windows installer is written under `out/make/squirrel.windows/`; `npm run desktop:verify-package` checks the output for environment files, backend/database payloads, and credential-like assignments.
+
+The installer is unsigned and Windows SmartScreen may show a warning. This build targets Windows only and does not include the backend or database; offline use, auto-update, and code signing are out of scope.
+
 ## Source layout
 
 ```text

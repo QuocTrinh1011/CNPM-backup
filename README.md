@@ -14,6 +14,7 @@ Dự án gồm ba giao diện độc lập **Khách hàng**, **Admin hệ thốn
 - [Cấu trúc thư mục](#cấu-trúc-thư-mục)
 - [Cài đặt và chạy local](#cài-đặt-và-chạy-local)
 - [Cấu hình môi trường demo/nghiệm thu](#cấu-hình-môi-trường-demonghiệm-thu)
+- [Ứng dụng desktop Windows](#ứng-dụng-desktop-windows)
 - [Cấu hình thanh toán PayOS](#cấu-hình-thanh-toán-payos)
 - [Kiểm thử và CI](#kiểm-thử-và-ci)
 - [Tài liệu chi tiết](#tài-liệu-chi-tiết)
@@ -281,6 +282,22 @@ Spring Boot không tự đọc file `.env`. Đặt các biến trong môi trư�
 PayOS không có sandbox. COD là luồng smoke test mặc định; chỉ thử PayOS thật khi người phụ trách đã xác nhận tài khoản, số tiền giới hạn và thời điểm thực hiện. Không commit `PAYOS_CLIENT_ID`, `PAYOS_API_KEY` hoặc `PAYOS_CHECKSUM_KEY`.
 
 Code đã hỗ trợ khôi phục mật khẩu qua Resend khi cấu hình email hợp lệ; `DEV_PASSWORD_RESET_ENABLED=false` không tắt nhánh email. Bộ demo ở trên chủ động tắt cả hai cờ. Khi thử riêng luồng email, xem [cấu hình Resend](docs/ops/resend-email.md); liên kết dùng token 43 ký tự, API không trả mã đặt lại trong chế độ email. Chưa xác nhận gửi email thật trong đợt rà soát tài liệu này.
+
+
+## Ứng dụng desktop Windows
+
+Frontend có thể chạy trong ứng dụng Electron cho ba cổng khách hàng, Admin và Manager. Cài đặt và tạo installer từ Windows trong thư mục `frontend`:
+
+```powershell
+npm ci
+npm run desktop:start
+npm run desktop:make
+npm run desktop:verify-package
+```
+
+Installer Squirrel.Windows được tạo trong `frontend/out/make/squirrel.windows/`. Backend Spring Boot và PostgreSQL phải được khởi động riêng; lần mở đầu ứng dụng yêu cầu nhập địa chỉ API. HTTP chỉ được dùng với `localhost`, `127.0.0.1` hoặc `::1`; máy chủ ở địa chỉ khác phải dùng HTTPS. Refresh cookie chỉ được giữ trong bộ nhớ của tiến trình chính, vì vậy người dùng cần đăng nhập lại mỗi lần mở app.
+
+Installer hiện chưa ký số; Windows SmartScreen có thể cảnh báo khi cài. Bản desktop chỉ nhắm Windows, không hỗ trợ offline và chưa có auto-update hoặc code signing.
 
 ## Cấu hình thanh toán PayOS
 

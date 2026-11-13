@@ -1,3 +1,4 @@
+import squirrelStartupEvent from 'electron-squirrel-startup';
 import { app, BrowserWindow, ipcMain, Menu, net, protocol, session, shell } from 'electron';
 import { existsSync, statSync } from 'node:fs';
 import { readFile as readFileAsync } from 'node:fs/promises';
@@ -12,6 +13,7 @@ import { classifyAppRequest, resolveDistPath, withDesktopContentSecurityPolicy }
 import { createRefreshCookieStore } from './refresh-cookie-store.mjs';
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
+const appUserModelId = 'com.squirrel.AnhLonShopDesktop.AnhLonShop';
 const frontendDir = path.resolve(currentDir, '..');
 const distRoot = path.resolve(frontendDir, 'dist');
 const testFixture = process.argv.includes('--desktop-test-fixture');
@@ -96,6 +98,7 @@ async function appProtocolResponse(request) {
 }
 
 function createWindow() {
+  if (process.platform === 'win32') app.setAppUserModelId(appUserModelId);
   const window = new BrowserWindow({
     width: 1280,
     height: 860,
@@ -124,17 +127,19 @@ function createWindow() {
   return window;
 }
 
-app.whenReady().then(async () => {
-  desktopSession = session.fromPartition('desktop-session');
-  await desktopSession.protocol.handle('app', appProtocolResponse);
-  await apiConfig.initialize();
-  registerDesktopConfigIpc(ipcMain, {
-    apiConfig,
-    onSaved: event => BrowserWindow.fromWebContents(event.sender)?.webContents.reload(),
+if (!squirrelStartupEvent) {
+  app.whenReady().then(async () => {
+    desktopSession = session.fromPartition('desktop-session');
+    await desktopSession.protocol.handle('app', appProtocolResponse);
+    await apiConfig.initialize();
+    registerDesktopConfigIpc(ipcMain, {
+      apiConfig,
+      onSaved: event => BrowserWindow.fromWebContents(event.sender)?.webContents.reload(),
+    });
+    createWindow();
   });
-  createWindow();
-});
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
-});
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
+  });
+}

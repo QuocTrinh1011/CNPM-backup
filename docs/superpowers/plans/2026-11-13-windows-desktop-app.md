@@ -181,21 +181,22 @@
 - Create: `frontend/electron-forge.config.mjs`
 - Create: `frontend/scripts/build-desktop.mjs`
 - Create: `frontend/scripts/verify-desktop-package.mjs`, `frontend/scripts/verify-desktop-package.test.js`
-- Modify: `frontend/package.json`, `frontend/package-lock.json`, `frontend/README.md`, `README.md`, `.gitignore`
+- Create: `frontend/scripts/electron-forge-config.test.js`
+- Modify: `frontend/electron/main.mjs`, `frontend/package.json`, `frontend/package-lock.json`, `frontend/README.md`, `README.md`, `.gitignore`
 
 **Interfaces:**
 - `npm run desktop:build` sets `VITE_DESKTOP_API_BASE_URL=/api` and runs `vite build --mode desktop` without changing `npm run build` or the user/admin/manager modes.
 - `npm run desktop:make` builds the desktop renderer and invokes Electron Forge Squirrel.Windows to create `Setup.exe`.
 - `npm run desktop:verify-package` scans `out/` and fails for `.env` files, backend/database payloads, and likely embedded credential assignments.
 
-- [ ] **Step 1: Write scanner tests.** Create temporary `out/` fixtures containing `.env`, backend/database paths, and secret-like credential assignments; assert each fails. Assert ordinary minified UI text containing the words “password” or “secret” without an assigned value does not create a false positive.
-- [ ] **Step 2: Run `npx vitest run scripts/verify-desktop-package.test.js` and verify the tests fail because the scanner is missing.**
-- [ ] **Step 3: Implement the scanner.** Inspect generated app contents (including `app.asar` through `@electron/asar`) and fail with the exact offending path/pattern; do not print secret values.
-- [ ] **Step 4: Add Forge, Electron Squirrel startup, and metadata.** Add `@electron/asar` for package inspection; configure Squirrel.Windows, stable `productName`/package identifier, required author/description, production file allowlist, and early `electron-squirrel-startup` handling before BrowserWindow creation.
-- [ ] **Step 5: Add desktop npm scripts and ignore generated output.** Keep existing web scripts intact; add build, start, make, E2E, and package verification scripts; add `frontend/out/` to the root `.gitignore`.
-- [ ] **Step 6: Run `npm run desktop:build`, `npm run desktop:make`, and `npm run desktop:verify-package` on Windows.** Verify one `Setup.exe` is produced and the scanner passes on the actual generated `out/` tree.
-- [ ] **Step 7: Update both READMEs.** Document setup/launch, API endpoint configuration, that the backend/database must be run separately, sign-in is required each time the desktop app starts, unsigned-installer SmartScreen warning, and the explicit out-of-scope items.
-- [ ] **Step 8: Commit.** `git add frontend/package.json frontend/package-lock.json frontend/electron-forge.config.mjs frontend/scripts/build-desktop.mjs frontend/scripts/verify-desktop-package.mjs frontend/scripts/verify-desktop-package.test.js frontend/README.md README.md .gitignore` then `git commit -m "feat(frontend-desktop): package Windows installer"`.
+- [x] **Step 1: Write scanner and packaging-allowlist tests.** Temporary output fixtures cover `.env`, backend/database paths, credential-like assignments, ASAR inspection, and false positives for UI words/routes.
+- [x] **Step 2: Run `npx vitest run scripts/verify-desktop-package.test.js` and verify the scanner test fails because the scanner is missing.**
+- [x] **Step 3: Implement the scanner.** Inspect generated app contents (including `app.asar` through `@electron/asar`) and fail with the exact offending path/pattern; do not print secret values.
+- [x] **Step 4: Add Forge, Electron Squirrel startup, and metadata.** Add `@electron/asar` for package inspection; configure Squirrel.Windows, stable `productName`/package identifier, required author/description, production file allowlist, and early `electron-squirrel-startup` handling before BrowserWindow creation.
+- [x] **Step 5: Add desktop npm scripts and ignore generated output.** Keep existing web scripts intact; add build, start, make, and package verification scripts; add `frontend/out/` to the root `.gitignore`. The E2E script is added in Task 7.
+- [x] **Step 6: Run `npm run desktop:build`, `npm run desktop:make`, and `npm run desktop:verify-package` on Windows.** Verified `AnhLonShop-Setup.exe` and the scanner on the actual generated `out/` tree; ASAR inspection found no tests, `.env`, backend, or database paths.
+- [x] **Step 7: Update both READMEs.** Document setup/launch, API endpoint configuration, that the backend/database must be run separately, sign-in is required each time the desktop app starts, unsigned-installer SmartScreen warning, and the explicit out-of-scope items.
+- [x] **Step 8: Commit.** `git add frontend/package.json frontend/package-lock.json frontend/electron-forge.config.mjs frontend/scripts/build-desktop.mjs frontend/scripts/verify-desktop-package.mjs frontend/scripts/verify-desktop-package.test.js frontend/README.md README.md .gitignore` then `git commit -m "feat(frontend-desktop): package Windows installer"`.
 
 ### Task 7: Complete full Electron E2E and acceptance verification
 
