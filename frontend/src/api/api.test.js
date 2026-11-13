@@ -36,6 +36,18 @@ it('uses the same-origin desktop API base without duplicating /api', async () =>
 
   expect(fetch.mock.calls.map(([url]) => url)).toEqual(['/api/products', '/api/manager/users']);
 });
+it('dispatches the desktop connection event only for the backend-unreachable code', async () => {
+  vi.stubEnv('MODE', 'desktop');
+  const dispatchEvent = vi.fn();
+  vi.stubGlobal('window', { dispatchEvent });
+  const { api } = await import('./api');
+  const { adminApi: managerApi } = await import('./manager-api');
+  fetch.mockResolvedValue(response(502, { code: 'BACKEND_UNREACHABLE' }));
+  await expect(api('/api/products')).rejects.toMatchObject({ status: 502, code: 'BACKEND_UNREACHABLE' });
+  await expect(managerApi('/api/manager/products')).rejects.toMatchObject({ status: 502, code: 'BACKEND_UNREACHABLE' });
+  expect(dispatchEvent).toHaveBeenCalledTimes(2);
+  expect(dispatchEvent.mock.calls[0][0].type).toBe('shop-backend-unreachable');
+});
 it('does not treat network failure during refresh as logout or discard token', async () => {
   const { signIn, refreshSession, api } = await import('./api');
   fetch.mockResolvedValueOnce(response(200, {accessToken:'customer-token'}));

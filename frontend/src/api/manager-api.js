@@ -1,6 +1,7 @@
 import { beginManagerMutation } from './manager-sync';
 import {managerQuery} from '../shared/hooks/useManagerFilters';
 import { buildApiUrl } from './api-url';
+import { emitDesktopBackendUnavailable } from './api-errors';
 
 const API_BASE = import.meta.env.MODE === 'desktop'
   ? (import.meta.env.VITE_DESKTOP_API_BASE_URL || '/api')
@@ -26,6 +27,7 @@ let adminRefreshing = null;
 async function parseResponse(response) {
   if (response.ok) return response.status === 204 ? null : response.json();
   const data = await response.json().catch(() => ({}));
+  emitDesktopBackendUnavailable(data.code, import.meta.env.MODE);
   const error = new Error(data.message || `Yêu cầu thất bại (${response.status})`);
   error.code = data.code;
   error.status = response.status;

@@ -157,7 +157,8 @@
 **Files:**
 - Create: `frontend/src/desktop/DesktopBootstrap.jsx`, `frontend/src/desktop/DesktopBootstrap.test.jsx`
 - Create: `frontend/src/desktop/DesktopConnectionScreen.jsx`, `frontend/src/desktop/DesktopConnectionScreen.test.jsx`
-- Modify: `frontend/src/main.jsx`, `frontend/src/api/api.js`, `frontend/src/api/manager-api.js`
+- Create: `frontend/src/api/api-errors.js`, `frontend/src/api/api-errors.test.js`
+- Modify: `frontend/src/main.jsx`, `frontend/src/api/api.js`, `frontend/src/api/manager-api.js`, `frontend/src/desktop/DesktopConfigScreen.jsx`
 
 **Interfaces:**
 - In desktop mode, the API error layer dispatches `shop-backend-unreachable` only for response code `BACKEND_UNREACHABLE`; ordinary business errors retain their existing behavior.
@@ -165,14 +166,14 @@
 - `DesktopConnectionScreen` has accessible buttons **Thử lại** (reload current route) and **Đổi địa chỉ máy chủ** (dispatch `shop-desktop-open-config`, handled by `DesktopBootstrap`).
 - `main.jsx` imports `DesktopBootstrap` dynamically only inside `if (import.meta.env.MODE === 'desktop')`; its configuration and connection screens are reachable only from that desktop chunk.
 
-- [ ] **Step 1: Write tests for the error mapping.** A 502 `BACKEND_UNREACHABLE` emits the desktop event; 4xx business errors and all non-desktop web mode errors do not.
-- [ ] **Step 2: Write bootstrap tests.** Assert a valid configured endpoint mounts the selected portal, a missing/invalid endpoint mounts configuration first, and no portal API load occurs before configuration is accepted.
-- [ ] **Step 3: Write connection-screen tests.** Assert Retry reloads the current route and Change server opens the configuration screen.
-- [ ] **Step 4: Run `npx vitest run src/desktop` and verify these tests fail before implementation.**
-- [ ] **Step 5: Implement the desktop-only event and screen behavior with a dynamic import gated by `import.meta.env.MODE === 'desktop'`.** Preserve all existing web error handling and route selection.
-- [ ] **Step 6: Build `user`, `admin`, and `manager` modes and verify there are no emitted DesktopBootstrap/Config/Connection chunks; compare generated JS/CSS sizes to the Task 1 baseline and require each combined total to stay within 1%.**
-- [ ] **Step 7: Run `npx vitest run src/desktop src/api` and verify all tests pass.**
-- [ ] **Step 8: Commit.** `git add frontend/src/desktop frontend/src/main.jsx frontend/src/api` then `git commit -m "feat(frontend-desktop): recover from backend outages"`.
+- [x] **Step 1: Write tests for the error mapping.** A 502 `BACKEND_UNREACHABLE` emits the desktop event; 4xx business errors and all non-desktop web mode errors do not.
+- [x] **Step 2: Write bootstrap tests.** Assert a valid configured endpoint mounts the selected portal, a missing/invalid endpoint mounts configuration first, and no portal API load occurs before configuration is accepted.
+- [x] **Step 3: Write connection-screen tests.** Assert Retry reloads the current route and Change server opens the configuration screen.
+- [x] **Step 4: Run the new API/desktop tests before implementation; missing event helper and screens failed while existing API tests passed.**
+- [x] **Step 5: Implement the desktop-only event and screen behavior with a dynamic import gated by `import.meta.env.MODE === 'desktop'`.** Preserve all existing web error handling and route selection.
+- [x] **Step 6: Build `user`, `admin`, and `manager` modes and verify there are no emitted DesktopBootstrap/Config/Connection chunks; compare generated JS/CSS sizes to the Task 1 baseline and require each combined total to stay within 1%.**
+- [x] **Step 7: Run `npx vitest run src/desktop src/api` and verify all tests pass.**
+- [x] **Step 8: Commit.** `git add frontend/src/desktop frontend/src/main.jsx frontend/src/api` then `git commit -m "feat(frontend-desktop): recover from backend outages"`.
 
 ### Task 6: Package a Windows installer and scan its contents
 

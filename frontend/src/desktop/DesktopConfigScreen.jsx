@@ -7,14 +7,26 @@ function errorMessage(error) {
   return 'Không thể lưu địa chỉ máy chủ. Hãy kiểm tra lại rồi thử lần nữa.';
 }
 
-export default function DesktopConfigScreen({ children }) {
-  const [apiBaseUrl, setApiBaseUrl] = useState('http://localhost:8080');
-  const [configured, setConfigured] = useState(false);
-  const [loading, setLoading] = useState(true);
+export default function DesktopConfigScreen({
+  children,
+  configLoaded = false,
+  initialConfig = null,
+  forceOpen = false,
+  onConfigured,
+}) {
+  const [apiBaseUrl, setApiBaseUrl] = useState(initialConfig?.apiBaseUrl || 'http://localhost:8080');
+  const [configured, setConfigured] = useState(Boolean(configLoaded && initialConfig?.apiBaseUrl && !forceOpen));
+  const [loading, setLoading] = useState(!configLoaded);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (configLoaded) {
+      setApiBaseUrl(initialConfig?.apiBaseUrl || 'http://localhost:8080');
+      setConfigured(Boolean(initialConfig?.apiBaseUrl && !forceOpen));
+      setLoading(false);
+      return undefined;
+    }
     let active = true;
     window.desktopConfig.load()
       .then(config => {
@@ -31,7 +43,7 @@ export default function DesktopConfigScreen({ children }) {
         if (active) setLoading(false);
       });
     return () => { active = false; };
-  }, []);
+  }, [configLoaded, forceOpen, initialConfig]);
 
   async function save(event) {
     event.preventDefault();
@@ -43,6 +55,7 @@ export default function DesktopConfigScreen({ children }) {
       if (!result?.apiBaseUrl) throw new Error('INVALID_API_ORIGIN');
       setApiBaseUrl(result.apiBaseUrl);
       setConfigured(true);
+      onConfigured?.(result.apiBaseUrl);
     } catch (cause) {
       setError(errorMessage(cause));
     } finally {

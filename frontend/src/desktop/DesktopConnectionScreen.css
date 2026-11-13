@@ -1,0 +1,76 @@
+.desktop-connection {
+  align-items: center;
+  background: #f4f6f4;
+  color: #18221e;
+  display: flex;
+  font-family: Inter, sans-serif;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.desktop-connection__card {
+  background: #fff;
+  border: 1px solid #dce5df;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgb(21 47 36 / 10%);
+  max-width: 520px;
+  padding: 36px;
+  width: 100%;
+}
+
+.desktop-connection__eyebrow {
+  color: #27856a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  margin: 0 0 12px;
+}
+
+.desktop-connection h1 {
+  font-size: clamp(24px, 4vw, 32px);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.desktop-connection__message {
+  color: #5d6b64;
+  line-height: 1.55;
+  margin: 12px 0 26px;
+}
+
+.desktop-connection__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.desktop-connection button {
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  min-height: 46px;
+  padding: 0 18px;
+}
+
+.desktop-connection button:focus-visible {
+  outline: 3px solid rgb(39 133 106 / 30%);
+  outline-offset: 2px;
+}
+
+.desktop-connection__primary {
+  background: #176b51;
+  color: #fff;
+}
+
+.desktop-connection__secondary {
+  background: #e9f2ed;
+  color: #176b51;
+}
+
+@media (max-width: 520px) {
+  .desktop-connection__card { padding: 26px 22px; }
+  .desktop-connection__actions { display: grid; }
+}

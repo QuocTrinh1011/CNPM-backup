@@ -13,8 +13,8 @@ const root = createRoot(document.getElementById('root'));
 const portalContent = <React.Suspense fallback={<p role="status">Đang tải ANH LỚN SHOP...</p>}>{selectedPortal}</React.Suspense>;
 
 if (mode === 'desktop') {
-  void import('./desktop/DesktopConfigScreen.jsx').then(({ default: DesktopConfigScreen }) => {
-    root.render(<React.StrictMode><DesktopConfigScreen>{portalContent}</DesktopConfigScreen></React.StrictMode>);
+  void import('./desktop/DesktopBootstrap.jsx').then(({ default: DesktopBootstrap }) => {
+    root.render(<React.StrictMode><DesktopBootstrap>{portalContent}</DesktopBootstrap></React.StrictMode>);
   });
 } else {
   root.render(<React.StrictMode>{portalContent}</React.StrictMode>);
