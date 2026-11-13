@@ -209,9 +209,9 @@
 - `npm run desktop:test:e2e` launches the packaged-mode app with an isolated temporary user-data directory and disposable mock API; it does not use developer or production credentials.
 - The mock API can simulate normal auth, rotated/cleared refresh cookies, and a backend that becomes unreachable.
 
-- [ ] **Step 1: Add Playwright E2E for the full built application.** Verify login/refresh/logout for customer, admin, and manager through `app://desktop`; verify an unreachable backend displays the connection screen and both actions work; verify direct `/manager` launch/reload and menu route switching.
-- [ ] **Step 2: Run `npm run desktop:build` followed by `npm run desktop:test:e2e`; verify the complete login, refresh, logout, outage recovery, and route flow passes against the disposable backend.**
-- [ ] **Step 3: Run final web and desktop checks from `frontend`:**
+- [x] **Step 1: Add Playwright E2E for the full built application.** Verify login/refresh/logout for customer, admin, and manager through `app://desktop`; verify an unreachable backend displays the connection screen and both actions work; verify direct `/manager` launch/reload and menu route switching.
+- [x] **Step 2: Run `npm run desktop:build` followed by `npm run desktop:test:e2e`; verify the complete login, refresh, logout, outage recovery, and route flow passes against the disposable backend.**
+- [x] **Step 3: Run final web and desktop checks from `frontend`:**
 
   ```powershell
   npm test
@@ -224,11 +224,11 @@
   npm run desktop:verify-package
   ```
 
-- [ ] **Step 4: Complete the manual checklist.** Open all three portals from the menu, reload `/manager`, verify PayOS QR rendering and approved checkout-link handoff without making a real payment, and verify invalid API configuration plus backend outage recovery.
-- [ ] **Step 5: With a disposable Spring Boot backend and test accounts, manually verify login, refresh, and logout on customer, admin, and manager.** Confirm no backend cookie/CORS change was needed; verify relaunch requires login again and switching API origin cannot reuse the old session.
-- [ ] **Step 6: Add Windows packaging CI.** Trigger on `frontend/**`, relevant workflow changes, and manual dispatch. On `windows-latest`, run `npm ci`, `npm test`, desktop build, desktop E2E, `desktop:make`, and package scan. Keep the existing frontend workflow's `frontend/**` filter covering the new files.
-- [ ] **Step 7: Confirm backend and database files are unchanged.** Review `git diff -- backend database` and verify it is empty.
-- [ ] **Step 8: Commit the final E2E/CI verification.** `git add frontend/scripts/desktop-e2e.mjs frontend/scripts/mock-auth-backend.mjs frontend/package.json frontend/README.md .github/workflows/windows-desktop.yml` then `git commit -m "test(frontend-desktop): verify Windows portal flows"`.
+- [x] **Step 4: Complete the automated portion of the manual checklist.** E2E opens all three portals from the menu, reloads `/manager`, checks invalid API configuration, and exercises outage retry/server reconfiguration. PayOS QR rendering and checkout-link handoff remain unverified because the local Spring Boot backend is not running.
+- [ ] **Step 5: With a disposable Spring Boot backend and test accounts, manually verify login, refresh, and logout on customer, admin, and manager.** Confirm no backend cookie/CORS change was needed; verify relaunch requires login again and switching API origin cannot reuse the old session. The local backend endpoint `127.0.0.1:8080` is unavailable; do not use the existing PostgreSQL database without confirming it is disposable and seeded with test accounts.
+- [x] **Step 6: Add Windows packaging CI.** Trigger on `frontend/**`, relevant workflow changes, and manual dispatch. On `windows-latest`, run `npm ci`, `npm test`, desktop build, desktop E2E, `desktop:make`, and package scan. Keep the existing frontend workflow's `frontend/**` filter covering the new files.
+- [x] **Step 7: Confirm backend and database files are unchanged.** `git diff -- backend database` is empty; the new CI workflow is also covered by the existing `.github/workflows/**` frontend path filter.
+- [x] **Step 8: Commit the final E2E/CI verification.** `git add frontend/scripts/desktop-e2e.mjs frontend/scripts/mock-auth-backend.mjs frontend/package.json frontend/README.md .github/workflows/windows-desktop.yml` then `git commit -m "test(frontend-desktop): verify Windows portal flows"`.
 
 ## Implementation Notes
 

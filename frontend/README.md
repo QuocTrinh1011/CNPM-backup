@@ -19,11 +19,14 @@ The Electron app opens the customer, Admin, and Manager portals from one native 
 ```powershell
 npm ci
 npm run desktop:start
+npm run desktop:test:e2e
 npm run desktop:make
 npm run desktop:verify-package
 ```
 
 On first launch, enter the API origin. HTTP is accepted only for `localhost`, `127.0.0.1`, or `::1`; remote hosts must use HTTPS. The refresh cookie fallback stays in the main process memory only, so sign in again after every app restart. The Squirrel.Windows installer is written under `out/make/squirrel.windows/`; `npm run desktop:verify-package` checks the output for environment files, backend/database payloads, and credential-like assignments.
+
+`npm run desktop:test:e2e` runs Playwright against the built desktop renderer and an isolated disposable API mock. It uses only `@example.test` accounts and a temporary Electron profile; it does not need a running backend or production credentials.
 
 The installer is unsigned and Windows SmartScreen may show a warning. This build targets Windows only and does not include the backend or database; offline use, auto-update, and code signing are out of scope.
 

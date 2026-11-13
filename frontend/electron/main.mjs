@@ -18,6 +18,7 @@ const frontendDir = path.resolve(currentDir, '..');
 const distRoot = path.resolve(frontendDir, 'dist');
 const testFixture = process.argv.includes('--desktop-test-fixture');
 const testUserData = process.env.DESKTOP_E2E_USER_DATA;
+const testStartRoute = process.env.DESKTOP_E2E_START_ROUTE;
 if (testUserData) app.setPath('userData', testUserData);
 
 protocol.registerSchemesAsPrivileged([{
@@ -123,7 +124,8 @@ function createWindow() {
       },
     ]));
   }
-  void window.loadURL('app://desktop/');
+  const initialRoute = ['/admin', '/manager'].includes(testStartRoute) ? testStartRoute : '/';
+  void window.loadURL(`app://desktop${initialRoute}`);
   return window;
 }
 

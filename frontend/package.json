@@ -15,6 +15,7 @@
     "build": "vite build",
     "test": "vitest run",
     "desktop:test:auth-prototype": "node scripts/desktop-auth-prototype.e2e.mjs",
+    "desktop:test:e2e": "node scripts/desktop-e2e.mjs",
     "desktop:build": "node scripts/build-desktop.mjs",
     "desktop:start": "npm run desktop:build && electron .",
     "desktop:make": "npm run desktop:build && electron-forge make",
