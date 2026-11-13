@@ -142,15 +142,15 @@
 - `classifyAppRequest(url, assetExists) -> { kind: 'api' | 'asset' | 'spa' | 'reject', path?: string }` requires host `desktop`, prevents decoded path traversal, and never classifies `/api/*` as SPA.
 - `approvedExternalUrl(value) -> URL | null` returns a URL only for HTTPS and exact host `pay.payos.vn`.
 
-- [ ] **Step 1: Write route tests.** Assert `/`, `/admin`, `/manager`, and a nested portal route resolve to the SPA document; existing assets resolve to files; missing non-API files resolve to the SPA; `/api/*`, a wrong host, and encoded traversal do not resolve to `index.html`.
-- [ ] **Step 2: Write external navigation tests.** Allow `https://pay.payos.vn/...`; reject HTTP, `javascript:`, `mailto:`, lookalike subdomains, and all non-allowlisted hosts.
-- [ ] **Step 3: Run `npx vitest run electron/protocol-router.test.mjs electron/external-links.test.mjs` and verify failures.**
-- [ ] **Step 4: Implement secure static-file resolution.** Use canonical resolved paths bounded under `frontend/dist`; return `index.html` only for non-file paths outside `/api/`.
-- [ ] **Step 5: Add response CSP.** Set `script-src 'self'` with no inline script or eval; set `connect-src 'self'`; set `img-src 'self' data: https:`; allow Google Fonts only in `style-src`/`font-src`. Do not set Electron's `bypassCSP` privilege.
-- [ ] **Step 6: Run the router tests and inspect a desktop response to verify the exact `script-src`, `connect-src`, and `img-src` policies and the Google Fonts exceptions.**
-- [ ] **Step 7: Add the native portal menu and navigation handlers.** Add menu entries for `/`, `/admin`, and `/manager`; deny every in-app navigation outside `app://desktop`; deny all new BrowserWindows while routing only an exact approved PayOS HTTPS target through `shell.openExternal`.
-- [ ] **Step 8: Run the external URL tests and verify no unapproved navigation or window can open.**
-- [ ] **Step 9: Commit.** `git add frontend/electron` then `git commit -m "feat(frontend-desktop): secure routing and navigation"`.
+- [x] **Step 1: Write route tests.** Assert `/`, `/admin`, `/manager`, and a nested portal route resolve to the SPA document; existing assets resolve to files; missing non-API files resolve to the SPA; `/api/*`, a wrong host, and encoded traversal do not resolve to `index.html`.
+- [x] **Step 2: Write external navigation tests.** Allow `https://pay.payos.vn/...`; reject HTTP, `javascript:`, `mailto:`, lookalike subdomains, and all non-allowlisted hosts.
+- [x] **Step 3: Run `npx vitest run electron/protocol-router.test.mjs electron/external-links.test.mjs` and verify failures.**
+- [x] **Step 4: Implement secure static-file resolution.** Use canonical resolved paths bounded under `frontend/dist`; return `index.html` only for non-file paths outside `/api/`.
+- [x] **Step 5: Add response CSP.** Set `script-src 'self'` with no inline script or eval; set `connect-src 'self'`; set `img-src 'self' data: https:`; allow Google Fonts only in `style-src`/`font-src`. Do not set Electron's `bypassCSP` privilege.
+- [x] **Step 6: Run the router tests and inspect a desktop response to verify the exact `script-src`, `connect-src`, and `img-src` policies and the Google Fonts exceptions.**
+- [x] **Step 7: Add the native portal menu and navigation handlers.** Add menu entries for `/`, `/admin`, and `/manager`; deny every in-app navigation outside `app://desktop`; deny all new BrowserWindows while routing only an exact approved PayOS HTTPS target through `shell.openExternal`.
+- [x] **Step 8: Run the external URL tests and verify no unapproved navigation or window can open.**
+- [x] **Step 9: Commit.** `git add frontend/electron` then `git commit -m "feat(frontend-desktop): secure routing and navigation"`.
 
 ### Task 5: Add recoverable backend connection UI
 

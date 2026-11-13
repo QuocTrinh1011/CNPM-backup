@@ -47,6 +47,15 @@ try {
     assert.ok(backend.requests.find(item => item.audience === audience && item.action === 'refresh')?.cookie, `${audience} refresh must forward its cookie`);
   }
 
+  const managerRouteResponse = await window.goto('app://desktop/manager');
+  assert.equal(managerRouteResponse.status(), 200, 'direct SPA routes must resolve to the app document');
+  const csp = managerRouteResponse.headers()['content-security-policy'];
+  assert.match(csp, /script-src 'self'/);
+  assert.match(csp, /connect-src 'self'/);
+  assert.match(csp, /img-src 'self' data: https:/);
+  assert.match(csp, /style-src .*https:\/\/fonts\.googleapis\.com/);
+  assert.match(csp, /font-src .*https:\/\/fonts\.gstatic\.com/);
+
   await window.evaluate(() => window.loginCustomerOnly());
   await app.close();
   app = await launchApp();

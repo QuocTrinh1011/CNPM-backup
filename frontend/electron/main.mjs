@@ -1,15 +1,19 @@
-import { app, BrowserWindow, ipcMain, Menu, net, protocol, session } from 'electron';
-import { readFile } from 'node:fs/promises';
+import { app, BrowserWindow, ipcMain, Menu, net, protocol, session, shell } from 'electron';
+import { existsSync, statSync } from 'node:fs';
+import { readFile as readFileAsync } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { proxyApiRequest } from './api-proxy.mjs';
 import { createActiveApiConfig } from './api-config.mjs';
 import { registerDesktopConfigIpc } from './config-ipc.mjs';
 import { createConfigStore } from './config-store.mjs';
+import { installNavigationGuards } from './external-links.mjs';
+import { classifyAppRequest, resolveDistPath, withDesktopContentSecurityPolicy } from './protocol-router.mjs';
 import { createRefreshCookieStore } from './refresh-cookie-store.mjs';
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const frontendDir = path.resolve(currentDir, '..');
+const distRoot = path.resolve(frontendDir, 'dist');
 const testFixture = process.argv.includes('--desktop-test-fixture');
 const testUserData = process.env.DESKTOP_E2E_USER_DATA;
 if (testUserData) app.setPath('userData', testUserData);
@@ -30,45 +34,65 @@ const apiConfig = createActiveApiConfig(configStore, {
   },
 });
 
-function testPage() {
-  return readFile(path.join(currentDir, 'test', 'auth-fixture.html'), 'utf8');
+function desktopAssetExists(pathname) {
+  if (testFixture) return pathname === '/index.html' || pathname === '/test/auth-fixture.js';
+  const filePath = resolveDistPath(distRoot, pathname);
+  if (!filePath || !existsSync(filePath)) return false;
+  try { return statSync(filePath).isFile(); } catch { return false; }
+}
+
+const contentTypes = new Map([
+  ['.css', 'text/css; charset=utf-8'],
+  ['.html', 'text/html; charset=utf-8'],
+  ['.ico', 'image/x-icon'],
+  ['.jpeg', 'image/jpeg'],
+  ['.jpg', 'image/jpeg'],
+  ['.js', 'text/javascript; charset=utf-8'],
+  ['.json', 'application/json; charset=utf-8'],
+  ['.png', 'image/png'],
+  ['.svg', 'image/svg+xml'],
+  ['.ttf', 'font/ttf'],
+  ['.webp', 'image/webp'],
+  ['.woff', 'font/woff'],
+  ['.woff2', 'font/woff2'],
+]);
+
+async function readAsset(pathname) {
+  const filePath = testFixture && pathname === '/index.html'
+    ? path.join(currentDir, 'test', 'auth-fixture.html')
+    : testFixture && pathname === '/test/auth-fixture.js'
+      ? path.join(currentDir, 'test', 'auth-fixture.js')
+      : resolveDistPath(distRoot, pathname);
+  if (!filePath) return new Response('Not found', { status: 404 });
+  try {
+    const body = await readFileAsync(filePath);
+    const contentType = contentTypes.get(path.extname(filePath).toLowerCase()) || 'application/octet-stream';
+    return new Response(body, { headers: { 'Content-Type': contentType } });
+  } catch {
+    return new Response('Not found', { status: 404 });
+  }
 }
 
 async function appProtocolResponse(request) {
+  const classification = classifyAppRequest(request.url, desktopAssetExists);
+  if (classification.kind === 'reject') return withDesktopContentSecurityPolicy(new Response('Not found', { status: 404 }));
   const url = new URL(request.url);
-  if (url.protocol !== 'app:' || url.hostname !== 'desktop') return new Response('Not found', { status: 404 });
   if (testFixture && url.pathname === '/__test/observations') {
-    return Response.json(authCookieObservations);
+    return withDesktopContentSecurityPolicy(Response.json(authCookieObservations));
   }
-  if (url.pathname.startsWith('/api/')) {
+  if (classification.kind === 'api') {
     if (testFixture && url.pathname.endsWith('/refresh')) {
       authCookieObservations.push({ pathname: url.pathname, browserCookiePresent: Boolean(request.headers.get('cookie')) });
     }
     const apiBaseUrl = testFixture ? process.env.DESKTOP_E2E_API_URL : apiConfig.current();
     if (!apiBaseUrl) {
-      return Response.json({ code: 'DESKTOP_CONFIG_REQUIRED' }, { status: 503 });
+      return withDesktopContentSecurityPolicy(Response.json({ code: 'DESKTOP_CONFIG_REQUIRED' }, { status: 503 }));
     }
-    return proxyApiRequest(request, { apiBaseUrl, cookieStore, fetchImpl: net.fetch });
+    const response = await proxyApiRequest(request, { apiBaseUrl, cookieStore, fetchImpl: net.fetch });
+    return withDesktopContentSecurityPolicy(response);
   }
-
-  if (testFixture) {
-    if (url.pathname === '/' || url.pathname === '/index.html') {
-      return new Response(await testPage(), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
-    }
-    return new Response('Not found', { status: 404 });
-  }
-
-  const requestedPath = url.pathname === '/' ? '/index.html' : decodeURIComponent(url.pathname);
-  const filePath = path.resolve(frontendDir, 'dist', `.${requestedPath}`);
-  const distRoot = path.resolve(frontendDir, 'dist') + path.sep;
-  if (!filePath.startsWith(distRoot)) return new Response('Not found', { status: 404 });
-  try {
-    const body = await readFile(filePath);
-    const contentType = filePath.endsWith('.html') ? 'text/html; charset=utf-8' : undefined;
-    return new Response(body, { headers: contentType ? { 'Content-Type': contentType } : undefined });
-  } catch {
-    return new Response('Not found', { status: 404 });
-  }
+  const response = await readAsset(classification.path);
+  return withDesktopContentSecurityPolicy(response);
 }
 
 function createWindow() {
@@ -83,6 +107,7 @@ function createWindow() {
       sandbox: true,
     },
   });
+  installNavigationGuards(window.webContents, shell);
   if (!testFixture) {
     Menu.setApplicationMenu(Menu.buildFromTemplate([
       {

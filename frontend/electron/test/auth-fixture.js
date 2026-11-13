@@ -1,0 +1,24 @@
+const audiences = [
+  { name: 'customer', prefix: '/api/auth' },
+  { name: 'admin', prefix: '/api/admin/auth' },
+  { name: 'manager', prefix: '/api/manager/auth' },
+];
+
+async function post(path) {
+  const response = await fetch(path, { method: 'POST' });
+  return { status: response.status, body: await response.json().catch(() => null) };
+}
+
+window.runAuthFlows = async () => {
+  const flows = [];
+  for (const audience of audiences) {
+    const login = await post(`${audience.prefix}/login`);
+    const refresh = await post(`${audience.prefix}/refresh`);
+    const logout = await post(`${audience.prefix}/logout`);
+    flows.push({ name: audience.name, login, refresh, logout });
+  }
+  return { flows, visibleCookies: document.cookie };
+};
+
+window.loginCustomerOnly = () => post('/api/auth/login');
+window.refreshCustomer = () => post('/api/auth/refresh');
