@@ -123,13 +123,13 @@
 - The proxy recognizes customer `refreshToken`, admin `adminRefreshToken`, and manager `managerRefreshToken` only on their corresponding auth path prefixes.
 - Production passes Electron `net.fetch`; unit tests pass a fake `fetchImpl`. `Set-Cookie` parsing uses `headers.getSetCookie()`.
 
-- [ ] **Step 1: Write proxy tests for disallowed paths and renderer-controlled target URLs.** Assert `/outside`, malformed URLs, and host override attempts are rejected before backend fetch is called.
-- [ ] **Step 2: Write header tests.** Pass `Origin`, `Referer`, `X-Forwarded-For`, `Host`, and hop-by-hop headers; assert the forwarded request omits them while preserving method, body, `Authorization`, `Accept`, and `Content-Type`.
-- [ ] **Step 3: Write redirect, body, cookie, origin-change, and outage tests.** Assert `fetchImpl` receives `redirect: 'manual'` and `duplex: 'half'` for streamed bodies; multiple `Set-Cookie` headers rotate/clear cookies; saving origin B after login with A clears both cookie stores and no cookie from A reaches B; cross-origin redirects are not followed; connection refusal returns status 502 with `{ code: 'BACKEND_UNREACHABLE' }`.
-- [ ] **Step 4: Run `npx vitest run electron/api-proxy.test.mjs electron/refresh-cookie-store.test.mjs` and verify the new policy assertions fail.**
-- [ ] **Step 5: Implement the request/response policy.** Preserve allowed auth cookie flow, strip all nonmatching and non-auth cookies, filter hop-by-hop response headers, and never return internal endpoint/configuration details. Clear the in-memory cookie store and Electron session cookies when the API origin changes.
-- [ ] **Step 6: Run the proxy and cookie-store tests plus `npm run desktop:test:auth-prototype`; verify all three cookie scopes still pass.**
-- [ ] **Step 7: Commit.** `git add frontend/electron` then `git commit -m "feat(frontend-desktop): secure the API proxy"`.
+- [x] **Step 1: Write proxy tests for disallowed paths and renderer-controlled target URLs.** Assert `/outside`, malformed URLs, and host override attempts are rejected before backend fetch is called.
+- [x] **Step 2: Write header tests.** Pass `Origin`, `Referer`, `X-Forwarded-For`, `Host`, and hop-by-hop headers; assert the forwarded request omits them while preserving method, body, `Authorization`, `Accept`, and `Content-Type`.
+- [x] **Step 3: Write redirect, body, cookie, origin-change, and outage tests.** Assert `fetchImpl` receives `redirect: 'manual'` and `duplex: 'half'` for streamed bodies; multiple `Set-Cookie` headers rotate/clear cookies; saving origin B after login with A clears both cookie stores and no cookie from A reaches B; cross-origin redirects are not followed; connection refusal returns status 502 with `{ code: 'BACKEND_UNREACHABLE' }`.
+- [x] **Step 4: Run `npx vitest run electron/api-proxy.test.mjs electron/refresh-cookie-store.test.mjs` and verify the new policy assertions fail.**
+- [x] **Step 5: Implement the request/response policy.** Preserve allowed auth cookie flow, strip all nonmatching and non-auth cookies, filter hop-by-hop response headers, and never return internal endpoint/configuration details. Clear the in-memory cookie store and Electron session cookies when the API origin changes.
+- [x] **Step 6: Run the proxy and cookie-store tests plus `npm run desktop:test:auth-prototype`; verify all three cookie scopes still pass.**
+- [x] **Step 7: Commit.** `git add frontend/electron` then `git commit -m "feat(frontend-desktop): secure the API proxy"`.
 
 ### Task 4: Serve SPA routes and enforce navigation/CSP rules
 
