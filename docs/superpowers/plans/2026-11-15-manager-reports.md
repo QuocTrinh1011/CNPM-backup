@@ -92,31 +92,34 @@ git commit -m "feat(reports): add manager report aggregation API"
 - Modify: `frontend/src/api/manager-api.js`
 - Create: `frontend/src/features/manager/ManagerReports.jsx`
 - Create: `frontend/src/features/manager/manager-reports.css`
+- Create: `frontend/src/features/manager/ManagerReports.test.jsx`
 
 **Interfaces:**
 - Add `adminEndpoints.reports({ year, month })`, returning `/api/manager/reports` with encoded year and optional month query parameters.
 - `ManagerReports({ location, go })` reads `year` and optional `month` from `location`, loads through `adminApi` in an abortable `useEffect`, and uses `go` to update URL filters. Do not use `useAdminList` because it polls every five seconds and this aggregate endpoint should load only when filters change or the user retries.
 
-- [ ] **Step 1: Add the reports endpoint helper**
+- [x] **Step 1: Add the reports endpoint helper**
+
+First write `ManagerReports.test.jsx` for the initial year/month filters, the default popular-products view, combobox switching to customer/employee detail without another API request, URL filter updates, and retry after an API error. Run the focused Vitest test and confirm it fails because the feature page does not exist. Then add and verify the reports endpoint helper.
 
 Serialize year/month as query parameters and omit month for annual view.
 
-- [ ] **Step 2: Build filter controls and summary cards**
+- [x] **Step 2: Build filter controls and summary cards**
 
 Render year and month selectors; default to the current year/all months; preserve unrelated query parameters when changing filters. Render total income, stock-receipt expense, and net balance using `manager-data.js` currency formatting. Offer a manual retry button after request failure.
 
-- [ ] **Step 3: Build the trend visualization and report-type combobox**
+- [x] **Step 3: Build the trend visualization and report-type combobox**
 
 Render a lightweight CSS bar chart for each monthly/daily bucket. Show popular product variants by default. Add a report-type combobox to switch the detail panel to top customers or stock-receipt activity by employee, including the system/unknown label and recorded color/size. Use the already-loaded report payload for every view. Provide loading, retryable error, empty-period, and empty-table states.
 
-- [ ] **Step 4: Add responsive light/dark styles**
+- [x] **Step 4: Add responsive light/dark styles**
 
 Style the page in `manager-reports.css` using existing Manager theme variables. Keep cards and filter controls usable on narrow screens and allow wide tables to scroll horizontally.
 
-- [ ] **Step 5: Commit the page and API helper**
+- [x] **Step 5: Commit the page and API helper**
 
 ```bash
-git add frontend/src/api/manager-api.js frontend/src/features/manager/ManagerReports.jsx frontend/src/features/manager/manager-reports.css
+git add frontend/src/api/manager-api.js frontend/src/features/manager/ManagerReports.jsx frontend/src/features/manager/manager-reports.css frontend/src/features/manager/ManagerReports.test.jsx
 git commit -m "feat(reports): add manager reports page"
 ```
 

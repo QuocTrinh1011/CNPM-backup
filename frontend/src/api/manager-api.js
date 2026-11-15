@@ -94,6 +94,12 @@ export const adminEndpoints = {
   createPromotion: () => '/api/manager/promotions',
   updatePromotion: id => `/api/manager/promotions/${id}`,
   deletePromotion: id => `/api/manager/promotions/${id}`,
+  reports: ({ year, month } = {}) => {
+    const params = new URLSearchParams();
+    if (year != null) params.set('year', String(year));
+    if (month != null && month !== '') params.set('month', String(month));
+    return `/api/manager/reports?${params}`;
+  },
 };
 
 export const currentApiBase = API_BASE;
