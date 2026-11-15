@@ -498,7 +498,7 @@ export default function SystemAdminApp() {
                       <div className="tip-item">
                         <CheckCircle2 size={16} className="tip-icon" />
                         <p>
-                          <strong>Phân quyền tối thiểu:</strong> Chỉ cấp quyền <code>ADMIN</code> cho người quản trị cấp cao. Nhân viên vận hành cấp quyền <code>MANAGER</code>.
+                          <strong>Phân quyền tối thiểu:</strong> Chỉ cấp quyền <code>ADMIN</code> cho người quản trị cấp cao. Cấp <code>MANAGER_HR</code>, <code>MANAGER_WAREHOUSE</code> hoặc <code>MANAGER_SALES</code> theo đúng nhiệm vụ; <code>EMPLOYEE</code> chỉ nằm trong danh bạ và không đăng nhập.
                         </p>
                       </div>
                       <div className="tip-item">

@@ -28,6 +28,7 @@ export default function InternalDirectory({ kind, manager = false }) {
   const [reload, setReload] = useState(0);
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState(null);
+  const [promotingEmployee, setPromotingEmployee] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -60,9 +61,11 @@ export default function InternalDirectory({ kind, manager = false }) {
     setBusy(true);
     setError('');
     try {
+      const body = { ...form };
+      if (kind === 'accounts' && body.role === 'EMPLOYEE') delete body.password;
       await api(form.id ? `${base}/${form.id}` : base, {
         method: form.id ? (kind === 'accounts' ? 'PATCH' : 'PUT') : 'POST',
-        body: form,
+        body,
       });
       setForm(null);
       setReload((n) => n + 1);
@@ -90,7 +93,7 @@ export default function InternalDirectory({ kind, manager = false }) {
   const editable = kind === 'accounts' || (manager && kind === 'suppliers');
   const labels =
     kind === 'accounts'
-      ? { fullName: 'Họ tên', email: 'Email', password: 'Mật khẩu (để trống nếu không đổi)' }
+      ? { fullName: 'Họ tên', email: 'Email', password: 'Mật khẩu mới' }
       : {
           code: 'Mã nhà cung cấp',
           name: 'Tên nhà cung cấp',
@@ -101,7 +104,7 @@ export default function InternalDirectory({ kind, manager = false }) {
         };
 
   const titles = {
-    accounts: { title: 'Tài khoản nội bộ', desc: 'Quản trị danh sách quản trị viên và nhân viên vận hành hệ thống', icon: ShieldCheck },
+    accounts: { title: 'Tài khoản nội bộ', desc: 'Quản trị Admin, các vai trò Manager và danh bạ nhân viên', icon: ShieldCheck },
     products: { title: 'Tra cứu sản phẩm', desc: 'Xem danh mục, giá bán và số lượng tồn kho', icon: Package },
     suppliers: { title: 'Nhà cung cấp', desc: 'Quản lý thông tin liên hệ và đối tác phân phối hàng hóa', icon: Truck },
   };
@@ -132,13 +135,14 @@ export default function InternalDirectory({ kind, manager = false }) {
           <button
             type="button"
             className="admin-primary-btn"
-            onClick={() =>
+            onClick={() => {
+              setPromotingEmployee(false);
               setForm(
                 kind === 'accounts'
-                  ? { fullName: '', email: '', password: '', role: 'MANAGER', locked: false }
+                  ? { fullName: '', email: '', password: '', role: 'MANAGER_SALES', locked: false }
                   : { code: '', name: '', email: '', phone: '', address: '', notes: '', active: true }
-              )
-            }
+              );
+            }}
           >
             <Plus size={16} /> Thêm mới
           </button>
@@ -238,7 +242,7 @@ export default function InternalDirectory({ kind, manager = false }) {
             </p>
           </div>
 
-          {Object.entries(labels).map(([key, label]) => (
+          {Object.entries(labels).filter(([key]) => !(kind === 'accounts' && key === 'password' && form.role === 'EMPLOYEE')).map(([key, label]) => (
             <label key={key}>
               {label}
               <input
@@ -246,7 +250,7 @@ export default function InternalDirectory({ kind, manager = false }) {
                 required={
                   ['fullName', 'name', 'code'].includes(key) ||
                   (kind === 'accounts' && key === 'email') ||
-                  (key === 'password' && !form.id)
+                  (key === 'password' && form.role !== 'EMPLOYEE' && (!form.id || promotingEmployee))
                 }
                 value={form[key] || ''}
                 onChange={(e) => setForm({ ...form, [key]: e.target.value })}
@@ -262,8 +266,11 @@ export default function InternalDirectory({ kind, manager = false }) {
                   value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value })}
                 >
-                  <option>MANAGER</option>
-                  <option>ADMIN</option>
+                  <option value="MANAGER_HR">Manager Nhân sự</option>
+                  <option value="MANAGER_WAREHOUSE">Manager Kho</option>
+                  <option value="MANAGER_SALES">Manager Bán hàng</option>
+                  <option value="EMPLOYEE">Nhân viên</option>
+                  <option value="ADMIN">Admin</option>
                 </select>
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', flexDirection: 'row', cursor: 'pointer', alignSelf: 'center', marginTop: '16px' }}>
@@ -371,7 +378,10 @@ export default function InternalDirectory({ kind, manager = false }) {
                         <button
                           type="button"
                           disabled={busy}
-                          onClick={() => setForm({ ...row, password: '' })}
+                          onClick={() => {
+                            setPromotingEmployee(row.role === 'EMPLOYEE');
+                            setForm({ ...row, password: '' });
+                          }}
                           title="Sửa thông tin"
                         >
                           <Edit2 size={13} /> Sửa
