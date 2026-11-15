@@ -72,6 +72,25 @@ it("switches the detail report without reloading the shared report payload", asy
   expect(adminApi).toHaveBeenCalledTimes(1);
 });
 
+it("keeps variants with null and empty color values as distinct rows", async () => {
+  const payload = report(new Date().getFullYear());
+  payload.topProducts = [
+    { productId: 12, productName: "Áo", categoryName: "Áo", color: null, size: "M", quantitySold: 1, totalRevenue: 10 },
+    { productId: 12, productName: "Áo", categoryName: "Áo", color: "", size: "M", quantitySold: 1, totalRevenue: 10 },
+  ];
+  adminApi.mockResolvedValueOnce(payload);
+  const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+  try {
+    renderReports();
+    const table = await screen.findByRole("table", { name: "Sản phẩm nổi bật" });
+    expect(table.querySelectorAll("tbody tr")).toHaveLength(2);
+    expect(errorSpy.mock.calls.flat().join(" ")).not.toMatch(/same key/i);
+  } finally {
+    errorSpy.mockRestore();
+  }
+});
+
 it("writes year and month filters to the Manager route", async () => {
   const { go } = renderReports("/manager/reports?year=2026&month=2");
   const month = await screen.findByRole("combobox", { name: "Tháng báo cáo" });

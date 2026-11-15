@@ -54,7 +54,7 @@ function DetailReport({ type, data }) {
       </tr>} />;
   }
   return <ReportTable name="Sản phẩm nổi bật" headers={["Sản phẩm", "Danh mục", "Màu", "Cỡ", "Đã bán", "Doanh thu"]}
-    rows={data.topProducts || []} renderRow={row => <tr key={`${row.productId}-${row.color || ""}-${row.size || ""}`}>
+    rows={data.topProducts || []} renderRow={row => <tr key={JSON.stringify([row.productId, row.color, row.size])}>
       <td><b>{row.productName || "Sản phẩm"}</b></td><td>{row.categoryName || "—"}</td>
       <td><span className="manager-report-color"><i className="manager-report-color-dot" data-color={row.color || "unknown"} />{row.color || "Chưa phân loại"}</span></td>
       <td>{row.size || "—"}</td><td>{row.quantitySold}</td><td>{money(row.totalRevenue)}</td>

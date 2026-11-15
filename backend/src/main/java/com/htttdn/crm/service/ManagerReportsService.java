@@ -160,10 +160,8 @@ public class ManagerReportsService {
     }
 
     private List<CustomerSpend> topCustomers(Map<String, Object> args) {
-        String amount = "CASE WHEN o.payment_method = 'COD' "
-                + "THEN COALESCE(o.cod_collected_amount, o.total_amount) ELSE o.total_amount END";
         String sql = "SELECT c.customer_id, c.full_name, c.email, COUNT(*) AS order_count, "
-                + "COALESCE(SUM(" + amount + "), 0) AS total_spent FROM orders o "
+                + "COALESCE(SUM(o.total_amount), 0) AS total_spent FROM orders o "
                 + "JOIN customers c ON c.customer_id = o.customer_id WHERE " + CAPTURED_ORDER
                 + " AND " + INCOME_AT + " >= :from AND " + INCOME_AT + " < :to "
                 + "GROUP BY c.customer_id, c.full_name, c.email "

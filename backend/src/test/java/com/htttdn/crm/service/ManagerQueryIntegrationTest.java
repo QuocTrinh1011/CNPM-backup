@@ -85,6 +85,7 @@ class ManagerQueryIntegrationTest {
   assertEquals("Tháng 1",reports.report(2026,null).trend().getFirst().label());
   assertEquals("100.00",report.topProducts().stream().filter(row->"Navy".equals(row.color())).findFirst().orElseThrow().totalRevenue().toPlainString());
   assertEquals(2,report.topCustomers().getFirst().orderCount());
+  assertEquals(new BigDecimal("150.00"),report.topCustomers().getFirst().totalSpent());
   assertEquals(2,report.employeeActivities().size());
   assertTrue(report.employeeActivities().stream().anyMatch(row->row.employeeId()==null&&row.fullName().equals("Hệ thống / Không xác định")));
   assertEquals(100.0,report.trend().getFirst().income().doubleValue());
