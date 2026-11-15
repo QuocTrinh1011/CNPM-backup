@@ -122,8 +122,17 @@ class InternalAccountRoleIntegrationTest {
                 .andExpect(jsonPath("$.content.length()").value(1));
         mvc.perform(get("/api/manager/employees").header("Authorization", bearer(hr)).param("q", employeeA.getFullName()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].role").value("EMPLOYEE"))
-                .andExpect(jsonPath("$.content[0].passwordHash").doesNotExist());
+                .andExpect(jsonPath("$.content[0].id").value(employeeA.getId()))
+                .andExpect(jsonPath("$.content[0].fullName").value(employeeA.getFullName()))
+                .andExpect(jsonPath("$.content[0].email").value(employeeA.getEmail()))
+                .andExpect(jsonPath("$.content[0].locked").value(false))
+                .andExpect(jsonPath("$.content[0].age").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.content[0].preferences").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.content[0].lockReason").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.content[0].deletedAt").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.content[0].createdAt").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.content[0].role").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.content[0].passwordHash").doesNotHaveJsonPath());
         mvc.perform(get("/api/manager/employees").header("Authorization", bearer(sales)))
                 .andExpect(status().isForbidden());
         mvc.perform(get("/api/manager/orders").header("Authorization", bearer(hr)))
