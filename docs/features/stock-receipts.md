@@ -6,10 +6,10 @@
 2. Từ thư mục gốc repository, chạy migration mới:
 
    ```powershell
-   psql -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/migrations/019_stock_receipts.sql
+   psql -U postgres -d cnpm_crm -v ON_ERROR_STOP=1 -f database/migrations/019_stock_receipts.sql
    ```
 
-   Đổi `postgres`/`htttdn` theo tài khoản và database đang cấu hình. Script chỉ thêm hai bảng và index; không cập nhật tồn hoặc tạo dữ liệu lịch sử.
+   Đổi `postgres`/`cnpm_crm` theo tài khoản và database CNPM đang cấu hình. Script chỉ thêm hai bảng và index; không cập nhật tồn hoặc tạo dữ liệu lịch sử.
 3. Khởi động lại backend và Manager frontend. Không đổi `ddl-auto`; backend xác thực schema bằng `validate`.
 
 Database cài mới dùng `database/schema.sql`, đã bao gồm hai bảng nhập kho.

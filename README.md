@@ -173,9 +173,9 @@ cd do-an-htttdn-crm
 ### 2. Tạo database mới
 
 ```powershell
-psql -U postgres -c "CREATE DATABASE htttdn;"
-psql -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/schema.sql
-psql -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/seed/seed_data.sql
+psql -U postgres -c "CREATE DATABASE cnpm_crm;"
+psql -U postgres -d cnpm_crm -v ON_ERROR_STOP=1 -f database/schema.sql
+psql -U postgres -d cnpm_crm -v ON_ERROR_STOP=1 -f database/seed/seed_data.sql
 ```
 
 `schema.sql` là cấu trúc khởi tạo hiện tại; `seed_data.sql` thêm dữ liệu minh họa cho local/demo. Tuyệt đối không chạy seed trên production. Nếu lỡ nạp vào môi trường thật, đổi mật khẩu của tất cả tài khoản mẫu ngay.
@@ -206,7 +206,7 @@ Các script nằm trong `database/migrations/`. Migration 020 xóa dữ liệu n
 
 ```powershell
 cd backend
-$env:DB_URL='jdbc:postgresql://localhost:5432/htttdn'
+$env:DB_URL='jdbc:postgresql://localhost:5432/cnpm_crm'
 $env:DB_USERNAME='postgres'
 $env:DB_PASSWORD='<mat-khau-postgresql-cua-ban>'
 $env:JWT_SECRET=[Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(48))

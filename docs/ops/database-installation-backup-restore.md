@@ -17,17 +17,17 @@ Danh sách này phản ánh schema hiện tại; các bảng hoàn tiền, chăm
 
 ## Cài đặt database mới
 
-Yêu cầu PostgreSQL và bộ công cụ dòng lệnh tương ứng (`psql`, `createdb`). Chạy từ thư mục gốc repo; ví dụ dùng database `htttdn` như cấu hình mặc định của backend:
+Yêu cầu PostgreSQL và bộ công cụ dòng lệnh tương ứng (`psql`, `createdb`). Chạy từ thư mục gốc repo; ví dụ dùng database riêng `cnpm_crm` như cấu hình mặc định của backend:
 
 ```powershell
-createdb --host localhost --port 5432 --username postgres htttdn
-psql --host localhost --port 5432 --username postgres --dbname htttdn --set ON_ERROR_STOP=1 --file database/schema.sql
+createdb --host localhost --port 5432 --username postgres cnpm_crm
+psql --host localhost --port 5432 --username postgres --dbname cnpm_crm --set ON_ERROR_STOP=1 --file database/schema.sql
 ```
 
 `psql` sẽ yêu cầu mật khẩu nếu PostgreSQL yêu cầu xác thực. Không ghi mật khẩu trực tiếp vào câu lệnh, file trong repo hoặc log. Chỉ nạp dữ liệu mẫu trên môi trường local/demo:
 
 ```powershell
-psql --host localhost --port 5432 --username postgres --dbname htttdn --set ON_ERROR_STOP=1 --file database/seed/seed_data.sql
+psql --host localhost --port 5432 --username postgres --dbname cnpm_crm --set ON_ERROR_STOP=1 --file database/seed/seed_data.sql
 ```
 
 Không chạy lại `schema.sql` hoặc seed trên database production. Với database đang hoạt động, sao lưu trước và chọn các migration phù hợp với phiên bản hiện tại; không chạy mù toàn bộ lịch sử migration.
@@ -45,8 +45,8 @@ Ví dụ PowerShell (chạy từ thư mục repo; `pg_dump` sẽ hỏi mật kh�
 $backupDir = "D:\crm-backups"
 New-Item -ItemType Directory -Force -Path $backupDir | Out-Null
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$backupFile = Join-Path $backupDir "htttdn-$stamp.dump"
-pg_dump --host localhost --port 5432 --username postgres --dbname htttdn --format custom --file $backupFile
+$backupFile = Join-Path $backupDir "cnpm_crm-$stamp.dump"
+pg_dump --host localhost --port 5432 --username postgres --dbname cnpm_crm --format custom --file $backupFile
 if ($LASTEXITCODE -ne 0) { throw "pg_dump thất bại" }
 pg_restore --list $backupFile | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "Không đọc được file backup" }
@@ -61,14 +61,14 @@ Nếu cần khôi phục cả role PostgreSQL, xuất globals riêng bằng `pg_
 3. Khôi phục trước vào database tách biệt để kiểm tra. Ví dụ:
 
 ```powershell
-createdb --host localhost --port 5432 --username postgres htttdn_restore_check
-pg_restore --host localhost --port 5432 --username postgres --dbname htttdn_restore_check --no-owner --no-privileges --exit-on-error "D:\crm-backups\htttdn-YYYYMMDD-HHMMSS.dump"
+createdb --host localhost --port 5432 --username postgres cnpm_crm_restore_check
+pg_restore --host localhost --port 5432 --username postgres --dbname cnpm_crm_restore_check --no-owner --no-privileges --exit-on-error "D:\crm-backups\cnpm_crm-YYYYMMDD-HHMMSS.dump"
 ```
 
 4. Xác nhận `pg_restore` kết thúc thành công, các bảng chính có mặt, dữ liệu có thể đọc, và backend kết nối được bằng cấu hình ứng dụng. Ví dụ kiểm tra nhanh:
 
 ```powershell
-psql --host localhost --port 5432 --username postgres --dbname htttdn_restore_check --command "SELECT count(*) FROM customers; SELECT count(*) FROM orders; SELECT count(*) FROM products;"
+psql --host localhost --port 5432 --username postgres --dbname cnpm_crm_restore_check --command "SELECT count(*) FROM customers; SELECT count(*) FROM orders; SELECT count(*) FROM products;"
 ```
 
 5. Sau khi kiểm tra chấp nhận được, thực hiện restore vào database đích trong cửa sổ bảo trì. Với dump custom và database đích đã tồn tại, có thể dùng `pg_restore --clean --if-exists --exit-on-error`; lệnh này thay thế các object được lưu trong dump. Xác nhận lại quyền của role ứng dụng trước khi mở backend.
