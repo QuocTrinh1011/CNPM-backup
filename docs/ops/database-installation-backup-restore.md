@@ -78,8 +78,10 @@ Không khôi phục trực tiếp lên production trước khi đã kiểm tra f
 
 ## Biên bản diễn tập phục hồi
 
-Chưa có bằng chứng trong repo cho thấy đã diễn tập restore trên PostgreSQL thật; không ghi nhận đây là một lần restore thành công. Sau khi chạy diễn tập, cập nhật các trường sau bằng kết quả thực tế:
-
-| Ngày/giờ | File backup | Database thử nghiệm | Kết quả kiểm tra | Người thực hiện |
+| Ngày | PostgreSQL | Nguồn | Database thử nghiệm | Kết quả |
 | --- | --- | --- | --- | --- |
-| Chưa thực hiện | — | — | Cần chạy diễn tập và ghi kết quả | — |
+| 2026-11-15 | 18.1, localhost | `htttdn` | `htttdn_restore_check_20261115_165330` (đã dọn sau test) | `pg_dump` custom-format và `pg_restore` thành công; `pg_restore --list` hợp lệ; tên bảng public và số dòng khớp trên 39/39 bảng. Database nguồn không bị ghi/sửa. Dump tạm đã xóa sau diễn tập để không giữ thêm bản dữ liệu cá nhân. |
+
+### Sai khác schema cần xử lý riêng
+
+Database thật có sáu bảng public không có trong schema khởi tạo hiện tại: `crm_voucher_campaigns`, `crm_voucher_issues`, `customer_care_notes`, `customer_care_tasks`, `order_refunds`, `support_tickets`. Bốn bảng cuối được gỡ bởi migration `020_retire_refund_care_support_reports.sql`; hai bảng `crm_voucher_campaigns` và `crm_voucher_issues` không được tìm thấy trong schema hoặc mã hiện tại. Diễn tập này chỉ kiểm tra backup/restore và không chạy migration hay xóa dữ liệu. Trước khi đồng bộ database thật với schema hiện tại, cần rà soát hai bảng voucher cũ và xác nhận thời điểm áp dụng migration 020 sau khi backup.
