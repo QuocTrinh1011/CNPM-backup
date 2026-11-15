@@ -16,7 +16,7 @@ public class InternalAccountService extends AdminServiceSupport {
  private final UserRepository users; private final RefreshTokenRepository tokens; private final PasswordEncoder encoder; private final JwtTokenService jwt;
  public InternalAccountService(UserRepository users,RefreshTokenRepository tokens,PasswordEncoder encoder,JwtTokenService jwt){this.users=users;this.tokens=tokens;this.encoder=encoder;this.jwt=jwt;}
  public record Input(@NotBlank @Size(max=150) String fullName,@NotBlank @Email String email,String role,String password,Boolean locked){}
- public Page<User> list(String q,int page,int size){String query=q==null?"":q.toLowerCase(Locale.ROOT);return users.findAll((r,x,c)->c.and(r.get("role").in("ADMIN","MANAGER_HR","MANAGER_WAREHOUSE","MANAGER_SALES"),c.isNull(r.get("deletedAt")),c.or(c.like(c.lower(r.get("fullName")),"%"+query+"%"),c.like(c.lower(r.get("email")),"%"+query+"%"))),PageRequest.of(Math.max(0,page),Math.max(1,Math.min(100,size)),Sort.by("id").descending()));}
+ public Page<User> list(String q,int page,int size){String query=q==null?"":q.toLowerCase(Locale.ROOT);return users.findAll((r,x,c)->c.and(r.get("role").in("ADMIN","MANAGER_HR","MANAGER_WAREHOUSE","MANAGER_SALES","EMPLOYEE"),c.isNull(r.get("deletedAt")),c.or(c.like(c.lower(r.get("fullName")),"%"+query+"%"),c.like(c.lower(r.get("email")),"%"+query+"%"))),PageRequest.of(Math.max(0,page),Math.max(1,Math.min(100,size)),Sort.by("id").descending()));}
  @Transactional public User create(Input in){User u=new User();copy(u,in,true);users.save(u);audit("CREATE","ACCOUNT",u.getId(),Map.of(),u);return u;}
  @Transactional public User update(Long id,Input in,String authorization){
   var all=users.lockInternalAccounts();User u=all.stream().filter(a->a.getId().equals(id)&&a.getDeletedAt()==null).findFirst().orElseThrow();
@@ -32,10 +32,14 @@ public class InternalAccountService extends AdminServiceSupport {
  }
  private void protectLast(List<User> all){if(all.stream().filter(u->"ADMIN".equals(u.getRole())&&!u.isLocked()&&u.getDeletedAt()==null).count()<=1)throw VoucherService.bad("LAST_ADMIN","Phải giữ ít nhất một admin hoạt động.");}
  private void copy(User u,Input in,boolean creating){
-  Set<String> roles=Set.of("ADMIN","MANAGER_HR","MANAGER_WAREHOUSE","MANAGER_SALES");
+  Set<String> roles=Set.of("ADMIN","MANAGER_HR","MANAGER_WAREHOUSE","MANAGER_SALES","EMPLOYEE");
   if(in.role()==null||!roles.contains(in.role()))throw VoucherService.bad("INVALID_ROLE","Vai trò tài khoản không hợp lệ.");
   String email=in.email().trim().toLowerCase(Locale.ROOT);users.findByEmailIgnoreCase(email).filter(other->!Objects.equals(other.getId(),u.getId())).ifPresent(other->{throw VoucherService.bad("EMAIL_EXISTS","Email đã tồn tại.");});
-  if(creating||in.password()!=null&&!in.password().isBlank()){
+  boolean employee="EMPLOYEE".equals(in.role());
+  boolean wasEmployee=!creating&&"EMPLOYEE".equals(u.getRole());
+  if(employee){
+   if(creating||!wasEmployee)u.setPasswordHash(encoder.encode(UUID.randomUUID().toString()));
+  }else if(creating||wasEmployee||in.password()!=null&&!in.password().isBlank()){
    if(in.password()==null||in.password().length()<8||in.password().getBytes(java.nio.charset.StandardCharsets.UTF_8).length>72)throw VoucherService.bad("INVALID_PASSWORD","Mật khẩu từ 8 ký tự, tối đa 72 byte.");
    u.setPasswordHash(encoder.encode(in.password()));
   }

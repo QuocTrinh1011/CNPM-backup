@@ -12,7 +12,7 @@ public class DirectoryService {
  private final ProductRepository products;private final SupplierRepository suppliers;private final UserRepository users;
  public DirectoryService(ProductRepository products,SupplierRepository suppliers,UserRepository users){this.products=products;this.suppliers=suppliers;this.users=users;}
  private Pageable paging(int page,int size,String sort,boolean desc,Set<String> allowed){if(!allowed.contains(sort)||page<0||size<1||size>100)throw VoucherService.bad("INVALID_FILTER","Bộ lọc hoặc phân trang không hợp lệ.");return PageRequest.of(page,size,Sort.by(desc?Sort.Direction.DESC:Sort.Direction.ASC,sort).and(Sort.by("id")));}
- public Map<String,Long> overview(){return Map.of("accounts",users.countByRoleAndDeletedAtIsNull("ADMIN")+users.countByRoleAndDeletedAtIsNull("MANAGER"),"products",products.count(),"suppliers",suppliers.count());}
+ public Map<String,Long> overview(){long accounts=users.countByRoleAndDeletedAtIsNull("ADMIN")+users.countByRoleAndDeletedAtIsNull("MANAGER_HR")+users.countByRoleAndDeletedAtIsNull("MANAGER_WAREHOUSE")+users.countByRoleAndDeletedAtIsNull("MANAGER_SALES")+users.countByRoleAndDeletedAtIsNull("EMPLOYEE");return Map.of("accounts",accounts,"products",products.count(),"suppliers",suppliers.count());}
  public Page<Product> products(String q,String category,Long supplierId,BigDecimal minPrice,BigDecimal maxPrice,String stock,Boolean active,int page,int size,String sort,boolean desc){
   return products.findAll((r,x,c)->{List<Predicate> p=new ArrayList<>();
    if(!q.isBlank()){Predicate name=c.like(c.lower(r.get("name")),"%"+q.toLowerCase(Locale.ROOT)+"%");try{p.add(c.or(name,c.equal(r.get("id"),Long.valueOf(q))));}catch(NumberFormatException e){p.add(name);}}
