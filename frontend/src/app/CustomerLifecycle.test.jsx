@@ -11,7 +11,7 @@ const page={content:[user],totalElements:25,totalPages:3};
 const flush=async()=>act(async()=>{await import('../features/manager/CustomerProfile');await vi.advanceTimersByTimeAsync(0);});
 beforeEach(()=>{
  vi.useFakeTimers();vi.spyOn(document,'visibilityState','get').mockReturnValue('visible');
- adminRefreshSession.mockResolvedValue({manager:{fullName:'Manager'}});adminApi.mockReset();adminApi.mockResolvedValue(page);
+ adminRefreshSession.mockResolvedValue({manager:{fullName:'Manager',role:'MANAGER_SALES'}});adminApi.mockReset();adminApi.mockResolvedValue(page);
  window.history.replaceState({},'','/manager/users?q=A&page=2');
 });
 afterEach(()=>{cleanup();vi.useRealTimers();vi.restoreAllMocks();});

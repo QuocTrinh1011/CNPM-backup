@@ -10,7 +10,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
   adminApi.mockReset();
-  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Manager' } });
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Manager', role: 'MANAGER_SALES' } });
 });
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.restoreAllMocks(); });
 const flush = async () => { await act(async () => {}); };

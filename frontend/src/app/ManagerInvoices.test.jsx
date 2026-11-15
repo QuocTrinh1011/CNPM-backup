@@ -45,7 +45,7 @@ const listUrl = url => url.startsWith('/api/manager/orders?');
 beforeEach(() => {
   vi.useFakeTimers();
   vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
-  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Manager' } });
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Manager', role: 'MANAGER_SALES' } });
   window.history.replaceState({}, '', '/manager/invoices');
   adminApi.mockReset();
   adminApi.mockImplementation(async url => {

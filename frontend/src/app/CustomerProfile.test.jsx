@@ -31,7 +31,7 @@ it('labels customer cancellations and receipt confirmations distinctly on the ti
 beforeEach(() => {
   vi.useFakeTimers();
   vi.spyOn(document,'visibilityState','get').mockReturnValue('visible');
-  adminRefreshSession.mockResolvedValue({manager:{fullName:'Manager'}});
+  adminRefreshSession.mockResolvedValue({manager:{fullName:'Manager',role:'MANAGER_SALES'}});
   adminApi.mockReset();
   adminApi.mockImplementation(async url => url.endsWith('/profile') ? profile() : page());
   window.history.replaceState({},'', '/manager/users/1?q=Alice&page=2');

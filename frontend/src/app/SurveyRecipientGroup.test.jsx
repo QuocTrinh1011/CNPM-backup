@@ -15,7 +15,7 @@ const complete=()=>{
 };
 beforeEach(()=>{
  vi.useFakeTimers();vi.spyOn(document,'visibilityState','get').mockReturnValue('visible');
- adminRefreshSession.mockResolvedValue({manager:{fullName:'Manager'}});adminApi.mockReset();
+ adminRefreshSession.mockResolvedValue({manager:{fullName:'Manager',role:'MANAGER_SALES'}});adminApi.mockReset();
  adminApi.mockImplementation(async(url,options)=>url.endsWith('/recipients/preview')?preview:url==='/api/manager/surveys'&&options?.method==='POST'?{id:7,recipientCount:12}:{content:[],totalPages:0,totalElements:0});
  window.history.replaceState({},'','/manager/users?q=A&page=2&stage=LOYAL&sort=completedValue&direction=asc');
 });
