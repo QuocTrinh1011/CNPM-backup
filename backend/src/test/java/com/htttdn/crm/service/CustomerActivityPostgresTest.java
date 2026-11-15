@@ -25,7 +25,7 @@ class CustomerActivityPostgresTest {
         db.execute("create temporary table survey_definitions(id bigint primary key,title varchar,status varchar,audience varchar,created_at timestamptz,deleted_at timestamptz) on commit drop");
         db.execute("create temporary table survey_recipients(survey_id bigint,customer_id bigint) on commit drop");
         db.execute("create temporary table audit_logs(id bigint primary key,entity_type varchar,target_id bigint,action varchar,created_at timestamptz) on commit drop");
-        db.update("insert into customers(customer_id,full_name,email,role,created_at,locked) values(1,'Buyer','buyer@test','CUSTOMER',CURRENT_TIMESTAMP,true),(2,'Other','other@test','CUSTOMER',CURRENT_TIMESTAMP,false),(3,'Staff','staff@test','MANAGER',CURRENT_TIMESTAMP,false)");
+        db.update("insert into customers(customer_id,full_name,email,role,created_at,locked) values(1,'Buyer','buyer@test','CUSTOMER',CURRENT_TIMESTAMP,true),(2,'Other','other@test','CUSTOMER',CURRENT_TIMESTAMP,false),(3,'Staff','staff@test','MANAGER_SALES',CURRENT_TIMESTAMP,false)");
         db.update("insert into orders values(10,1,'COMPLETED',100,CURRENT_TIMESTAMP),(20,2,'PENDING',100,CURRENT_TIMESTAMP)");
         db.update("insert into feedback values(1,1,2,null,CURRENT_TIMESTAMP),(2,1,4,null,CURRENT_TIMESTAMP),(3,1,5,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)");
         db.update("insert into survey_responses values(1,1,100,CURRENT_TIMESTAMP)");

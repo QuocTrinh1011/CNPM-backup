@@ -23,7 +23,7 @@ class ManagerQueryIntegrationTest {
  @Autowired EntityManager em; @Autowired ManagerOrderQuery query; @Autowired AdminProductService products; @Autowired ManagerReportsService reports;
  @Autowired MockMvc mvc; @Autowired JwtTokenService jwt;
  User customer,manager,admin;
- @BeforeEach void setup(){customer=user("Buyer","CUSTOMER");manager=user("Staff","MANAGER");admin=user("Root","ADMIN");}
+ @BeforeEach void setup(){customer=user("Buyer","CUSTOMER");manager=user("Staff","MANAGER_SALES");admin=user("Root","ADMIN");}
  User user(String name,String role){var u=new User();u.setFullName(name);u.setEmail(name+"@query.test");u.setPasswordHash("NEVER_RETURN");u.setRole(role);em.persist(u);return u;}
  Order order(long code,String status,String returns,String payment){var o=new Order();o.setCustomer(customer);o.setOrderCode(code);o.setStatus(status);o.setReturnStatus(returns);o.setPaymentStatus(payment);o.setPaymentMethod("COD".equals(payment)?"COD":"PAYOS");o.setTotalAmount(BigDecimal.valueOf(code));em.persist(o);return o;}
  ManagerOrderQuery.Filter filter(String status,String q,String payment,int page,int size){return new ManagerOrderQuery.Filter(status,q,payment,null,null,"totalAmount","ASC",page,size);}

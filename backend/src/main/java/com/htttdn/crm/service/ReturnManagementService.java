@@ -24,8 +24,8 @@ public class ReturnManagementService extends AdminServiceSupport {
     @Transactional public Order process(String authorization, Long id, Request input) {
         var claims=jwt.parse(authorization);
         User manager=users.findById(claims.userId()).orElseThrow(()->new ApiException(HttpStatus.UNAUTHORIZED,"UNAUTHORIZED","Phiên không hợp lệ."));
-        if (!"MANAGER".equals(claims.role()) || !"MANAGER".equals(manager.getRole()) || manager.isLocked() || manager.getDeletedAt()!=null)
-            throw new ApiException(HttpStatus.FORBIDDEN,"MANAGER_REQUIRED","Chỉ quản lý được xử lý đổi trả.");
+        if (!"MANAGER_SALES".equals(claims.role()) || !"MANAGER_SALES".equals(manager.getRole()) || manager.isLocked() || manager.getDeletedAt()!=null)
+            throw new ApiException(HttpStatus.FORBIDDEN,"MANAGER_SALES_REQUIRED","Chỉ Manager Sales được xử lý đổi trả.");
         String status=input.status(), note=input.note()==null?"":input.note().trim();
         if (status==null || !Set.of("APPROVED","REJECTED","COMPLETED").contains(status) || note.length()>1000 || (!"APPROVED".equals(status) && note.isEmpty()))
             throw new ApiException(HttpStatus.BAD_REQUEST,"INVALID_RETURN_ACTION","Chọn thao tác hợp lệ; lý do từ chối hoặc ghi chú hoàn tất là bắt buộc, tối đa 1.000 ký tự.");

@@ -27,8 +27,8 @@ public class PaymentCollectionService {
     @Transactional
     public void confirmCod(Long id, String note) {
         var actor = AuditTrail.actor();
-        if (actor == null || !"MANAGER".equals(actor.role()))
-            throw new ApiException(HttpStatus.FORBIDDEN, "MANAGER_REQUIRED", "Chỉ Manager được xác nhận thu COD.");
+        if (actor == null || !"MANAGER_SALES".equals(actor.role()))
+            throw new ApiException(HttpStatus.FORBIDDEN, "MANAGER_SALES_REQUIRED", "Chỉ Manager Sales được xác nhận thu COD.");
         String cleanNote = note == null ? "" : note.trim();
         if (cleanNote.isEmpty() || cleanNote.length() > 1000)
             throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_PAYMENT_NOTE", "Vui lòng nhập ghi chú tối đa 1.000 ký tự.");

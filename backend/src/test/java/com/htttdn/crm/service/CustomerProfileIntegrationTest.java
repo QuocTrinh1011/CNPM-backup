@@ -30,7 +30,7 @@ class CustomerProfileIntegrationTest {
     User customer, other, staff, root;
     @BeforeEach void setup() {
         customer=user("Customer","CUSTOMER"); other=user("Other","CUSTOMER");
-        staff=user("Manager","MANAGER"); root=user("Admin","ADMIN"); em.flush();
+        staff=user("Manager","MANAGER_SALES"); root=user("Admin","ADMIN"); em.flush();
     }
     User user(String name,String role) {
         User u=new User(); u.setFullName(name);u.setEmail(name+"@profile.test");u.setPasswordHash("private-hash");u.setRole(role);em.persist(u);return u;
@@ -111,7 +111,7 @@ class CustomerProfileIntegrationTest {
     }
     @Test void activityIsCustomerScopedPaginatedAndDoesNotInventHistory() throws Exception {
         var own=order(customer,777,"DELIVERED","100");order(other,778,"COMPLETED","999");
-        em.persist(new AuditLog(staff.getId(),"Manager","MANAGER","UPDATE","ORDER",own.getId(),"{}","{}"));
+        em.persist(new AuditLog(staff.getId(),"Manager","MANAGER_SALES","UPDATE","ORDER",own.getId(),"{}","{}"));
         em.flush();
         assertEquals(2,activities.list(customer.getId(),0,1).totalElements());
         assertEquals(2,activities.list(customer.getId(),0,1).totalPages());

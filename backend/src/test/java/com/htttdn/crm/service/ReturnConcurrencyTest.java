@@ -26,10 +26,10 @@ class ReturnConcurrencyTest {
     @MockitoSpyBean NotificationService notifications;
     record Fixture(Long orderId,String token){}
     Fixture fixture(){return new TransactionTemplate(tx).execute(status->{
-        User m=new User();m.setFullName("Manager");m.setEmail(UUID.randomUUID()+"@test.local");m.setPasswordHash("hash");m.setRole("MANAGER");em.persist(m);
+        User m=new User();m.setFullName("Manager");m.setEmail(UUID.randomUUID()+"@test.local");m.setPasswordHash("hash");m.setRole("MANAGER_SALES");em.persist(m);
         User c=new User();c.setFullName("Customer");c.setEmail(UUID.randomUUID()+"@test.local");c.setPasswordHash("hash");em.persist(c);
         Order o=new Order();o.setOrderCode(Math.abs(UUID.randomUUID().getMostSignificantBits()));o.setCustomer(c);o.setStatus("DELIVERED");o.setReturnStatus("REQUESTED");em.persist(o);em.flush();
-        return new Fixture(o.getId(),"Bearer "+jwt.issue(m.getId(),"MANAGER"));
+        return new Fixture(o.getId(),"Bearer "+jwt.issue(m.getId(),"MANAGER_SALES"));
     });}
     @Test void concurrentDecisionsCannotBothSucceed() throws Exception {
         var f=fixture();long before=events.count();var start=new CountDownLatch(1);var executor=Executors.newFixedThreadPool(2);

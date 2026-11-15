@@ -40,7 +40,7 @@ public class AdminProductService extends AdminServiceSupport {
     @Transactional public Product update(Long id, ProductRequest request) { Product product = get(id);var before=snapshot(product); copy(product, request); product.setUpdatedAt(Instant.now());audit("UPDATE","PRODUCT",id,before,product); return products.save(product); }
     @Transactional public void archive(Long id) { Product product = get(id);var before=snapshot(product); product.setActive(false); products.save(product);if(!before.equals(snapshot(product)))audit("ARCHIVE","PRODUCT",id,before,product); }
     @Transactional public Product stock(Long id, StockRequest request) { Product product = get(id);var before=snapshot(product); product.setStock(request.quantity()); product.setUpdatedAt(Instant.now());if(!before.equals(snapshot(product)))audit("STOCK","PRODUCT",id,before,product); return products.save(product); }
-    private Product get(Long id) { return products.findById(id).orElseThrow(); }
+    public Product get(Long id) { return products.findById(id).orElseThrow(); }
     private void copy(Product p, ProductRequest r) {
         p.setName(r.name());
         if (r.category() != null && !r.category().isBlank()) {

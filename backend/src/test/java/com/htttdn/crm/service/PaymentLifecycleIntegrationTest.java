@@ -32,7 +32,7 @@ class PaymentLifecycleIntegrationTest {
     @Autowired ObjectMapper mapper;
     @MockitoBean PayosService payos;
     User customer,manager;String token;TransactionTemplate tx;
-    @BeforeEach void setup(){tx=new TransactionTemplate(tm);customer=user("CUSTOMER");manager=user("MANAGER");token="Bearer "+jwt.issue(manager.getId(),"MANAGER");}
+    @BeforeEach void setup(){tx=new TransactionTemplate(tm);customer=user("CUSTOMER");manager=user("MANAGER_SALES");token="Bearer "+jwt.issue(manager.getId(),"MANAGER_SALES");}
     User user(String role){User u=new User();u.setEmail(UUID.randomUUID()+"@payment.test");u.setFullName(role);u.setRole(role);u.setPasswordHash("test-only");return users.save(u);}
     Order order(String method,String status,String payment){return tx.execute(s->{Order o=new Order();o.setCustomer(customer);o.setOrderCode(Math.abs(UUID.randomUUID().getMostSignificantBits()%900000000000L));o.setTotalAmount(new BigDecimal("100000"));o.setPaymentMethod(method);o.setStatus(status);o.setPaymentStatus(payment);o.setExpiresAt(Instant.now().minus(Duration.ofHours(25)));orders.saveAndFlush(o);Payment p=new Payment();p.setOrder(o);p.setAmount(o.getTotalAmount());p.setStatus(payment);p.setPaymentLinkId("link-"+o.getId());payments.save(p);return o;});}
     @Test void networkFailureAndChangedStatusNeverReleaseResources(){

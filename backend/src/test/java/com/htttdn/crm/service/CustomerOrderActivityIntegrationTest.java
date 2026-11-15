@@ -45,7 +45,7 @@ class CustomerOrderActivityIntegrationTest {
     String url(Order o,boolean receipt){return "/api/orders/"+o.getId()+(receipt?"/confirm-receipt":"/cancel");}
 
     @Test void successfulCustomerActionsAreAtomicPrivateAndIdempotentOnTimeline() throws Exception {
-        var buyer=user("CUSTOMER");var other=user("CUSTOMER");var manager=user("MANAGER");
+        var buyer=user("CUSTOMER");var other=user("CUSTOMER");var manager=user("MANAGER_SALES");
         for(boolean receipt:new boolean[]{false,true}) {
             var o=order(buyer,receipt?"DELIVERED":"PENDING");String action=receipt?"CUSTOMER_RECEIPT":"CUSTOMER_CANCEL";
             for(int i=0;i<2;i++)mvc.perform(patch(url(o,receipt)).header("Authorization",token(buyer))
@@ -69,7 +69,7 @@ class CustomerOrderActivityIntegrationTest {
     }
 
     @Test void failedUnauthorizedAndWrongOwnerRequestsDoNotCreateAudit() throws Exception {
-        var buyer=user("CUSTOMER");var other=user("CUSTOMER");var manager=user("MANAGER");
+        var buyer=user("CUSTOMER");var other=user("CUSTOMER");var manager=user("MANAGER_SALES");
         var pending=order(buyer,"PENDING");var shipped=order(buyer,"SHIPPED");var returning=order(buyer,"DELIVERED");returning.setReturnStatus("REQUESTED");em.flush();
         for(boolean receipt:new boolean[]{false,true}) {
             mvc.perform(patch(url(pending,receipt))).andExpect(status().isUnauthorized());

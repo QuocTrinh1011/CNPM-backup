@@ -130,7 +130,7 @@ class VoucherIntegrationTest {
     @Autowired DirectoryService directory;
     @Test void portalsRejectCrossRoleAndRevokeChangedAccounts() throws Exception {
         User root=accounts.create(new InternalAccountService.Input("Admin",code+"root@test.vn","ADMIN","TestPass123!",false));
-        User staff=accounts.create(new InternalAccountService.Input("Manager",code+"staff@test.vn","MANAGER","TestPass123!",false));
+        User staff=accounts.create(new InternalAccountService.Input("Manager",code+"staff@test.vn","MANAGER_SALES","TestPass123!",false));
         String a="Bearer "+adminAuth.login(root.getEmail(),"TestPass123!").accessToken();
         var ms=managerAuth.login(staff.getEmail(),"TestPass123!");String m="Bearer "+ms.accessToken();
         assertThrows(ApiException.class,()->adminAuth.login(staff.getEmail(),"TestPass123!"));
@@ -142,7 +142,7 @@ class VoucherIntegrationTest {
         mvc.perform(get("/api/admin/products").header("Authorization",a)).andExpect(status().isOk());
         mvc.perform(post("/api/admin/vouchers").header("Authorization",a)).andExpect(status().isNotFound());
         assertThrows(ApiException.class,()->accounts.delete(root.getId(),a));
-        accounts.update(staff.getId(),new InternalAccountService.Input("Manager",staff.getEmail(),"MANAGER",null,true),a);
+        accounts.update(staff.getId(),new InternalAccountService.Input("Manager",staff.getEmail(),"MANAGER_SALES",null,true),a);
         mvc.perform(get("/api/manager/users").header("Authorization",m)).andExpect(status().isForbidden());
         assertThrows(ApiException.class,()->managerAuth.refresh(ms.refreshToken()));
     }
@@ -519,8 +519,8 @@ class VoucherIntegrationTest {
     @Test void httpApiRequiresAdminAndRetainsPublicPreviewContract() throws Exception {
         mvc.perform(get("/api/manager/vouchers")).andExpect(status().isUnauthorized());
         mvc.perform(get("/api/manager/vouchers").header("Authorization","Bearer "+jwt.issue(customer.getId(),"CUSTOMER"))).andExpect(status().isForbidden());
-        User owner=new User();owner.setEmail(code+"admin@example.test");owner.setFullName("Admin");owner.setPasswordHash("test-only");owner.setRole("MANAGER");users.save(owner);
-        String token="Bearer "+jwt.issue(owner.getId(),"MANAGER");
+        User owner=new User();owner.setEmail(code+"admin@example.test");owner.setFullName("Admin");owner.setPasswordHash("test-only");owner.setRole("MANAGER_SALES");users.save(owner);
+        String token="Bearer "+jwt.issue(owner.getId(),"MANAGER_SALES");
         String response=mvc.perform(post("/api/manager/vouchers").header("Authorization",token).contentType("application/json").content(mapper.writeValueAsString(input(code,"PERCENTAGE","10",5)))).andExpect(status().isCreated()).andExpect(jsonPath("$.code").value(code)).andReturn().getResponse().getContentAsString();
         long id=mapper.readTree(response).path("id").asLong();
         mvc.perform(get("/api/vouchers/validate").param("code",code).param("amount","100000")).andExpect(status().isOk()).andExpect(jsonPath("$.discountAmount").value(10000));

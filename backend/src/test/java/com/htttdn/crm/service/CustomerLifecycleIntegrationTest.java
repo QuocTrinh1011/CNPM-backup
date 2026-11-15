@@ -27,7 +27,7 @@ class CustomerLifecycleIntegrationTest {
     CustomerLifecycleQuery.Filters filters(String stage,Boolean dormant,int page,int size,String sort) {return new CustomerLifecycleQuery.Filters("life",stage,dormant,null,null,null,null,null,null,sort,"desc",page,size);}
     @Test void aggregatesBeforePaginationAndIncludesLockedReturnOrdersButNotStaffDeletedOrOtherStatuses() {
         User empty=customer("life-empty","CUSTOMER"),first=customer("life-first","CUSTOMER"),loyal=customer("life-loyal","CUSTOMER");
-        loyal.setLocked(true);customer("life-staff","MANAGER");customer("life-admin","ADMIN");var deleted=customer("life-deleted","CUSTOMER");deleted.setDeletedAt(Instant.now());
+        loyal.setLocked(true);customer("life-staff","MANAGER_SALES");customer("life-admin","ADMIN");var deleted=customer("life-deleted","CUSTOMER");deleted.setDeletedAt(Instant.now());
         order(first,"COMPLETED","100",29);order(first,"PENDING","9000000",0);order(first,"DELIVERED","9000000",0);order(first,"CANCELLED","9000000",0);
         Order o=order(loyal,"COMPLETED","5000000",30);o.setReturnStatus("REQUESTED");em.flush();
         var category=new Category();category.setName("Lifecycle");em.persist(category);
@@ -43,7 +43,7 @@ class CustomerLifecycleIntegrationTest {
         assertEquals(0,query.list(new CustomerLifecycleQuery.Filters("%",null,null,null,null,null,null,null,null,"createdAt","desc",0,10),today).totalElements());
     }
     @Test void invalidFiltersAndManagerOnlySafeResponses() throws Exception {
-        User manager=customer("life-manager","MANAGER"),u=customer("life-customer","CUSTOMER"),admin=customer("life-root","ADMIN");
+        User manager=customer("life-manager","MANAGER_SALES"),u=customer("life-customer","CUSTOMER"),admin=customer("life-root","ADMIN");
         mvc.perform(get("/api/manager/users")).andExpect(status().isUnauthorized());
         for(User wrong:new User[]{u,admin}) mvc.perform(get("/api/manager/users").header("Authorization","Bearer "+jwt.issue(wrong.getId(),wrong.getRole()))).andExpect(status().isForbidden());
         String token="Bearer "+jwt.issue(manager.getId(),manager.getRole());

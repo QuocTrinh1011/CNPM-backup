@@ -45,7 +45,7 @@ class SurveyRecipientGroupIntegrationTest {
         return json.readTree(result.getResponse().getContentAsString()).get("id").asLong();
     }
     @Test void fullFilteredGroupIsSavedNotOnlyPreviewPageAndCountsExcludeLockedDeletedAndStaff() throws Exception {
-        var manager=user("Group manager","MANAGER");
+        var manager=user("Group manager","MANAGER_SALES");
         var wanted=new HashSet<Long>();
         for(int i=0;i<13;i++){var u=user("Group buyer "+i,"CUSTOMER");purchase(u);wanted.add(u.getId());}
         var locked=user("Group locked","CUSTOMER");locked.setLocked(true);purchase(locked);
@@ -67,7 +67,7 @@ class SurveyRecipientGroupIntegrationTest {
         mvc.perform(get("/api/surveys/"+id).header("Authorization",token(owner))).andExpect(status().isOk()).andExpect(jsonPath("$.recipients").doesNotExist());
     }
     @Test void reevaluatesAtSaveAndRejectsEmptyOrConflictingSelectionWithoutPartialDraft() throws Exception {
-        var manager=user("Manager","MANAGER");var buyer=user("Before save","CUSTOMER");var filter=Map.<String,Object>of("q","Before save");
+        var manager=user("Manager","MANAGER_SALES");var buyer=user("Before save","CUSTOMER");var filter=Map.<String,Object>of("q","Before save");
         mvc.perform(post("/api/manager/surveys/recipients/preview").header("Authorization",token(manager)).contentType("application/json").content(json.writeValueAsString(Map.of("recipientFilter",filter))))
             .andExpect(jsonPath("$.eligibleCount").value(1));
         buyer.setLocked(true);em.flush();
@@ -81,7 +81,7 @@ class SurveyRecipientGroupIntegrationTest {
         var id=create(manager,request(filter));assertEquals(Set.of(buyer.getId(),added.getId()),em.find(Survey.class,id).getRecipients());
     }
     @Test void previewValidatesFiltersAndRequiresManager() throws Exception {
-        var manager=user("Manager","MANAGER");var buyer=user("Buyer","CUSTOMER");var admin=user("Root","ADMIN");
+        var manager=user("Manager","MANAGER_SALES");var buyer=user("Buyer","CUSTOMER");var admin=user("Root","ADMIN");
         String url="/api/manager/surveys/recipients/preview";
         mvc.perform(post(url).contentType("application/json").content("{\"recipientFilter\":{}}" )).andExpect(status().isUnauthorized());
         for(var wrong:List.of(buyer,admin))mvc.perform(post(url).header("Authorization",token(wrong)).contentType("application/json").content("{\"recipientFilter\":{}}" )).andExpect(status().isForbidden());
@@ -89,7 +89,7 @@ class SurveyRecipientGroupIntegrationTest {
             mvc.perform(post(url).header("Authorization",token(manager)).contentType("application/json").content(json.writeValueAsString(input))).andExpect(status().isBadRequest());
     }
     @Test void combinedRatingSurveyPurchaseAndVietnamDateFiltersMatchCustomerList() throws Exception {
-        var manager=user("Manager","MANAGER");
+        var manager=user("Manager","MANAGER_SALES");
         var category=new Category();category.setName("Survey filters");em.persist(category);
         var product=new Product();product.setName("Product");product.setCategoryEntity(category);product.setPrice(BigDecimal.TEN);em.persist(product);
         db.update("insert into survey_definitions(id,title,status,created_at,deleted_at) values(11001,'Archived','DRAFT',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)");
@@ -109,7 +109,7 @@ class SurveyRecipientGroupIntegrationTest {
         assertEquals(Set.of(expected),em.find(Survey.class,id).getRecipients());
     }
     @Test void specificSurveyFiltersOnlyInvitedCustomersAndNeverConfusesOtherSurveyResponses() throws Exception {
-        var manager=user("Manager","MANAGER");var waiting=user("Waiting","CUSTOMER");var answered=user("Answered","CUSTOMER");var outside=user("Not invited","CUSTOMER");
+        var manager=user("Manager","MANAGER_SALES");var waiting=user("Waiting","CUSTOMER");var answered=user("Answered","CUSTOMER");var outside=user("Not invited","CUSTOMER");
         var selected=new Survey();selected.setTitle("Selected archived survey");selected.setAudience("SELECTED");selected.setDeletedAt(Instant.now());
         selected.getRecipients().addAll(Set.of(waiting.getId(),answered.getId()));em.persist(selected);
         var other=new Survey();other.setTitle("Other survey");em.persist(other);em.flush();
@@ -133,7 +133,7 @@ class SurveyRecipientGroupIntegrationTest {
             .andExpect(jsonPath("$.totalElements").value(2)); // ALL scope: answered-on-other and not-invited have not answered this one.
     }
     @Test void surveyPickerSearchPaginationArchivedSelectionAndInvalidIdsAreSafe() throws Exception {
-        var manager=user("Manager","MANAGER");var buyer=user("Buyer","CUSTOMER");
+        var manager=user("Manager","MANAGER_SALES");var buyer=user("Buyer","CUSTOMER");
         for(int i=0;i<12;i++){var s=new Survey();s.setTitle("History "+i);em.persist(s);}var archived=new Survey();archived.setTitle("Archived record");archived.setDeletedAt(Instant.now());em.persist(archived);em.flush();
         String url="/api/manager/surveys/filter-options?q=History&size=10&page=1&selectedId="+archived.getId();
         mvc.perform(get(url).header("Authorization",token(manager))).andExpect(status().isOk())

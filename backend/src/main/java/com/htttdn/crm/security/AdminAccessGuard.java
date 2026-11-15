@@ -4,13 +4,13 @@ import com.htttdn.crm.entity.User;
 import com.htttdn.crm.exception.ApiException;
 import com.htttdn.crm.repository.UserRepository;
 import jakarta.servlet.*; import jakarta.servlet.http.*;
-import org.springframework.beans.factory.annotation.Value; import org.springframework.http.HttpStatus; import org.springframework.stereotype.Component; import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.http.HttpStatus; import org.springframework.stereotype.Component; import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
 public class AdminAccessGuard extends OncePerRequestFilter {
-    private final JwtTokenService jwt; private final UserRepository users;
-    public AdminAccessGuard(JwtTokenService jwt, UserRepository users) { this.jwt = jwt; this.users = users; }
+    private final JwtTokenService jwt; private final UserRepository users; private final ManagerRoleAccessPolicy managerRoles;
+    public AdminAccessGuard(JwtTokenService jwt, UserRepository users, ManagerRoleAccessPolicy managerRoles) { this.jwt = jwt; this.users = users; this.managerRoles = managerRoles; }
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String path = request.getRequestURI();
         boolean manager=path.equals("/api/manager")||path.startsWith("/api/manager/");
@@ -19,8 +19,13 @@ public class AdminAccessGuard extends OncePerRequestFilter {
         try {
             JwtTokenService.Claims claims = jwt.parse(request.getHeader("Authorization"));
             User user = users.findById(claims.userId()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Admin token không hợp lệ."));
-            String role=manager?"MANAGER":"ADMIN";
-            if (!role.equals(claims.role()) || !role.equals(user.getRole()) || user.isLocked() || user.getDeletedAt()!=null) throw new ApiException(HttpStatus.FORBIDDEN, role+"_REQUIRED", "Không có quyền truy cập portal này.");
+            String role = user.getRole();
+            if (user.isLocked() || user.getDeletedAt()!=null || !role.equals(claims.role()))
+                throw new ApiException(HttpStatus.FORBIDDEN, manager ? "MANAGER_ROLE_REQUIRED" : "ADMIN_REQUIRED", "Không có quyền truy cập portal này.");
+            if (manager && (!ManagerRoleAccessPolicy.isManagerRole(role) || !managerRoles.allows(role, request.getMethod(), path)))
+                throw new ApiException(HttpStatus.FORBIDDEN, "MANAGER_SCOPE_FORBIDDEN", "Vai trò này không được phép truy cập chức năng.");
+            if (admin && !"ADMIN".equals(role))
+                throw new ApiException(HttpStatus.FORBIDDEN, "ADMIN_REQUIRED", "Không có quyền truy cập portal này.");
             request.setAttribute(com.htttdn.crm.service.AuditTrail.ACTOR_ATTRIBUTE,new com.htttdn.crm.service.AuditTrail.Actor(user.getId(),user.getFullName(),role));
             try { chain.doFilter(request, response); }
             finally { request.removeAttribute(com.htttdn.crm.service.AuditTrail.ACTOR_ATTRIBUTE); }

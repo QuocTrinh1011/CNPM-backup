@@ -29,7 +29,7 @@ class ReturnManagementIntegrationTest {
     @Autowired OrderReturnEventRepository events;
     @Autowired CustomerNotificationRepository notifications;
     User manager,customer,root;Order order;
-    @BeforeEach void setup(){manager=user("Manager","MANAGER");customer=user("Customer","CUSTOMER");root=user("Admin","ADMIN");order=order(10001L,"REQUESTED");em.flush();}
+    @BeforeEach void setup(){manager=user("Manager","MANAGER_SALES");customer=user("Customer","CUSTOMER");root=user("Admin","ADMIN");order=order(10001L,"REQUESTED");em.flush();}
     User user(String name,String role){User u=new User();u.setFullName(name);u.setEmail(name+"@return.test");u.setPasswordHash("hash");u.setRole(role);em.persist(u);return u;}
     Order order(long code,String status){Order o=new Order();o.setOrderCode(code);o.setCustomer(customer);o.setStatus("DELIVERED");o.setPaymentMethod("COD");o.setPaymentStatus("COD");o.setReturnStatus(status);o.setReturnReason("Sai size");o.setTotalAmount(BigDecimal.TEN);o.setDiscountAmount(BigDecimal.ONE);o.setVoucherCode("KEEP");em.persist(o);return o;}
     String token(User u){return "Bearer "+jwt.issue(u.getId(),u.getRole());}
