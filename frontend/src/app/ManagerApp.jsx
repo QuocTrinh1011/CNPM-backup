@@ -18,6 +18,7 @@ const StockReceiving = React.lazy(()=>import('../features/manager/StockReceiving
 const ManagerInvoices = React.lazy(()=>import('../features/manager/ManagerInvoices'));
 const PromotionCampaigns = React.lazy(() => import('../features/manager/PromotionCampaigns'));
 const ManagerReports = React.lazy(() => import('../features/manager/ManagerReports'));
+const ManagerEmployees = React.lazy(() => import('../features/manager/ManagerEmployees'));
 import {
   Activity,
   LayoutDashboard,
@@ -52,6 +53,7 @@ import {
 
 const navItems = [
   ["dashboard", "Tổng quan"],
+  ["employees", "Nhân viên"],
   ["users", "Khách hàng"],
   ["products", "Sản phẩm"],
   ["stock-receipts", "Nhập kho"],
@@ -64,8 +66,19 @@ const navItems = [
   ["reports", "Báo cáo"],
 ];
 const validSections = new Set(navItems.map(([key]) => key));
+const managerRoleSections = {
+  MANAGER_SALES: new Set(["dashboard", "users", "products", "orders", "invoices", "feedback", "surveys", "vouchers", "promotions", "reports"]),
+  MANAGER_WAREHOUSE: new Set(["products", "stock-receipts"]),
+  MANAGER_HR: new Set(["employees"]),
+};
+const managerLandingPaths = {
+  MANAGER_SALES: "/manager/orders",
+  MANAGER_WAREHOUSE: "/manager/products",
+  MANAGER_HR: "/manager/employees",
+};
 const navIcons = {
   dashboard: LayoutDashboard,
+  employees: UsersIcon,
   users: UsersIcon,
   products: Package,
   'stock-receipts': Package,
@@ -81,12 +94,10 @@ const userOrigin = import.meta.env.VITE_USER_ORIGIN || "http://localhost:5173";
 const normalizeAdminPath = (value) => {
   if (value === "/manager/login") return value;
   if (/^\/manager\/users\/[^/]+$/.test(value)) return value;
-  const key = value.replace(/^\/manager\/?/, "").split("/")[0] || "dashboard";
-  return validSections.has(key)
-    ? key === "dashboard"
-      ? "/manager"
-      : `/manager/${key}`
-    : "/manager";
+  const pathname = value.split("?")[0];
+  if (pathname === "/manager" || pathname === "/manager/") return "/manager";
+  const key = pathname.replace(/^\/manager\/?/, "").split("/")[0] || "dashboard";
+  return validSections.has(key) ? `/manager/${key}` : "/manager";
 };
 
 export default function ManagerApp() {
@@ -114,7 +125,7 @@ export default function ManagerApp() {
       : path.split('?')[0].replace(/^\/manager\/?/, "").split("/")[0] || "dashboard";
   const profileMatch = path.split('?')[0].match(/^\/manager\/users\/([^/]+)$/);
   const go = (next, state = {}) => {
-    const target = next === "dashboard" ? "/manager" : `/manager/${next}`;
+    const target = `/manager/${next}`;
     window.history.pushState(state, "", target);
     window.dispatchEvent(new Event('manager:navigation'));
     setPath(target);
@@ -158,6 +169,16 @@ export default function ManagerApp() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
   useEffect(() => {
+    if (!admin || path.split('?')[0] === "/manager/login") return;
+    const pathname = path.split('?')[0];
+    const allowed = managerRoleSections[admin.role] || new Set();
+    if (pathname === "/manager" || !allowed.has(section)) {
+      const landing = managerLandingPaths[admin.role] || "/manager/login";
+      window.history.replaceState({}, "", landing);
+      setPath(landing);
+    }
+  }, [admin, path, section]);
+  useEffect(() => {
     const expired = () => {
       setAdmin(null);
       window.history.replaceState({}, '', '/manager/login');
@@ -176,12 +197,16 @@ export default function ManagerApp() {
         theme={theme}
         onAuthenticated={(session) => {
           setAdmin(session.manager);
-          go("dashboard");
+          go((managerLandingPaths[session.manager?.role] || "/manager/login").replace("/manager/", ""));
         }}
         onNotice={notify}
         error={notice?.message}
       />
     );
+  const allowedSections = managerRoleSections[admin.role] || new Set();
+  if (path.split('?')[0] === "/manager" || !allowedSections.has(section)) {
+    return <div className="admin-loading" role="status">Đang mở chức năng phù hợp với vai trò...</div>;
+  }
   const renderNavItem = ([key, label]) => {
     const Icon = navIcons[key];
     return (
@@ -197,7 +222,8 @@ export default function ManagerApp() {
       </button>
     );
   };
-  const promotionNavItems = navItems.filter(([key]) => key === "vouchers" || key === "promotions");
+  const roleNavItems = navItems.filter(([key]) => allowedSections.has(key));
+  const promotionNavItems = roleNavItems.filter(([key]) => key === "vouchers" || key === "promotions");
   return (
     <div className={`admin-shell manager-shell${profileMatch ? ' manager-profile-page' : ''}`} data-theme={theme} onKeyDown={event=>{if(['DIV','SPAN'].includes(event.target.tagName)&&event.target.getAttribute('role')==='button'&&['Enter',' '].includes(event.key)){event.preventDefault();event.target.click();}}}>
       <button
@@ -241,11 +267,11 @@ export default function ManagerApp() {
           </button>
         </div>
         <nav aria-label="Chức năng quản lý">
-          {navItems.filter(([key]) => key !== "vouchers" && key !== "promotions").map(renderNavItem)}
-          <div className="manager-nav-group" role="group" aria-label="Khuyến mãi">
+          {roleNavItems.filter(([key]) => key !== "vouchers" && key !== "promotions").map(renderNavItem)}
+          {promotionNavItems.length > 0 && <div className="manager-nav-group" role="group" aria-label="Khuyến mãi">
             <span className="manager-nav-group-label" aria-hidden="true">Khuyến mãi</span>
             {promotionNavItems.map(renderNavItem)}
-          </div>
+          </div>}
         </nav>
         <div className="manager-sidebar-footer">
         <div className="admin-profile">
@@ -324,7 +350,8 @@ export default function ManagerApp() {
         <React.Suspense fallback={<PanelLoading/>}>
         {section === "dashboard" && <Dashboard go={go} />}
         {section === "users" && (profileMatch ? <CustomerProfile key={profileMatch[1]} customerId={profileMatch[1]} location={path} go={go} /> : <Users notify={notify} location={path} go={go} />)}{" "}
-        {section === "products" && <Products notify={notify} />}{" "}
+        {section === "products" && <Products notify={notify} readOnly={admin.role === "MANAGER_SALES"} />}{" "}
+        {section === "employees" && <ManagerEmployees />}
         {section === "stock-receipts" && <StockReceiving />}
         {section === "orders" && <Orders notify={notify} />}{" "}
         {section === "invoices" && <ManagerInvoices />}

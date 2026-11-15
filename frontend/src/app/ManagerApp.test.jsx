@@ -20,9 +20,9 @@ const deferred = () => {
 };
 beforeEach(() => {
   vi.resetAllMocks();
-  window.history.replaceState({}, "", "/manager");
+  window.history.replaceState({}, "", "/manager/dashboard");
   window.localStorage.clear();
-  adminRefreshSession.mockResolvedValue({ manager: { fullName: "Test Admin" } });
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: "Test Admin", role: "MANAGER_SALES" } });
   adminApi.mockResolvedValue({ content: [] });
 });
 afterEach(cleanup);
@@ -41,7 +41,7 @@ it('keeps care, support, and personal-task modules retired while restoring repor
 it.each(["care", "my-tasks", "care-dashboard", "support-tickets"])("redirects retired manager route /manager/%s", async section => {
   window.history.replaceState({}, "", `/manager/${section}`);
   render(<ManagerApp />);
-  await waitFor(() => expect(window.location.pathname).toBe("/manager"));
+  await waitFor(() => expect(window.location.pathname).toBe("/manager/orders"));
   expect(screen.queryByText("Chăm sóc khách hàng")).toBeNull();
   expect(screen.queryByText("Phiếu hỗ trợ")).toBeNull();
 });
@@ -68,6 +68,50 @@ it('keeps the invoices section instead of redirecting to the dashboard', async (
   render(<ManagerApp/>);
   await waitFor(() => expect(adminApi.mock.calls.some(([url]) => String(url).startsWith('/api/manager/orders?'))).toBe(true));
   expect(window.location.pathname).toBe('/manager/invoices');
+});
+
+it.each([
+  ['MANAGER_SALES', '/manager/orders', ['Đơn hàng', 'Khách hàng', 'Báo cáo', 'Chiến dịch khuyến mãi'], ['Nhập kho', 'Nhân viên']],
+  ['MANAGER_WAREHOUSE', '/manager/products', ['Sản phẩm', 'Nhập kho'], ['Đơn hàng', 'Báo cáo', 'Nhân viên', 'Tổng quan']],
+  ['MANAGER_HR', '/manager/employees', ['Nhân viên'], ['Đơn hàng', 'Sản phẩm', 'Nhập kho', 'Báo cáo', 'Tổng quan']],
+])('routes %s to its landing page and filters navigation', async (role, landing, visible, hidden) => {
+  window.history.replaceState({}, '', '/manager');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Role test', role } });
+  render(<ManagerApp />, { wrapper });
+  const heading = landing === '/manager/products' ? 'Sản phẩm' : landing === '/manager/employees' ? 'Nhân viên' : 'Đơn hàng';
+  await screen.findByRole('heading', { name: heading, level: 1 });
+  expect(window.location.pathname).toBe(landing);
+  const navigation = screen.getByRole('navigation', { name: 'Chức năng quản lý' });
+  for (const label of visible) expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(true);
+  for (const label of hidden) expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(false);
+});
+
+it.each([
+  ['MANAGER_HR', '/manager/orders', '/manager/employees', '/api/manager/orders'],
+  ['MANAGER_WAREHOUSE', '/manager/reports', '/manager/products', '/api/manager/reports'],
+  ['MANAGER_SALES', '/manager/stock-receipts', '/manager/orders', '/api/manager/stock-receipts'],
+])('redirects %s away from restricted routes before loading their data', async (role, restricted, landing, forbiddenEndpoint) => {
+  window.history.replaceState({}, '', restricted);
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Role test', role } });
+  render(<ManagerApp />, { wrapper });
+  await waitFor(() => expect(window.location.pathname).toBe(landing));
+  expect(adminApi.mock.calls.some(([url]) => String(url).startsWith(forbiddenEndpoint))).toBe(false);
+});
+
+it('shows Sales product lookup without write controls while Warehouse retains them', async () => {
+  window.history.replaceState({}, '', '/manager/products');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Sales', role: 'MANAGER_SALES' } });
+  const sales = render(<ManagerApp />, { wrapper });
+  await screen.findByRole('heading', { name: 'Sản phẩm', level: 1 });
+  expect(screen.queryByRole('button', { name: 'Thêm sản phẩm' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Sửa', exact: true })).toBeNull();
+  sales.unmount();
+
+  window.history.replaceState({}, '', '/manager/products');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Warehouse', role: 'MANAGER_WAREHOUSE' } });
+  render(<ManagerApp />, { wrapper });
+  await screen.findByRole('heading', { name: 'Sản phẩm', level: 1 });
+  expect(await screen.findByRole('button', { name: 'Thêm sản phẩm' })).toBeTruthy();
 });
 
 describe("manager list lifecycle", () => {
@@ -402,8 +446,8 @@ describe("manager navigation", () => {
       window.history.replaceState({}, "", "/manager/invalid");
       window.dispatchEvent(new PopStateEvent("popstate"));
     });
-    await screen.findByRole("heading", { name: "Tổng quan", level: 1 });
-    expect(window.location.pathname).toBe("/manager");
+    await screen.findByRole("heading", { name: "Đơn hàng", level: 1 });
+    expect(window.location.pathname).toBe("/manager/orders");
   });
 });
 

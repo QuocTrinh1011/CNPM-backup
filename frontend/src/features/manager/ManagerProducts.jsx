@@ -6,7 +6,7 @@ import { adminApi, adminEndpoints } from "../../api/manager-api";
 import { money, pageData } from "./manager-data";
 import { ListError, PageControls, PanelLoading, PanelTitle, Table } from "./ManagerComponents";
 
-export default function Products({ notify }) {
+export default function Products({ notify, readOnly = false }) {
   const [filters,changeFilters]=useManagerFilters({q:'',category:'',minPrice:'',maxPrice:'',stock:'ALL',active:'true',sort:'createdAt',direction:'DESC',page:'0'});
   const endpoint=useCallback(()=>adminEndpoints.products(filters),[filters]);
   const { data:previousData, load, loading, error,stale } = useAdminList(endpoint,{keepPreviousData:true});
@@ -174,13 +174,13 @@ export default function Products({ notify }) {
           <span className="admin-toolbar-count">
             {data?.totalElements ?? filteredProducts.length} sản phẩm
           </span>
-          <button
+          {!readOnly && <button
             type="button"
             className="admin-primary admin-btn-with-icon"
             onClick={openAdd}
           >
             <Plus size={16} /> Thêm sản phẩm
-          </button>
+          </button>}
         </div>
       </div>
 
@@ -241,7 +241,7 @@ export default function Products({ notify }) {
               </span>
             </td>
             <td>
-              <div className="admin-table-row-actions">
+              {!readOnly && <div className="admin-table-row-actions">
                 <button
                   type="button"
                   className="admin-action"
@@ -256,7 +256,7 @@ export default function Products({ notify }) {
                 >
                   Ẩn
                 </button>
-              </div>
+              </div>}
             </td>
           </tr>
         ))}
