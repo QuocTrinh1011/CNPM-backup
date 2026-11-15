@@ -10,7 +10,7 @@ $env:VITE_API_BASE_URL='http://localhost:8080'
 npm run dev
 ```
 
-The default API base URL is `http://localhost:8080`. Copy `.env.example` to `.env.local` to override it, then restart Vite. Run `npm run dev:user` on port 5173, `npm run dev:admin` on port 5174, and `npm run dev:manager` on port 5175 in separate terminals. All three connect to the same backend and use separate sessions. Admin list screens call `/api/admin/users`, `/products`, `/orders`, `/feedback`, and `/surveys`; dashboard cards call the revenue, user, and survey report endpoints.
+The default API base URL is `http://localhost:8080`. Copy `.env.example` to `.env.local` to override it, then restart Vite. Run `npm run dev:user` on port 5173, `npm run dev:admin` on port 5174, and `npm run dev:manager` on port 5175 in separate terminals. All three connect to the same backend and use separate sessions. Admin list screens call `/api/admin/users`, `/products`, `/orders`, `/feedback`, and `/surveys`. The Manager reports page calls `/api/manager/reports?year=2026&month=11`; omit `month` for a yearly view. It shows captured order income, posted stock-receipt costs, popular product variants, customer purchases, and receipt activity by receipt creator. COD is dated by collection time, other paid orders by creation time, and report periods use Vietnam local time.
 
 ## Windows desktop app
 
@@ -56,7 +56,7 @@ Feature component tests and component-only styles live beside their component. A
 
 Dependency direction: app/ may import features/ and shared/; features/ may import shared/. Features do not import each other, and shared code does not import from app or features. A Vitest guard checks these boundaries.
 
-The frontend no longer exposes refund, support-ticket, customer-care, personal-task, or report screens. Backend and database code are outside this frontend refactor.
+The frontend still excludes refund, support-ticket, customer-care, and personal-task screens. Manager reporting is limited to captured order income and stock-receipt costs; its employee view identifies who created stock receipts and does not attribute sales to staff. Backend and database code are outside this frontend refactor.
 
 ## Implemented customer flows
 

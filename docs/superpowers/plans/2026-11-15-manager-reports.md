@@ -153,15 +153,15 @@ git commit -m "feat(reports): restore manager reports navigation"
 **Files:**
 - Modify: `frontend/README.md`
 
-- [ ] **Step 1: Document the Manager report page and definitions**
+- [x] **Step 1: Document the Manager report page and definitions**
 
 Replace statements that say Manager has no report screen; explain the new read-only income/stock-receipt report and its data limits, including employee activity being based on stock receipt creators. Leave the root migration history unchanged because it correctly documents the historical removal in migration 020.
 
-- [ ] **Step 2: Build every Vite mode and backend compilation**
+- [x] **Step 2: Build every Vite mode and backend compilation**
 
 Run `cd backend && mvn -q test`, `cd frontend && npm test`, `npx vite build --mode user`, `npx vite build --mode admin`, and `npx vite build --mode manager`. All commands must exit successfully; report any PostgreSQL-only test that is skipped or blocked because the environment lacks a database.
 
-- [ ] **Step 3: Review the final diff and commit documentation**
+- [x] **Step 3: Review the final diff and commit documentation**
 
 Confirm no SQL schema/migration, care/support/task, refund, or checkout changes were introduced, and `git diff --check` is clean.
 
