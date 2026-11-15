@@ -129,19 +129,19 @@ git commit -m "feat(reports): add manager reports page"
 - Modify: `frontend/src/app/ManagerApp.jsx`
 - Modify: `frontend/src/app/ManagerApp.test.jsx` (update existing navigation/retired-route expectations; do not add a test file)
 
-- [ ] **Step 1: Register the report section and icon**
+- [x] **Step 1: Register the report section and icon**
 
 Add `reports` / “Báo cáo” to `navItems`, add a chart icon, and allow direct `/manager/reports` normalization.
 
-- [ ] **Step 2: Lazy-load the report feature**
+- [x] **Step 2: Lazy-load the report feature**
 
 Load `ManagerReports` with `React.lazy` and render it for the `reports` section, passing the current location and `go` callback. Keep all retired modules and routes retired.
 
-- [ ] **Step 3: Align existing Manager route expectations**
+- [x] **Step 3: Align existing Manager route expectations**
 
 Update the existing tests that currently expect “Báo cáo” to be absent and `/manager/reports` to redirect. Retain the retired-route expectations for care, personal tasks, and support tickets.
 
-- [ ] **Step 4: Commit the Manager route**
+- [x] **Step 4: Commit the Manager route**
 
 ```bash
 git add frontend/src/app/ManagerApp.jsx frontend/src/app/ManagerApp.test.jsx

@@ -17,6 +17,7 @@ const CustomerProfile = React.lazy(() => import('../features/manager/CustomerPro
 const StockReceiving = React.lazy(()=>import('../features/manager/StockReceiving'));
 const ManagerInvoices = React.lazy(()=>import('../features/manager/ManagerInvoices'));
 const PromotionCampaigns = React.lazy(() => import('../features/manager/PromotionCampaigns'));
+const ManagerReports = React.lazy(() => import('../features/manager/ManagerReports'));
 import {
   Activity,
   LayoutDashboard,
@@ -38,7 +39,8 @@ import {
   Plus,
   ChevronRight,
   Sparkles,
-  ReceiptText
+  ReceiptText,
+  BarChart3
 } from "lucide-react";
 import {
   adminApi,
@@ -59,6 +61,7 @@ const navItems = [
   ["surveys", "Khảo sát"],
   ["vouchers", "Voucher"],
   ["promotions", "Chiến dịch khuyến mãi"],
+  ["reports", "Báo cáo"],
 ];
 const validSections = new Set(navItems.map(([key]) => key));
 const navIcons = {
@@ -72,6 +75,7 @@ const navIcons = {
   surveys: ClipboardList,
   vouchers: TicketPercent,
   promotions: Sparkles,
+  reports: BarChart3,
 };
 const userOrigin = import.meta.env.VITE_USER_ORIGIN || "http://localhost:5173";
 const normalizeAdminPath = (value) => {
@@ -328,6 +332,7 @@ export default function ManagerApp() {
         {section === "surveys" && <Surveys notify={notify} location={path} go={go} />}
         {section === "vouchers" && <AdminVouchers />}
         {section === "promotions" && <PromotionCampaigns />}
+        {section === "reports" && <ManagerReports location={path} go={go} />}
         </React.Suspense>
       </main>
       {notice && (

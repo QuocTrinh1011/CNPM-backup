@@ -26,24 +26,33 @@ beforeEach(() => {
   adminApi.mockResolvedValue({ content: [] });
 });
 afterEach(cleanup);
-it('hides retired care, support, task, and report modules', async () => {
+it('keeps care, support, and personal-task modules retired while restoring reports', async () => {
   window.history.replaceState({}, "", "/manager");
   render(<ManagerApp />);
   const navigation = await screen.findByRole("navigation", { name: "Chức năng quản lý" });
-  for (const label of ["Chăm sóc khách hàng", "Việc của tôi", "Hiệu quả chăm sóc", "Phiếu hỗ trợ", "Báo cáo"]) {
+  for (const label of ["Chăm sóc khách hàng", "Việc của tôi", "Hiệu quả chăm sóc", "Phiếu hỗ trợ"]) {
     expect([...navigation.querySelectorAll("a,button")].some(item => item.textContent.includes(label))).toBe(false);
   }
+  expect([...navigation.querySelectorAll("a,button")].some(item => item.textContent.includes("Báo cáo"))).toBe(true);
   expect(screen.queryByRole("heading", { name: "Việc của tôi" })).toBeNull();
   expect(screen.queryByRole("heading", { name: "Báo cáo khách hàng" })).toBeNull();
 });
 
-it.each(["care", "my-tasks", "care-dashboard", "support-tickets", "reports"])("redirects retired manager route /manager/%s", async section => {
+it.each(["care", "my-tasks", "care-dashboard", "support-tickets"])("redirects retired manager route /manager/%s", async section => {
   window.history.replaceState({}, "", `/manager/${section}`);
   render(<ManagerApp />);
   await waitFor(() => expect(window.location.pathname).toBe("/manager"));
   expect(screen.queryByText("Chăm sóc khách hàng")).toBeNull();
   expect(screen.queryByText("Phiếu hỗ trợ")).toBeNull();
-  expect(screen.queryByText("Báo cáo")).toBeNull();
+});
+
+it('opens the reports route and keeps its period filters in the URL', async () => {
+  window.history.replaceState({}, '', '/manager/reports?year=2026&month=2');
+  render(<ManagerApp/>);
+  expect(await screen.findByRole('combobox', { name: 'Loại thống kê' })).toBeTruthy();
+  expect(window.location.pathname).toBe('/manager/reports');
+  expect(window.location.search).toBe('?year=2026&month=2');
+  expect(screen.getByRole('button', { name: 'Báo cáo' }).getAttribute('aria-current')).toBe('page');
 });
 
 it('removes manager supplier tools and redirects the retired route', async () => {
