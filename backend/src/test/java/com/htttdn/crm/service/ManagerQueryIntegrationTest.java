@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:managerQueryTests;MODE=PostgreSQL;DB_CLOSE_DELAY=-1","spring.datasource.driver-class-name=org.h2.Driver","spring.datasource.username=sa","spring.datasource.password=","spring.jpa.database-platform=org.hibernate.dialect.H2Dialect","spring.jpa.hibernate.ddl-auto=create-drop"})
 @AutoConfigureMockMvc @Transactional
 class ManagerQueryIntegrationTest {
- @Autowired EntityManager em; @Autowired ManagerOrderQuery query; @Autowired AdminProductService products;
+ @Autowired EntityManager em; @Autowired ManagerOrderQuery query; @Autowired AdminProductService products; @Autowired ManagerReportsService reports;
  @Autowired MockMvc mvc; @Autowired JwtTokenService jwt;
  User customer,manager,admin;
  @BeforeEach void setup(){customer=user("Buyer","CUSTOMER");manager=user("Staff","MANAGER");admin=user("Root","ADMIN");}
@@ -60,4 +61,38 @@ class ManagerQueryIntegrationTest {
   assertEquals("Quần 2",products.search("Quần","Quần",BigDecimal.valueOf(101),null,"AVAILABLE","true","price","ASC",1,1).getContent().getFirst().getName());
   assertEquals(1,products.search("","",null,null,"ALL","false","name","DESC",0,10).getTotalElements());assertTrue(products.categoryNames().contains("Quần"));
  }
+ @Test void reportsUseVietnamLocalCollectionDatesVariantsAndUnknownReceiptCreators()throws Exception{
+  var category=new Category();category.setName("Áo Nam");em.persist(category);
+  var product=new Product();product.setName("Polo cơ bản");product.setCategoryEntity(category);product.setPrice(new BigDecimal("100.00"));product.setStock(10);em.persist(product);
+
+  var payos=order(1001,"COMPLETED","NONE","PAID");payos.setPaymentMethod("PAYOS");payos.setCreatedAt(Instant.parse("2025-12-31T18:00:00Z"));payos.setTotalAmount(new BigDecimal("100.00"));
+  var payosLine=new OrderItem();payosLine.setOrder(payos);payosLine.setProduct(product);payosLine.setQuantity(2);payosLine.setUnitPrice(new BigDecimal("50.00"));payosLine.setColor("Navy");payosLine.setSize("L");em.persist(payosLine);
+
+  var cod=order(1002,"COMPLETED","NONE","PAID");cod.setPaymentMethod("COD");cod.setCreatedAt(Instant.parse("2025-12-31T15:00:00Z"));cod.codCollectedAt=Instant.parse("2026-01-01T18:00:00Z");cod.codCollectedAmount=new BigDecimal("45.00");cod.setTotalAmount(new BigDecimal("50.00"));
+  var codLine=new OrderItem();codLine.setOrder(cod);codLine.setProduct(product);codLine.setQuantity(1);codLine.setUnitPrice(new BigDecimal("50.00"));codLine.setColor("Đen");codLine.setSize("M");em.persist(codLine);
+
+  var cancelled=order(1003,"CANCELLED","NONE","PAID");cancelled.setPaymentMethod("PAYOS");cancelled.setCreatedAt(Instant.parse("2026-01-02T01:00:00Z"));cancelled.setTotalAmount(new BigDecimal("999.00"));
+  var supplier=new Supplier();supplier.code="RPT-"+UUID.randomUUID();supplier.name="Nhà cung cấp báo cáo";em.persist(supplier);
+  receipt(supplier,manager.getId(),"2026-01-01T10:00:00Z","25.00");
+  receipt(supplier,null,"2026-01-02T10:00:00Z","30.00");
+  em.flush();
+
+  var report=reports.report(2026,1);
+  assertEquals(new BigDecimal("145.00"),report.summary().totalIncome());
+  assertEquals(new BigDecimal("55.00"),report.summary().totalExpense());
+  assertEquals(new BigDecimal("90.00"),report.summary().netBalance());
+  assertEquals(2,report.summary().paidOrdersCount());assertEquals(2,report.summary().stockReceiptsCount());
+  assertEquals("Tháng 1",reports.report(2026,null).trend().getFirst().label());
+  assertEquals("100.00",report.topProducts().stream().filter(row->"Navy".equals(row.color())).findFirst().orElseThrow().totalRevenue().toPlainString());
+  assertEquals(2,report.topCustomers().getFirst().orderCount());
+  assertEquals(2,report.employeeActivities().size());
+  assertTrue(report.employeeActivities().stream().anyMatch(row->row.employeeId()==null&&row.fullName().equals("Hệ thống / Không xác định")));
+  assertEquals(100.0,report.trend().getFirst().income().doubleValue());
+  assertEquals(45.0,report.trend().get(1).income().doubleValue());
+  assertEquals(25.0,report.trend().getFirst().expense().doubleValue());
+  mvc.perform(get("/api/manager/reports?year=2026&month=1").header("Authorization","Bearer "+jwt.issue(manager.getId(),manager.getRole())))
+   .andExpect(status().isOk()).andExpect(jsonPath("$.summary.totalIncome").value(145.0)).andExpect(jsonPath("$.trend.length()").value(31));
+  for(User denied:new User[]{customer,admin})mvc.perform(get("/api/manager/reports").header("Authorization","Bearer "+jwt.issue(denied.getId(),denied.getRole()))).andExpect(status().isForbidden());
+ }
+ private void receipt(Supplier supplier,Long creator,String receivedAt,String total){var row=new StockReceipt();row.setReceiptCode("RPT-"+UUID.randomUUID());row.setSupplier(supplier);row.setSupplierCode(supplier.code);row.setSupplierName(supplier.name);row.setReceivedAt(Instant.parse(receivedAt));row.setTotalCost(new BigDecimal(total));row.setCreatedBy(creator);em.persist(row);}
 }
