@@ -56,7 +56,7 @@ Feature component tests and component-only styles live beside their component. A
 
 Dependency direction: app/ may import features/ and shared/; features/ may import shared/. Features do not import each other, and shared code does not import from app or features. A Vitest guard checks these boundaries.
 
-The frontend still excludes refund, support-ticket, customer-care, and personal-task screens. Manager reporting is limited to captured order income and stock-receipt costs; its employee view identifies who created stock receipts and does not attribute sales to staff. Backend and database code are outside this frontend refactor.
+The frontend still excludes refund, support-ticket, customer-care, and personal-task screens. Manager navigation follows the signed-in role: Sales uses the customer/order/report and promotion workflows, Warehouse manages products and stock receipts, and HR reads the employee directory. Sales product lookup is read-only. Admin assigns the roles; `EMPLOYEE` is directory-only and has no login. Manager Reports shows captured order income and stock-receipt costs; its employee activity identifies who created stock receipts and does not attribute sales to staff. Backend authorization remains authoritative if a client calls an unavailable route directly.
 
 ## Implemented customer flows
 

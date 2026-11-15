@@ -49,7 +49,7 @@ Không trả danh sách ID người nhận qua API khảo sát User.
 
 - Integration: nhóm nhiều trang, khóa/xóa/tài khoản nội bộ, so khớp danh sách khách,
   kết hợp điểm/khảo sát/ngày Việt Nam, tính lại trước lưu, cố định sau lưu,
-  phát hành không trùng thông báo, ngoài nhóm không xem/nộp bài, quyền MANAGER.
+  phát hành không trùng thông báo, ngoài nhóm không xem/nộp bài, quyền `MANAGER_SALES`.
 - Frontend: điều hướng từ bộ lọc, loading/rỗng/lỗi preview, phân trang, giữ form,
   không gửi customerIds hay phát hành tự động, số thực tế và back/forward.
 - CustomerActivityPostgresTest bổ sung kiểm tra preview/ID bằng bảng tạm và rollback.

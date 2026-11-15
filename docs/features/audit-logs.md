@@ -4,8 +4,8 @@
 
 Với database hiện có, chạy `database/migrations/016_audit_logs.sql` rồi khởi động lại backend. Script chỉ bổ sung bảng và index, không sửa dữ liệu nghiệp vụ. Database cài mới dùng `database/schema.sql` đã gồm bảng này. Không cần đổi `application.yml`.
 
-- Admin: `/admin/audit-logs`, API `GET /api/admin/audit-logs` trả toàn bộ nhật ký, gồm ADMIN, MANAGER và hai thao tác đơn hàng CUSTOMER bổ sung bên dưới.
-- Manager không có trang hoặc API tra cứu nhật ký. Thao tác Manager vẫn được ghi nhận để Admin tra cứu và hiển thị trong timeline hồ sơ 360°.
+- Admin: `/admin/audit-logs`, API `GET /api/admin/audit-logs` trả toàn bộ nhật ký, gồm ADMIN, `MANAGER_HR`, `MANAGER_WAREHOUSE`, `MANAGER_SALES` và hai thao tác đơn hàng CUSTOMER bổ sung bên dưới.
+- Manager không có trang hoặc API tra cứu nhật ký. Thao tác của các role Manager vẫn được ghi nhận để Admin tra cứu và hiển thị trong timeline hồ sơ 360°.
 - CUSTOMER không được truy cập. Quyền và người thực hiện lấy từ tài khoản đã kiểm tra trong database, không nhận tên/quyền từ header tự khai báo.
 
 ## Phạm vi bản đầu
@@ -19,11 +19,8 @@ Với database hiện có, chạy `database/migrations/016_audit_logs.sql` rồi
 | Voucher chung | Tạo, cập nhật và bật/tắt |
 | Phản hồi | Xử lý, trả lời, ẩn/hiện, xóa mềm |
 | Khảo sát | Tạo, cấu hình thưởng, phát hành/gỡ, xóa mềm |
-| Công việc chăm sóc | Tạo, cập nhật/hoàn thành, tạo công việc kế tiếp (CARE_TASK) |
-| Ghi chú chăm sóc | Thêm ghi chú, chỉ lưu ID khách và người ghi (CARE_NOTE) |
-| Phiếu hỗ trợ | Manager tạo hộ, phân công, xử lý và trả lời/ghi chú (SUPPORT_TICKET); chỉ metadata, không lưu nội dung hội thoại |
 
-Chỉ ghi thao tác thành công, trong cùng transaction với dữ liệu nguồn. Nếu ghi nhật ký lỗi, toàn bộ thao tác rollback. Không dựng lại lịch sử cũ. Không ghi GET, đăng nhập, webhook hoặc tác vụ nền. Các thao tác portal thông thường lấy người thực hiện từ request đã xác thực; service chăm sóc lấy từ JWT và tài khoản MANAGER đã kiểm tra trong database, nên vẫn ghi đúng khi gọi service trực tiếp. Gửi lại chuyển trạng thái đơn/đổi trả không thay đổi dữ liệu không tạo log trùng.
+Chỉ ghi thao tác thành công, trong cùng transaction với dữ liệu nguồn. Nếu ghi nhật ký lỗi, toàn bộ thao tác rollback. Không dựng lại lịch sử cũ. Không ghi GET, đăng nhập, webhook hoặc tác vụ nền. Các thao tác portal lấy người thực hiện từ request đã xác thực. Các màn hình chăm sóc và phiếu hỗ trợ đã được gỡ; bản ghi audit lịch sử của chúng vẫn được giữ nguyên, không tạo thêm loại thao tác mới. Gửi lại chuyển trạng thái đơn/đổi trả không thay đổi dữ liệu không tạo log trùng.
 
 ## Bổ sung lịch sử đơn hàng từ khách
 

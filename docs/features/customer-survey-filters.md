@@ -25,7 +25,7 @@
   giúp khôi phục lựa chọn dù không nằm trên trang tìm kiếm hiện tại.
 - SurveyId không hợp lệ/không tồn tại trả 400, không tự bỏ lọc hay trả nhóm rỗng.
   Không trả đáp án khảo sát, mật khẩu, token hoặc danh sách người nhận qua lookup.
-- Chỉ MANAGER được gọi. Giữ API User, Admin và quy tắc phát hành/thưởng hiện có.
+- Chỉ `MANAGER_SALES` được gọi. Giữ API User, Admin và quy tắc phát hành/thưởng hiện có.
 
 ## Giao diện và kiểm tra
 

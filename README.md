@@ -36,10 +36,13 @@ Dự án gồm ba giao diện độc lập **Khách hàng**, **Admin hệ thốn
 | Vai trò | Giao diện local | Trách nhiệm chính |
 | --- | --- | --- |
 | `CUSTOMER` | <http://localhost:5173> | Mua hàng, quản lý thông tin cá nhân, theo dõi đơn và khảo sát |
-| `ADMIN` | <http://localhost:5174/admin/login> | Quản trị tài khoản ADMIN/MANAGER, tra cứu sản phẩm và xem nhật ký hệ thống |
-| `MANAGER` | <http://localhost:5175/manager/login> | Vận hành cửa hàng, quản lý khách hàng và thực hiện nghiệp vụ CRM |
+| `ADMIN` | <http://localhost:5174/admin/login> | Tạo/quản lý tài khoản nội bộ, cấp quyền, tra cứu sản phẩm và xem nhật ký hệ thống |
+| `MANAGER_SALES` | <http://localhost:5175/manager/login> | Bán hàng, khách hàng, đơn hàng, báo cáo và khuyến mãi; chỉ đọc danh mục sản phẩm |
+| `MANAGER_WAREHOUSE` | <http://localhost:5175/manager/login> | Quản lý sản phẩm, nhà cung cấp, tồn kho và phiếu nhập hàng |
+| `MANAGER_HR` | <http://localhost:5175/manager/login> | Xem danh bạ nhân viên |
+| `EMPLOYEE` | Không đăng nhập | Bản ghi danh bạ do Admin quản lý, không phải tài khoản đăng nhập |
 
-Ba portal sử dụng luồng đăng nhập và phiên riêng. Backend kiểm tra vai trò, trạng thái tài khoản và quyền sở hữu dữ liệu; không chỉ ẩn nút trên giao diện. ADMIN không dùng token của mình để thao tác nghiệp vụ thay MANAGER.
+Ba portal sử dụng luồng đăng nhập và phiên riêng. Các role Manager dùng chung portal nhưng chỉ nhìn thấy chức năng được cấp; backend cũng kiểm tra từng API theo role, HTTP method và đường dẫn. Khi migration 022 được áp dụng, tài khoản `MANAGER` cũ chuyển thành `MANAGER_SALES` và cần đăng nhập lại do phiên refresh cũ bị thu hồi. `EMPLOYEE` chỉ có trong danh bạ và không đăng nhập được.
 
 ## Các chức năng chính
 
@@ -57,25 +60,18 @@ Ba portal sử dụng luồng đăng nhập và phiên riêng. Backend kiểm tr
 
 Các trang thường dùng: `/san-pham/{id}`, `/gio-hang`, `/dat-hang`, `/don-hang`, `/tai-khoan`, `/tai-khoan/voucher`, `/khao-sat`. Đường dẫn `/thanh-toan` phục vụ luồng quay về từ PayOS, không phải trang tạo đơn mới.
 
-### 2. Portal nhân viên quản lý
+### 2. Portal Manager
 
-- **Tổng quan:** chỉ số vận hành và liên kết nhanh đến đúng chức năng/bộ lọc.
-- **Khách hàng:** thêm/sửa, khóa/mở khóa, xóa mềm, tìm kiếm và lọc trên toàn bộ dữ liệu trước phân trang.
-- **Hồ sơ khách hàng:** thông tin liên hệ, địa chỉ, đơn hàng, đánh giá, khảo sát, voucher và lịch sử hoạt động đã được ghi nhận.
-- **Phân nhóm:** chưa mua, mua lần đầu, quay lại, thân thiết; nhãn lâu chưa mua lại. Kết hợp ngày mua, số đơn, giá trị, điểm đánh giá và trạng thái tham gia khảo sát.
-- **Sản phẩm và tồn kho:** quản lý thông tin, danh mục, giá, trạng thái hiển thị và số lượng tồn.
-- **Đơn hàng/đổi trả:** tìm kiếm, lọc, theo dõi thanh toán, cập nhật tiến trình giao hàng; chấp thuận, từ chối hoặc hoàn tất yêu cầu đổi trả theo luồng cho phép.
-- **Phản hồi:** tiếp nhận, trả lời, xử lý, ẩn/hiện và xóa mềm đánh giá.
-- **Khảo sát:** tạo nháp, phát hành/gỡ, thống kê kết quả, chọn tất cả khách hoặc chỉ định người nhận và cấu hình voucher thưởng.
-- **Khảo sát theo nhóm:** tạo bản nháp từ toàn bộ khách khớp bộ lọc, xem trước và chốt người nhận khi lưu; không tự phát hành. Có thể lọc đã/chưa trả lời một khảo sát cụ thể.
-- **Voucher:** quản lý mã giảm giá. Lịch sử hoạt động của khách được xem trong hồ sơ; audit log hệ thống chỉ dành cho Admin.
+- **Sales:** tổng quan, khách hàng và hồ sơ, đơn hàng/đổi trả, hóa đơn, phản hồi, khảo sát, voucher, chiến dịch khuyến mãi và báo cáo. Có thể tra cứu sản phẩm nhưng không sửa sản phẩm hoặc tồn kho.
+- **Warehouse:** quản lý sản phẩm, nhà cung cấp, tồn kho và phiếu nhập hàng/chi tiết phiếu nhập hàng. Có thể đọc thông tin sản phẩm dùng chung nhưng không truy cập dữ liệu bán hàng hoặc khách hàng.
+- **HR:** đọc danh bạ nhân viên; không tạo, sửa, khóa hoặc xóa account và không truy cập nghiệp vụ Sales/Kho.
 
-Các màn hình chính nằm dưới `/manager/*`. Dữ liệu màn hình đang mở được cập nhật mỗi 5 giây; tạm dừng khi tab bị ẩn hoặc người dùng đang nhập/gửi thao tác liên quan.
+Các role đăng nhập tại `/manager/login`; sau đăng nhập hệ thống chuyển Sales đến `/manager/orders`, Warehouse đến `/manager/products`, HR đến `/manager/employees`. Dữ liệu màn hình đang mở được cập nhật mỗi 5 giây; tạm dừng khi tab bị ẩn hoặc người dùng đang nhập/gửi thao tác liên quan.
 
 ### 3. Portal Admin hệ thống
 
 - Xem tổng quan và tra cứu sản phẩm bằng tìm kiếm, bộ lọc, sắp xếp và phân trang.
-- Tạo, sửa, khóa/mở khóa, xóa mềm và đổi quyền tài khoản ADMIN/MANAGER.
+- Tạo, sửa, khóa/mở khóa, xóa mềm và đổi quyền tài khoản ADMIN, MANAGER_HR, MANAGER_WAREHOUSE, MANAGER_SALES và EMPLOYEE. Employee không có mật khẩu đăng nhập; khi chuyển Employee sang role đăng nhập, Admin phải đặt mật khẩu mới.
 - Bảo vệ thao tác tự khóa/xóa/đổi quyền và tài khoản Admin hoạt động cuối cùng.
 - Xem toàn bộ audit log, gồm cả các thao tác quản lý tài khoản nội bộ do Admin thực hiện.
 - Liên kết đến portal Manager và website khách hàng; không thay thế vai trò vận hành của Manager.
@@ -184,7 +180,7 @@ psql -U postgres -d htttdn -v ON_ERROR_STOP=1 -f database/seed/seed_data.sql
 
 `schema.sql` là cấu trúc khởi tạo hiện tại; `seed_data.sql` thêm dữ liệu minh họa cho local/demo. Tuyệt đối không chạy seed trên production. Nếu lỡ nạp vào môi trường thật, đổi mật khẩu của tất cả tài khoản mẫu ngay.
 
-Tài khoản Admin minh họa do seed tạo là `admin@shop.com`, mật khẩu mẫu được ghi trong chính script seed. Chỉ dùng tài khoản mẫu ở local, đổi mật khẩu trước khi triển khai. Đăng nhập Admin để tạo tài khoản `MANAGER` với mật khẩu riêng; **không có tài khoản Manager mặc định**. Khách có thể đăng ký trên website.
+Tài khoản Admin minh họa do seed tạo là `admin@shop.com`, mật khẩu mẫu được ghi trong chính script seed. Chỉ dùng tài khoản mẫu ở local, đổi mật khẩu trước khi triển khai. Đăng nhập Admin để tạo `MANAGER_HR`, `MANAGER_WAREHOUSE` hoặc `MANAGER_SALES` với mật khẩu riêng; **không có tài khoản Manager mặc định**. Account `EMPLOYEE` chỉ dùng trong danh bạ và không cần mật khẩu. Khách có thể đăng ký trên website.
 
 ### 3. Nâng cấp database đã có
 
@@ -200,8 +196,9 @@ Sao lưu, xác định phiên bản schema đã triển khai và đọc migratio
 | Audit log và phiếu hỗ trợ (phiếu hỗ trợ gỡ ở 020) | `016_audit_logs.sql`, `017_support_tickets.sql` |
 | Thống kê doanh thu (lịch sử, gỡ ở 020) và nhập kho | `018_sales_statistics.sql`, `019_stock_receipts.sql` |
 | Gỡ schema tính năng đã bỏ và mô hình CTKM | `020_retire_refund_care_support_reports.sql`, `021_promotion_campaigns.sql` |
+| Tách role Manager và thêm danh bạ Employee | `022_manager_role_split.sql` |
 
-Các script nằm trong `database/migrations/`. Migration 020 xóa dữ liệu nghiệp vụ trong các bảng hoàn tiền, chăm sóc và phiếu hỗ trợ cùng các cột báo cáo đã bỏ; sao lưu database trước khi chạy. Bảng `audit_logs` và các bản ghi lịch sử được giữ nguyên. Migration 021 thêm mô hình campaign CTKM và các rule theo sản phẩm, hóa đơn, voucher. Xem thứ tự và phụ thuộc tại [database/migrations/README.md](database/migrations/README.md).
+Các script nằm trong `database/migrations/`. Migration 020 xóa dữ liệu nghiệp vụ trong các bảng hoàn tiền, chăm sóc và phiếu hỗ trợ cùng các cột báo cáo đã bỏ; sao lưu database trước khi chạy. Bảng `audit_logs` và các bản ghi lịch sử được giữ nguyên. Migration 021 thêm mô hình campaign CTKM và các rule theo sản phẩm, hóa đơn, voucher. Migration 022 chuyển account Manager cũ sang `MANAGER_SALES` và thu hồi phiên đăng nhập Manager hiện tại; người dùng cần đăng nhập lại. Xem thứ tự và phụ thuộc tại [database/migrations/README.md](database/migrations/README.md).
 
 `database/maintenance/cleanup_legacy.sql` dành cho dữ liệu/cấu trúc cũ, **không phải bước cài đặt mặc định**. Chỉ dùng khi đã hiểu nội dung, có bản sao lưu và đã kiểm thử trên bản sao. Khởi động lại backend sau khi cập nhật migration/mã nguồn; chạy SQL không tự nạp endpoint mới vào tiến trình Java đang chạy.
 

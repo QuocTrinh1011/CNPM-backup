@@ -5,7 +5,7 @@ Trang chỉ tổng hợp dữ liệu; không thêm ghi chú, không sửa địa
 
 ## API chỉ đọc
 
-Tất cả endpoint dưới `/api/manager/users/{id}/profile` chỉ chấp nhận phiên MANAGER hiện còn hiệu lực:
+Tất cả endpoint dưới `/api/manager/users/{id}/profile` chỉ chấp nhận phiên `MANAGER_SALES` hiện còn hiệu lực:
 
 - `GET /`: thông tin customer và chỉ số tổng hợp.
 - `GET /addresses`, `/orders`, `/feedback`, `/surveys`, `/vouchers`, `/voucher-usages`.

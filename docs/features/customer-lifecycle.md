@@ -19,7 +19,7 @@ Trang `/manager/users` và `/manager/users/{id}` tính tự động từ đơn `
 | sort | createdAt, completedOrders, completedValue, lastPurchaseAt |
 | direction | asc hoặc desc; mặc định desc |
 
-Ngày mua trống xếp cuối; cùng chỉ số sắp theo ID giảm dần. Tìm kiếm escape ký tự `%`, `_`, `!`. Truy vấn tổng hợp một dòng trên một customer trước lọc, sắp xếp và phân trang; không nối các dòng sản phẩm. Chỉ MANAGER được truy cập; khách khóa vẫn có, khách xóa mềm và tài khoản nội bộ không có. DTO không có mật khẩu/token.
+Ngày mua trống xếp cuối; cùng chỉ số sắp theo ID giảm dần. Tìm kiếm escape ký tự `%`, `_`, `!`. Truy vấn tổng hợp một dòng trên một customer trước lọc, sắp xếp và phân trang; không nối các dòng sản phẩm. Chỉ `MANAGER_SALES` được truy cập; khách khóa vẫn có, khách xóa mềm và tài khoản nội bộ không có. DTO không có mật khẩu/token.
 
 Bộ lọc nằm trong URL; quay về danh sách từ hồ sơ giữ bộ lọc. Polling 5 giây giữ dữ liệu cũ khi mất kết nối và tạm dừng khi đang sửa/thao tác. Không thêm schema, tác vụ nền, thông báo hay chiến dịch.
 
