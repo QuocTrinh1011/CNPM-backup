@@ -251,24 +251,26 @@ WHERE NOT EXISTS (
     SELECT 1 FROM customers AS account WHERE lower(account.email) = demo.email
 );
 
-INSERT INTO employee_profiles(employee_id, employee_code, job_title, permission_profile, hire_date)
+INSERT INTO employee_profiles(employee_id, employee_code, job_title, permission_profile, work_area, hire_date)
 SELECT account.customer_id,
        demo.employee_code,
        demo.job_title,
        'STAFF',
+       demo.work_area,
        current_date
 FROM customers AS account
 JOIN (VALUES
-    ('qlnhansu@shop.com', 'HR-001', 'Quản lý nhân sự'),
-    ('nvbh01@shop.com', 'SALES-001', 'Nhân viên bán hàng'),
-    ('nvbh02@shop.com', 'SALES-002', 'Nhân viên bán hàng'),
-    ('nvbh03@shop.com', 'SALES-003', 'Nhân viên bán hàng'),
-    ('nvkho01@shop.com', 'WAREHOUSE-001', 'Nhân viên kho'),
-    ('nvkho02@shop.com', 'WAREHOUSE-002', 'Nhân viên kho'),
-    ('nvkho03@shop.com', 'WAREHOUSE-003', 'Nhân viên kho')
-) AS demo(email, employee_code, job_title)
+    ('qlnhansu@shop.com', 'HR-001', 'Quản lý nhân sự', 'GENERAL'),
+    ('nvbh01@shop.com', 'SALES-001', 'Nhân viên bán hàng', 'SALES'),
+    ('nvbh02@shop.com', 'SALES-002', 'Nhân viên bán hàng', 'SALES'),
+    ('nvbh03@shop.com', 'SALES-003', 'Nhân viên bán hàng', 'SALES'),
+    ('nvkho01@shop.com', 'WAREHOUSE-001', 'Nhân viên kho', 'WAREHOUSE'),
+    ('nvkho02@shop.com', 'WAREHOUSE-002', 'Nhân viên kho', 'WAREHOUSE'),
+    ('nvkho03@shop.com', 'WAREHOUSE-003', 'Nhân viên kho', 'WAREHOUSE')
+) AS demo(email, employee_code, job_title, work_area)
   ON lower(account.email) = demo.email
-ON CONFLICT (employee_id) DO NOTHING;
+ON CONFLICT (employee_id) DO UPDATE
+SET work_area = EXCLUDED.work_area;
 
 INSERT INTO survey_definitions(title, description, status, starts_at)
 SELECT 'Gu thời trang của bạn', 'Trả lời nhanh để ANH LỚN SHOP gợi ý những món đồ hợp với bạn hơn.', 'PUBLISHED', now()
@@ -291,3 +293,26 @@ CROSS JOIN (VALUES
 ) AS q(text, type, display_order, options_json)
 WHERE s.title = 'Gu thời trang của bạn'
   AND NOT EXISTS (SELECT 1 FROM survey_questions existing WHERE existing.survey_id = s.id AND existing.display_order = q.display_order);
+
+-- Fresh-install demo products are inserted after schema.sql's migration snapshot.
+-- Add opening balances only when neither an upgrade nor an earlier seed recorded one.
+INSERT INTO warehouse_finished_stock(product_id, quantity)
+SELECT product_id, 0 FROM products
+ON CONFLICT (product_id) DO NOTHING;
+
+INSERT INTO inventory_movements(
+    item_type, item_id, location, scope_id, quantity_delta, quantity_after,
+    movement_type, reference_type, reference_id, actor_id, actor_name, actor_role, created_at
+)
+SELECT 'PRODUCT', p.product_id, 'SELLABLE', NULL, p.quantity_remaining,
+       p.quantity_remaining, 'OPENING', 'SEED_OPENING', p.product_id,
+       NULL, 'System (demo seed opening balance)', 'SYSTEM', now()
+FROM products p
+WHERE NOT EXISTS (
+    SELECT 1 FROM inventory_movements m
+    WHERE m.item_type = 'PRODUCT'
+      AND m.item_id = p.product_id
+      AND m.location = 'SELLABLE'
+      AND m.movement_type = 'OPENING'
+)
+ON CONFLICT DO NOTHING;
