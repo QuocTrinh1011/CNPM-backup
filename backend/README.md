@@ -1,6 +1,6 @@
 # CRM Admin Backend
 
-Java 21 / Spring Boot REST backend for the Vietnamese men's clothing customer portal and the existing admin CRM module. PostgreSQL is accessed through Spring Data JPA; Hibernate validates the application schema. The default database is `cnpm_crm`, isolated for this CNPM project.
+Java 21 / Spring Boot REST backend for the Vietnamese men's clothing customer portal and the existing admin CRM module. PostgreSQL is accessed through Spring Data JPA; Hibernate validates the application schema. The default database is `cnpm`, isolated for this CNPM project.
 
 ## Package structure
 
@@ -19,7 +19,7 @@ com.htttdn.crm
 ## Run locally
 
 ```powershell
-$env:DB_URL='jdbc:postgresql://localhost:5432/cnpm_crm'
+$env:DB_URL='jdbc:postgresql://localhost:5432/cnpm'
 $env:DB_USERNAME='postgres'
 $env:DB_PASSWORD='mat-khau-postgres-cua-ban'
 mvn spring-boot:run
