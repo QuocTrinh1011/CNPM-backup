@@ -11,8 +11,12 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.List;
 
 public interface EmployeeLeaveRequestRepository extends JpaRepository<EmployeeLeaveRequest, Long> {
+    @EntityGraph(attributePaths = {"employee", "employee.account"})
+    @Query("select request from EmployeeLeaveRequest request where request.status = 'APPROVED' and request.startDate <= :endDate and request.endDate >= :startDate")
+    List<EmployeeLeaveRequest> findApprovedOverlapping(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
     @EntityGraph(attributePaths = {"employee", "employee.account", "reviewedBy"})
     Page<EmployeeLeaveRequest> findByEmployee_EmployeeId(Long employeeId, Pageable pageable);
 

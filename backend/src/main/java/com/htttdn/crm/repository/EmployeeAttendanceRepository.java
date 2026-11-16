@@ -35,4 +35,8 @@ public interface EmployeeAttendanceRepository extends JpaRepository<EmployeeAtte
     List<EmployeeAttendance> findMonthForEmployees(@Param("startDate") LocalDate startDate,
                                                    @Param("endDate") LocalDate endDate,
                                                    @Param("employeeIds") List<Long> employeeIds);
+
+    @EntityGraph(attributePaths = {"employee", "employee.account"})
+    @Query("select attendance from EmployeeAttendance attendance where attendance.attendanceDate between :startDate and :endDate order by attendance.attendanceDate, attendance.employee.employeeId")
+    List<EmployeeAttendance> findPayrollRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

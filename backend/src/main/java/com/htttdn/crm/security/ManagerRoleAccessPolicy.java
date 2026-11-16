@@ -49,7 +49,12 @@ public final class ManagerRoleAccessPolicy {
         add(configured, "GET", "/api/manager/hr/payroll-periods", HR);
         add(configured, "POST", "/api/manager/hr/payroll-periods", HR);
         add(configured, "GET", "/api/manager/hr/payroll-periods/" + ID + "/" + ID, HR);
+        add(configured, "POST", "/api/manager/hr/payroll-periods/" + ID + "/" + ID + "/review", HR);
         add(configured, "POST", "/api/manager/hr/payroll-periods/" + ID + "/" + ID + "/publish", HR);
+        add(configured, "POST", "/api/manager/hr/payroll-periods/" + ID + "/" + ID + "/adjustments", HR);
+        add(configured, "POST", "/api/manager/hr/payroll-periods/" + ID + "/" + ID + "/revisions/" + ID, HR);
+        add(configured, "GET", "/api/manager/hr/payroll-settings", HR);
+        add(configured, "PUT", "/api/manager/hr/payroll-settings", HR);
         add(configured, "GET", "/api/manager/hr/reports", HR);
 
         add(configured, "GET", "/api/manager/products", PRODUCT_READERS);

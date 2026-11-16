@@ -84,7 +84,12 @@ class ManagerRoleAccessPolicyTest {
                 route("GET", "/api/manager/hr/payroll-periods", Set.of(HR)),
                 route("POST", "/api/manager/hr/payroll-periods", Set.of(HR)),
                 route("GET", "/api/manager/hr/payroll-periods/2026/11", Set.of(HR)),
+                route("POST", "/api/manager/hr/payroll-periods/2026/11/review", Set.of(HR)),
                 route("POST", "/api/manager/hr/payroll-periods/2026/11/publish", Set.of(HR)),
+                route("POST", "/api/manager/hr/payroll-periods/2026/11/adjustments", Set.of(HR)),
+                route("POST", "/api/manager/hr/payroll-periods/2026/11/revisions/12", Set.of(HR)),
+                route("GET", "/api/manager/hr/payroll-settings", Set.of(HR)),
+                route("PUT", "/api/manager/hr/payroll-settings", Set.of(HR)),
                 route("GET", "/api/manager/hr/reports", Set.of(HR))
         ).toList()) {
             assertEquals(route.allowedRoles(), policy.rolesFor(route.method(), route.path()), route.toString());

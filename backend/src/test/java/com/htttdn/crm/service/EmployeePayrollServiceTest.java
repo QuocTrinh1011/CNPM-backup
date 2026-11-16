@@ -1,0 +1,106 @@
+package com.htttdn.crm.service;
+
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class EmployeePayrollServiceTest {
+    private final PayrollCalculator calculator = new PayrollCalculator();
+
+    @Test
+    void rejectsZeroStandardWorkdays() {
+        assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculate(input("10000000", "0", "0", "0", "0", "0", "0", "0", 0, List.of()), rules()));
+    }
+
+    @Test
+    void doesNotCreateNegativeTakeHomeWhenThereAreNoPaidDays() {
+        var result = calculator.calculate(input("0", "1000000", "20", "0", "0", "0", "0", "0", 0, List.of()),
+                rules("8", "1.5", "2", "3", "0.3", "0.10", "0.20", "0", "0", List.of()));
+
+        assertMoney("0.00", result.employeeDeductions());
+        assertMoney("0.00", result.takeHomePay());
+    }
+
+    @Test
+    void proratesMonthlyBaseByPaidEquivalentHalfDays() {
+        var result = calculator.calculate(input("100000", "0", "2", "0.5", "0", "0", "0", "0", 0, List.of()),
+                rules("8", "1", "1", "1", "0", "0", "0", "0", "0", List.of()));
+
+        assertMoney("25000.00", result.proratedBase());
+        assertMoney("25000.00", result.takeHomePay());
+    }
+
+    @Test
+    void appliesEachConfiguredOvertimeMultiplier() {
+        var result = calculator.calculate(input("10000000", "0", "20", "20", "2", "1", "1", "1", 0, List.of()),
+                rules("8", "1.5", "2", "3", "0.3", "0", "0", "0", "0", List.of()));
+
+        assertMoney("10000000.00", result.proratedBase());
+        assertMoney("518750.00", result.overtimePay());
+        assertMoney("10518750.00", result.takeHomePay());
+    }
+
+    @Test
+    void computesInsuranceProgressiveTaxBenefitsAndDeductionsSeparately() {
+        List<PayrollCalculator.TaxBracket> brackets = List.of(
+                new PayrollCalculator.TaxBracket(new BigDecimal("0"), new BigDecimal("50000"), new BigDecimal("0.05")),
+                new PayrollCalculator.TaxBracket(new BigDecimal("50000"), null, new BigDecimal("0.10")));
+        List<PayrollCalculator.Adjustment> adjustments = List.of(
+                new PayrollCalculator.Adjustment("BENEFIT", "SICK_BENEFIT", "Sick leave benefit", new BigDecimal("10000")),
+                new PayrollCalculator.Adjustment("DEDUCTION", "ADVANCE_REPAYMENT", "Advance repayment", new BigDecimal("1000")));
+        var result = calculator.calculate(input("100000", "50000", "20", "20", "0", "0", "0", "0", 0, adjustments),
+                rules("8", "1", "1", "1", "0", "0.10", "0.20", "10000", "0", brackets));
+
+        assertMoney("5000.00", result.employeeInsurance());
+        assertMoney("6000.00", result.personalIncomeTax());
+        assertMoney("10000.00", result.separateBenefits());
+        assertMoney("12000.00", result.employeeDeductions());
+        assertMoney("10000.00", result.employerContributions());
+        assertMoney("98000.00", result.takeHomePay());
+    }
+
+    @Test
+    void roundsCurrencyToTwoDecimalPlacesHalfUp() {
+        var result = calculator.calculate(input("1", "0", "3", "1", "0", "0", "0", "0", 0, List.of()),
+                rules("8", "1", "1", "1", "0", "0", "0", "0", "0", List.of()));
+
+        assertMoney("0.33", result.proratedBase());
+    }
+
+    @Test
+    void rejectsOverlappingOrGappedTaxBrackets() {
+        var invalidRules = rules("8", "1", "1", "1", "0", "0", "0", "0", "0", List.of(
+                new PayrollCalculator.TaxBracket(new BigDecimal("0"), new BigDecimal("50000"), new BigDecimal("0.05")),
+                new PayrollCalculator.TaxBracket(new BigDecimal("40000"), null, new BigDecimal("0.10"))));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculate(input("100000", "0", "20", "20", "0", "0", "0", "0", 0, List.of()), invalidRules));
+    }
+
+    private static PayrollCalculator.Input input(String salary, String insuranceBase, String workdays,
+                                                 String paidDays, String normal, String rest, String holiday,
+                                                 String night, int dependents, List<PayrollCalculator.Adjustment> adjustments) {
+        return new PayrollCalculator.Input(money(salary), money(insuranceBase), money(workdays), money(paidDays),
+                money(normal), money(rest), money(holiday), money(night), dependents, adjustments);
+    }
+
+    private static PayrollCalculator.Rules rules() {
+        return rules("8", "1", "1", "1", "0", "0", "0", "0", "0", List.of());
+    }
+
+    private static PayrollCalculator.Rules rules(String hoursPerWorkday, String normal, String rest, String holiday,
+                                                  String night, String employeeInsurance, String employerContribution,
+                                                  String personalAllowance, String dependentAllowance,
+                                                  List<PayrollCalculator.TaxBracket> brackets) {
+        return new PayrollCalculator.Rules(money(hoursPerWorkday), money(normal), money(rest), money(holiday), money(night),
+                money(employeeInsurance), money(employerContribution), money(personalAllowance), money(dependentAllowance), brackets);
+    }
+
+    private static BigDecimal money(String value) { return new BigDecimal(value); }
+    private static void assertMoney(String expected, BigDecimal actual) { assertEquals(money(expected), actual); }
+}

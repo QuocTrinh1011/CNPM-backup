@@ -10,8 +10,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
 
 public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile, Long> {
+    @EntityGraph(attributePaths = "account")
+    @Query("select profile from EmployeeProfile profile where profile.account.role = 'EMPLOYEE' and profile.account.deletedAt is null and profile.employmentStatus in ('ACTIVE','RESIGNED') and profile.hireDate <= :periodEnd and (profile.resignationDate is null or profile.resignationDate >= :periodStart) order by profile.employeeId")
+    List<EmployeeProfile> findEligibleForPayroll(@Param("periodStart") LocalDate periodStart, @Param("periodEnd") LocalDate periodEnd);
     Optional<EmployeeProfile> findByEmployeeCodeIgnoreCase(String employeeCode);
     boolean existsByEmployeeCodeIgnoreCase(String employeeCode);
     boolean existsByReportsToEmployeeId(Long employeeId);
