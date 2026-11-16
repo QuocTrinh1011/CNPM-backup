@@ -1,14 +1,15 @@
 // @vitest-environment jsdom
 import React, { StrictMode } from "react";
-import { act, cleanup, configure, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, configure, fireEvent, render, renderHook, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ManagerApp, { useAdminList } from "./ManagerApp";
-import { adminApi, adminRefreshSession } from "../api/manager-api";
+import { adminApi, adminRefreshSession, managerChangePassword } from "../api/manager-api";
 
 vi.mock("../api/manager-api", async (importOriginal) => ({
   ...(await importOriginal()),
   adminApi: vi.fn(),
   adminRefreshSession: vi.fn(),
+  managerChangePassword: vi.fn(),
 }));
 const wrapper = ({ children }) => <StrictMode>{children}</StrictMode>;
 configure({ reactStrictMode: true });
@@ -24,6 +25,7 @@ beforeEach(() => {
   window.localStorage.clear();
   adminRefreshSession.mockResolvedValue({ manager: { fullName: "Test Admin", role: "MANAGER_SALES" } });
   adminApi.mockResolvedValue({ content: [] });
+  managerChangePassword.mockResolvedValue(undefined);
 });
 afterEach(cleanup);
 it('keeps care, support, and personal-task modules retired while restoring reports', async () => {
@@ -36,6 +38,20 @@ it('keeps care, support, and personal-task modules retired while restoring repor
   expect([...navigation.querySelectorAll("a,button")].some(item => item.textContent.includes("Báo cáo"))).toBe(true);
   expect(screen.queryByRole("heading", { name: "Việc của tôi" })).toBeNull();
   expect(screen.queryByRole("heading", { name: "Báo cáo khách hàng" })).toBeNull();
+});
+
+it('allows a manager to change their password from the account menu', async () => {
+  window.history.replaceState({}, '', '/manager');
+  render(<ManagerApp />, { wrapper });
+
+  fireEvent.click(await screen.findByRole('button', { name: 'Đổi mật khẩu' }));
+  const dialog = screen.getByRole('dialog', { name: 'Đổi mật khẩu cá nhân' });
+  fireEvent.change(screen.getByLabelText('MẬT KHẨU HIỆN TẠI'), { target: { value: 'OldPassword123!' } });
+  fireEvent.change(screen.getByLabelText('MẬT KHẨU MỚI (TỐI THIỂU 8 KÝ TỰ)'), { target: { value: 'NewPassword456!' } });
+  fireEvent.change(screen.getByLabelText('XÁC NHẬN MẬT KHẨU MỚI'), { target: { value: 'NewPassword456!' } });
+  fireEvent.click(within(dialog).getByRole('button', { name: 'Đổi mật khẩu' }));
+
+  await waitFor(() => expect(managerChangePassword).toHaveBeenCalledWith('OldPassword123!', 'NewPassword456!'));
 });
 
 it.each(["care", "my-tasks", "care-dashboard", "support-tickets"])("redirects retired manager route /manager/%s", async section => {

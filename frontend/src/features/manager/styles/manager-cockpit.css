@@ -673,3 +673,65 @@
 @media (prefers-reduced-motion: reduce) {
   .manager-shell.admin-shell *, .manager-login.admin-login * { animation: none; transition: none; scroll-behavior: auto; }
 }
+
+.manager-shell.admin-shell .manager-change-pw-btn {
+  margin-bottom: 6px;
+  color: #93c5fd;
+  border-color: rgb(255 255 255 / 9%);
+}
+.manager-shell.admin-shell .manager-change-pw-btn:hover {
+  border-color: rgb(147 197 253 / 35%);
+  background: rgb(147 197 253 / 10%);
+}
+.manager-shell.admin-shell .manager-change-password-backdrop {
+  z-index: 9999;
+  padding: 16px;
+  background: rgb(15 23 42 / 58%);
+}
+.manager-shell.admin-shell .manager-change-password-dialog {
+  color: var(--admin-text, #0f172a);
+  box-shadow: 0 24px 64px rgb(15 23 42 / 22%);
+}
+.manager-shell.admin-shell .manager-change-password-close {
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border: 0;
+  border-radius: 7px;
+  color: var(--admin-muted, #64748b);
+  background: transparent;
+  cursor: pointer;
+}
+.manager-shell.admin-shell .manager-change-password-close:hover { background: var(--admin-border, #e2e8f0); }
+.manager-shell.admin-shell .manager-change-password-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--admin-muted, #64748b);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .035em;
+}
+.manager-shell.admin-shell .manager-change-password-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border, #cbd5e1);
+  border-radius: 8px;
+  color: var(--admin-text, #0f172a);
+  background: var(--admin-input-bg, #fff);
+  font: inherit;
+}
+.manager-shell.admin-shell .manager-change-password-form input:focus {
+  outline: 2px solid rgb(59 130 246 / 30%);
+  border-color: var(--admin-primary, #3b82f6);
+}
+.manager-shell.admin-shell .manager-change-password-error {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border: 1px solid rgb(239 68 68 / 25%);
+  border-radius: 8px;
+  color: #b91c1c;
+  background: #fee2e2;
+  font-size: 13px;
+}

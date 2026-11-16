@@ -50,6 +50,35 @@ public class ManagerAuthService {
     }
 
     @Transactional public void logout(String raw) { if (raw == null || raw.isBlank()) return; refreshTokens.findForUpdate(AuthService.hash(raw)).filter(t -> ManagerRoleAccessPolicy.isManagerRole(t.getAudience())).ifPresent(t -> { if ("ACTIVE".equals(t.getStatus())) { t.setStatus("REVOKED"); t.setRevokeReason("LOGOUT"); t.setRevokedAt(Instant.now()); refreshTokens.save(t); } }); }
+    @Transactional public void changePassword(String authorization, String currentPassword, String newPassword) {
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Vui lòng đăng nhập.");
+        }
+
+        JwtTokenService.Claims claims = jwt.parse(authorization);
+        if (!ManagerRoleAccessPolicy.isManagerRole(claims.role())) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "MANAGER_REQUIRED", "Yêu cầu quyền nhân viên quản lý.");
+        }
+
+        User user = users.findById(claims.userId())
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Không tìm thấy người dùng."));
+        if (!claims.role().equals(user.getRole()) || !ManagerRoleAccessPolicy.isManagerRole(user.getRole()) || user.getDeletedAt() != null) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Phiên làm việc không hợp lệ.");
+        }
+        if (user.isLocked()) {
+            throw new ApiException(HttpStatus.LOCKED, "ACCOUNT_LOCKED", "Tài khoản đang bị khóa.");
+        }
+        if (!encoder.matches(currentPassword == null ? "" : currentPassword, user.getPasswordHash())) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "CURRENT_PASSWORD_INVALID", "Mật khẩu hiện tại không đúng.");
+        }
+        if (newPassword == null || newPassword.length() < 8 || newPassword.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_PASSWORD", "Mật khẩu mới từ 8 ký tự, tối đa 72 byte.");
+        }
+
+        user.setPasswordHash(encoder.encode(newPassword));
+        users.save(user);
+        refreshTokens.revokeByUserId(user.getId());
+    }
     public ResponseCookie cookie(String raw) { return ResponseCookie.from("managerRefreshToken", raw).httpOnly(true).secure(secureCookie).sameSite("Lax").path("/api/manager/auth").maxAge(Duration.ofDays(refreshDays)).build(); }
     public ResponseCookie clearCookie() { return ResponseCookie.from("managerRefreshToken", "").httpOnly(true).secure(secureCookie).sameSite("Lax").path("/api/manager/auth").maxAge(Duration.ZERO).build(); }
     private Session issue(User user, String family) { String raw = UUID.randomUUID() + "." + UUID.randomUUID(); RefreshToken token = new RefreshToken(); token.setUser(user); token.setAudience(user.getRole()); token.setFamilyId(family); token.setTokenHash(AuthService.hash(raw)); token.setExpiresAt(Instant.now().plus(Duration.ofDays(refreshDays))); refreshTokens.save(token); return new Session(jwt.issue(user.getId(), user.getRole()), raw, user); }

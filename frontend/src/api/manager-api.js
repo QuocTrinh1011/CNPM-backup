@@ -73,6 +73,13 @@ export async function adminSignOut() {
   adminAccessToken = null;
 }
 
+export async function managerChangePassword(currentPassword, newPassword) {
+  return await adminApi('/api/manager/auth/change-password', {
+    method: 'POST',
+    body: { currentPassword, newPassword },
+  }, false);
+}
+
 export const adminEndpoints = {
   users: ({ q = '', page = 0, size = 10, ...filters } = {}) => `/api/manager/users?q=${encodeURIComponent(q)}&page=${page}&size=${size}${Object.entries(filters).filter(([,v])=>v!==''&&v!=null).map(([k,v])=>`&${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('')}`,
   user: id => `/api/manager/users/${id}`,

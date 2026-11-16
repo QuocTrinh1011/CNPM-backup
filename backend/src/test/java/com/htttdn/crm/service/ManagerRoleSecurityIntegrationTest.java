@@ -9,6 +9,8 @@ import com.htttdn.crm.repository.ProductRepository;
 import com.htttdn.crm.repository.RefreshTokenRepository;
 import com.htttdn.crm.repository.UserRepository;
 import com.htttdn.crm.security.JwtTokenService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,6 +53,7 @@ class ManagerRoleSecurityIntegrationTest {
     @Autowired ManagerAuthService managerAuth;
     @Autowired JwtTokenService jwt;
     @Autowired MockMvc mvc;
+    @PersistenceContext EntityManager entityManager;
 
     @Test
     void eachManagerRoleGetsItsOwnLoginRefreshAudienceAndJwtClaim() {
@@ -77,6 +81,25 @@ class ManagerRoleSecurityIntegrationTest {
         mvc.perform(get("/api/manager/products/1").header("Authorization", "Bearer " + session.accessToken()))
                 .andExpect(status().isForbidden());
         assertThrows(ApiException.class, () -> managerAuth.refresh(session.refreshToken()));
+    }
+
+    @Test
+    void eachManagerRoleCanChangeItsPasswordAndOldRefreshSessionIsRevoked() throws Exception {
+        for (String role : new String[]{"MANAGER_HR", "MANAGER_WAREHOUSE", "MANAGER_SALES"}) {
+            User user = account(role);
+            ManagerAuthService.Session oldSession = managerAuth.login(user.getEmail(), PASSWORD);
+
+            mvc.perform(post("/api/manager/auth/change-password")
+                            .header("Authorization", "Bearer " + oldSession.accessToken())
+                            .contentType("application/json")
+                            .content("{\"currentPassword\":\"" + PASSWORD + "\",\"newPassword\":\"NewPassword456!\"}"))
+                    .andExpect(status().isNoContent());
+
+            entityManager.flush();
+            entityManager.clear();
+            assertDoesNotThrow(() -> managerAuth.login(user.getEmail(), "NewPassword456!"));
+            assertThrows(ApiException.class, () -> managerAuth.refresh(oldSession.refreshToken()));
+        }
     }
 
     @Test
