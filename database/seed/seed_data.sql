@@ -211,6 +211,65 @@ INSERT INTO customers(email, full_name, phone, preferences, password_hash, role)
 SELECT 'admin@shop.com', 'Quản trị viên', NULL, NULL, '$2a$10$8FUcPt6obMuhIBNsf/0pDO2Iwx.umyP60RDcpXxcO7hBiJerhhJJy', 'ADMIN'
 WHERE NOT EXISTS (SELECT 1 FROM customers WHERE email = 'admin@shop.com');
 
+-- HR and employee test accounts: password is "password" (local/demo only).
+-- This BCrypt hash was checked with Spring BCryptPasswordEncoder.
+WITH demo_accounts(email, full_name, role) AS (
+    VALUES
+        ('qlnhansu@shop.com', 'Quản lý nhân sự', 'MANAGER_HR'),
+        ('nvbh01@shop.com', 'Nhân viên bán hàng 01', 'EMPLOYEE'),
+        ('nvbh02@shop.com', 'Nhân viên bán hàng 02', 'EMPLOYEE'),
+        ('nvbh03@shop.com', 'Nhân viên bán hàng 03', 'EMPLOYEE'),
+        ('nvkho01@shop.com', 'Nhân viên kho 01', 'EMPLOYEE'),
+        ('nvkho02@shop.com', 'Nhân viên kho 02', 'EMPLOYEE'),
+        ('nvkho03@shop.com', 'Nhân viên kho 03', 'EMPLOYEE')
+)
+UPDATE customers AS account
+SET full_name = demo.full_name,
+    password_hash = '$2a$10$5e3JotDKvazJWuvExc/S3.FsD54I6dk65pTa4uk/TjYSt.YfenXmC',
+    role = demo.role,
+    locked = FALSE,
+    lock_reason = NULL,
+    deleted_at = NULL
+FROM demo_accounts AS demo
+WHERE lower(account.email) = demo.email;
+
+INSERT INTO customers(email, full_name, password_hash, role)
+SELECT demo.email,
+       demo.full_name,
+       '$2a$10$5e3JotDKvazJWuvExc/S3.FsD54I6dk65pTa4uk/TjYSt.YfenXmC',
+       demo.role
+FROM (VALUES
+    ('qlnhansu@shop.com', 'Quản lý nhân sự', 'MANAGER_HR'),
+    ('nvbh01@shop.com', 'Nhân viên bán hàng 01', 'EMPLOYEE'),
+    ('nvbh02@shop.com', 'Nhân viên bán hàng 02', 'EMPLOYEE'),
+    ('nvbh03@shop.com', 'Nhân viên bán hàng 03', 'EMPLOYEE'),
+    ('nvkho01@shop.com', 'Nhân viên kho 01', 'EMPLOYEE'),
+    ('nvkho02@shop.com', 'Nhân viên kho 02', 'EMPLOYEE'),
+    ('nvkho03@shop.com', 'Nhân viên kho 03', 'EMPLOYEE')
+) AS demo(email, full_name, role)
+WHERE NOT EXISTS (
+    SELECT 1 FROM customers AS account WHERE lower(account.email) = demo.email
+);
+
+INSERT INTO employee_profiles(employee_id, employee_code, job_title, permission_profile, hire_date)
+SELECT account.customer_id,
+       demo.employee_code,
+       demo.job_title,
+       'STAFF',
+       current_date
+FROM customers AS account
+JOIN (VALUES
+    ('qlnhansu@shop.com', 'HR-001', 'Quản lý nhân sự'),
+    ('nvbh01@shop.com', 'SALES-001', 'Nhân viên bán hàng'),
+    ('nvbh02@shop.com', 'SALES-002', 'Nhân viên bán hàng'),
+    ('nvbh03@shop.com', 'SALES-003', 'Nhân viên bán hàng'),
+    ('nvkho01@shop.com', 'WAREHOUSE-001', 'Nhân viên kho'),
+    ('nvkho02@shop.com', 'WAREHOUSE-002', 'Nhân viên kho'),
+    ('nvkho03@shop.com', 'WAREHOUSE-003', 'Nhân viên kho')
+) AS demo(email, employee_code, job_title)
+  ON lower(account.email) = demo.email
+ON CONFLICT (employee_id) DO NOTHING;
+
 INSERT INTO survey_definitions(title, description, status, starts_at)
 SELECT 'Gu thời trang của bạn', 'Trả lời nhanh để ANH LỚN SHOP gợi ý những món đồ hợp với bạn hơn.', 'PUBLISHED', now()
 WHERE NOT EXISTS (SELECT 1 FROM survey_definitions WHERE title = 'Gu thời trang của bạn');
