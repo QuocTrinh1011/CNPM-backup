@@ -27,8 +27,23 @@
 .warehouse-status.status-pending { background: #fff7e6; color: #93370d !important; }
 .warehouse-status.status-approved { background: #ecfdf3; color: #027a48 !important; }
 .warehouse-danger-action { color: #b42318 !important; border-color: #fecdca !important; }
+.warehouse-employee-plans, .warehouse-employee-history-grid { display: grid; gap: 13px; }
+.warehouse-employee-plan { display: grid; gap: 14px; padding: 16px; border: 1px solid var(--admin-border); border-radius: 11px; background: var(--admin-card); color: var(--admin-text); }
+.warehouse-material-breakdown { display: grid; gap: 8px; font-size: 13px; }
+.warehouse-material-breakdown > div { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--admin-border); padding-top: 7px; }
+.warehouse-material-breakdown > div span:last-child { color: var(--admin-muted, #667085); text-align: right; }
+.warehouse-employee-form { background: color-mix(in srgb, var(--admin-primary) 4%, var(--admin-card)); }
+.warehouse-employee-form h4 { margin: 0; }
+.warehouse-employee-history-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.warehouse-employee-history { border: 1px solid var(--admin-border); border-radius: 10px; padding: 14px; background: var(--admin-card); color: var(--admin-text); }
+.warehouse-employee-history h3 { margin: 0 0 10px; font-size: 15px; }
+.warehouse-history-row { display: grid; grid-template-columns: 1fr auto; gap: 5px 10px; padding: 9px 0; border-top: 1px solid var(--admin-border); font-size: 13px; }
+.warehouse-history-row > span:nth-child(2) { color: var(--admin-muted, #667085); }
+.warehouse-history-row .warehouse-status { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
 @media (max-width: 700px) {
   .warehouse-receipt-line, .warehouse-recipe-line { grid-template-columns: 1fr 1fr; }
   .warehouse-receipt-line label:first-child, .warehouse-recipe-line label:first-child { grid-column: 1 / -1; }
   .warehouse-approval-heading { flex-direction: column; }
+  .warehouse-material-breakdown > div { flex-direction: column; }
+  .warehouse-material-breakdown > div span:last-child { text-align: left; }
 }

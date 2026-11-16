@@ -29,6 +29,7 @@ const EmployeeLeaveRequests = React.lazy(() => import('../features/manager/Emplo
 const EmployeeAttendancePage = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeAttendancePage })));
 const EmployeePayrollPage = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeePayrollPage })));
 const EmployeeReportPage = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeReportPage })));
+const WarehouseEmployeeWorkspace = React.lazy(() => import('../features/manager/WarehouseEmployeeWorkspace'));
 import {
   Activity,
   LayoutDashboard,
@@ -82,6 +83,7 @@ const navItems = [
   ["my-requests", "Đơn nghỉ của tôi"],
   ["my-attendance", "Chấm công của tôi"],
   ["my-payslips", "Phiếu lương của tôi"],
+  ["warehouse-tasks", "Công việc kho"],
   ["my-team", "Nhân viên trong nhóm"],
   ["my-team-attendance", "Chấm công nhóm"],
   ["users", "Khách hàng"],
@@ -139,6 +141,7 @@ const navIcons = {
   'my-requests': ClipboardCheck,
   'my-attendance': CalendarDays,
   'my-payslips': Wallet,
+  'warehouse-tasks': Factory,
   'my-team': UsersRound,
   'my-team-attendance': CalendarDays,
 };
@@ -242,9 +245,12 @@ export default function ManagerApp() {
     if (!admin || path.split('?')[0] === "/manager/login") return;
     if (admin.role === "EMPLOYEE" && !employeeProfileReady) return;
     const pathname = path.split('?')[0];
-    const allowed = admin.role === "EMPLOYEE" && employeeProfile?.permissionProfile === "TEAM_LEAD"
-      ? new Set([...managerRoleSections.EMPLOYEE, "my-team", "my-team-attendance"])
-      : managerRoleSections[admin.role] || new Set();
+    const employeeSections = new Set([
+      ...managerRoleSections.EMPLOYEE,
+      ...(employeeProfile?.permissionProfile === "TEAM_LEAD" ? ["my-team", "my-team-attendance"] : []),
+      ...(employeeProfile?.workArea === "WAREHOUSE" ? ["warehouse-tasks"] : []),
+    ]);
+    const allowed = admin.role === "EMPLOYEE" ? employeeSections : managerRoleSections[admin.role] || new Set();
     if (pathname === "/manager" || !allowed.has(section)) {
       const landing = admin.role === "EMPLOYEE" && employeeProfile?.permissionProfile === "TEAM_LEAD"
         ? "/manager/my-team"
@@ -284,9 +290,11 @@ export default function ManagerApp() {
       />
     );
   const allowedSections = managerRoleSections[admin.role] || new Set();
-  const employeeAllowedSections = admin.role === "EMPLOYEE" && employeeProfile?.permissionProfile === "TEAM_LEAD"
-    ? new Set([...managerRoleSections.EMPLOYEE, "my-team", "my-team-attendance"])
-    : allowedSections;
+  const employeeAllowedSections = new Set([
+    ...managerRoleSections.EMPLOYEE,
+    ...(employeeProfile?.permissionProfile === "TEAM_LEAD" ? ["my-team", "my-team-attendance"] : []),
+    ...(employeeProfile?.workArea === "WAREHOUSE" ? ["warehouse-tasks"] : []),
+  ]);
   const roleSections = admin.role === "EMPLOYEE" ? employeeAllowedSections : allowedSections;
   if (admin.role === "EMPLOYEE" && !employeeProfileReady) return <div className="admin-loading" role="status">Đang tải hồ sơ nhân viên...</div>;
   if (path.split('?')[0] === "/manager" || !roleSections.has(section)) {
@@ -455,6 +463,7 @@ export default function ManagerApp() {
         {section === "my-requests" && <EmployeeLeaveRequests />}
         {section === "my-attendance" && <EmployeeAttendancePage />}
         {section === "my-payslips" && <EmployeePayrollPage />}
+        {section === "warehouse-tasks" && <WarehouseEmployeeWorkspace />}
         {section === "my-team" && <EmployeeAttendancePage team />}
         {section === "my-team-attendance" && <EmployeeAttendancePage team teamAttendance />}
         {section === "stock-receipts" && <StockReceiving />}

@@ -124,6 +124,21 @@ it('routes employees to self-service pages without HR payroll navigation', async
   }
 });
 
+it('adds the warehouse task page only to EMPLOYEE accounts assigned to the warehouse area', async () => {
+  window.history.replaceState({}, '', '/manager');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Warehouse employee', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 43, fullName: 'Warehouse employee', employeeCode: 'E-43', workArea: 'WAREHOUSE', permissionProfile: 'STAFF', employmentStatus: 'ACTIVE' }
+    : url.includes('/warehouse/me/plans?') ? { content: [], totalPages: 0, totalElements: 0 }
+      : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+  const navigation = await screen.findByRole('navigation', { name: 'Chức năng quản lý' });
+  expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes('Công việc kho'))).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: 'Công việc kho' }));
+  expect(await screen.findByRole('heading', { name: 'Công việc kho của tôi', level: 2 })).toBeTruthy();
+});
+
 it('lands team leads on their direct team directory while staff land on their own profile', async () => {
   window.history.replaceState({}, '', '/manager');
   adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Team lead', role: 'EMPLOYEE' } });
