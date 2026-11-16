@@ -6,6 +6,37 @@ import { adminApi, adminEndpoints } from "../../api/manager-api";
 import { money, pageData } from "./manager-data";
 import { ListError, PageControls, PanelLoading, PanelTitle, Table } from "./ManagerComponents";
 
+const emptyProductForm = () => ({
+  name: "",
+  category: "",
+  price: "",
+  stock: 0,
+  description: "",
+  imageUrl: "",
+  colors: "",
+  colorImages: {},
+});
+
+const productColors = (value) => [...new Set(
+  String(value || "").split(",").map((color) => color.trim()).filter(Boolean)
+)];
+
+const colorGalleryFor = (colors, existing = {}) => Object.fromEntries(
+  productColors(colors).map((color) => {
+    const images = Array.isArray(existing[color]) ? [...existing[color]] : [];
+    return [color, images.length ? images : [""]];
+  })
+);
+
+const galleryPayloadFor = (colors, gallery = {}) => Object.fromEntries(
+  productColors(colors).flatMap((color) => {
+    const images = (Array.isArray(gallery[color]) ? gallery[color] : [])
+      .map((url) => String(url || "").trim())
+      .filter(Boolean);
+    return images.length ? [[color, images]] : [];
+  })
+);
+
 export default function Products({ notify, readOnly = false }) {
   const [filters,changeFilters]=useManagerFilters({q:'',category:'',minPrice:'',maxPrice:'',stock:'ALL',active:'true',sort:'createdAt',direction:'DESC',page:'0'});
   const endpoint=useCallback(()=>adminEndpoints.products(filters),[filters]);
@@ -20,25 +51,40 @@ export default function Products({ notify, readOnly = false }) {
   const [editing, setEditing] = useState(null);
   const [confirmArchive, setConfirmArchive] = useState(null);
   useManagerReadPause(dialogOpen || !!confirmArchive);
-  const [form, setForm] = useState({
-    name: "",
-    category: "",
-    price: "",
-    stock: 0,
-    description: "",
-    imageUrl: "",
+  const [form, setForm] = useState(emptyProductForm);
+  const colorsInForm = productColors(form.colors);
+
+  const changeColors = (colors) => setForm((current) => ({
+    ...current,
+    colors,
+    colorImages: colorGalleryFor(colors, current.colorImages),
+  }));
+
+  const changeColorImage = (color, index, value) => setForm((current) => {
+    const images = [...(current.colorImages[color] || [])];
+    images[index] = value;
+    return { ...current, colorImages: { ...current.colorImages, [color]: images } };
   });
+
+  const addColorImage = (color) => setForm((current) => ({
+    ...current,
+    colorImages: {
+      ...current.colorImages,
+      [color]: [...(current.colorImages[color] || []), ""],
+    },
+  }));
+
+  const removeColorImage = (color, index) => setForm((current) => ({
+    ...current,
+    colorImages: {
+      ...current.colorImages,
+      [color]: (current.colorImages[color] || []).filter((_, imageIndex) => imageIndex !== index),
+    },
+  }));
 
   const openAdd = () => {
     setEditing(null);
-    setForm({
-      name: "",
-      category: "",
-      price: "",
-      stock: 0,
-      description: "",
-      imageUrl: "",
-    });
+    setForm(emptyProductForm());
     setDialogOpen(true);
   };
 
@@ -51,6 +97,8 @@ export default function Products({ notify, readOnly = false }) {
       stock: product.stock,
       description: product.description || "",
       imageUrl: product.imageUrl || "",
+      colors: product.colors || "",
+      colorImages: colorGalleryFor(product.colors, product.colorImages || {}),
     });
     setDialogOpen(true);
   };
@@ -73,19 +121,14 @@ export default function Products({ notify, readOnly = false }) {
           method: editing ? "PUT" : "POST",
           body: {
             ...form,
+            colors: productColors(form.colors).join(","),
+            colorImages: galleryPayloadFor(form.colors, form.colorImages),
             price: Number(form.price),
             stock: Number(form.stock),
           },
         }
       );
-      setForm({
-        name: "",
-        category: "",
-        price: "",
-        stock: 0,
-        description: "",
-        imageUrl: "",
-      });
+      setForm(emptyProductForm());
       setEditing(null);
       setDialogOpen(false);
       notify(editing ? "Đã cập nhật sản phẩm." : "Đã thêm sản phẩm mới.");
@@ -377,6 +420,73 @@ export default function Products({ notify, readOnly = false }) {
                     </div>
                   </div>
                 )}
+
+                <div className="admin-form-group span-2">
+                  <label htmlFor="prod-colors">MÀU SẮC (phân cách bằng dấu phẩy)</label>
+                  <input
+                    id="prod-colors"
+                    type="text"
+                    placeholder="Ví dụ: Đen, Trắng, Xanh denim"
+                    value={form.colors}
+                    onChange={(event) => changeColors(event.target.value)}
+                  />
+                  <small>Mỗi màu là một tùy chọn riêng cho khách hàng.</small>
+                </div>
+
+                {colorsInForm.map((color, colorIndex) => {
+                  const images = form.colorImages[color] || [];
+                  return (
+                    <section className="admin-form-group span-2 admin-color-gallery" key={color} aria-labelledby={`prod-color-title-${colorIndex}`}>
+                      <div className="admin-color-gallery-heading">
+                        <h3 id={`prod-color-title-${colorIndex}`}>{color}</h3>
+                        {images.length < 6 && (
+                          <button
+                            type="button"
+                            className="admin-action"
+                            onClick={() => addColorImage(color)}
+                          >
+                            Thêm ảnh cho màu {color}
+                          </button>
+                        )}
+                      </div>
+                      {images.length === 0 && <small>Chưa có ảnh cho màu này.</small>}
+                      {images.map((url, imageIndex) => (
+                        <div className="admin-color-gallery-item" key={`${color}-${imageIndex}`}>
+                          <label htmlFor={`prod-color-image-${colorIndex}-${imageIndex}`}>
+                            URL ảnh {color} {imageIndex + 1}
+                          </label>
+                          <input
+                            id={`prod-color-image-${colorIndex}-${imageIndex}`}
+                            type="text"
+                            inputMode="url"
+                            pattern="https://[^ ]+|/(?!/).*"
+                            placeholder="https://... hoặc /uploads/..."
+                            title="Nhập URL HTTPS hoặc đường dẫn cùng máy chủ bắt đầu bằng /"
+                            value={url}
+                            onChange={(event) => changeColorImage(color, imageIndex, event.target.value)}
+                          />
+                          <button
+                            type="button"
+                            className="admin-action danger-text"
+                            aria-label={`Xóa ảnh ${color} ${imageIndex + 1}`}
+                            onClick={() => removeColorImage(color, imageIndex)}
+                          >
+                            Xóa
+                          </button>
+                          {url && (
+                            <img
+                              className="admin-color-gallery-preview"
+                              src={url}
+                              alt={`Ảnh xem trước màu ${color} ${imageIndex + 1}`}
+                              onError={(event) => { event.currentTarget.style.display = "none"; }}
+                              onLoad={(event) => { event.currentTarget.style.display = "block"; }}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </section>
+                  );
+                })}
 
                 <div className="admin-form-group span-2">
                   <label htmlFor="prod-desc">MÔ TẢ CHI TIẾT</label>

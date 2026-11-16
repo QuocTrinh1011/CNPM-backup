@@ -5,7 +5,7 @@
 Chạy **`database/migrations/005_voucher_management.sql`** trước khi khởi động backend mới:
 
 ```sh
-psql -h localhost -U postgres -d cnpm_crm -v ON_ERROR_STOP=1 -f database/migrations/005_voucher_management.sql
+psql -h localhost -U postgres -d cnpm -v ON_ERROR_STOP=1 -f database/migrations/005_voucher_management.sql
 ```
 
 Database mới dùng `database/schema.sql`. Không cần thay đổi `application.yml`.

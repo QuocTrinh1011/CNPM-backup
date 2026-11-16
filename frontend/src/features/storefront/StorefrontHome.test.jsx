@@ -27,3 +27,25 @@ it('opens the real featured product and uses the existing image resolver', () =>
   expect(onProduct).toHaveBeenCalledWith(product);
   expect(screen.queryByText('08')).toBeNull();
 });
+
+it('uses a matching product photo in the collection tile', () => {
+  const product = {
+    id: 8,
+    name: 'Áo thun trắng',
+    category: 'Áo thun',
+    imageUrl: '/legacy.jpg',
+    colors: 'Trắng,Đen',
+    colorImages: { Trắng: ['/white-tee.jpg'], Đen: ['/black-tee.jpg'] },
+  };
+  render(
+    <StorefrontHome
+      products={[product]}
+      onCatalog={vi.fn()}
+      imageSrc={src => `https://shop.test${src}`}
+    />
+  );
+
+  const tile = screen.getByRole('button', { name: /01.*Áo thun/ });
+  expect(tile.querySelector('img')).not.toBeNull();
+  expect(tile.querySelector('img').getAttribute('src')).toBe('https://shop.test/white-tee.jpg');
+});

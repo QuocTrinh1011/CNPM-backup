@@ -1,10 +1,20 @@
 import React from 'react';
 import { ArrowUpRight, ArrowRight, Shirt, Layers, MoveUpRight, Sparkles, Zap } from 'lucide-react';
+import { firstProductColor, imagesForColor } from './product-image-gallery';
 
 const EDITORIAL_IMAGE = '/images/figma/daily-uniform.png';
+const COLLECTIONS = [
+  ['Áo thun', 'Dễ mặc. Dễ là chính mình.', '01', Shirt],
+  ['Áo khoác', 'Thêm một lớp cá tính.', '02', Layers],
+  ['Áo polo', 'Chỉn chu, không gò bó.', '03', Shirt],
+  ['Quần', 'Thoải mái theo từng bước.', '04', Layers],
+];
 
 export default function StorefrontHome({ products = [], onCatalog, onProduct, imageSrc = value => value }) {
   const featured = products.find(product => product.imageUrl) || null;
+  const featuredImage = featured
+    ? imagesForColor(featured, firstProductColor(featured))[0] || featured.imageUrl
+    : null;
   return <>
     <section className="shop-editorial" aria-label="Khám phá phong cách Anh Lớn Shop">
       <div className="shop-editorial-copy">
@@ -22,7 +32,7 @@ export default function StorefrontHome({ products = [], onCatalog, onProduct, im
       <div className="shop-editorial-visual">
         <img
           className="shop-editorial-image"
-          src={featured ? imageSrc(featured.imageUrl) : EDITORIAL_IMAGE}
+          src={featured ? imageSrc(featuredImage) : EDITORIAL_IMAGE}
           alt={featured ? featured.name : 'Phong cách menswear tối giản của Anh Lớn Shop'}
           fetchPriority="high"
           onError={event => {
@@ -38,12 +48,36 @@ export default function StorefrontHome({ products = [], onCatalog, onProduct, im
     <div className="shop-style-line" aria-hidden="true"><span><Zap size={14}/> FORM FIRST</span><i/><span><Sparkles size={14}/> MADE TO MOVE</span><i/><span>YOUR DAILY ROTATION</span></div>
     <section className="shop-collections" aria-labelledby="shop-collection-title">
       <div className="shop-section-title"><div><p className="shop-eyebrow">TÌM PHONG CÁCH CỦA BẠN</p><h2 id="shop-collection-title">Tủ đồ, theo cách của bạn.</h2></div><button className="shop-text-link" onClick={() => onCatalog('')}>Tất cả danh mục <ArrowUpRight size={18}/></button></div>
-      <div className="shop-collection-grid">{[
-        ['Áo thun','Dễ mặc. Dễ là chính mình.','01',Shirt],
-        ['Áo khoác','Thêm một lớp cá tính.','02',Layers],
-        ['Áo polo','Chỉn chu, không gò bó.','03',Shirt],
-        ['Quần','Thoải mái theo từng bước.','04',Layers],
-      ].map(([name, subtitle, number, Icon]) => <button className="shop-collection-tile" key={name} onClick={() => onCatalog(name)}><div className="shop-collection-top"><span>{number}</span><Icon size={30} strokeWidth={1.3}/></div><div><h3>{name}</h3><p>{subtitle}</p></div><ArrowUpRight className="shop-collection-arrow" size={22}/></button>)}</div>
+      <div className="shop-collection-grid">
+        {COLLECTIONS.map(([name, subtitle, number, Icon]) => {
+          const product = products.find(item => item.category === name && item.imageUrl);
+          const image = product
+            ? imagesForColor(product, firstProductColor(product))[0] || product.imageUrl
+            : null;
+          return (
+            <button
+              className={`shop-collection-tile${image ? ' has-image' : ''}`}
+              key={name}
+              onClick={() => onCatalog(name)}
+            >
+              {image && (
+                <img
+                  className="shop-collection-image"
+                  src={imageSrc(image)}
+                  alt=""
+                  loading="lazy"
+                  onError={event => { event.currentTarget.style.display = 'none'; }}
+                />
+              )}
+              <div className="shop-collection-content">
+                <div className="shop-collection-top"><span>{number}</span><Icon size={30} strokeWidth={1.3}/></div>
+                <div><h3>{name}</h3><p>{subtitle}</p></div>
+              </div>
+              <ArrowUpRight className="shop-collection-arrow" size={22}/>
+            </button>
+          );
+        })}
+      </div>
     </section>
   </>;
 }
