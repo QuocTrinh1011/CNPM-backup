@@ -45,7 +45,7 @@ class VoucherIntegrationTest {
         assertEquals("VOUCHER_PER_CUSTOMER_LIMIT",assertThrows(ApiException.class,()->vouchers.preview(code,new BigDecimal("100000"),customer.getId())).code());
         mvc.perform(get("/api/customers/me/vouchers").header("Authorization","Bearer "+jwt.issue(customer.getId(),"CUSTOMER"))).andExpect(status().isOk()).andExpect(jsonPath("$.content[?(@.code=='"+code+"')].selectable").value(org.hamcrest.Matchers.hasItem(false)));
         User other=new User();other.setEmail(UUID.randomUUID()+"@limit.test");other.setFullName("Other");other.setPasswordHash("test");users.save(other);assertNotNull(vouchers.preview(code,new BigDecimal("100000"),other.getId()));
-        when(payos.getPayment("TEST-LINK")).thenReturn(new PayosService.ProviderPayment(first.order().orderCode(),90000,0,"CANCELLED","TEST-LINK"));orders.cancel(customer,first.order().id(),"Test");orders.cancel(customer,first.order().id(),"Test");assertNotNull(vouchers.preview(code,new BigDecimal("100000"),customer.getId()));checkout("COD");
+        when(payos.getPayment("TEST-LINK")).thenReturn(new PayosService.ProviderPayment(first.order().orderCode(),120000,0,"CANCELLED","TEST-LINK"));orders.cancel(customer,first.order().id(),"Test");orders.cancel(customer,first.order().id(),"Test");assertNotNull(vouchers.preview(code,new BigDecimal("100000"),customer.getId()));checkout("COD");
     }
     @Test void simultaneousOrdersCannotExceedCustomerLimit()throws Exception{
         var v=admin.create(input(code,"PERCENTAGE","10",20));admin.update(v.id(),mapper.readTree("{\"perCustomerLimit\":1}"));CountDownLatch start=new CountDownLatch(1);
@@ -61,8 +61,8 @@ class VoucherIntegrationTest {
         long id=orders.create(customer,new OrderService.CheckoutRequest("Address","PAYOS",null,List.of(new OrderService.RequestedItem(product.getId(),1,null,null)))).order().id();
         var attempt=attemptRepo.findFirstByOrderIdOrderByIdDesc(id).orElseThrow();
         when(payos.verifyWebhook(any(),any())).thenReturn(true);
-        when(payos.getPayment("TEST-LINK")).thenReturn(new PayosService.ProviderPayment(attempt.getProviderOrderCode(),100000L,0L,"PENDING","TEST-LINK"));
-        var payload=mapper.readTree("{\"success\":true,\"data\":{\"orderCode\":"+attempt.getProviderOrderCode()+",\"amount\":100000,\"code\":\"00\",\"paymentLinkId\":\"TEST-LINK\"}}");
+        when(payos.getPayment("TEST-LINK")).thenReturn(new PayosService.ProviderPayment(attempt.getProviderOrderCode(),130000L,0L,"PENDING","TEST-LINK"));
+        var payload=mapper.readTree("{\"success\":true,\"data\":{\"orderCode\":"+attempt.getProviderOrderCode()+",\"amount\":130000,\"code\":\"00\",\"paymentLinkId\":\"TEST-LINK\"}}");
         CountDownLatch start=new CountDownLatch(1);
         try(var pool=Executors.newFixedThreadPool(2)) {
             var a=pool.submit(()->{start.await();return orders.cancel(customer,id,"Test");});
@@ -396,7 +396,7 @@ class VoucherIntegrationTest {
         var v=admin.create(input(code,"PERCENTAGE","10",2));
         var cod=checkout("COD");var pay=checkout("PAYOS");
         for(var result:List.of(cod,pay)){
-            assertEquals("PENDING",result.order().status());assertEquals(0,new BigDecimal("90000").compareTo(result.order().totalAmount()));
+            assertEquals("PENDING",result.order().status());assertEquals(0,new BigDecimal("120000").compareTo(result.order().totalAmount()));
             assertTrue(usageRepo.findByOrderId(result.order().id()).isPresent());
         }
         assertNull(cod.paymentUrl());assertNotNull(pay.paymentUrl());
@@ -476,10 +476,12 @@ class VoucherIntegrationTest {
         assertEquals(0,new BigDecimal("20000").compareTo(orderRepo.voucherSavings(code)));
         assertThrows(ApiException.class,()->checkout("COD"));
     }
-    @Test void expiredPaymentDoesNotReleaseAndFreeOrderDoesNotCallPayos() {
+    @Test void expiredPaymentDoesNotReleaseAndFullyDiscountedOrderStillPaysShipping() {
         var v=admin.create(input(code,"FIXED_AMOUNT","100000",3));
-        var free=checkout("PAYOS");assertEquals("PENDING",free.order().status());assertNull(free.paymentUrl());
-        assertEquals("PAID",free.order().paymentStatus());verify(payos,never()).createPaymentLink(any());
+        var discounted=checkout("PAYOS");assertEquals("PENDING",discounted.order().status());assertNotNull(discounted.paymentUrl());
+        assertEquals(0,new BigDecimal("30000").compareTo(discounted.order().shippingFee()));
+        assertEquals(0,new BigDecimal("30000").compareTo(discounted.order().totalAmount()));
+        assertEquals("PENDING",discounted.order().paymentStatus());verify(payos).createPaymentLink(any());
         tx.executeWithoutResult(s->{var voucher=voucherRepo.findById(v.id()).orElseThrow();voucher.setDiscountValue(new BigDecimal("10000"));});
         var pending=checkout("PAYOS");
         tx.executeWithoutResult(s->{var order=orderRepo.findById(pending.order().id()).orElseThrow();order.setExpiresAt(Instant.now().minusSeconds(30));});
@@ -493,7 +495,7 @@ class VoucherIntegrationTest {
         long orderId=first.order().id(), count=orderRepo.count();
         assertEquals(1,attemptRepo.findFirstByOrderIdOrderByIdDesc(orderId).stream().count());
         tx.executeWithoutResult(s->{var order=orderRepo.findById(orderId).orElseThrow();order.setExpiresAt(Instant.now().minusSeconds(30));});
-        when(payos.getPayment("TEST-LINK")).thenReturn(new PayosService.ProviderPayment(first.order().orderCode(),100000,0,"EXPIRED","TEST-LINK"));
+        when(payos.getPayment("TEST-LINK")).thenReturn(new PayosService.ProviderPayment(first.order().orderCode(),130000,0,"EXPIRED","TEST-LINK"));
         when(payos.createPaymentLink(any(Order.class),anyLong()))
             .thenReturn(new PayosService.Link("TEST-LINK-2","https://example.test/new","000202"));
         var retried=orders.retryPayment(customer,orderId);
