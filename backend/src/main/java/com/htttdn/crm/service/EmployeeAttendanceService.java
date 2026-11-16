@@ -137,6 +137,10 @@ public class EmployeeAttendanceService {
         if (input.paidEquivalentDays().compareTo(input.dayFraction()) > 0) {
             throw bad("INVALID_PAID_DAYS", "Ngày công được tính lương không được vượt quá ngày công ghi nhận.");
         }
+        if (("UNPAID_LEAVE".equals(status) || "ABSENT".equals(status))
+                && input.paidEquivalentDays().signum() > 0) {
+            throw bad("INVALID_PAID_DAYS", "Ngày nghỉ không lương hoặc vắng mặt không được tính ngày công hưởng lương.");
+        }
         if (input.overtimeNormalHours().signum() < 0 || input.overtimeRestDayHours().signum() < 0
                 || input.overtimeHolidayHours().signum() < 0 || input.overtimeNightHours().signum() < 0) {
             throw bad("INVALID_OVERTIME", "Giờ tăng ca không được âm.");

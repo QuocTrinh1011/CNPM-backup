@@ -95,6 +95,14 @@ class EmployeeAttendanceIntegrationTest {
                         .header("Authorization", hrToken).contentType("application/json")
                         .content(attendanceJson(firstId, "2026-05-05", "UNKNOWN", "1", "1", "0", "0", "0", "0")))
                 .andExpect(status().isBadRequest());
+        for (String attendanceStatus : new String[]{"UNPAID_LEAVE", "ABSENT"}) {
+            mvc.perform(put("/api/manager/hr/attendance")
+                            .header("Authorization", hrToken).contentType("application/json")
+                            .content(attendanceJson(firstId, attendanceStatus.equals("ABSENT") ? "2026-05-07" : "2026-05-06",
+                                    attendanceStatus, "1", "1", "0", "0", "0", "0")))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("INVALID_PAID_DAYS"));
+        }
         mvc.perform(get("/api/manager/me/attendance?year=1999&month=5").header("Authorization", employeeToken))
                 .andExpect(status().isBadRequest());
     }
