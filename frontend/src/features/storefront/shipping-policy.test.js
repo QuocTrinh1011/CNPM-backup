@@ -5,6 +5,8 @@ describe("threshold shipping", () => {
     const { getShippingFee } = await import("./shipping-policy").catch(() => ({}));
     expect(getShippingFee).toBeTypeOf("function");
     expect(getShippingFee(398999)).toBe(30000);
+    expect(getShippingFee(398999.99)).toBe(30000);
+    expect(getShippingFee(398999.99999999994)).toBe(0);
     expect(getShippingFee(399000)).toBe(0);
     expect(getShippingFee(500000)).toBe(0);
   });
