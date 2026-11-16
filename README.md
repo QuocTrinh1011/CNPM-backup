@@ -38,7 +38,7 @@ Dự án gồm ba giao diện độc lập **Khách hàng**, **Admin hệ thốn
 | `CUSTOMER` | <http://localhost:5173> | Mua hàng, quản lý thông tin cá nhân, theo dõi đơn và khảo sát |
 | `ADMIN` | <http://localhost:5174/admin/login> | Tạo/quản lý tài khoản nội bộ, cấp quyền, tra cứu sản phẩm và xem nhật ký hệ thống |
 | `MANAGER_SALES` | <http://localhost:5175/manager/login> | Bán hàng, khách hàng, đơn hàng, báo cáo và khuyến mãi; chỉ đọc danh mục sản phẩm |
-| `MANAGER_WAREHOUSE` | <http://localhost:5175/manager/login> | Quản lý sản phẩm, nhà cung cấp, tồn kho và phiếu nhập hàng |
+| `MANAGER_WAREHOUSE` | <http://localhost:5175/manager/login> | Quản lý sản phẩm, nhà cung cấp, nguyên vật liệu, sản xuất, tồn kho và báo cáo kho |
 | `MANAGER_HR` | <http://localhost:5175/manager/login> | Quản lý hồ sơ nhân viên, duyệt đơn nghỉ, chấm công, cấu hình/công bố lương và xem báo cáo nhân sự |
 | `EMPLOYEE` | <http://localhost:5175/manager/login> | Xem/cập nhật thông tin liên hệ cá nhân, gửi đơn nghỉ, xem ngày công và phiếu lương đã công bố |
 
@@ -63,9 +63,9 @@ Các trang thường dùng: `/san-pham/{id}`, `/gio-hang`, `/dat-hang`, `/don-ha
 ### 2. Portal Manager
 
 - **Sales:** tổng quan, khách hàng và hồ sơ, đơn hàng/đổi trả, hóa đơn, phản hồi, khảo sát, voucher, chiến dịch khuyến mãi và báo cáo. Có thể tra cứu sản phẩm nhưng không sửa sản phẩm hoặc tồn kho.
-- **Warehouse:** quản lý sản phẩm, nhà cung cấp, tồn kho và phiếu nhập hàng/chi tiết phiếu nhập hàng. Có thể đọc thông tin sản phẩm dùng chung nhưng không truy cập dữ liệu bán hàng hoặc khách hàng.
+- **Warehouse:** quản lý sản phẩm, nhà cung cấp, nguyên vật liệu và phiếu nhập; tạo phiên bản công thức, lập kế hoạch sản xuất, duyệt yêu cầu cấp/hoàn nguyên liệu và chuyển thành phẩm sang tồn bán được; xem báo cáo tồn và luân chuyển theo tháng, quý hoặc năm. Nguyên vật liệu được theo dõi riêng với tồn sản phẩm bán được. Có thể đọc thông tin sản phẩm dùng chung nhưng không truy cập dữ liệu bán hàng hoặc khách hàng.
 - **HR:** tạo/cập nhật/ngừng hoạt động hồ sơ nhân viên; duyệt nghỉ phép/nghỉ việc; ghi chấm công; thiết lập, lập, duyệt, công bố và hiệu chỉnh bảng lương; xem báo cáo nhân sự. HR có quyền xem dữ liệu lương.
-- **Employee:** đăng nhập cùng Manager portal; chỉ xem dữ liệu của mình, cập nhật số điện thoại/liên hệ khẩn cấp, gửi/rút yêu cầu nghỉ trước khi được duyệt, xem chấm công cá nhân và phiếu lương đã công bố. Không tự sửa chức danh, quyền nhóm, lương hoặc trạng thái làm việc.
+- **Employee:** đăng nhập cùng Manager portal; chỉ xem dữ liệu của mình, cập nhật số điện thoại/liên hệ khẩn cấp, gửi/rút yêu cầu nghỉ trước khi được duyệt, xem chấm công cá nhân và phiếu lương đã công bố. Nhân viên có `work_area=WAREHOUSE` còn xem lệnh sản xuất được giao, đề nghị cấp/hoàn nguyên liệu, ghi nhận sản lượng và đề nghị chuyển thành phẩm; backend xác định danh tính và kiểm tra quyền trên từng API. Không tự sửa chức danh, khu vực công tác, quyền nhóm, lương hoặc trạng thái làm việc.
 - **Team Lead:** là hồ sơ quyền `TEAM_LEAD` của một tài khoản `EMPLOYEE`, không phải system role mới. Sau đăng nhập sẽ mở danh sách nhóm tại `/manager/my-team`; chỉ xem hồ sơ cơ bản và chấm công của nhân viên được HR gán trực tiếp. Không xem lương, duyệt nghỉ hoặc sửa hồ sơ nhân viên.
 
 Các role đăng nhập tại `/manager/login`; sau đăng nhập hệ thống chuyển Sales đến `/manager/orders`, Warehouse đến `/manager/products`, HR đến `/manager/employees`, Employee đến `/manager/my-profile` và Team Lead đến `/manager/my-team`. Admin quản lý system role; HR quản lý vòng đời hồ sơ nhân viên trong phạm vi HR. Ngừng hoạt động là thao tác lưu lịch sử, không xóa cứng dữ liệu chấm công/đơn nghỉ/bảng lương.
@@ -366,7 +366,8 @@ GitHub Actions phân loại thay đổi để chạy backend `mvn verify`, front
 | Quản lý portal | [Ba portal](docs/database/manager-portal.md) |
 | Voucher và đánh giá | [Voucher](docs/database/vouchers.md), [đánh giá và thưởng khảo sát](docs/database/reviews-rewards.md) |
 | Nhật ký và kiểm tra nghiệp vụ | [Audit log](docs/features/audit-logs.md), [ma trận QA](docs/qa/crm-workflow-qa.md), [cấu hình demo](docs/ops/env-demo.md), [quyết định và ghi nhận thay đổi](docs/requirements/decisions-changelog.md) |
-| Nhập kho và chi phí mua hàng | [Phiếu nhập kho](docs/features/stock-receipts.md) |
+| Nhập kho và chi phí mua hàng | [Phiếu nhập thành phẩm](docs/features/stock-receipts.md) |
+| Nguyên vật liệu và sản xuất | [Schema, migration và giới hạn lịch sử kho](database/migrations/README.md#thứ-tự-migration) |
 | Sơ đồ | [Thư mục sơ đồ](docs/design/diagrams/) |
 
 Tài liệu từng đợt có thể ghi kết quả kiểm tra ở thời điểm khác nhau. Khi có khác biệt, đối chiếu phiên bản mã nguồn và migration đang triển khai.
