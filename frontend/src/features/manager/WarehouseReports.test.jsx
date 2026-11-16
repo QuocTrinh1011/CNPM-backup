@@ -19,7 +19,7 @@ const report = {
     { itemType: 'PRODUCT', itemId: 12, itemCode: 'TEE-12', itemName: 'Áo thun', unit: 'cái', location: 'FINISHED_WAREHOUSE', scopeId: null, openingQuantity: 2, incomingQuantity: 4, outgoingQuantity: 1, closingQuantity: 5 },
     { itemType: 'PRODUCT', itemId: 12, itemCode: 'TEE-12', itemName: 'Áo thun', unit: 'cái', location: 'SELLABLE', scopeId: null, openingQuantity: 5, incomingQuantity: 1, outgoingQuantity: 2, closingQuantity: 4 },
   ],
-  movementTotals: [{ itemType: 'PRODUCT', location: 'SELLABLE', movementType: 'SALE', incomingQuantity: 0, outgoingQuantity: 2, netQuantity: -2 }],
+  movementTotals: [{ itemType: 'PRODUCT', location: 'SELLABLE', movementType: 'SALE_RESERVATION', incomingQuantity: 0, outgoingQuantity: 2, netQuantity: -2 }],
 };
 
 beforeEach(() => {
@@ -37,6 +37,7 @@ it('requests a selected month and separates stock balances by warehouse location
   expect(screen.getByRole('table', { name: 'Thành phẩm trong kho' })).toBeTruthy();
   expect(screen.getByRole('table', { name: 'Sản phẩm sẵn sàng bán' })).toBeTruthy();
   expect(screen.getByText('Kế hoạch #31')).toBeTruthy();
+  expect(screen.getByText('Giữ tồn cho đơn hàng')).toBeTruthy();
   expect(screen.getByText('10')).toBeTruthy();
   expect(adminApi).toHaveBeenCalledWith(`/api/manager/warehouse/reports?period=MONTH&year=${YEAR}&month=${MONTH}`, expect.anything());
 

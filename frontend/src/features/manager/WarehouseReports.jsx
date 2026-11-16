@@ -8,8 +8,9 @@ const periodLabels = { MONTH: 'Tháng', QUARTER: 'Quý', YEAR: 'Năm' };
 const movementLabels = {
   OPENING: 'Số dư đầu kỳ', MATERIAL_RECEIPT: 'Nhập nguyên liệu', MATERIAL_ISSUE: 'Cấp nguyên liệu',
   MATERIAL_RETURN: 'Trả nguyên liệu', PRODUCTION_CONSUMPTION: 'Tiêu hao sản xuất', PRODUCTION_OUTPUT: 'Nhập thành phẩm',
-  FINISHED_GOODS_TRANSFER: 'Chuyển sang kho bán', SALE: 'Bán hàng', ORDER_RESERVATION: 'Giữ hàng',
-  ORDER_RELEASE: 'Hoàn tồn hủy đơn', MANUAL_ADJUSTMENT: 'Điều chỉnh thủ công',
+  FINISHED_GOODS_TRANSFER: 'Chuyển sang kho bán', PRODUCT_RECEIPT: 'Nhập thành phẩm',
+  SELLABLE_ADJUSTMENT: 'Điều chỉnh tồn bán', SALE_RESERVATION: 'Giữ tồn cho đơn hàng',
+  SALE_RELEASE: 'Hoàn tồn đơn hàng',
 };
 const number = value => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 3 }).format(Number(value || 0));
 const dateLabel = value => value ? new Date(value).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }) : '—';
