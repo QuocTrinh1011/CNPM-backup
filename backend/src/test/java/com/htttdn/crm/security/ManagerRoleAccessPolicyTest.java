@@ -79,6 +79,7 @@ class ManagerRoleAccessPolicyTest {
                 route("POST", "/api/manager/warehouse/me/material-requests", Set.of(EMPLOYEE)),
                 route("POST", "/api/manager/warehouse/me/plans/12/production-runs", Set.of(EMPLOYEE)),
                 route("POST", "/api/manager/warehouse/me/plans/12/material-returns", Set.of(EMPLOYEE)),
+                route("GET", "/api/manager/warehouse/me/material-returns", Set.of(EMPLOYEE)),
                 route("GET", "/api/manager/warehouse/me/finished-goods-requests", Set.of(EMPLOYEE)),
                 route("POST", "/api/manager/warehouse/me/finished-goods-requests", Set.of(EMPLOYEE))
         ).toList()) {

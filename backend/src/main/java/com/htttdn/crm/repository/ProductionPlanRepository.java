@@ -13,6 +13,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProductionPlanRepository extends JpaRepository<ProductionPlan, Long> {
     @EntityGraph(attributePaths = {"product", "recipe", "assignedEmployee", "assignedEmployee.account"})
+    Page<ProductionPlan> findAllByAssignedEmployee_EmployeeIdOrderByCreatedAtDescIdDesc(
+            Long employeeId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"product", "recipe", "assignedEmployee", "assignedEmployee.account"})
     Page<ProductionPlan> findAllByOrderByCreatedAtDescIdDesc(Pageable pageable);
 
     @Override

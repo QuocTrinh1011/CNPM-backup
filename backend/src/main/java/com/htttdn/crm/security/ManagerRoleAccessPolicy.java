@@ -91,6 +91,7 @@ public final class ManagerRoleAccessPolicy {
         add(configured, "POST", "/api/manager/warehouse/me/material-requests", EMPLOYEE);
         add(configured, "POST", "/api/manager/warehouse/me/plans/" + ID + "/production-runs", EMPLOYEE);
         add(configured, "POST", "/api/manager/warehouse/me/plans/" + ID + "/material-returns", EMPLOYEE);
+        add(configured, "GET", "/api/manager/warehouse/me/material-returns", EMPLOYEE);
         add(configured, "GET", "/api/manager/warehouse/me/finished-goods-requests", EMPLOYEE);
         add(configured, "POST", "/api/manager/warehouse/me/finished-goods-requests", EMPLOYEE);
 

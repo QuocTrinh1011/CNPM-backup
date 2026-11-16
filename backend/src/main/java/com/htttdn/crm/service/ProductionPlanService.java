@@ -10,6 +10,8 @@ import com.htttdn.crm.entity.RawMaterial;
 import com.htttdn.crm.entity.User;
 import com.htttdn.crm.exception.ApiException;
 import com.htttdn.crm.repository.EmployeeProfileRepository;
+import com.htttdn.crm.repository.MaterialIssueRequestRepository;
+import com.htttdn.crm.repository.MaterialReturnRepository;
 import com.htttdn.crm.repository.ProductRecipeRepository;
 import com.htttdn.crm.repository.ProductRepository;
 import com.htttdn.crm.repository.ProductionPlanMaterialRepository;
@@ -41,16 +43,21 @@ public class ProductionPlanService {
     private final ProductionPlanRepository plans;
     private final ProductionPlanMaterialRepository planMaterials;
     private final EmployeeProfileRepository employees;
+    private final MaterialIssueRequestRepository issueRequests;
+    private final MaterialReturnRepository materialReturns;
     private final AuditTrail audit;
 
     public ProductionPlanService(ProductRepository products, ProductRecipeRepository recipes,
                                  ProductionPlanRepository plans, ProductionPlanMaterialRepository planMaterials,
-                                 EmployeeProfileRepository employees, AuditTrail audit) {
+                                 EmployeeProfileRepository employees, MaterialIssueRequestRepository issueRequests,
+                                 MaterialReturnRepository materialReturns, AuditTrail audit) {
         this.products = products;
         this.recipes = recipes;
         this.plans = plans;
         this.planMaterials = planMaterials;
         this.employees = employees;
+        this.issueRequests = issueRequests;
+        this.materialReturns = materialReturns;
         this.audit = audit;
     }
 
@@ -145,6 +152,10 @@ public class ProductionPlanService {
                 notFound("PRODUCTION_PLAN_NOT_FOUND", "Không tìm thấy kế hoạch sản xuất."));
         if (!"PLANNED".equals(plan.getStatus()) && !"IN_PROGRESS".equals(plan.getStatus())) {
             throw invalid("Chỉ có thể hủy kế hoạch chưa hoàn tất.");
+        }
+        if (issueRequests.existsByPlan_IdAndStatus(id, "PENDING")
+                || materialReturns.existsByPlan_IdAndStatus(id, "PENDING")) {
+            throw invalid("Hãy xử lý các đề nghị nguyên liệu đang chờ trước khi hủy kế hoạch.");
         }
         boolean outstandingAllocation = planMaterials.findByPlan_IdOrderByIdAsc(id).stream()
                 .anyMatch(material -> material.getAllocatedQuantity()
