@@ -102,29 +102,31 @@ class InternalAccountRoleIntegrationTest {
     }
 
     @Test
-    void roleChangeRevokesRefreshSessionAndEmployeeDirectoryIsReadOnlyForHr() throws Exception {
+    void roleChangeRevokesRefreshSessionAndHrCanManageEmployeeProfiles() throws Exception {
         User sales = accounts.create(new InternalAccountService.Input("Sales manager", email("sales"), "MANAGER_SALES", PASSWORD, false));
         var session = managerAuth.login(sales.getEmail(), PASSWORD);
         accounts.update(sales.getId(), new InternalAccountService.Input("Sales manager", sales.getEmail(), "MANAGER_WAREHOUSE", null, false), bearer(user("Admin", "ADMIN", PASSWORD)));
         assertThrows(com.htttdn.crm.exception.ApiException.class, () -> managerAuth.refresh(session.refreshToken()));
 
         User hr = user("HR manager", "MANAGER_HR", PASSWORD);
-        User employeeA = accounts.create(new InternalAccountService.Input("A Directory employee", email("employee-a"), "EMPLOYEE", null, false));
-        accounts.create(new InternalAccountService.Input("B Directory employee", email("employee-b"), "EMPLOYEE", null, false));
-        User deleted = accounts.create(new InternalAccountService.Input("Deleted employee", email("deleted"), "EMPLOYEE", null, false));
-        deleted.setDeletedAt(java.time.Instant.now());
-        users.save(deleted);
+        String hrToken = bearer(hr);
+        String employeeAEmail = email("employee-a");
+        long employeeAId = createEmployee(hrToken, "A Directory employee", employeeAEmail);
+        createEmployee(hrToken, "B Directory employee", email("employee-b"));
+        long deletedEmployeeId = createEmployee(hrToken, "Deleted employee", email("deleted"));
+        mvc.perform(delete("/api/manager/employees/" + deletedEmployeeId).header("Authorization", hrToken))
+                .andExpect(status().isNoContent());
         user("Matching customer", "CUSTOMER", PASSWORD);
 
-        mvc.perform(get("/api/manager/employees").header("Authorization", bearer(hr)).param("q", "Directory").param("page", "0").param("size", "1"))
+        mvc.perform(get("/api/manager/employees").header("Authorization", hrToken).param("q", "Directory").param("page", "0").param("size", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements").value(2))
                 .andExpect(jsonPath("$.content.length()").value(1));
-        mvc.perform(get("/api/manager/employees").header("Authorization", bearer(hr)).param("q", employeeA.getFullName()))
+        mvc.perform(get("/api/manager/employees").header("Authorization", hrToken).param("q", "A Directory employee"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(employeeA.getId()))
-                .andExpect(jsonPath("$.content[0].fullName").value(employeeA.getFullName()))
-                .andExpect(jsonPath("$.content[0].email").value(employeeA.getEmail()))
+                .andExpect(jsonPath("$.content[0].id").value(employeeAId))
+                .andExpect(jsonPath("$.content[0].fullName").value("A Directory employee"))
+                .andExpect(jsonPath("$.content[0].email").value(employeeAEmail))
                 .andExpect(jsonPath("$.content[0].locked").value(false))
                 .andExpect(jsonPath("$.content[0].age").doesNotHaveJsonPath())
                 .andExpect(jsonPath("$.content[0].preferences").doesNotHaveJsonPath())
@@ -137,11 +139,32 @@ class InternalAccountRoleIntegrationTest {
                 .andExpect(status().isForbidden());
         mvc.perform(get("/api/manager/orders").header("Authorization", bearer(hr)))
                 .andExpect(status().isForbidden());
-        mvc.perform(post("/api/manager/employees").header("Authorization", bearer(hr)).contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mvc.perform(post("/api/manager/employees").header("Authorization", bearer(sales)).contentType(MediaType.APPLICATION_JSON)
+                        .content(employeeJson(email("sales-create"), "Sales employee", "SALES-" + UUID.randomUUID())))
                 .andExpect(status().isForbidden());
-        mvc.perform(delete("/api/manager/employees/" + employeeA.getId()).header("Authorization", bearer(hr)))
+        mvc.perform(delete("/api/manager/employees/" + employeeAId).header("Authorization", bearer(sales)))
                 .andExpect(status().isForbidden());
-        assertTrue(users.findById(employeeA.getId()).isPresent());
+        assertTrue(users.findById(employeeAId).isPresent());
+        assertTrue(users.findById(deletedEmployeeId).orElseThrow().getDeletedAt() != null);
+    }
+
+    private long createEmployee(String hrToken, String fullName, String employeeEmail) throws Exception {
+        String response = mvc.perform(post("/api/manager/employees").header("Authorization", hrToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(employeeJson(employeeEmail, fullName, "HR-" + UUID.randomUUID())))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        return ((Number) com.jayway.jsonpath.JsonPath.read(response, "$.id")).longValue();
+    }
+
+    private String employeeJson(String employeeEmail, String fullName, String employeeCode) {
+        return """
+                {"fullName":"%s","email":"%s","phone":"0901234567",
+                 "temporaryPassword":"StrongPass123!","employeeCode":"%s","educationLevel":"Cao đẳng",
+                 "jobTitle":"Nhân viên bán hàng","permissionProfile":"STAFF",
+                 "hireDate":"2025-01-15","monthlyBaseSalary":12000000,
+                 "insuranceSalaryBase":10000000}
+                """.formatted(fullName, employeeEmail, employeeCode);
     }
 
     private User user(String name, String role, String password) {
