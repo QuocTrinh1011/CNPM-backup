@@ -1,6 +1,6 @@
 # CRM Admin Backend
 
-Java 21 / Spring Boot REST backend for the Vietnamese men's clothing customer portal and the existing admin CRM module. PostgreSQL is accessed through Spring Data JPA; Hibernate validates the application schema. The default database is `cnpm`, isolated for this CNPM project.
+Java 21 / Spring Boot REST backend for the Vietnamese men's clothing customer portal and the Admin/Manager CRM portals. PostgreSQL is accessed through Spring Data JPA. Hibernate `ddl-auto` defaults to `validate`: apply the schema and required migrations from the repository's `database/` directory before startup; the backend does not create or update the schema. The default database is `cnpm`, isolated for this CNPM project.
 
 ## Package structure
 
@@ -44,7 +44,7 @@ Admin APIs use a separate JWT flow: call `/api/admin/auth/login`, then send its 
 
 All list endpoints support `page` and `size`; users and products also support `q`, while feedback/survey/order lists support `status`.
 
-For an existing database created from an older schema, run `database/migrations/001_admin_user_split.sql` before starting with `ddl-auto=none`. The script adds missing storefront/order columns and the refresh-token audience discriminator without deleting data.
+For an existing database created from an older schema, run the required scripts from the ordered [`database/migrations/README.md`](../database/migrations/README.md) after taking a backup. For the original admin/storefront split, `database/migrations/001_admin_user_split.sql` adds missing storefront/order columns and the refresh-token audience discriminator without deleting data.
 
 Manager API access is enforced by role and HTTP method/path: `MANAGER_SALES` handles sales/CRM workflows, `MANAGER_WAREHOUSE` handles products, suppliers, and stock receipts, and `MANAGER_HR` reads the employee directory. Sales and Warehouse share read-only product lookup. `EMPLOYEE` is directory-only and cannot log in. Admin remains the only role that creates internal accounts and assigns roles. Apply `database/migrations/022_manager_role_split.sql` after the earlier migrations before deploying this role-aware backend; it changes legacy `MANAGER` accounts to `MANAGER_SALES` and revokes their existing Manager refresh sessions, so those users must sign in again.
 
