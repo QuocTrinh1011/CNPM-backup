@@ -108,6 +108,39 @@ export const adminEndpoints = {
     return `/api/manager/reports?${params}`;
   },
   employees: ({ q = '', page = 0, size = 15 } = {}) => `/api/manager/employees?${managerQuery({ q, page, size })}`,
+  rawMaterials: () => '/api/manager/raw-materials',
+  rawMaterial: id => `/api/manager/raw-materials/${id}`,
+  createRawMaterial: () => '/api/manager/raw-materials',
+  updateRawMaterial: id => `/api/manager/raw-materials/${id}`,
+  rawMaterialReceipts: ({ page = 0, size = 20 } = {}) => `/api/manager/raw-material-receipts?${managerQuery({ page, size })}`,
+  rawMaterialReceipt: id => `/api/manager/raw-material-receipts/${id}`,
+  createRawMaterialReceipt: () => '/api/manager/raw-material-receipts',
+  productRecipe: productId => `/api/manager/products/${productId}/recipe`,
+  productionPlans: ({ page = 0, size = 20 } = {}) => `/api/manager/production-plans?${managerQuery({ page, size })}`,
+  productionPlan: id => `/api/manager/production-plans/${id}`,
+  createProductionPlan: () => '/api/manager/production-plans',
+  cancelProductionPlan: id => `/api/manager/production-plans/${id}/cancel`,
+  warehouseMaterialRequests: ({ page = 0, size = 20 } = {}) => `/api/manager/warehouse/material-requests?${managerQuery({ page, size })}`,
+  decideWarehouseMaterialRequest: id => `/api/manager/warehouse/material-requests/${id}/decision`,
+  warehouseMaterialReturns: ({ page = 0, size = 20 } = {}) => `/api/manager/warehouse/material-returns?${managerQuery({ page, size })}`,
+  decideWarehouseMaterialReturn: id => `/api/manager/warehouse/material-returns/${id}/decision`,
+  warehouseFinishedGoodsRequests: ({ page = 0, size = 20 } = {}) => `/api/manager/warehouse/finished-goods-requests?${managerQuery({ page, size })}`,
+  decideWarehouseFinishedGoodsRequest: id => `/api/manager/warehouse/finished-goods-requests/${id}/decision`,
+  warehouseReport: ({ period = 'MONTH', year, month, quarter } = {}) => {
+    const params = new URLSearchParams({ period });
+    if (year != null && year !== '') params.set('year', String(year));
+    if (month != null && month !== '') params.set('month', String(month));
+    if (quarter != null && quarter !== '') params.set('quarter', String(quarter));
+    return `/api/manager/warehouse/reports?${params}`;
+  },
+  warehouseEmployeePlans: ({ page = 0, size = 20 } = {}) => `/api/manager/warehouse/me/plans?${managerQuery({ page, size })}`,
+  warehouseEmployeeMaterialRequests: ({ page = 0, size = 20 } = {}) => `/api/manager/warehouse/me/material-requests?${managerQuery({ page, size })}`,
+  createWarehouseEmployeeMaterialRequest: () => '/api/manager/warehouse/me/material-requests',
+  submitWarehouseProductionRun: planId => `/api/manager/warehouse/me/plans/${planId}/production-runs`,
+  warehouseEmployeeMaterialReturns: ({ page = 0, size = 20 } = {}) => `/api/manager/warehouse/me/material-returns?${managerQuery({ page, size })}`,
+  createWarehouseEmployeeMaterialReturn: planId => `/api/manager/warehouse/me/plans/${planId}/material-returns`,
+  warehouseEmployeeFinishedGoodsRequests: ({ page = 0, size = 20 } = {}) => `/api/manager/warehouse/me/finished-goods-requests?${managerQuery({ page, size })}`,
+  createWarehouseEmployeeFinishedGoodsRequest: () => '/api/manager/warehouse/me/finished-goods-requests',
   employee: id => `/api/manager/employees/${id}`,
   createEmployee: () => '/api/manager/employees',
   updateEmployee: id => `/api/manager/employees/${id}`,

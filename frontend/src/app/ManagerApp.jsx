@@ -19,6 +19,11 @@ const ManagerInvoices = React.lazy(()=>import('../features/manager/ManagerInvoic
 const PromotionCampaigns = React.lazy(() => import('../features/manager/PromotionCampaigns'));
 const ManagerReports = React.lazy(() => import('../features/manager/ManagerReports'));
 const ManagerEmployees = React.lazy(() => import('../features/manager/ManagerEmployees'));
+const WarehouseMaterials = React.lazy(() => import('../features/manager/WarehouseMaterials'));
+const WarehouseRecipes = React.lazy(() => import('../features/manager/WarehouseRecipes'));
+const WarehouseProductionPlans = React.lazy(() => import('../features/manager/WarehouseProductionPlans'));
+const WarehouseApprovals = React.lazy(() => import('../features/manager/WarehouseApprovals'));
+const WarehouseReports = React.lazy(() => import('../features/manager/WarehouseReports'));
 const EmployeeSelfProfile = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeSelfProfile })));
 const EmployeeLeaveRequests = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeLeaveRequests })));
 const EmployeeAttendancePage = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeAttendancePage })));
@@ -29,6 +34,9 @@ import {
   LayoutDashboard,
   Users as UsersIcon,
   Package,
+  Warehouse,
+  FlaskConical,
+  Factory,
   ShoppingCart,
   MessageSquare,
   ClipboardList,
@@ -79,6 +87,11 @@ const navItems = [
   ["users", "Khách hàng"],
   ["products", "Sản phẩm"],
   ["stock-receipts", "Nhập kho"],
+  ["materials", "Nguyên liệu"],
+  ["recipes", "Công thức sản phẩm"],
+  ["production-plans", "Kế hoạch sản xuất"],
+  ["warehouse-approvals", "Duyệt yêu cầu kho"],
+  ["warehouse-reports", "Báo cáo kho"],
   ["orders", "Đơn hàng"],
   ["invoices", "Hóa đơn"],
   ["feedback", "Phản hồi"],
@@ -90,7 +103,7 @@ const navItems = [
 const validSections = new Set(navItems.map(([key]) => key));
 const managerRoleSections = {
   MANAGER_SALES: new Set(["dashboard", "users", "products", "orders", "invoices", "feedback", "surveys", "vouchers", "promotions", "reports"]),
-  MANAGER_WAREHOUSE: new Set(["products", "stock-receipts"]),
+  MANAGER_WAREHOUSE: new Set(["products", "stock-receipts", "materials", "recipes", "production-plans", "warehouse-approvals", "warehouse-reports"]),
   MANAGER_HR: new Set(["employees", "leave-requests", "attendance", "payroll", "hr-reports"]),
   EMPLOYEE: new Set(["my-profile", "my-requests", "my-attendance", "my-payslips"]),
 };
@@ -106,6 +119,11 @@ const navIcons = {
   users: UsersIcon,
   products: Package,
   'stock-receipts': Package,
+  materials: Warehouse,
+  recipes: FlaskConical,
+  'production-plans': Factory,
+  'warehouse-approvals': ClipboardCheck,
+  'warehouse-reports': BarChart3,
   orders: ShoppingCart,
   invoices: ReceiptText,
   feedback: MessageSquare,
@@ -440,6 +458,11 @@ export default function ManagerApp() {
         {section === "my-team" && <EmployeeAttendancePage team />}
         {section === "my-team-attendance" && <EmployeeAttendancePage team teamAttendance />}
         {section === "stock-receipts" && <StockReceiving />}
+        {section === "materials" && <WarehouseMaterials />}
+        {section === "recipes" && <WarehouseRecipes />}
+        {section === "production-plans" && <WarehouseProductionPlans />}
+        {section === "warehouse-approvals" && <WarehouseApprovals />}
+        {section === "warehouse-reports" && <WarehouseReports />}
         {section === "orders" && <Orders notify={notify} />}{" "}
         {section === "invoices" && <ManagerInvoices />}
         {section === "feedback" && <Feedback notify={notify} />}{" "}

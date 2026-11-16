@@ -87,9 +87,9 @@ it('keeps the invoices section instead of redirecting to the dashboard', async (
 });
 
 it.each([
-  ['MANAGER_SALES', '/manager/orders', ['Đơn hàng', 'Khách hàng', 'Báo cáo', 'Chiến dịch khuyến mãi'], ['Nhập kho', 'Nhân viên']],
-  ['MANAGER_WAREHOUSE', '/manager/products', ['Sản phẩm', 'Nhập kho'], ['Đơn hàng', 'Báo cáo', 'Nhân viên', 'Tổng quan']],
-  ['MANAGER_HR', '/manager/employees', ['Nhân viên', 'Duyệt đơn nghỉ', 'Chấm công', 'Bảng lương', 'Báo cáo nhân sự'], ['Đơn hàng', 'Sản phẩm', 'Nhập kho', 'Tổng quan']],
+  ['MANAGER_SALES', '/manager/orders', ['Đơn hàng', 'Khách hàng', 'Báo cáo', 'Chiến dịch khuyến mãi'], ['Nhập kho', 'Nguyên liệu', 'Công thức sản phẩm', 'Kế hoạch sản xuất', 'Duyệt yêu cầu kho', 'Báo cáo kho', 'Nhân viên']],
+  ['MANAGER_WAREHOUSE', '/manager/products', ['Sản phẩm', 'Nhập kho', 'Nguyên liệu', 'Công thức sản phẩm', 'Kế hoạch sản xuất', 'Duyệt yêu cầu kho', 'Báo cáo kho'], ['Đơn hàng', 'Nhân viên', 'Tổng quan']],
+  ['MANAGER_HR', '/manager/employees', ['Nhân viên', 'Duyệt đơn nghỉ', 'Chấm công', 'Bảng lương', 'Báo cáo nhân sự'], ['Đơn hàng', 'Sản phẩm', 'Nhập kho', 'Nguyên liệu', 'Công thức sản phẩm', 'Kế hoạch sản xuất', 'Duyệt yêu cầu kho', 'Báo cáo kho', 'Tổng quan']],
 ])('routes %s to its landing page and filters navigation', async (role, landing, visible, hidden) => {
   window.history.replaceState({}, '', '/manager');
   adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Role test', role } });
@@ -115,6 +115,9 @@ it('routes employees to self-service pages without HR payroll navigation', async
   const navigation = screen.getByRole('navigation', { name: 'Chức năng quản lý' });
   for (const label of ['Thông tin của tôi', 'Đơn nghỉ của tôi', 'Chấm công của tôi', 'Phiếu lương của tôi']) {
     expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(true);
+  }
+  for (const label of ['Nguyên liệu', 'Công thức sản phẩm', 'Kế hoạch sản xuất', 'Duyệt yêu cầu kho', 'Báo cáo kho']) {
+    expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(false);
   }
   for (const label of ['Bảng lương', 'Duyệt đơn nghỉ', 'Báo cáo nhân sự', 'Nhân viên trong nhóm']) {
     expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(false);
@@ -169,12 +172,26 @@ it.each([
   ['MANAGER_HR', '/manager/orders', '/manager/employees', '/api/manager/orders'],
   ['MANAGER_WAREHOUSE', '/manager/reports', '/manager/products', '/api/manager/reports'],
   ['MANAGER_SALES', '/manager/stock-receipts', '/manager/orders', '/api/manager/stock-receipts'],
+  ['MANAGER_HR', '/manager/materials', '/manager/employees', '/api/manager/raw-materials'],
+  ['MANAGER_SALES', '/manager/materials', '/manager/orders', '/api/manager/raw-materials'],
 ])('redirects %s away from restricted routes before loading their data', async (role, restricted, landing, forbiddenEndpoint) => {
   window.history.replaceState({}, '', restricted);
   adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Role test', role } });
   render(<ManagerApp />, { wrapper });
   await waitFor(() => expect(window.location.pathname).toBe(landing));
   expect(adminApi.mock.calls.some(([url]) => String(url).startsWith(forbiddenEndpoint))).toBe(false);
+});
+
+it('does not expose warehouse manager pages to employees outside the warehouse work area', async () => {
+  window.history.replaceState({}, '', '/manager/materials');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Sales employee', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 42, fullName: 'Sales employee', employeeCode: 'E-42', workArea: 'SALES', permissionProfile: 'STAFF', employmentStatus: 'ACTIVE' }
+    : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+  await waitFor(() => expect(window.location.pathname).toBe('/manager/my-profile'));
+  expect(adminApi.mock.calls.some(([url]) => String(url).startsWith('/api/manager/raw-materials'))).toBe(false);
 });
 
 it('shows Sales product lookup without write controls while Warehouse retains them', async () => {

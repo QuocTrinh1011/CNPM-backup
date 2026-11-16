@@ -8,7 +8,7 @@ const localDate = () => {
 };
 const emptyForm = () => ({
   fullName: '', email: '', phone: '', temporaryPassword: '', employeeCode: '', educationLevel: '', jobTitle: '',
-  permissionProfile: 'STAFF', employmentStatus: 'ACTIVE', hireDate: localDate(), resignationDate: '',
+  permissionProfile: 'STAFF', workArea: 'GENERAL', employmentStatus: 'ACTIVE', hireDate: localDate(), resignationDate: '',
   monthlyBaseSalary: '0', insuranceSalaryBase: '0', reportsToEmployeeId: '', emergencyContactName: '',
   emergencyContactPhone: '', emergencyContactRelationship: '',
 });
@@ -106,6 +106,7 @@ export default function ManagerEmployees() {
         </label>)}
         {formMode === 'create' && <label>Mật khẩu tạm thời<input aria-label="Mật khẩu tạm thời" type="password" required minLength="8" autoComplete="new-password" value={form.temporaryPassword} onChange={event => setField('temporaryPassword', event.target.value)} /></label>}
         <label>Quyền trong nhóm<select value={form.permissionProfile || 'STAFF'} onChange={event => setField('permissionProfile', event.target.value)}><option value="STAFF">Nhân viên</option><option value="TEAM_LEAD">Trưởng nhóm</option></select></label>
+        <label>Khu vực làm việc<select aria-label="Khu vực làm việc" value={form.workArea || 'GENERAL'} onChange={event => setField('workArea', event.target.value)}><option value="GENERAL">Chung</option><option value="SALES">Bán hàng</option><option value="WAREHOUSE">Kho</option></select></label>
         <p className="hr-form-help">Để gán trưởng nhóm, nhập ID hồ sơ của nhân viên có quyền Trưởng nhóm. Bỏ trống nếu không thuộc nhóm.</p>
         {formMode === 'edit' && <label>Tình trạng<select value={form.employmentStatus || 'ACTIVE'} onChange={event => setField('employmentStatus', event.target.value)}><option value="ACTIVE">Đang làm việc</option><option value="RESIGNED">Nghỉ việc</option><option value="TERMINATED">Đã chấm dứt</option></select></label>}
         <div className="hr-form-actions"><button className="admin-primary" type="submit" disabled={busy}>{busy ? 'Đang lưu…' : formMode === 'create' ? 'Tạo hồ sơ' : 'Lưu hồ sơ'}</button><button type="button" disabled={busy} onClick={() => setFormMode(null)}>Hủy</button></div>

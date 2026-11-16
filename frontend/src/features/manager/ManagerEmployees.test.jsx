@@ -36,11 +36,12 @@ it('lets HR create an employee account with a self-service profile', async () =>
   fireEvent.change(screen.getByLabelText('Mã nhân viên'), { target: { value: 'NV-012' } });
   fireEvent.change(screen.getByLabelText('Chức danh'), { target: { value: 'Nhân viên bán hàng' } });
   fireEvent.change(screen.getByLabelText('Ngày nhận việc'), { target: { value: '2026-01-01' } });
+  fireEvent.change(screen.getByLabelText('Khu vực làm việc'), { target: { value: 'WAREHOUSE' } });
   fireEvent.click(screen.getByRole('button', { name: 'Tạo hồ sơ' }));
 
   await waitFor(() => expect(adminApi).toHaveBeenCalledWith('/api/manager/employees', expect.objectContaining({
     method: 'POST',
-    body: expect.objectContaining({ fullName: 'Linh Nguyễn', email: 'linh@example.test', temporaryPassword: 'Employee123!', employeeCode: 'NV-012', jobTitle: 'Nhân viên bán hàng' }),
+    body: expect.objectContaining({ fullName: 'Linh Nguyễn', email: 'linh@example.test', temporaryPassword: 'Employee123!', employeeCode: 'NV-012', jobTitle: 'Nhân viên bán hàng', workArea: 'WAREHOUSE' }),
   })));
   expect(screen.getByText(/Admin quản lý quyền truy cập hệ thống/)).toBeTruthy();
 });
