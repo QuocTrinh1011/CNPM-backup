@@ -14,6 +14,6 @@ public interface EmployeePayrollPeriodRepository extends JpaRepository<EmployeeP
     @Query("select period from EmployeePayrollPeriod period where period.periodYear = :year and period.periodMonth = :month")
     Optional<EmployeePayrollPeriod> findForUpdate(@Param("year") int year, @Param("month") int month);
 
-    @EntityGraph(attributePaths = {"createdBy", "reviewedBy", "publishedBy", "payslips", "payslips.employee", "payslips.employee.account", "payslips.lines"})
+    @EntityGraph(attributePaths = {"createdBy", "reviewedBy", "publishedBy"})
     Optional<EmployeePayrollPeriod> findByPeriodYearAndPeriodMonth(int periodYear, int periodMonth);
 }
