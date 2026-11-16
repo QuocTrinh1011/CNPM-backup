@@ -152,6 +152,10 @@ export default function ManagerOrderDetail({ detail: sourceDetail, loading, erro
               ))}
             </div>
             <div className="admin-detail-total">
+              <span>Phí giao hàng</span>
+              <strong>{Number(detail.shippingFee || 0) > 0 ? money(detail.shippingFee) : 'Miễn phí'}</strong>
+            </div>
+            <div className="admin-detail-total">
               <span>Tổng tiền</span>
               <strong>{money(detail.totalAmount)}</strong>
             </div>

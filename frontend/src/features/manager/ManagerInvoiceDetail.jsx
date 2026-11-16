@@ -28,7 +28,8 @@ export default function ManagerInvoiceDetail({ orderId, onClose, focusTarget }) 
     if (event.key === 'Escape') { event.stopPropagation(); close(); return; }
   };
 
-  const subtotal = order ? Number(order.totalAmount || 0) + Number(order.discountAmount || 0) : 0;
+  const shippingFee = Number(order?.shippingFee || 0);
+  const subtotal = order ? Number(order.totalAmount || 0) + Number(order.discountAmount || 0) - shippingFee : 0;
   const discount = Number(order?.discountAmount || 0);
   return (
     <aside
@@ -112,6 +113,7 @@ export default function ManagerInvoiceDetail({ orderId, onClose, focusTarget }) 
             <div className="invoice-totals">
               <div><span>Tạm tính</span><b>{money(subtotal)}</b></div>
               <div><span>Giảm giá{order.voucherCode ? ` · ${order.voucherCode}` : ''}</span><b>{discount > 0 ? `-${money(discount)}` : money(0)}</b></div>
+              <div><span>Phí giao hàng</span><b>{shippingFee > 0 ? money(shippingFee) : 'Miễn phí'}</b></div>
               <div className="invoice-total-row"><span>Tổng thanh toán</span><strong>{money(order.totalAmount)}</strong></div>
             </div>
             <p className="invoice-note">Hóa đơn chỉ dùng để tra cứu. Thao tác cập nhật trạng thái nằm ở trang Đơn hàng.</p>
