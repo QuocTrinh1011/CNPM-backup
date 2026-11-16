@@ -1,6 +1,9 @@
 package com.htttdn.crm.service;
 
 import com.htttdn.crm.entity.User;
+import com.htttdn.crm.entity.EmployeeAttendance;
+import com.htttdn.crm.repository.EmployeeAttendanceRepository;
+import com.htttdn.crm.repository.EmployeeProfileRepository;
 import com.htttdn.crm.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -34,6 +39,8 @@ class EmployeePayrollIntegrationTest {
     private static final String PASSWORD = "TestPassword123!";
 
     @Autowired UserRepository users;
+    @Autowired EmployeeProfileRepository profiles;
+    @Autowired EmployeeAttendanceRepository attendance;
     @Autowired PasswordEncoder encoder;
     @Autowired ManagerAuthService managerAuth;
     @Autowired MockMvc mvc;
@@ -154,6 +161,20 @@ class EmployeePayrollIntegrationTest {
         mvc.perform(put("/api/manager/hr/payroll-settings").header("Authorization", hrToken)
                         .contentType("application/json").content("{\"settingKey\":\"PAYROLL_RULES\",\"effectiveFrom\":\"2026-01-01\",\"settingValue\":{}}"))
                 .andExpect(status().isBadRequest());
+
+        String emptyTaxRules = """
+                {"hoursPerWorkday":8,"normalOvertimeMultiplier":1.5,"restDayOvertimeMultiplier":2,
+                 "holidayOvertimeMultiplier":3,"nightWorkPremiumMultiplier":0.3,"employeeInsuranceRate":0.1,
+                 "employerContributionRate":0.2,"personalTaxAllowance":0,"dependentTaxAllowance":0,
+                 "workingWeekdays":[1,2,3,4,5],"publicHolidays":[],"taxBrackets":[]}
+                """;
+        mvc.perform(put("/api/manager/hr/payroll-settings").header("Authorization", hrToken)
+                        .contentType("application/json")
+                        .content("""
+                                {"settingKey":"PAYROLL_RULES","effectiveFrom":"2026-01-01","settingValue":%s}
+                                """.formatted(emptyTaxRules)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_PAYROLL_RULES"));
     }
 
     @Test
@@ -167,6 +188,31 @@ class EmployeePayrollIntegrationTest {
                         .content("{\"year\":2026,\"month\":5,\"standardPaidWorkdays\":20,\"dependentCounts\":{}}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.code").value("PAYROLL_RULE_CHANGE_WITHIN_PERIOD"));
+    }
+
+    @Test
+    void refusesPayrollWhenUnpaidOrAbsentAttendanceContainsPaidDays() throws Exception {
+        String hrToken = hrToken();
+        long employeeId = createEmployee(hrToken, "payroll-invalid-days", "STAFF", null, "2000000", "1000000");
+        saveRules(hrToken, "2026-01-01", "0.10");
+        for (var row : new Object[][]{
+                {"2026-05-04", "UNPAID_LEAVE"},
+                {"2026-05-05", "ABSENT"}
+        }) {
+            EmployeeAttendance invalid = new EmployeeAttendance();
+            invalid.setEmployee(profiles.findById(employeeId).orElseThrow());
+            invalid.setAttendanceDate(LocalDate.parse((String) row[0]));
+            invalid.setAttendanceStatus((String) row[1]);
+            invalid.setDayFraction(BigDecimal.ONE);
+            invalid.setPaidEquivalentDays(BigDecimal.ONE);
+            attendance.saveAndFlush(invalid);
+        }
+
+        mvc.perform(post("/api/manager/hr/payroll-periods").header("Authorization", hrToken)
+                        .contentType("application/json")
+                        .content("{\"year\":2026,\"month\":5,\"standardPaidWorkdays\":20,\"dependentCounts\":{}}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_PAYROLL_ATTENDANCE"));
     }
 
     private void saveRules(String hrToken, String effectiveFrom, String employeeRate) throws Exception {

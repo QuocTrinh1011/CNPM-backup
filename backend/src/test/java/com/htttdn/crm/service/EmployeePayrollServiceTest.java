@@ -20,7 +20,7 @@ class EmployeePayrollServiceTest {
     @Test
     void doesNotCreateNegativeTakeHomeWhenThereAreNoPaidDays() {
         var result = calculator.calculate(input("0", "1000000", "20", "0", "0", "0", "0", "0", 0, List.of()),
-                rules("8", "1.5", "2", "3", "0.3", "0.10", "0.20", "0", "0", List.of()));
+                rules("8", "1.5", "2", "3", "0.3", "0.10", "0.20", "0", "0", zeroTaxBrackets()));
 
         assertMoney("0.00", result.employeeDeductions());
         assertMoney("0.00", result.takeHomePay());
@@ -29,7 +29,7 @@ class EmployeePayrollServiceTest {
     @Test
     void proratesMonthlyBaseByPaidEquivalentHalfDays() {
         var result = calculator.calculate(input("100000", "0", "2", "0.5", "0", "0", "0", "0", 0, List.of()),
-                rules("8", "1", "1", "1", "0", "0", "0", "0", "0", List.of()));
+                rules("8", "1", "1", "1", "0", "0", "0", "0", "0", zeroTaxBrackets()));
 
         assertMoney("25000.00", result.proratedBase());
         assertMoney("25000.00", result.takeHomePay());
@@ -38,7 +38,7 @@ class EmployeePayrollServiceTest {
     @Test
     void appliesEachConfiguredOvertimeMultiplier() {
         var result = calculator.calculate(input("10000000", "0", "20", "20", "2", "1", "1", "1", 0, List.of()),
-                rules("8", "1.5", "2", "3", "0.3", "0", "0", "0", "0", List.of()));
+                rules("8", "1.5", "2", "3", "0.3", "0", "0", "0", "0", zeroTaxBrackets()));
 
         assertMoney("10000000.00", result.proratedBase());
         assertMoney("518750.00", result.overtimePay());
@@ -67,7 +67,7 @@ class EmployeePayrollServiceTest {
     @Test
     void roundsCurrencyToTwoDecimalPlacesHalfUp() {
         var result = calculator.calculate(input("1", "0", "3", "1", "0", "0", "0", "0", 0, List.of()),
-                rules("8", "1", "1", "1", "0", "0", "0", "0", "0", List.of()));
+                rules("8", "1", "1", "1", "0", "0", "0", "0", "0", zeroTaxBrackets()));
 
         assertMoney("0.33", result.proratedBase());
     }
@@ -82,6 +82,15 @@ class EmployeePayrollServiceTest {
                 () -> calculator.calculate(input("100000", "0", "20", "20", "0", "0", "0", "0", 0, List.of()), invalidRules));
     }
 
+    @Test
+    void rejectsEmptyTaxBracketSchedule() {
+        var emptyTaxRules = new PayrollCalculator.Rules(money("8"), money("1"), money("1"), money("1"),
+                money("0"), money("0"), money("0"), money("0"), money("0"), List.of());
+
+        assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculate(input("100000", "0", "20", "20", "0", "0", "0", "0", 0, List.of()), emptyTaxRules));
+    }
+
     private static PayrollCalculator.Input input(String salary, String insuranceBase, String workdays,
                                                  String paidDays, String normal, String rest, String holiday,
                                                  String night, int dependents, List<PayrollCalculator.Adjustment> adjustments) {
@@ -90,7 +99,11 @@ class EmployeePayrollServiceTest {
     }
 
     private static PayrollCalculator.Rules rules() {
-        return rules("8", "1", "1", "1", "0", "0", "0", "0", "0", List.of());
+        return rules("8", "1", "1", "1", "0", "0", "0", "0", "0", zeroTaxBrackets());
+    }
+
+    private static List<PayrollCalculator.TaxBracket> zeroTaxBrackets() {
+        return List.of(new PayrollCalculator.TaxBracket(BigDecimal.ZERO, null, BigDecimal.ZERO));
     }
 
     private static PayrollCalculator.Rules rules(String hoursPerWorkday, String normal, String rest, String holiday,

@@ -134,6 +134,9 @@ public final class PayrollCalculator {
         if (input.adjustments() == null || rules.taxBrackets() == null) {
             throw new IllegalArgumentException("Payroll adjustments and tax brackets are required.");
         }
+        if (rules.taxBrackets().isEmpty()) {
+            throw new IllegalArgumentException("Tax brackets must include at least one open-ended bracket.");
+        }
         for (Adjustment adjustment : input.adjustments()) {
             if (adjustment == null || !ADJUSTMENT_TYPES.contains(adjustment.lineType())
                     || adjustment.code() == null || adjustment.code().isBlank()
@@ -152,17 +155,15 @@ public final class PayrollCalculator {
         }
         List<TaxBracket> orderedBrackets = rules.taxBrackets().stream()
                 .sorted(Comparator.comparing(TaxBracket::lowerBound)).toList();
-        if (!orderedBrackets.isEmpty()) {
-            if (orderedBrackets.getFirst().lowerBound().signum() != 0
-                    || orderedBrackets.getLast().upperBound() != null) {
-                throw new IllegalArgumentException("Tax brackets must start at zero and have an open-ended final bracket.");
-            }
-            for (int index = 0; index < orderedBrackets.size() - 1; index++) {
-                TaxBracket current = orderedBrackets.get(index);
-                TaxBracket next = orderedBrackets.get(index + 1);
-                if (current.upperBound() == null || current.upperBound().compareTo(next.lowerBound()) != 0) {
-                    throw new IllegalArgumentException("Tax brackets must be contiguous and non-overlapping.");
-                }
+        if (orderedBrackets.getFirst().lowerBound().signum() != 0
+                || orderedBrackets.getLast().upperBound() != null) {
+            throw new IllegalArgumentException("Tax brackets must start at zero and have an open-ended final bracket.");
+        }
+        for (int index = 0; index < orderedBrackets.size() - 1; index++) {
+            TaxBracket current = orderedBrackets.get(index);
+            TaxBracket next = orderedBrackets.get(index + 1);
+            if (current.upperBound() == null || current.upperBound().compareTo(next.lowerBound()) != 0) {
+                throw new IllegalArgumentException("Tax brackets must be contiguous and non-overlapping.");
             }
         }
     }

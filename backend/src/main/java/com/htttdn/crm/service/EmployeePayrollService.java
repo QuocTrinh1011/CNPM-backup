@@ -264,7 +264,12 @@ public class EmployeePayrollService {
         Set<LocalDate> recordedDates = new HashSet<>();
         for (EmployeeAttendance row : rows) {
             if (!inEmployment(employee, row.getAttendanceDate())) continue;
-            if (!"WORKED".equals(row.getAttendanceStatus())
+            String attendanceStatus = row.getAttendanceStatus().trim().toUpperCase(Locale.ROOT);
+            if (("UNPAID_LEAVE".equals(attendanceStatus) || "ABSENT".equals(attendanceStatus))
+                    && row.getPaidEquivalentDays().signum() > 0) {
+                throw bad("INVALID_PAYROLL_ATTENDANCE", "Ngày nghỉ không lương hoặc vắng mặt không được tính vào ngày công hưởng lương.");
+            }
+            if (!"WORKED".equals(attendanceStatus)
                     && (row.getOvertimeNormalHours().signum() > 0 || row.getOvertimeRestDayHours().signum() > 0
                     || row.getOvertimeHolidayHours().signum() > 0 || row.getOvertimeNightHours().signum() > 0)) {
                 throw bad("OVERTIME_REQUIRES_WORKED_ATTENDANCE", "Giờ tăng ca chỉ hợp lệ trên ngày có trạng thái WORKED.");
