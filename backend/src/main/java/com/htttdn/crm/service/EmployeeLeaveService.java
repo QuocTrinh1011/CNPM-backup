@@ -9,6 +9,7 @@ import com.htttdn.crm.entity.User;
 import com.htttdn.crm.exception.ApiException;
 import com.htttdn.crm.repository.EmployeeLeaveRequestRepository;
 import com.htttdn.crm.repository.EmployeeProfileRepository;
+import com.htttdn.crm.repository.RefreshTokenRepository;
 import com.htttdn.crm.repository.UserRepository;
 import com.htttdn.crm.security.JwtTokenService;
 import org.springframework.data.domain.Page;
@@ -32,16 +33,18 @@ public class EmployeeLeaveService {
 
     private final EmployeeLeaveRequestRepository requests;
     private final EmployeeProfileRepository profiles;
+    private final RefreshTokenRepository refreshTokens;
     private final UserRepository users;
     private final EmployeeAccessService employeeAccess;
     private final JwtTokenService jwt;
     private final AuditTrail audit;
 
     public EmployeeLeaveService(EmployeeLeaveRequestRepository requests, EmployeeProfileRepository profiles,
-                                UserRepository users, EmployeeAccessService employeeAccess,
+                                RefreshTokenRepository refreshTokens, UserRepository users, EmployeeAccessService employeeAccess,
                                 JwtTokenService jwt, AuditTrail audit) {
         this.requests = requests;
         this.profiles = profiles;
+        this.refreshTokens = refreshTokens;
         this.users = users;
         this.employeeAccess = employeeAccess;
         this.jwt = jwt;
@@ -134,6 +137,7 @@ public class EmployeeLeaveService {
             employee.setEmploymentStatus("RESIGNED");
             employee.setResignationDate(request.getStartDate());
             profiles.saveAndFlush(employee);
+            refreshTokens.revokeByUserId(employee.getEmployeeId());
         }
         requests.saveAndFlush(request);
         audit.record("DECIDE", "EMPLOYEE_LEAVE_REQUEST", request.getId(), before, auditSnapshot(request));

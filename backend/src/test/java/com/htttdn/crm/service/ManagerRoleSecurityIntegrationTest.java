@@ -3,6 +3,8 @@ package com.htttdn.crm.service;
 import com.htttdn.crm.entity.Category;
 import com.htttdn.crm.entity.Product;
 import com.htttdn.crm.entity.User;
+import com.htttdn.crm.entity.EmployeeProfile;
+import com.htttdn.crm.repository.EmployeeProfileRepository;
 import com.htttdn.crm.exception.ApiException;
 import com.htttdn.crm.repository.CategoryRepository;
 import com.htttdn.crm.repository.ProductRepository;
@@ -21,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,6 +50,7 @@ class ManagerRoleSecurityIntegrationTest {
     private static final String PASSWORD = "TestPassword123!";
 
     @Autowired UserRepository users;
+    @Autowired EmployeeProfileRepository employeeProfiles;
     @Autowired RefreshTokenRepository refreshTokens;
     @Autowired CategoryRepository categories;
     @Autowired ProductRepository products;
@@ -129,7 +134,8 @@ class ManagerRoleSecurityIntegrationTest {
         String token = "Bearer " + managerAuth.login(employee.getEmail(), PASSWORD).accessToken();
 
         mvc.perform(get("/api/manager/me/profile").header("Authorization", token))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(employee.getId()));
     }
 
     @Test
@@ -214,6 +220,19 @@ class ManagerRoleSecurityIntegrationTest {
         user.setEmail(UUID.randomUUID() + "@manager-role.test");
         user.setPasswordHash(encoder.encode(PASSWORD));
         user.setRole(role);
-        return users.saveAndFlush(user);
+        User saved = users.saveAndFlush(user);
+        if ("EMPLOYEE".equals(role)) {
+            EmployeeProfile profile = new EmployeeProfile();
+            profile.setEmployeeId(saved.getId());
+            profile.setAccount(saved);
+            profile.setEmployeeCode("T-" + UUID.randomUUID().toString().substring(0, 8));
+            profile.setJobTitle("Nhân viên kiểm thử");
+            profile.setEmploymentStatus("ACTIVE");
+            profile.setHireDate(LocalDate.of(2025, 1, 1));
+            profile.setMonthlyBaseSalary(BigDecimal.ZERO);
+            profile.setInsuranceSalaryBase(BigDecimal.ZERO);
+            employeeProfiles.saveAndFlush(profile);
+        }
+        return saved;
     }
 }

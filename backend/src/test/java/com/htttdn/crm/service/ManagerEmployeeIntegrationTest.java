@@ -129,6 +129,28 @@ class ManagerEmployeeIntegrationTest {
     }
 
     @Test
+    void offboardingRevokesRefreshSessionAndBlocksExistingSelfServiceToken() throws Exception {
+        String hrToken = hrToken();
+        String email = email("offboarded");
+        long employeeId = createEmployee(hrToken, email, "O-" + UUID.randomUUID().toString().substring(0, 8));
+        ManagerAuthService.Session employeeSession = managerAuth.login(email, "StrongPass123!");
+
+        mvc.perform(put("/api/manager/employees/" + employeeId)
+                        .header("Authorization", hrToken)
+                        .contentType("application/json")
+                        .content("{\"employmentStatus\":\"TERMINATED\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.employmentStatus").value("TERMINATED"));
+
+        assertThrows(com.htttdn.crm.exception.ApiException.class,
+                () -> managerAuth.refresh(employeeSession.refreshToken()));
+        assertThrows(com.htttdn.crm.exception.ApiException.class,
+                () -> managerAuth.login(email, "StrongPass123!"));
+        mvc.perform(get("/api/manager/me/profile").header("Authorization", "Bearer " + employeeSession.accessToken()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void employeeReadsAndEditsOnlyOwnContactFields() throws Exception {
         String hrToken = hrToken();
         String firstEmail = email("self-one");

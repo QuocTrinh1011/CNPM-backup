@@ -152,6 +152,7 @@ public class ManagerEmployeeService {
         profile.setAccount(account);
         profile.touch();
         profiles.saveAndFlush(profile);
+        if (!"ACTIVE".equals(profile.getEmploymentStatus())) refreshTokens.revokeByUserId(employeeId);
         audit.record("UPDATE", "EMPLOYEE", employeeId, before, AuditTrail.snapshot(profile));
         return EmployeeProfileDto.from(profile);
     }

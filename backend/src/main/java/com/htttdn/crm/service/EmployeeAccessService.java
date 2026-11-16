@@ -31,7 +31,11 @@ public class EmployeeAccessService {
                 || account.isLocked() || account.getDeletedAt() != null) {
             throw new ApiException(HttpStatus.FORBIDDEN, "EMPLOYEE_SELF_SCOPE_REQUIRED", "Không có quyền truy cập hồ sơ này.");
         }
-        return profiles.findById(account.getId())
+        EmployeeProfile profile = profiles.findById(account.getId())
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "EMPLOYEE_NOT_FOUND", "Chưa có hồ sơ nhân viên."));
+        if (!"ACTIVE".equals(profile.getEmploymentStatus())) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "EMPLOYEE_NOT_ACTIVE", "Nhân viên đã nghỉ việc không thể truy cập chức năng cá nhân.");
+        }
+        return profile;
     }
 }

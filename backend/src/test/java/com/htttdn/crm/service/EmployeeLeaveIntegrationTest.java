@@ -163,6 +163,26 @@ class EmployeeLeaveIntegrationTest {
     }
 
     @Test
+    void approvingResignationRevokesEmployeeSessionAndBlocksExistingSelfServiceToken() throws Exception {
+        String hrToken = hrToken();
+        long employeeId = createEmployee(hrToken, "leave-offboard");
+        User employee = users.findById(employeeId).orElseThrow();
+        ManagerAuthService.Session session = managerAuth.login(employee.getEmail(), "StrongPass123!");
+        String employeeToken = bearer(session.accessToken());
+        long resignationId = createLeave(employeeToken, "RESIGNATION", "2026-12-31", "2026-12-31");
+
+        mvc.perform(patch("/api/manager/hr/leave-requests/" + resignationId + "/decision")
+                        .header("Authorization", hrToken).contentType("application/json")
+                        .content("{\"decision\":\"APPROVED\"}"))
+                .andExpect(status().isOk());
+
+        org.junit.jupiter.api.Assertions.assertThrows(com.htttdn.crm.exception.ApiException.class,
+                () -> managerAuth.refresh(session.refreshToken()));
+        mvc.perform(get("/api/manager/me/profile").header("Authorization", employeeToken))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void employeesCannotAccessHrDecisionQueue() throws Exception {
         String hrToken = hrToken();
         long employeeId = createEmployee(hrToken, "leave-role-boundary");
