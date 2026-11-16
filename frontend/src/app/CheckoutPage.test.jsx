@@ -27,6 +27,32 @@ beforeEach(()=>{
   });
 });
 afterEach(cleanup);
+it("shows shipping fee and total below the free-shipping threshold",async()=>{
+  render(<CheckoutPage cart={cart}/>);
+  await screen.findByText(home.recipientName);
+  expect(screen.getByText("Phí giao hàng")).toBeTruthy();
+  expect(screen.getByText("Phí giao hàng").parentElement.textContent).toContain("30.000");
+  expect(screen.getByText("Tổng thanh toán").parentElement.textContent).toContain("130.000");
+});
+it("applies voucher before threshold and keeps shipping fee server-owned",async()=>{
+  const discountedCart={...cart,subtotal:420000,items:[{...cart.items[0],unitPrice:420000,lineTotal:420000}]};
+  api.mockImplementation(async(path,options)=>{
+    if(path.includes("/addresses")) return [home];
+    if(path.startsWith("/api/vouchers/validate")) return {code:"SAVE21",discountAmount:21000};
+    if(path==="/api/orders"&&options?.method==="POST") return {order:{id:99,orderCode:9900,totalAmount:399000,status:"PENDING",paymentMethod:"COD",paymentStatus:"COD"}};
+    return [];
+  });
+  render(<CheckoutPage cart={discountedCart}/>);
+  await screen.findByText(home.recipientName);
+  fireEvent.change(screen.getByPlaceholderText("Nhập mã voucher"),{target:{value:"SAVE21"}});
+  fireEvent.click(screen.getByText("ÁP DỤNG"));
+  await screen.findByText("Đã áp dụng SAVE21");
+  expect(screen.getByText("Miễn phí")).toBeTruthy();
+  fireEvent.click(screen.getByText("ĐẶT HÀNG"));
+  await screen.findByText("Chờ xác nhận · Cửa hàng sẽ kiểm tra và xác nhận đơn của bạn.");
+  const orderCall=api.mock.calls.find(([path,options])=>path==="/api/orders"&&options?.method==="POST");
+  expect(orderCall[1].body).not.toHaveProperty("shippingFee");
+});
 it("requires an explicit cart selection on a fresh direct checkout",async()=>{
   sessionStorage.clear();render(<App/>);
   await screen.findByText("Chưa chọn sản phẩm để đặt hàng");

@@ -4,6 +4,7 @@ import { api } from "../../api/api";
 import VoucherField, { useCheckoutVoucher } from "./VoucherField";
 import { useAddresses, AddressPicker, AddressSummary, preferredAddress, addressValid, deliveryText } from "../../shared/address/AddressBook";
 import PaymentQr from "./PaymentQr";
+import { getShippingFee } from "./shipping-policy";
 import "../../shared/address/checkout-page.css";
 
 const money = value => Number(value || 0).toLocaleString("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 });
@@ -47,7 +48,9 @@ export default function CheckoutPage({ cart, onPlaced, onShop, onOrders, onCart,
     <div className="shop-address-actions"><button className="button button-light" onClick={onShop}>Tiếp tục mua sắm</button><button className="button button-dark" onClick={onOrders}>Xem đơn hàng</button></div>
   </section></main>;
   if (!cart.items.length) return <CheckoutState title={onCart ? 'Chưa chọn sản phẩm để đặt hàng' : 'Giỏ hàng đang trống'} message="Quay lại giỏ hàng và chọn sản phẩm muốn mua." action={onCart ? 'Chọn sản phẩm trong giỏ' : 'Tiếp tục mua sắm'} onAction={onCart || onShop}/>;
-  const total = Math.max(0, Number(cart.subtotal) - Number(voucherModel.voucher?.discountAmount || 0));
+  const merchandiseTotalAfterVoucher = Math.max(0, Number(cart.subtotal) - Number(voucherModel.voucher?.discountAmount || 0));
+  const shippingFee = getShippingFee(merchandiseTotalAfterVoucher);
+  const total = merchandiseTotalAfterVoucher + shippingFee;
   const ready = addressValid(selected) && !resource.loading && !resource.error && !busy && !voucherModel.busy;
   return <main className="shop-checkout-page">
     <button className="shop-address-link" disabled={busy} onClick={onCart || onShop}><ArrowLeft size={16}/> {onCart ? 'Quay lại giỏ để đổi lựa chọn' : 'Tiếp tục mua sắm'}</button>
@@ -65,7 +68,7 @@ export default function CheckoutPage({ cart, onPlaced, onShop, onOrders, onCart,
         <label className={method === "PAYOS" ? "is-selected" : ""}><input type="radio" name="payment-method" checked={method === "PAYOS"} onChange={() => setMethod("PAYOS")}/><CreditCard size={21}/><span><b>payOS / VietQR</b><small>Quét mã QR ngay sau khi đặt hàng.</small></span></label>
       </fieldset></section>
     </div><aside className="shop-checkout-card shop-checkout-totals"><h2>Tóm tắt đơn hàng</h2><VoucherField model={voucherModel} disabled={busy} VoucherWallet={VoucherWallet}/>
-      <dl><div><dt>Tạm tính</dt><dd>{money(cart.subtotal)}</dd></div>{voucherModel.voucher && <div className="shop-checkout-discount"><dt>Giảm giá ({voucherModel.voucher.code})</dt><dd>−{money(voucherModel.voucher.discountAmount)}</dd></div>}<div className="shop-checkout-total"><dt>Tổng thanh toán</dt><dd>{money(total)}</dd></div></dl>
+      <dl><div><dt>Tạm tính</dt><dd>{money(cart.subtotal)}</dd></div>{voucherModel.voucher && <div className="shop-checkout-discount"><dt>Giảm giá ({voucherModel.voucher.code})</dt><dd>−{money(voucherModel.voucher.discountAmount)}</dd></div>}<div><dt>Phí giao hàng</dt><dd>{shippingFee > 0 ? money(shippingFee) : "Miễn phí"}</dd></div><div className="shop-checkout-total"><dt>Tổng thanh toán</dt><dd>{money(total)}</dd></div></dl>
       <form onSubmit={submit}>{error && <p className="shop-inline-error" role="alert">{error}</p>}<button className="button button-dark" type="submit" disabled={!ready}>{busy ? "ĐANG ĐẶT HÀNG..." : "ĐẶT HÀNG"}<ArrowUpRight size={17}/></button></form>
       {!selected && !resource.loading && !resource.error && <p>Vui lòng thêm địa chỉ để tiếp tục.</p>}<p className="shop-checkout-secure"><ShieldCheck size={16}/> Đơn hàng chỉ được xác nhận sau khi cửa hàng kiểm tra.</p>
     </aside></div>
