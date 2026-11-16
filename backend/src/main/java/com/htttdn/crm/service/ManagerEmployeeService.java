@@ -10,7 +10,6 @@ import com.htttdn.crm.exception.ApiException;
 import com.htttdn.crm.repository.EmployeeProfileRepository;
 import com.htttdn.crm.repository.RefreshTokenRepository;
 import com.htttdn.crm.repository.UserRepository;
-import com.htttdn.crm.security.JwtTokenService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -35,18 +34,18 @@ public class ManagerEmployeeService {
     private final EmployeeProfileRepository profiles;
     private final RefreshTokenRepository refreshTokens;
     private final PasswordEncoder encoder;
-    private final JwtTokenService jwt;
     private final AuditTrail audit;
+    private final EmployeeAccessService employeeAccess;
 
     public ManagerEmployeeService(UserRepository users, EmployeeProfileRepository profiles,
                                   RefreshTokenRepository refreshTokens, PasswordEncoder encoder,
-                                  JwtTokenService jwt, AuditTrail audit) {
+                                  AuditTrail audit, EmployeeAccessService employeeAccess) {
         this.users = users;
         this.profiles = profiles;
         this.refreshTokens = refreshTokens;
         this.encoder = encoder;
-        this.jwt = jwt;
         this.audit = audit;
+        this.employeeAccess = employeeAccess;
     }
 
     @Transactional(readOnly = true)
@@ -176,14 +175,13 @@ public class ManagerEmployeeService {
 
     @Transactional(readOnly = true)
     public EmployeeProfileDto selfProfile(String authorization) {
-        User account = authenticatedEmployee(authorization);
-        return EmployeeProfileDto.from(profile(account.getId()));
+        return EmployeeProfileDto.from(employeeAccess.requireEmployee(authorization));
     }
 
     @Transactional
     public EmployeeProfileDto updateSelfProfile(String authorization, EmployeeSelfProfileUpdate input) {
-        User account = authenticatedEmployee(authorization);
-        EmployeeProfile profile = profile(account.getId());
+        EmployeeProfile profile = employeeAccess.requireEmployee(authorization);
+        User account = profile.getAccount();
         boolean contactChanged = input.phone() != null || input.emergencyContactName() != null
                 || input.emergencyContactPhone() != null || input.emergencyContactRelationship() != null;
         if (input.phone() != null) account.setPhone(normalizeNullable(input.phone()));
@@ -199,16 +197,6 @@ public class ManagerEmployeeService {
                     Map.of("contactUpdated", false), Map.of("contactUpdated", true));
         }
         return EmployeeProfileDto.from(profile);
-    }
-
-    private User authenticatedEmployee(String authorization) {
-        JwtTokenService.Claims claims = jwt.parse(authorization);
-        User account = users.findById(claims.userId()).orElseThrow(() -> notFound("Không tìm thấy nhân viên."));
-        if (!"EMPLOYEE".equals(claims.role()) || !"EMPLOYEE".equals(account.getRole())
-                || account.isLocked() || account.getDeletedAt() != null) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "EMPLOYEE_SELF_SCOPE_REQUIRED", "Không có quyền truy cập hồ sơ này.");
-        }
-        return account;
     }
 
     private User activeEmployee(Long employeeId) {
