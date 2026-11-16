@@ -27,6 +27,18 @@
 .warehouse-status.status-pending { background: #fff7e6; color: #93370d !important; }
 .warehouse-status.status-approved { background: #ecfdf3; color: #027a48 !important; }
 .warehouse-danger-action { color: #b42318 !important; border-color: #fecdca !important; }
+.warehouse-report-filters { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; padding: 14px; border: 1px solid var(--admin-border); border-radius: 10px; background: var(--admin-card); }
+.warehouse-report-filters label { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 6px 8px; color: var(--admin-text); font-size: 13px; font-weight: 600; }
+.warehouse-report-filters label select, .warehouse-report-filters label input { grid-column: 1 / -1; min-width: 140px; border: 1px solid var(--admin-border); border-radius: 7px; padding: 8px 10px; background: var(--admin-card); color: var(--admin-text); font: inherit; }
+.warehouse-period-label { margin-left: auto; padding: 8px 11px; border-radius: 7px; color: var(--admin-primary); background: color-mix(in srgb, var(--admin-primary) 8%, var(--admin-card)); font-weight: 700; }
+.warehouse-report-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; color: var(--admin-muted, #667085); font-size: 12px; }
+.warehouse-report-meta span:last-child { display: inline-flex; align-items: center; gap: 6px; }
+.warehouse-report-section { display: grid; gap: 10px; }
+.warehouse-table-scroll { overflow-x: auto; border: 1px solid var(--admin-border); border-radius: 9px; }
+.warehouse-table-scroll table { width: 100%; border-collapse: collapse; color: var(--admin-text); background: var(--admin-card); font-size: 13px; }
+.warehouse-table-scroll th, .warehouse-table-scroll td { padding: 10px 12px; border-bottom: 1px solid var(--admin-border); text-align: left; white-space: nowrap; }
+.warehouse-table-scroll th { color: var(--admin-muted, #667085); background: color-mix(in srgb, var(--admin-primary) 4%, var(--admin-card)); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.warehouse-notice.is-warning { border: 1px solid #fedf89; color: #93370d; background: #fffaeb; }
 .warehouse-employee-plans, .warehouse-employee-history-grid { display: grid; gap: 13px; }
 .warehouse-employee-plan { display: grid; gap: 14px; padding: 16px; border: 1px solid var(--admin-border); border-radius: 11px; background: var(--admin-card); color: var(--admin-text); }
 .warehouse-material-breakdown { display: grid; gap: 8px; font-size: 13px; }
@@ -44,6 +56,7 @@
   .warehouse-receipt-line, .warehouse-recipe-line { grid-template-columns: 1fr 1fr; }
   .warehouse-receipt-line label:first-child, .warehouse-recipe-line label:first-child { grid-column: 1 / -1; }
   .warehouse-approval-heading { flex-direction: column; }
+  .warehouse-period-label { margin-left: 0; }
   .warehouse-material-breakdown > div { flex-direction: column; }
   .warehouse-material-breakdown > div span:last-child { text-align: left; }
 }

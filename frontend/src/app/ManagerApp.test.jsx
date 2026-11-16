@@ -139,6 +139,18 @@ it('adds the warehouse task page only to EMPLOYEE accounts assigned to the wareh
   expect(await screen.findByRole('heading', { name: 'Công việc kho của tôi', level: 2 })).toBeTruthy();
 });
 
+it('opens the warehouse report route for warehouse managers', async () => {
+  window.history.replaceState({}, '', '/manager/warehouse-reports');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Warehouse', role: 'MANAGER_WAREHOUSE' } });
+  adminApi.mockImplementation(async url => url.includes('/warehouse/reports?')
+    ? { period: 'MONTH', year: 2026, month: 11, balances: [], movementTotals: [], historyComplete: false }
+    : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+  expect(await screen.findByRole('heading', { name: 'Báo cáo kho', level: 2 })).toBeTruthy();
+  expect(await screen.findByRole('combobox', { name: 'Loại kỳ' })).toBeTruthy();
+});
+
 it('lands team leads on their direct team directory while staff land on their own profile', async () => {
   window.history.replaceState({}, '', '/manager');
   adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Team lead', role: 'EMPLOYEE' } });
