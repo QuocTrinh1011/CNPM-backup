@@ -154,6 +154,7 @@ class ManagerRoleAccessPolicyTest {
                 route("GET", "/api/manager/production-plans", warehouse),
                 route("POST", "/api/manager/production-plans", warehouse),
                 route("GET", "/api/manager/production-plans/12", warehouse),
+                route("PATCH", "/api/manager/production-plans/12/cancel", warehouse),
                 route("GET", "/api/manager/warehouse/material-requests", warehouse),
                 route("PATCH", "/api/manager/warehouse/material-requests/12/decision", warehouse),
                 route("GET", "/api/manager/warehouse/material-returns", warehouse),

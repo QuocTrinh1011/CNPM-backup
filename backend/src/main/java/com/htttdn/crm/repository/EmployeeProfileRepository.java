@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -13,6 +15,10 @@ import java.util.Optional;
 import java.time.LocalDate;
 
 public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile, Long> {
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select profile from EmployeeProfile profile where profile.employeeId = :employeeId")
+    Optional<EmployeeProfile> findByIdForUpdate(@Param("employeeId") Long employeeId);
+
     @EntityGraph(attributePaths = "account")
     @Query("select profile from EmployeeProfile profile where profile.account.role = 'EMPLOYEE' and profile.hireDate <= :periodEnd and (profile.resignationDate is null or profile.resignationDate >= :periodStart) order by profile.employeeId")
     List<EmployeeProfile> findForWorkforceReport(@Param("periodStart") LocalDate periodStart, @Param("periodEnd") LocalDate periodEnd);

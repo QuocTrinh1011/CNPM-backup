@@ -104,7 +104,7 @@ public class ManagerEmployeeService {
     @Transactional
     public EmployeeProfileDto update(Long employeeId, UpdateEmployeeRequest input) {
         User account = activeEmployee(employeeId);
-        EmployeeProfile profile = profile(employeeId);
+        EmployeeProfile profile = profiles.findByIdForUpdate(employeeId).orElseThrow(() -> notFound("Chưa có hồ sơ nhân viên."));
         var before = AuditTrail.snapshot(profile);
 
         if (input.email() != null) {
@@ -164,7 +164,7 @@ public class ManagerEmployeeService {
     @Transactional
     public void deactivate(Long employeeId) {
         User account = activeEmployee(employeeId);
-        EmployeeProfile profile = profile(employeeId);
+        EmployeeProfile profile = profiles.findByIdForUpdate(employeeId).orElseThrow(() -> notFound("Chưa có hồ sơ nhân viên."));
         var before = AuditTrail.snapshot(profile);
         Instant now = Instant.now();
         account.setDeletedAt(now);
@@ -210,10 +210,6 @@ public class ManagerEmployeeService {
             throw notFound("Không tìm thấy nhân viên đang hoạt động.");
         }
         return account;
-    }
-
-    private EmployeeProfile profile(Long employeeId) {
-        return profiles.findById(employeeId).orElseThrow(() -> notFound("Chưa có hồ sơ nhân viên."));
     }
 
     private void setManager(EmployeeProfile employee, Long managerId) {
