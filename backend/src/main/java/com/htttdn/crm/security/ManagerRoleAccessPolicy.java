@@ -73,6 +73,34 @@ public final class ManagerRoleAccessPolicy {
         add(configured, "GET", "/api/manager/stock-receipts/" + ID, WAREHOUSE);
         add(configured, "POST", "/api/manager/stock-receipts", WAREHOUSE);
 
+        add(configured, "GET", "/api/manager/raw-materials", WAREHOUSE);
+        add(configured, "POST", "/api/manager/raw-materials", WAREHOUSE);
+        add(configured, "PUT", "/api/manager/raw-materials/" + ID, WAREHOUSE);
+        add(configured, "GET", "/api/manager/raw-material-receipts", WAREHOUSE);
+        add(configured, "GET", "/api/manager/raw-material-receipts/" + ID, WAREHOUSE);
+        add(configured, "POST", "/api/manager/raw-material-receipts", WAREHOUSE);
+        add(configured, "GET", "/api/manager/products/" + ID + "/recipe", WAREHOUSE);
+        add(configured, "PUT", "/api/manager/products/" + ID + "/recipe", WAREHOUSE);
+        add(configured, "GET", "/api/manager/production-plans", WAREHOUSE);
+        add(configured, "POST", "/api/manager/production-plans", WAREHOUSE);
+        add(configured, "GET", "/api/manager/production-plans/" + ID, WAREHOUSE);
+
+        add(configured, "GET", "/api/manager/warehouse/me/plans", EMPLOYEE);
+        add(configured, "GET", "/api/manager/warehouse/me/material-requests", EMPLOYEE);
+        add(configured, "POST", "/api/manager/warehouse/me/material-requests", EMPLOYEE);
+        add(configured, "POST", "/api/manager/warehouse/me/plans/" + ID + "/production-runs", EMPLOYEE);
+        add(configured, "POST", "/api/manager/warehouse/me/plans/" + ID + "/material-returns", EMPLOYEE);
+        add(configured, "GET", "/api/manager/warehouse/me/finished-goods-requests", EMPLOYEE);
+        add(configured, "POST", "/api/manager/warehouse/me/finished-goods-requests", EMPLOYEE);
+
+        add(configured, "GET", "/api/manager/warehouse/material-requests", WAREHOUSE);
+        add(configured, "PATCH", "/api/manager/warehouse/material-requests/" + ID + "/decision", WAREHOUSE);
+        add(configured, "GET", "/api/manager/warehouse/material-returns", WAREHOUSE);
+        add(configured, "PATCH", "/api/manager/warehouse/material-returns/" + ID + "/decision", WAREHOUSE);
+        add(configured, "GET", "/api/manager/warehouse/finished-goods-requests", WAREHOUSE);
+        add(configured, "PATCH", "/api/manager/warehouse/finished-goods-requests/" + ID + "/decision", WAREHOUSE);
+        add(configured, "GET", "/api/manager/warehouse/reports", WAREHOUSE);
+
         add(configured, "GET", "/api/manager/users", SALES);
         add(configured, "POST", "/api/manager/users", SALES);
         add(configured, "GET", "/api/manager/users/" + ID, SALES);

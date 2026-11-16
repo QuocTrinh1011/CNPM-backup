@@ -62,6 +62,7 @@ class ManagerEmployeeIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.email").value(email))
                 .andExpect(jsonPath("$.jobTitle").value("Nhân viên bán hàng"))
+                .andExpect(jsonPath("$.workArea").value("GENERAL"))
                 .andExpect(jsonPath("$.passwordHash").doesNotExist())
                 .andExpect(jsonPath("$.temporaryPassword").doesNotExist())
                 .andReturn().getResponse().getContentAsString();
@@ -129,6 +130,46 @@ class ManagerEmployeeIntegrationTest {
     }
 
     @Test
+    void hrCanAssignAndClearEmployeeWorkArea() throws Exception {
+        String hrToken = hrToken();
+        String email = email("warehouse-employee");
+        String body = employeeJson(email, "W-" + UUID.randomUUID(), "StrongPass123!")
+                .replace("\"hireDate\"", "\"workArea\":\"WAREHOUSE\",\"hireDate\"");
+
+        String created = mvc.perform(post("/api/manager/employees")
+                        .header("Authorization", hrToken)
+                        .contentType("application/json")
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.workArea").value("WAREHOUSE"))
+                .andReturn().getResponse().getContentAsString();
+        long employeeId = ((Number) com.jayway.jsonpath.JsonPath.read(created, "$.id")).longValue();
+
+        mvc.perform(put("/api/manager/employees/" + employeeId)
+                        .header("Authorization", hrToken)
+                        .contentType("application/json")
+                        .content("{\"workArea\":\"GENERAL\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.workArea").value("GENERAL"));
+        assertEquals("GENERAL", profiles.findById(employeeId).orElseThrow().getWorkArea());
+    }
+
+    @Test
+    void hrCannotAssignUnknownWorkArea() throws Exception {
+        String hrToken = hrToken();
+        String email = email("invalid-work-area");
+        String body = employeeJson(email, "W-" + UUID.randomUUID(), "StrongPass123!")
+                .replace("\"hireDate\"", "\"workArea\":\"OFFICE\",\"hireDate\"");
+
+        mvc.perform(post("/api/manager/employees")
+                        .header("Authorization", hrToken)
+                        .contentType("application/json")
+                        .content(body))
+                .andExpect(status().isBadRequest());
+        assertTrue(users.findByEmailIgnoreCase(email).isEmpty());
+    }
+
+    @Test
     void offboardingRevokesRefreshSessionAndBlocksExistingSelfServiceToken() throws Exception {
         String hrToken = hrToken();
         String email = email("offboarded");
@@ -171,10 +212,12 @@ class ManagerEmployeeIntegrationTest {
                         .contentType("application/json")
                         .content("""
                                 {"phone":"0987654321","emergencyContactName":"Người thân",
-                                 "emergencyContactPhone":"0900000000","monthlyBaseSalary":1}
+                                 "emergencyContactPhone":"0900000000","monthlyBaseSalary":1,
+                                 "workArea":"WAREHOUSE"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.phone").value("0987654321"))
+                .andExpect(jsonPath("$.workArea").value("GENERAL"))
                 .andExpect(jsonPath("$.monthlyBaseSalary").value(12000000));
 
         mvc.perform(get("/api/manager/me/profile").header("Authorization", secondToken))

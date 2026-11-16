@@ -72,6 +72,28 @@ class ManagerRoleAccessPolicyTest {
     }
 
     @Test
+    void warehouseEmployeeRoutesAreAdmittedOnlyAsEmployeeForServiceLevelWorkAreaChecks() {
+        for (RouteCase route : Stream.of(
+                route("GET", "/api/manager/warehouse/me/plans", Set.of(EMPLOYEE)),
+                route("GET", "/api/manager/warehouse/me/material-requests", Set.of(EMPLOYEE)),
+                route("POST", "/api/manager/warehouse/me/material-requests", Set.of(EMPLOYEE)),
+                route("POST", "/api/manager/warehouse/me/plans/12/production-runs", Set.of(EMPLOYEE)),
+                route("POST", "/api/manager/warehouse/me/plans/12/material-returns", Set.of(EMPLOYEE)),
+                route("GET", "/api/manager/warehouse/me/finished-goods-requests", Set.of(EMPLOYEE)),
+                route("POST", "/api/manager/warehouse/me/finished-goods-requests", Set.of(EMPLOYEE))
+        ).toList()) {
+            assertEquals(route.allowedRoles(), policy.rolesFor(route.method(), route.path()), route.toString());
+            assertTrue(policy.allows(EMPLOYEE, route.method(), route.path()), route.toString());
+            assertFalse(policy.allows(HR, route.method(), route.path()), HR + " " + route);
+            assertFalse(policy.allows(SALES, route.method(), route.path()), SALES + " " + route);
+            assertFalse(policy.allows(WAREHOUSE, route.method(), route.path()), WAREHOUSE + " " + route);
+        }
+
+        assertFalse(policy.allows(EMPLOYEE, "GET", "/api/manager/warehouse/me/unknown"));
+        assertFalse(policy.allows(EMPLOYEE, "DELETE", "/api/manager/warehouse/me/plans/12"));
+    }
+
+    @Test
     void hrOwnsEmployeeAdministrationLeaveDecisionsAttendancePayrollAndReports() {
         for (RouteCase route : Stream.of(
                 route("POST", "/api/manager/employees", Set.of(HR)),
@@ -121,6 +143,24 @@ class ManagerRoleAccessPolicyTest {
                 route("GET", "/api/manager/stock-receipts", warehouse),
                 route("GET", "/api/manager/stock-receipts/12", warehouse),
                 route("POST", "/api/manager/stock-receipts", warehouse),
+                route("GET", "/api/manager/raw-materials", warehouse),
+                route("POST", "/api/manager/raw-materials", warehouse),
+                route("PUT", "/api/manager/raw-materials/12", warehouse),
+                route("GET", "/api/manager/raw-material-receipts", warehouse),
+                route("GET", "/api/manager/raw-material-receipts/12", warehouse),
+                route("POST", "/api/manager/raw-material-receipts", warehouse),
+                route("GET", "/api/manager/products/12/recipe", warehouse),
+                route("PUT", "/api/manager/products/12/recipe", warehouse),
+                route("GET", "/api/manager/production-plans", warehouse),
+                route("POST", "/api/manager/production-plans", warehouse),
+                route("GET", "/api/manager/production-plans/12", warehouse),
+                route("GET", "/api/manager/warehouse/material-requests", warehouse),
+                route("PATCH", "/api/manager/warehouse/material-requests/12/decision", warehouse),
+                route("GET", "/api/manager/warehouse/material-returns", warehouse),
+                route("PATCH", "/api/manager/warehouse/material-returns/12/decision", warehouse),
+                route("GET", "/api/manager/warehouse/finished-goods-requests", warehouse),
+                route("PATCH", "/api/manager/warehouse/finished-goods-requests/12/decision", warehouse),
+                route("GET", "/api/manager/warehouse/reports", warehouse),
                 route("GET", "/api/manager/users", sales),
                 route("POST", "/api/manager/users", sales),
                 route("GET", "/api/manager/users/12", sales),

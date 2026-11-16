@@ -28,6 +28,7 @@ import java.util.Set;
 @Service
 public class ManagerEmployeeService {
     private static final Set<String> PERMISSION_PROFILES = Set.of("STAFF", "TEAM_LEAD");
+    private static final Set<String> WORK_AREAS = Set.of("GENERAL", "SALES", "WAREHOUSE");
     private static final Set<String> EMPLOYMENT_STATUSES = Set.of("ACTIVE", "RESIGNED", "TERMINATED");
 
     private final UserRepository users;
@@ -66,6 +67,7 @@ public class ManagerEmployeeService {
         ensureEmployeeCodeAvailable(code, null);
         validatePassword(input.temporaryPassword());
         String permissionProfile = normalizePermissionProfile(input.permissionProfile());
+        String workArea = normalizeWorkArea(input.workArea());
 
         User account = new User();
         account.setEmail(email);
@@ -83,6 +85,7 @@ public class ManagerEmployeeService {
         profile.setEducationLevel(normalizeNullable(input.educationLevel()));
         profile.setJobTitle(input.jobTitle().trim());
         profile.setPermissionProfile(permissionProfile);
+        profile.setWorkArea(workArea);
         profile.setEmploymentStatus("ACTIVE");
         profile.setHireDate(input.hireDate());
         profile.setMonthlyBaseSalary(input.monthlyBaseSalary());
@@ -118,6 +121,7 @@ public class ManagerEmployeeService {
         }
         if (input.educationLevel() != null) profile.setEducationLevel(normalizeNullable(input.educationLevel()));
         if (input.jobTitle() != null) profile.setJobTitle(input.jobTitle().trim());
+        if (input.workArea() != null) profile.setWorkArea(normalizeWorkArea(input.workArea()));
         if (input.permissionProfile() != null) {
             String permissionProfile = normalizePermissionProfile(input.permissionProfile());
             if ("TEAM_LEAD".equals(profile.getPermissionProfile()) && "STAFF".equals(permissionProfile)
@@ -257,6 +261,15 @@ public class ManagerEmployeeService {
                 ? "STAFF" : permissionProfile.trim().toUpperCase(Locale.ROOT);
         if (!PERMISSION_PROFILES.contains(normalized)) {
             throw bad("INVALID_EMPLOYEE_PROFILE", "Hồ sơ quyền nhân viên không hợp lệ.");
+        }
+        return normalized;
+    }
+
+    private static String normalizeWorkArea(String workArea) {
+        String normalized = workArea == null || workArea.isBlank()
+                ? "GENERAL" : workArea.trim().toUpperCase(Locale.ROOT);
+        if (!WORK_AREAS.contains(normalized)) {
+            throw bad("INVALID_EMPLOYEE_WORK_AREA", "Khu vực làm việc không hợp lệ.");
         }
         return normalized;
     }

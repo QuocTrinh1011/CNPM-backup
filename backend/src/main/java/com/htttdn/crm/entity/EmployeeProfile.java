@@ -42,6 +42,9 @@ public class EmployeeProfile implements Persistable<Long> {
     @Column(name = "permission_profile", nullable = false, length = 20)
     private String permissionProfile = "STAFF";
 
+    @Column(name = "work_area", nullable = false, length = 20)
+    private String workArea = "GENERAL";
+
     @Column(name = "employment_status", nullable = false, length = 20)
     private String employmentStatus = "ACTIVE";
 
@@ -95,6 +98,8 @@ public class EmployeeProfile implements Persistable<Long> {
     public void setJobTitle(String jobTitle) { this.jobTitle = jobTitle; }
     public String getPermissionProfile() { return permissionProfile; }
     public void setPermissionProfile(String permissionProfile) { this.permissionProfile = permissionProfile; }
+    public String getWorkArea() { return workArea; }
+    public void setWorkArea(String workArea) { this.workArea = workArea; }
     public String getEmploymentStatus() { return employmentStatus; }
     public void setEmploymentStatus(String employmentStatus) { this.employmentStatus = employmentStatus; }
     public LocalDate getHireDate() { return hireDate; }

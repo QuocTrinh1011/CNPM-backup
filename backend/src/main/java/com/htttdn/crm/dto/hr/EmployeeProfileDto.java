@@ -16,6 +16,7 @@ public record EmployeeProfileDto(
         String educationLevel,
         String jobTitle,
         String permissionProfile,
+        String workArea,
         String employmentStatus,
         LocalDate hireDate,
         LocalDate resignationDate,
@@ -31,7 +32,7 @@ public record EmployeeProfileDto(
         return new EmployeeProfileDto(
                 profile.getEmployeeId(), account.getFullName(), account.getEmail(), account.getPhone(), account.isLocked(),
                 profile.getEmployeeCode(), profile.getEducationLevel(), profile.getJobTitle(),
-                profile.getPermissionProfile(), profile.getEmploymentStatus(), profile.getHireDate(),
+                profile.getPermissionProfile(), profile.getWorkArea(), profile.getEmploymentStatus(), profile.getHireDate(),
                 profile.getResignationDate(), profile.getMonthlyBaseSalary(), profile.getInsuranceSalaryBase(),
                 profile.getReportsToEmployeeId(), profile.getEmergencyContactName(), profile.getEmergencyContactPhone(),
                 profile.getEmergencyContactRelationship());

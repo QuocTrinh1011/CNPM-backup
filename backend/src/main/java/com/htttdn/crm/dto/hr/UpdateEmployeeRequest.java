@@ -2,6 +2,7 @@ package com.htttdn.crm.dto.hr;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ public record UpdateEmployeeRequest(
         @Size(max = 120) String educationLevel,
         @Size(max = 150) String jobTitle,
         String permissionProfile,
+        @Pattern(regexp = "(?i)^(GENERAL|SALES|WAREHOUSE)$") String workArea,
         String employmentStatus,
         LocalDate hireDate,
         LocalDate resignationDate,
