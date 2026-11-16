@@ -1,6 +1,9 @@
 package com.htttdn.crm.service;
 
 import com.htttdn.crm.entity.Product;
+import com.htttdn.crm.entity.InventoryItemType;
+import com.htttdn.crm.entity.InventoryLocation;
+import com.htttdn.crm.entity.InventoryMovementType;
 import com.htttdn.crm.entity.StockReceipt;
 import com.htttdn.crm.entity.StockReceiptItem;
 import com.htttdn.crm.entity.Supplier;
@@ -27,13 +30,16 @@ public class StockReceiptService extends AdminServiceSupport {
     private final SupplierRepository suppliers;
     private final ProductRepository products;
     private final StockService stock;
+    private final InventoryMovementService movements;
 
     public StockReceiptService(StockReceiptRepository receipts, SupplierRepository suppliers,
-                               ProductRepository products, StockService stock) {
+                               ProductRepository products, StockService stock,
+                               InventoryMovementService movements) {
         this.receipts = receipts;
         this.suppliers = suppliers;
         this.products = products;
         this.stock = stock;
+        this.movements = movements;
     }
 
     @Transactional
@@ -96,6 +102,12 @@ public class StockReceiptService extends AdminServiceSupport {
         }
         receipt.setTotalCost(total);
         StockReceipt saved = receipts.saveAndFlush(receipt);
+        for (StockReceiptItem item : saved.getItems()) {
+            movements.recordChange(InventoryItemType.PRODUCT, item.getProduct().getId(), InventoryLocation.SELLABLE,
+                    null, BigDecimal.valueOf(item.getQuantity()).setScale(3),
+                    BigDecimal.valueOf(item.getProduct().getStock()).setScale(3),
+                    InventoryMovementType.PRODUCT_RECEIPT, "STOCK_RECEIPT", saved.getId());
+        }
         audit("RECEIVE", "STOCK_RECEIPT", saved.getId(), Map.of(), saved);
         return view(saved, true);
     }

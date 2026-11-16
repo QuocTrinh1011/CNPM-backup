@@ -2,6 +2,7 @@ package com.htttdn.crm.controller;
 
 import com.htttdn.crm.service.WarehouseEmployeeAccessService;
 import com.htttdn.crm.service.WarehouseWorkService;
+import com.htttdn.crm.service.FinishedGoodsTransferService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class WarehouseEmployeeController {
     private final WarehouseEmployeeAccessService access;
     private final WarehouseWorkService work;
+    private final FinishedGoodsTransferService finishedGoods;
 
-    public WarehouseEmployeeController(WarehouseEmployeeAccessService access, WarehouseWorkService work) {
+    public WarehouseEmployeeController(WarehouseEmployeeAccessService access, WarehouseWorkService work,
+                                       FinishedGoodsTransferService finishedGoods) {
         this.access = access;
         this.work = work;
+        this.finishedGoods = finishedGoods;
     }
 
     @GetMapping("/plans")
@@ -68,5 +72,20 @@ public class WarehouseEmployeeController {
             @RequestHeader("Authorization") String authorization, @PathVariable Long planId,
             @Valid @RequestBody WarehouseWorkService.ReturnRequestInput input) {
         return work.createReturn(access.requireWarehouseEmployee(authorization), planId, input);
+    }
+
+    @GetMapping("/finished-goods-requests")
+    public FinishedGoodsTransferService.RequestPage finishedGoodsRequests(
+            @RequestHeader("Authorization") String authorization,
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+        return finishedGoods.myRequests(access.requireWarehouseEmployee(authorization).getEmployeeId(), page, size);
+    }
+
+    @PostMapping("/finished-goods-requests")
+    @ResponseStatus(HttpStatus.CREATED)
+    public FinishedGoodsTransferService.RequestView createFinishedGoodsRequest(
+            @RequestHeader("Authorization") String authorization,
+            @Valid @RequestBody FinishedGoodsTransferService.RequestInput input) {
+        return finishedGoods.createRequest(access.requireWarehouseEmployee(authorization), input);
     }
 }

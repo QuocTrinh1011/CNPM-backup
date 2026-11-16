@@ -27,6 +27,16 @@ public class InventoryMovementService {
                                           BigDecimal delta, BigDecimal balanceAfter,
                                           InventoryMovementType movementType,
                                           String referenceType, long referenceId) {
+        return recordChangeAs(AuditTrail.actor(), itemType, itemId, location, scopeId, delta, balanceAfter,
+                movementType, referenceType, referenceId);
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public InventoryMovement recordChangeAs(AuditTrail.Actor actor, InventoryItemType itemType, long itemId,
+                                            InventoryLocation location, Long scopeId,
+                                            BigDecimal delta, BigDecimal balanceAfter,
+                                            InventoryMovementType movementType,
+                                            String referenceType, long referenceId) {
         requireTransaction();
         validate(itemType, itemId, location, scopeId, delta, balanceAfter, movementType, referenceType, referenceId);
         BigDecimal normalizedDelta = delta.setScale(3, java.math.RoundingMode.UNNECESSARY);
@@ -34,8 +44,10 @@ public class InventoryMovementService {
         if (normalizedDelta.precision() > 15 || normalizedBalance.precision() > 15) {
             throw new IllegalArgumentException("Inventory movement quantity exceeds NUMERIC(15,3)");
         }
-        AuditTrail.Actor actor = AuditTrail.actor();
-        if (actor == null) throw new IllegalStateException("Authenticated actor required for inventory movement");
+        if (actor == null || actor.name() == null || actor.name().isBlank()
+                || actor.role() == null || actor.role().isBlank()) {
+            throw new IllegalStateException("Verified actor required for inventory movement");
+        }
 
         InventoryMovement movement = new InventoryMovement();
         movement.setItemType(itemType);

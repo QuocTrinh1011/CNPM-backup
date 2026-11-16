@@ -44,14 +44,14 @@ public class AuditTrail {
         return m;
     }
     @Transactional(propagation=Propagation.MANDATORY)
-    public void record(String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
-        recordAs(actor(),action,type,id,before,after);
+    public Long record(String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
+        return recordAs(actor(),action,type,id,before,after);
     }
     /** Service callers may pass an actor only after authenticating and checking current database access. */
     @Transactional(propagation=Propagation.MANDATORY)
-    public void recordAs(Actor actor,String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
+    public Long recordAs(Actor actor,String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
         if(actor==null)throw new IllegalStateException("Verified audit actor required");
-        try {logs.save(new AuditLog(actor.id(),actor.name(),actor.role(),action,type,id,mapper.writeValueAsString(before),mapper.writeValueAsString(after)));}
+        try {return logs.save(new AuditLog(actor.id(),actor.name(),actor.role(),action,type,id,mapper.writeValueAsString(before),mapper.writeValueAsString(after))).getId();}
         catch(com.fasterxml.jackson.core.JsonProcessingException e){throw new IllegalStateException("Cannot encode audit data",e);}
     }
 }

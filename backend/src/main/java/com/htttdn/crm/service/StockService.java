@@ -2,6 +2,9 @@ package com.htttdn.crm.service;
 
 import com.htttdn.crm.entity.Order;
 import com.htttdn.crm.entity.Product;
+import com.htttdn.crm.entity.InventoryItemType;
+import com.htttdn.crm.entity.InventoryLocation;
+import com.htttdn.crm.entity.InventoryMovementType;
 import com.htttdn.crm.exception.ApiException;
 import com.htttdn.crm.repository.ProductRepository;
 import org.springframework.http.HttpStatus;
@@ -19,7 +22,12 @@ import jakarta.persistence.LockModeType;
 public class StockService {
     private final ProductRepository products;
     private final EntityManager em;
-    public StockService(ProductRepository products, EntityManager em) { this.products = products; this.em = em; }
+    private final InventoryMovementService movements;
+    public StockService(ProductRepository products, EntityManager em, InventoryMovementService movements) {
+        this.products = products;
+        this.em = em;
+        this.movements = movements;
+    }
 
     @Transactional(propagation = Propagation.MANDATORY)
     public Optional<Product> lockProduct(Long id) {
@@ -33,6 +41,13 @@ public class StockService {
     // Caller holds the order write lock until the enclosing transaction commits.
     @Transactional(propagation = Propagation.MANDATORY)
     public void release(Order order) {
+        AuditTrail.Actor actor = AuditTrail.actor();
+        if (actor == null) actor = new AuditTrail.Actor(null, "Order expiry worker", "SYSTEM");
+        release(order, actor);
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void release(Order order, AuditTrail.Actor actor) {
         if (order.isStockReleased()) return;
         Map<Long, Integer> quantities = new TreeMap<>();
         order.getItems().forEach(item -> quantities.merge(item.getProduct().getId(), item.getQuantity(), Math::addExact));
@@ -42,7 +57,29 @@ public class StockService {
             product.setStock(Math.addExact(product.getStock(), quantity));
             product.setUpdatedAt(Instant.now());
             products.save(product);
+            movements.recordChangeAs(actor, InventoryItemType.PRODUCT, id, InventoryLocation.SELLABLE, null,
+                    java.math.BigDecimal.valueOf(quantity).setScale(3),
+                    java.math.BigDecimal.valueOf(product.getStock()).setScale(3),
+                    InventoryMovementType.SALE_RELEASE, "ORDER_STOCK_RELEASE", order.getId());
         });
         order.setStockReleased(true);
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void recordSaleReservation(Order order, AuditTrail.Actor actor) {
+        Map<Long, Integer> quantities = new TreeMap<>();
+        Map<Long, Product> productsById = new TreeMap<>();
+        order.getItems().forEach(item -> {
+            long productId = item.getProduct().getId();
+            quantities.merge(productId, item.getQuantity(), Math::addExact);
+            productsById.putIfAbsent(productId, item.getProduct());
+        });
+        quantities.forEach((productId, quantity) -> {
+            Product product = productsById.get(productId);
+            movements.recordChangeAs(actor, InventoryItemType.PRODUCT, productId, InventoryLocation.SELLABLE, null,
+                    java.math.BigDecimal.valueOf(quantity).negate().setScale(3),
+                    java.math.BigDecimal.valueOf(product.getStock()).setScale(3),
+                    InventoryMovementType.SALE_RESERVATION, "ORDER_CHECKOUT", order.getId());
+        });
     }
 }

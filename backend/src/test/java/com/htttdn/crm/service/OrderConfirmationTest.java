@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htttdn.crm.entity.*;
 import com.htttdn.crm.repository.*;
 import com.htttdn.crm.exception.ApiException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.*;
@@ -11,6 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class OrderConfirmationTest {
+    @BeforeEach void assignIdentityToSavedOrders() {
+        lenient().when(orders.save(any(Order.class))).thenAnswer(invocation -> {
+            Order order = invocation.getArgument(0);
+            if (order.getId() == null) org.springframework.test.util.ReflectionTestUtils.setField(order, "id", 900L);
+            return order;
+        });
+    }
+
     @Test void lateSuccessfulWebhookAfterCancellationNotifiesOnlyOnce() throws Exception {
         Order order=paymentOrder("CANCELLED");Payment payment=new Payment();payment.setOrder(order);payment.setStatus("CANCELLED");
         when(orders.findIdByOrderCode(9009L)).thenReturn(Optional.of(9L));
@@ -58,7 +67,8 @@ class OrderConfirmationTest {
     final PayosService payos = mock(PayosService.class);
     final FeedbackRepository feedback = mock(FeedbackRepository.class);
     final AuditTrail audit = mock(AuditTrail.class);
-    final StockService stock = new StockService(products,mock(jakarta.persistence.EntityManager.class));
+    final InventoryMovementService movements = mock(InventoryMovementService.class);
+    final StockService stock = new StockService(products,mock(jakarta.persistence.EntityManager.class),movements);
     final PaymentReconciliationService reconciliation = new PaymentReconciliationService(payos,attempts,payments,notifications);
     final OrderService service = new OrderService(orders,products,carts,payments,attempts,events,vouchers,notifications,payos,feedback,audit,stock,reconciliation);
 
@@ -155,7 +165,7 @@ class OrderConfirmationTest {
         verify(orders,times(1)).save(order);
     }
     @Test void payosAlsoStartsPendingAndReturnsPaymentLink() {
-        Product product = new Product(); product.setName("Áo"); product.setPrice(BigDecimal.TEN); product.setStock(5); product.setActive(true);
+        Product product = new Product(); org.springframework.test.util.ReflectionTestUtils.setField(product,"id",1L); product.setName("Áo"); product.setPrice(BigDecimal.TEN); product.setStock(5); product.setActive(true);
         when(products.findLockedById(1L)).thenReturn(Optional.of(product));
         when(payos.createPaymentLink(any())).thenReturn(new PayosService.Link("link", "https://example.com/payment", "000201"));
         var result = service.create(new User(), new OrderService.CheckoutRequest("Địa chỉ", "PAYOS", null, List.of(new OrderService.RequestedItem(1L,1,null,null))));

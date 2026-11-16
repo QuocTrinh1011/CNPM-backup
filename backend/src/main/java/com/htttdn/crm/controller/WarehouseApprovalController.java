@@ -1,6 +1,7 @@
 package com.htttdn.crm.controller;
 
 import com.htttdn.crm.service.WarehouseWorkService;
+import com.htttdn.crm.service.FinishedGoodsTransferService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,8 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/manager/warehouse")
 public class WarehouseApprovalController {
     private final WarehouseWorkService work;
+    private final FinishedGoodsTransferService finishedGoods;
 
-    public WarehouseApprovalController(WarehouseWorkService work) { this.work = work; }
+    public WarehouseApprovalController(WarehouseWorkService work, FinishedGoodsTransferService finishedGoods) {
+        this.work = work;
+        this.finishedGoods = finishedGoods;
+    }
 
     @GetMapping("/material-requests")
     public WarehouseWorkService.RequestPage materialRequests(@RequestParam(defaultValue = "0") int page,
@@ -39,5 +44,17 @@ public class WarehouseApprovalController {
     public WarehouseWorkService.ReturnView decideMaterialReturn(@PathVariable Long id,
             @Valid @RequestBody WarehouseWorkService.DecisionInput input) {
         return work.decideReturn(id, input);
+    }
+
+    @GetMapping("/finished-goods-requests")
+    public FinishedGoodsTransferService.RequestPage finishedGoodsRequests(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+        return finishedGoods.queue(page, size);
+    }
+
+    @PatchMapping("/finished-goods-requests/{id}/decision")
+    public FinishedGoodsTransferService.RequestView decideFinishedGoodsRequest(@PathVariable Long id,
+            @Valid @RequestBody FinishedGoodsTransferService.DecisionInput input) {
+        return finishedGoods.decide(id, input);
     }
 }
