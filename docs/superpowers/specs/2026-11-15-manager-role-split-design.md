@@ -2,7 +2,10 @@
 
 ## Status
 
-Implemented after the reviewed design and approved implementation plan.
+The initial role split was implemented. Its directory-only `EMPLOYEE` and
+read-only HR assumptions were later superseded by the approved
+[`2026-11-16-hr-employee-self-service-design.md`](2026-11-16-hr-employee-self-service-design.md),
+which defines the current HR and Employee workflows.
 
 ## Intent
 
