@@ -171,7 +171,7 @@ it('opens product modal, views size guide, and handles buy now', async () => {
   await screen.findByRole('heading', { name: 'Áo kiểm thử' });
   fireEvent.click(screen.getByRole('button', { name: 'Chi tiết Áo kiểm thử' }));
   expect(await screen.findByRole('heading', { name: 'Áo kiểm thử', level: 2 })).toBeTruthy();
-  fireEvent.click(screen.getByRole('button', { name: /hướng dẫn kích thước/i }));
+  fireEvent.click(screen.getByRole('button', { name: /hướng dẫn chọn size/i }));
   expect(await screen.findByRole('heading', { name: 'Bảng Hướng Dẫn Kích Thước' })).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Đóng bảng kích thước' }));
   expect(screen.queryByRole('heading', { name: 'Bảng Hướng Dẫn Kích Thước' })).toBeNull();
