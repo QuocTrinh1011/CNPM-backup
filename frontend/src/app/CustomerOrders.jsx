@@ -221,6 +221,7 @@ export function OrderView({ order, onNotice, onChanged, onPaymentChanged, onRece
         </div>
       ))}
       {order.discountAmount > 0 && <div className="order-total"><span>GIẢM GIÁ {order.voucherCode ? `(${order.voucherCode})` : ""}</span><strong>-{money(order.discountAmount)}</strong></div>}
+      <div className="order-total"><span>PHÍ GIAO HÀNG</span><strong>{Number(order.shippingFee || 0) > 0 ? money(order.shippingFee) : "Miễn phí"}</strong></div>
       <div className="order-total"><span>TỔNG ĐƠN HÀNG</span><strong>{money(order.totalAmount)}</strong></div>
       <p className="shop-order-payment-method"><b>Phương thức thanh toán:</b> {order.paymentMethod === "PAYOS" ? "Quét mã QR PayOS" : "Thanh toán khi nhận hàng"}</p>
       {order.paymentMethod === "PAYOS" && <p className={paid ? "shop-payment-label is-paid" : "shop-payment-label"}>Trạng thái thanh toán: {paid ? "Đã thanh toán" : "Chưa thanh toán"}</p>}

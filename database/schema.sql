@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS orders (
     order_id BIGSERIAL PRIMARY KEY,
     customer_id BIGINT NOT NULL REFERENCES customers(customer_id),
     total_amount NUMERIC(12,2) NOT NULL DEFAULT 0,
+    shipping_fee NUMERIC(15,2) NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     status VARCHAR(30) NOT NULL DEFAULT 'PENDING'
 );
@@ -70,6 +71,7 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_address VARCHAR(1000);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now();
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS stock_released BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_fee NUMERIC(15,2) NOT NULL DEFAULT 0;
 -- Có thể orders đã có dữ liệu từ phiên bản cũ. Tách bước backfill để PostgreSQL
 -- không cố thêm cột NOT NULL vào các dòng cũ đang có giá trị NULL.
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_amount NUMERIC(15,2);

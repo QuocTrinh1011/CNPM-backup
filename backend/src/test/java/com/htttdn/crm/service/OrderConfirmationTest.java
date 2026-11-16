@@ -93,6 +93,51 @@ class OrderConfirmationTest {
         verify(carts).findByCustomerIdOrderByIdAsc(2L); verifyNoInteractions(payos);
         verify(payments).save(argThat(p -> "PENDING".equals(p.getStatus())));
     }
+    @Test void codBelowThresholdAddsShippingFeeToOrderAndPayment() {
+        Product product = new Product(); org.springframework.test.util.ReflectionTestUtils.setField(product,"id",1L); product.setName("Áo"); product.setPrice(new BigDecimal("398999")); product.setStock(5); product.setActive(true);
+        when(products.findLockedById(1L)).thenReturn(Optional.of(product));
+        User customer = new User(); org.springframework.test.util.ReflectionTestUtils.setField(customer,"id",2L);
+
+        var result = service.create(customer,new OrderService.CheckoutRequest("Địa chỉ", "COD",null,List.of(new OrderService.RequestedItem(1L,1,null,null))));
+
+        var json = new ObjectMapper().findAndRegisterModules().valueToTree(result.order());
+        assertTrue(json.has("shippingFee"));
+        assertEquals(0,new BigDecimal("30000").compareTo(json.path("shippingFee").decimalValue()));
+        assertEquals(0,new BigDecimal("428999").compareTo(result.order().totalAmount()));
+        verify(payments).save(argThat(payment -> payment.getAmount().compareTo(new BigDecimal("428999")) == 0));
+    }
+    @Test void waivesShippingWhenPostVoucherAmountIsExactly399000() {
+        Product product = new Product(); org.springframework.test.util.ReflectionTestUtils.setField(product,"id",1L); product.setName("Áo"); product.setPrice(new BigDecimal("420000")); product.setStock(5); product.setActive(true);
+        when(products.findLockedById(1L)).thenReturn(Optional.of(product));
+        doAnswer(invocation -> { ((Order) invocation.getArgument(2)).setDiscountAmount(new BigDecimal("21000")); return null; })
+            .when(vouchers).reserve(eq("TEST21"),any(),any());
+        User customer = new User(); org.springframework.test.util.ReflectionTestUtils.setField(customer,"id",2L);
+
+        var result = service.create(customer,new OrderService.CheckoutRequest("Địa chỉ", "COD","TEST21",List.of(new OrderService.RequestedItem(1L,1,null,null))));
+
+        var json = new ObjectMapper().findAndRegisterModules().valueToTree(result.order());
+        assertTrue(json.has("shippingFee"));
+        assertEquals(0,BigDecimal.ZERO.compareTo(json.path("shippingFee").decimalValue()));
+        assertEquals(0,new BigDecimal("399000").compareTo(result.order().totalAmount()));
+    }
+    @Test void payosUsesShippingFeeWhenVoucherLowersAmountBelowThreshold() {
+        Product product = new Product(); org.springframework.test.util.ReflectionTestUtils.setField(product,"id",1L); product.setName("Áo"); product.setPrice(new BigDecimal("420000")); product.setStock(5); product.setActive(true);
+        when(products.findLockedById(1L)).thenReturn(Optional.of(product));
+        doAnswer(invocation -> { ((Order) invocation.getArgument(2)).setDiscountAmount(new BigDecimal("21001")); return null; })
+            .when(vouchers).reserve(eq("TEST21"),any(),any());
+        when(payos.createPaymentLink(any(Order.class))).thenReturn(new PayosService.Link("link", "https://example.com/payment", "000201"));
+        User customer = new User(); org.springframework.test.util.ReflectionTestUtils.setField(customer,"id",2L);
+
+        var result = service.create(customer,new OrderService.CheckoutRequest("Địa chỉ", "PAYOS","TEST21",List.of(new OrderService.RequestedItem(1L,1,null,null))));
+
+        var json = new ObjectMapper().findAndRegisterModules().valueToTree(result.order());
+        assertTrue(json.has("shippingFee"));
+        assertEquals(0,new BigDecimal("30000").compareTo(json.path("shippingFee").decimalValue()));
+        assertEquals(0,new BigDecimal("428999").compareTo(result.order().totalAmount()));
+        org.mockito.ArgumentCaptor<Order> orderCaptor = org.mockito.ArgumentCaptor.forClass(Order.class);
+        verify(payos).createPaymentLink(orderCaptor.capture());
+        assertEquals(0,new BigDecimal("428999").compareTo(orderCaptor.getValue().getTotalAmount()));
+    }
     @Test void successfulPaymentWaitsForAdminAndLateWebhookDoesNotRegress() throws Exception {
         Order order = new Order(); org.springframework.test.util.ReflectionTestUtils.setField(order,"id",9L); order.setOrderCode(9009L); order.setStatus("PENDING"); order.setPaymentMethod("PAYOS"); order.setPaymentStatus("PENDING"); order.setTotalAmount(BigDecimal.TEN); order.setCustomer(new User());
         Payment payment = new Payment(); payment.setOrder(order);

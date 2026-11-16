@@ -20,6 +20,8 @@ import java.util.*;
 @Service
 public class OrderService {
     private static final Logger log = LoggerFactory.getLogger(OrderService.class);
+    private static final BigDecimal FREE_SHIPPING_THRESHOLD = new BigDecimal("399000.00");
+    private static final BigDecimal SHIPPING_FEE = new BigDecimal("30000.00");
     private static final Set<String> CUSTOMER_CANCELLABLE_STATUSES = Set.of("PENDING_PAYMENT", "PENDING", "CONFIRMED", "PREPARING");
     private final OrderRepository orders;
     private final ProductRepository products;
@@ -79,7 +81,10 @@ public class OrderService {
         BigDecimal discount = BigDecimal.ZERO;
         StoreVoucher applied = null;
         if (request.voucherCode() != null && !request.voucherCode().isBlank()) { applied = vouchers.reserve(request.voucherCode(), subtotal, order); discount = order.getDiscountAmount(); }
-        order.setDiscountAmount(discount); order.setTotalAmount(subtotal.subtract(discount).max(BigDecimal.ZERO));
+        BigDecimal merchandiseAfterDiscount = subtotal.subtract(discount).max(BigDecimal.ZERO);
+        BigDecimal shippingFee = merchandiseAfterDiscount.compareTo(FREE_SHIPPING_THRESHOLD) < 0 ? SHIPPING_FEE : BigDecimal.ZERO;
+        order.setDiscountAmount(discount); order.setShippingFee(shippingFee);
+        order.setTotalAmount(merchandiseAfterDiscount.add(shippingFee));
         if ("PAYOS".equals(method) && order.getTotalAmount().signum() > 0) payos.requireConfigured();
         orders.save(order); if(applied!=null) vouchers.record(order,applied);
         // Consume only purchased variants; keep unselected lines and any remaining quantity.
@@ -381,7 +386,7 @@ public class OrderService {
     private ApiException invalidCart() { return new ApiException(HttpStatus.BAD_REQUEST, "INVALID_CART", "Sản phẩm trong giỏ không còn hợp lệ."); }
     private long nextCode() { long code = 100000000000L + (System.currentTimeMillis() % 89999999999L); while (orders.findByOrderCode(code).isPresent()) code++; return code; }
 
-    public OrderView view(Order o) { List<OrderLineView> lines = o.getItems().stream().map(i -> new OrderLineView(i.getProduct().getId(), i.getProduct().getName(), i.getProduct().getImageUrl(), i.getQuantity(), i.getUnitPrice(), i.getUnitPrice().multiply(BigDecimal.valueOf(i.getQuantity())), i.getSize(), i.getColor())).toList(); return new OrderView(o.getId(), o.getOrderCode(), o.getStatus(), o.getPaymentStatus(), o.getPaymentMethod(), o.getDeliveryAddress(), o.getTrackingCode(), o.getCancelReason(), o.getReturnStatus(), o.getReturnReason(), o.getVoucherCode(), o.getDiscountAmount(), o.getTotalAmount(), o.getCreatedAt(), o.getUpdatedAt(), lines, o.getReturnRequestedAt(), o.getReturnHistory().stream().map(e->new ReturnEventView(e.getStatus(),e.getNote(),e.getCreatedAt())).toList()); }
+    public OrderView view(Order o) { List<OrderLineView> lines = o.getItems().stream().map(i -> new OrderLineView(i.getProduct().getId(), i.getProduct().getName(), i.getProduct().getImageUrl(), i.getQuantity(), i.getUnitPrice(), i.getUnitPrice().multiply(BigDecimal.valueOf(i.getQuantity())), i.getSize(), i.getColor())).toList(); return new OrderView(o.getId(), o.getOrderCode(), o.getStatus(), o.getPaymentStatus(), o.getPaymentMethod(), o.getDeliveryAddress(), o.getTrackingCode(), o.getCancelReason(), o.getReturnStatus(), o.getReturnReason(), o.getVoucherCode(), o.getDiscountAmount(), o.getShippingFee(), o.getTotalAmount(), o.getCreatedAt(), o.getUpdatedAt(), lines, o.getReturnRequestedAt(), o.getReturnHistory().stream().map(e->new ReturnEventView(e.getStatus(),e.getNote(),e.getCreatedAt())).toList()); }
 
     public record RequestedItem(Long productId, int quantity, String size, String color) {}
     private record CartLineKey(Long productId, String size, String color) {}
@@ -389,6 +394,6 @@ public class OrderService {
     public record Checkout(OrderView order, String paymentUrl, String paymentLinkId, String qrCode, Instant expiresAt) {}
     public record PaymentView(Long orderId, Long orderCode, String paymentStatus, BigDecimal amount, Instant expiresAt, String qrCode, String paymentUrl, boolean retryable, boolean reviewRequired) {}
     public record ReturnEventView(String status,String note,Instant createdAt) {}
-    public record OrderView(Long id, Long orderCode, String status, String paymentStatus, String paymentMethod, String deliveryAddress, String trackingCode, String cancelReason, String returnStatus, String returnReason, String voucherCode, BigDecimal discountAmount, BigDecimal totalAmount, Instant createdAt, Instant updatedAt, List<OrderLineView> items, Instant returnRequestedAt, List<ReturnEventView> returnHistory) {}
+    public record OrderView(Long id, Long orderCode, String status, String paymentStatus, String paymentMethod, String deliveryAddress, String trackingCode, String cancelReason, String returnStatus, String returnReason, String voucherCode, BigDecimal discountAmount, BigDecimal shippingFee, BigDecimal totalAmount, Instant createdAt, Instant updatedAt, List<OrderLineView> items, Instant returnRequestedAt, List<ReturnEventView> returnHistory) {}
     public record OrderLineView(Long productId, String name, String imageUrl, int quantity, BigDecimal unitPrice, BigDecimal lineTotal, String size, String color) {}
 }

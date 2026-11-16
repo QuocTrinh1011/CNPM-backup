@@ -1123,8 +1123,8 @@ function App() {
           </div>
           <div>
             <Truck size={24} />
-            <b>GIAO HÀNG TOÀN QUỐC</b>
-            <small>Đóng gói chỉn chu</small>
+            <b>FREESHIP ĐƠN TỪ 399K</b>
+            <small>Áp dụng trên giá trị đơn sau giảm giá</small>
           </div>
           <div>
             <Headphones size={24} />

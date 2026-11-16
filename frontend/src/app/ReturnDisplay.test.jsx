@@ -40,3 +40,8 @@ it('preserves cancellation priority and displays separate shipping and payment i
  expect(dialog.getByText('Đã thanh toán')).toBeTruthy();expect(dialog.getByText('Sai size')).toBeTruthy();
  expect(dialog.queryByText('Đã giao — chờ khách xác nhận')).toBeNull();
 });
+it('shows the recorded shipping fee in manager order details',()=>{
+ render(<ManagerOrderDetail detail={{...order,shippingFee:30000,totalAmount:130}} onClose={()=>{}}/>);
+ const dialog=within(screen.getByRole('dialog'));
+ expect(dialog.getByText('Phí giao hàng').parentElement.textContent).toContain('30.000');
+});

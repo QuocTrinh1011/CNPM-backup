@@ -44,11 +44,13 @@ class ManagerQueryIntegrationTest {
   assertThrows(ApiException.class,()->query.list(filter(null,"",null,-1,10)));
  }
  @Test void managerDtosNeverExposeAuthenticationAndOtherRolesAreDenied()throws Exception{
-  var o=order(1001,"PENDING","NONE","COD");em.flush();
+  var o=order(1001,"PENDING","NONE","COD");o.setShippingFee(new BigDecimal("30000.00"));em.flush();
   String path="/api/manager/orders";
   for(User u:new User[]{customer,admin})mvc.perform(get(path).header("Authorization","Bearer "+jwt.issue(u.getId(),u.getRole()))).andExpect(status().isForbidden());
+  mvc.perform(get(path).header("Authorization","Bearer "+jwt.issue(manager.getId(),manager.getRole())))
+   .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].shippingFee").value(30000));
   mvc.perform(get(path+"/"+o.getId()).header("Authorization","Bearer "+jwt.issue(manager.getId(),manager.getRole())))
-   .andExpect(status().isOk()).andExpect(jsonPath("$.customer.fullName").value("Buyer")).andExpect(jsonPath("$.customer.passwordHash").doesNotExist()).andExpect(jsonPath("$.customer.refreshTokens").doesNotExist());
+   .andExpect(status().isOk()).andExpect(jsonPath("$.shippingFee").value(30000)).andExpect(jsonPath("$.customer.fullName").value("Buyer")).andExpect(jsonPath("$.customer.passwordHash").doesNotExist()).andExpect(jsonPath("$.customer.refreshTokens").doesNotExist());
   mvc.perform(get("/api/auth/password-recovery")).andExpect(status().isOk()).andExpect(jsonPath("$.enabled").value(false));
   mvc.perform(post("/api/auth/forgot-password").contentType("application/json").content("{\"email\":\"Buyer@query.test\"}"))
    .andExpect(status().isServiceUnavailable()).andExpect(jsonPath("$.resetCode").doesNotExist());

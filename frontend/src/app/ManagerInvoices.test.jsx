@@ -15,8 +15,9 @@ const invoice = {
   paymentStatus: 'PAID',
   paymentMethod: 'PAYOS',
   returnStatus: 'NONE',
-  totalAmount: 900000,
+  totalAmount: 930000,
   discountAmount: 100000,
+  shippingFee: 30000,
   voucherCode: 'SALE10',
   createdAt: '2026-11-01T03:00:00Z',
   customer: { id: 7, fullName: 'Nguyễn Văn A', email: 'a@test.vn' },
@@ -77,6 +78,7 @@ it('renders the invoice page and keeps it visible beside a read-only detail pane
   expect(within(panel).getByText('Tạm tính')).toBeTruthy();
   expect(within(panel).getByText('Giảm giá · SALE10')).toBeTruthy();
   expect(within(panel).getByText('Tổng thanh toán')).toBeTruthy();
+  expect(within(panel).getByText('Phí giao hàng').parentElement.textContent).toContain('30.000');
   expect(within(panel).getByText('Đã thanh toán')).toBeTruthy();
   expect(within(panel).getByText('GHN123')).toBeTruthy();
 

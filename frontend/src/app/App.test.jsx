@@ -23,6 +23,14 @@ it('keeps the size-exchange announcement without a free-shipping promotion in bo
   expect(banner.textContent).toContain('ĐỔI SIZE TRONG 30 NGÀY');
   expect(banner.textContent).not.toMatch(/699|miễn phí|freeship/i);
 });
+it('shows the free-shipping threshold in the storefront benefits row', () => {
+  const view = render(<App/>);
+  expect(view.container.querySelector('.promise').textContent).toContain('FREESHIP ĐƠN TỪ 399K');
+});
+it('shows the recorded shipping fee in customer order details', () => {
+  render(<OrderView order={{id:1,status:'CONFIRMED',shippingFee:30000,totalAmount:130000,items:[]}}/>);
+  expect(screen.getByText('PHÍ GIAO HÀNG').parentElement.textContent).toContain('30.000');
+});
 it('defaults to light theme and keeps one shared product search', async () => {
   const view = render(<App/>);
   expect(view.container.querySelector('.site-shell').dataset.shopTheme).toBe('light');

@@ -109,7 +109,8 @@ export default function ManagerInvoices() {
                   <tbody>
                     {invoices.map(invoice => {
                       const discount = Number(invoice.discountAmount || 0);
-                      const subtotal = Number(invoice.totalAmount || 0) + discount;
+                      const shippingFee = Number(invoice.shippingFee || 0);
+                      const subtotal = Number(invoice.totalAmount || 0) + discount - shippingFee;
                       return (
                         <tr key={invoice.id}>
                           <td data-label="Mã hóa đơn">
