@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { adminApi, adminRefreshSession, adminSignIn, adminSignOut } from '../../api/api';
 import InternalDirectory from './InternalDirectory';
 import AuditLogs from './AuditLogs';
+import AdminDashboard from './AdminDashboard';
 import '../../shared/styles/internal-portal.css';
 import {
   LayoutDashboard,
@@ -313,210 +314,14 @@ export default function SystemAdminApp() {
             </header>
 
             {section === 'dashboard' ? (
-              <div className="internal-dashboard" style={{ display: 'grid', gap: '22px' }}>
-                {/* Hero Banner */}
-                <div className="internal-hero-banner">
-                  <div className="internal-hero-text">
-                    <span className="internal-eyebrow">BẢNG ĐIỀU KHIỂN HẠ TẦNG</span>
-                    <h2>Xin chào, {session.email?.split('@')[0] || 'Admin'}!</h2>
-                    <p>Giám sát và phân quyền tài khoản quản trị, danh mục sản phẩm và đối tác cung ứng kết nối.</p>
-                  </div>
-                  <div className="internal-hero-actions">
-                    <button
-                      type="button"
-                      className="internal-sync-btn"
-                      onClick={() => setRetry((n) => n + 1)}
-                      title="Tải lại số liệu mới nhất"
-                    >
-                      <RefreshCw size={13} />
-                      <span>Làm mới dữ liệu</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* KPI Metrics */}
-                <div className="internal-kpi-grid">
-                  <div
-                    className="internal-kpi-card blue"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => go('/admin/accounts')}
-                    title="Xem danh sách tài khoản nội bộ"
-                  >
-                    <div className="internal-kpi-header">
-                      <span className="internal-kpi-title">Tài khoản nội bộ</span>
-                      <div className="internal-kpi-icon blue">
-                        <ShieldCheck size={20} />
-                      </div>
-                    </div>
-                    <div className="internal-kpi-value">{overview ? overview.accounts ?? 0 : '—'}</div>
-                    <div className="internal-kpi-footer">
-                      <span>Phân quyền Admin & Manager</span>
-                      <ArrowRight size={14} className="internal-kpi-arrow" />
-                    </div>
-                  </div>
-
-                  <div
-                    className="internal-kpi-card green"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => go('/admin/products')}
-                    title="Tra cứu danh mục sản phẩm"
-                  >
-                    <div className="internal-kpi-header">
-                      <span className="internal-kpi-title">Sản phẩm</span>
-                      <div className="internal-kpi-icon green">
-                        <Package size={20} />
-                      </div>
-                    </div>
-                    <div className="internal-kpi-value">{overview ? overview.products ?? 0 : '—'}</div>
-                    <div className="internal-kpi-footer">
-                      <span>Sản phẩm trong cơ sở dữ liệu</span>
-                      <ArrowRight size={14} className="internal-kpi-arrow" />
-                    </div>
-                  </div>
-
-                  <div className="internal-kpi-card emerald">
-                    <div className="internal-kpi-header">
-                      <span className="internal-kpi-title">Hạ tầng hệ thống</span>
-                      <div className="internal-kpi-icon emerald">
-                        <Activity size={20} />
-                      </div>
-                    </div>
-                    <div className="internal-kpi-value">100%</div>
-                    <div className="internal-kpi-footer">
-                      <span className="internal-live-indicator">
-                        <i /> API & Database ổn định
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Actions Panel */}
-                <div className="internal-section-card">
-                  <div className="internal-card-head">
-                    <div>
-                      <h3>Lối tắt thao tác nhanh</h3>
-                      <p>Truy cập trực tiếp các nghiệp vụ quản trị hệ thống</p>
-                    </div>
-                  </div>
-                  <div className="internal-actions-grid">
-                    <a
-                      className="internal-action-item"
-                      href="/admin/accounts"
-                      onClick={followInternalLink}
-                      title="Mở quản lý tài khoản nội bộ"
-                    >
-                      <div className="internal-action-icon blue">
-                        <ShieldCheck size={20} />
-                      </div>
-                      <div className="internal-action-text">
-                        <b>Tài khoản nội bộ</b>
-                        <small>Cấp tài khoản Admin & Manager, phân quyền và khóa tài khoản</small>
-                      </div>
-                      <ChevronRight size={16} className="internal-action-arrow" />
-                    </a>
-
-                    <a
-                      className="internal-action-item"
-                      href="/admin/products"
-                      onClick={followInternalLink}
-                      title="Mở tra cứu sản phẩm"
-                    >
-                      <div className="internal-action-icon green">
-                        <Package size={20} />
-                      </div>
-                      <div className="internal-action-text">
-                        <b>Tra cứu sản phẩm</b>
-                        <small>Xem danh mục, giá bán và tồn kho</small>
-                      </div>
-                      <ChevronRight size={16} className="internal-action-arrow" />
-                    </a>
-
-                    <a
-                      className="internal-action-item"
-                      href={managerUrl}
-                      title="Chuyển sang Cổng quản lý cửa hàng (Manager Portal)"
-                    >
-                      <div className="internal-action-icon amber">
-                        <Layers size={20} />
-                      </div>
-                      <div className="internal-action-text">
-                        <b>Cổng quản lý cửa hàng</b>
-                        <small>Chuyển sang Manager Portal để xử lý đơn hàng, khách hàng, voucher</small>
-                      </div>
-                      <ChevronRight size={16} className="internal-action-arrow" />
-                    </a>
-                  </div>
-                </div>
-
-                {/* System Specifications & Security Policy */}
-                <div className="internal-info-grid">
-                  <div className="internal-section-card">
-                    <div className="internal-card-head">
-                      <div>
-                        <h3>Thông số máy chủ & Bảo mật</h3>
-                        <p>Thông tin cấu hình hạ tầng hiện tại</p>
-                      </div>
-                    </div>
-                    <div className="internal-spec-list">
-                      <div className="internal-spec-row">
-                        <span className="spec-label">
-                          <Server size={14} /> Máy chủ ứng dụng
-                        </span>
-                        <span className="spec-val">Spring Boot 3.4.3 (Java 21)</span>
-                      </div>
-                      <div className="internal-spec-row">
-                        <span className="spec-label">
-                          <Database size={14} /> Cơ sở dữ liệu
-                        </span>
-                        <span className="spec-val">PostgreSQL 16 Enterprise</span>
-                      </div>
-                      <div className="internal-spec-row">
-                        <span className="spec-label">
-                          <Lock size={14} /> Cơ chế xác thực
-                        </span>
-                        <span className="spec-val">HMAC-SHA256 JWT Token</span>
-                      </div>
-                      <div className="internal-spec-row">
-                        <span className="spec-label">
-                          <Shield size={14} /> Quyền hạn tài khoản
-                        </span>
-                        <span className="spec-val badge">ROOT_ADMINISTRATOR</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="internal-section-card internal-security-card">
-                    <div className="internal-card-head">
-                      <div>
-                        <h3>Chính sách an toàn thông tin</h3>
-                        <p>Quy chuẩn vận hành tài khoản nội bộ</p>
-                      </div>
-                    </div>
-                    <div className="internal-security-tips">
-                      <div className="tip-item">
-                        <CheckCircle2 size={16} className="tip-icon" />
-                        <p>
-                          <strong>Phân quyền tối thiểu:</strong> Chỉ cấp quyền <code>ADMIN</code> cho người quản trị cấp cao. Cấp <code>MANAGER_HR</code>, <code>MANAGER_WAREHOUSE</code> hoặc <code>MANAGER_SALES</code> theo đúng nhiệm vụ; <code>EMPLOYEE</code> chỉ nằm trong danh bạ và không đăng nhập.
-                        </p>
-                      </div>
-                      <div className="tip-item">
-                        <CheckCircle2 size={16} className="tip-icon" />
-                        <p>
-                          <strong>Khóa tài khoản kịp thời:</strong> Khi nhân viên nghỉ việc hoặc có dấu hiệu bất thường, sử dụng tính năng <em>Khóa tài khoản</em> trong trang Tài khoản nội bộ.
-                        </p>
-                      </div>
-                      <div className="tip-item">
-                        <CheckCircle2 size={16} className="tip-icon" />
-                        <p>
-                          <strong>Đổi mật khẩu định kỳ:</strong> Sử dụng mật khẩu phức tạp trên 8 ký tự gồm chữ hoa, chữ thường, số và ký tự đặc biệt.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <AdminDashboard
+                overview={overview}
+                session={session}
+                go={go}
+                managerUrl={managerUrl}
+                followInternalLink={followInternalLink}
+                setRetry={setRetry}
+              />
             ) : (
               section === 'audit-logs' ? <AuditLogs /> : menu[section] && <InternalDirectory key={section} kind={section} />
             )}

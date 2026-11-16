@@ -13,6 +13,15 @@ import {
   Lock
 } from 'lucide-react';
 
+const ROLE_CONFIG = {
+  ADMIN: { label: 'Admin hệ thống', bg: 'rgba(99, 102, 241, 0.15)', color: '#6366f1' },
+  MANAGER_SALES: { label: 'Quản lý Bán hàng', bg: 'rgba(14, 165, 233, 0.15)', color: '#0ea5e9' },
+  MANAGER_WAREHOUSE: { label: 'Quản lý Kho', bg: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' },
+  MANAGER_HR: { label: 'Quản lý Nhân sự', bg: 'rgba(16, 185, 129, 0.15)', color: '#10b981' },
+  EMPLOYEE: { label: 'Nhân viên', bg: 'rgba(148, 163, 184, 0.15)', color: '#64748b' },
+  MANAGER: { label: 'Quản lý cửa hàng', bg: 'rgba(14, 165, 233, 0.15)', color: '#0ea5e9' },
+};
+
 export default function InternalDirectory({ kind, manager = false }) {
   const api = manager ? managerApi : adminApi;
   const base = `/api/${manager ? 'manager' : 'admin'}/${kind}`;
@@ -342,8 +351,8 @@ export default function InternalDirectory({ kind, manager = false }) {
                       ) : kind === 'accounts' ? (
                         <span>
                           {row.email} ·{' '}
-                          <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600', background: row.role === 'ADMIN' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(37, 99, 235, 0.15)', color: row.role === 'ADMIN' ? '#8b5cf6' : '#2563eb' }}>
-                            {row.role}
+                          <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600', background: ROLE_CONFIG[row.role]?.bg || 'rgba(37, 99, 235, 0.15)', color: ROLE_CONFIG[row.role]?.color || '#2563eb' }}>
+                            {ROLE_CONFIG[row.role]?.label || row.role}
                           </span>
                         </span>
                       ) : (

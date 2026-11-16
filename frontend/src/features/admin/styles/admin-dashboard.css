@@ -1,0 +1,916 @@
+/* ===== Hallmark Anti-Slop Admin Dashboard Styles ===== */
+
+.hallmark-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Banner */
+.hallmark-hero-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  background: var(--admin-card, #0f172a);
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.hallmark-hero-text .hallmark-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--admin-primary, #3b82f6);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.hallmark-hero-text h2 {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--admin-text, #f1f5f9);
+  letter-spacing: -0.02em;
+}
+
+.hallmark-hero-text p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--admin-muted, #94a3b8);
+  line-height: 1.5;
+}
+
+.hallmark-hero-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.hallmark-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+/* KPI Cards Grid */
+.hallmark-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.hallmark-kpi-card {
+  padding: 20px;
+  background: var(--admin-card, #0f172a);
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.hallmark-kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--admin-primary, #3b82f6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.hallmark-kpi-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--admin-muted, #94a3b8);
+}
+
+.hallmark-kpi-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--admin-primary-soft, rgba(59, 130, 246, 0.1));
+  color: var(--admin-primary, #3b82f6);
+}
+
+.hallmark-kpi-icon.indigo {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}
+
+.hallmark-kpi-icon.emerald {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.hallmark-kpi-icon.amber {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.hallmark-kpi-number {
+  margin: 14px 0 8px 0;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--admin-text, #f1f5f9);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.hallmark-kpi-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--admin-muted, #94a3b8);
+}
+
+.hallmark-kpi-arrow {
+  color: var(--admin-primary, #3b82f6);
+  transition: transform 0.15s ease;
+}
+
+.hallmark-kpi-card:hover .hallmark-kpi-arrow {
+  transform: translate(2px, -2px);
+}
+
+/* Two-column Content Section */
+.hallmark-split-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 20px;
+}
+
+@media (max-width: 960px) {
+  .hallmark-split-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hallmark-section-box {
+  padding: 24px;
+  background: var(--admin-card, #0f172a);
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hallmark-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.hallmark-section-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-section-header p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--admin-muted, #94a3b8);
+}
+
+.hallmark-link-btn {
+  background: transparent;
+  border: 1px solid var(--admin-border, #1e293b);
+  color: var(--admin-text, #f1f5f9);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.hallmark-link-btn:hover {
+  background: var(--admin-primary-soft, rgba(59, 130, 246, 0.1));
+  border-color: var(--admin-primary, #3b82f6);
+}
+
+/* Segmented Control for Chart Tabs */
+.hallmark-tab-control {
+  display: inline-flex;
+  align-items: center;
+  background: var(--admin-input, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 20px;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.hallmark-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--admin-muted, #94a3b8);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.hallmark-tab-btn:hover {
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-tab-btn.active {
+  background: var(--admin-card, #0f172a);
+  color: var(--admin-text, #f1f5f9);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--admin-border, #1e293b);
+}
+
+/* Donut Chart Layout */
+.hallmark-donut-layout {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 4px 0;
+}
+
+@media (max-width: 580px) {
+  .hallmark-donut-layout {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.hallmark-chart-viewport {
+  position: relative;
+  width: 175px;
+  height: 175px;
+  flex-shrink: 0;
+}
+
+.hallmark-donut-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.hallmark-donut-bg-track {
+  stroke: var(--admin-border, #1e293b);
+  opacity: 0.6;
+}
+
+.hallmark-donut-segment {
+  cursor: pointer;
+  transition: stroke-width 0.2s ease, opacity 0.2s ease;
+}
+
+.hallmark-donut-segment:hover {
+  stroke-width: 12.5;
+  opacity: 0.95;
+}
+
+.hallmark-chart-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.hallmark-center-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--admin-text, #f1f5f9);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.hallmark-center-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--admin-muted, #94a3b8);
+  margin-top: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Donut Legend */
+.hallmark-legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.hallmark-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.hallmark-legend-row:hover {
+  background: var(--admin-primary-soft, rgba(59, 130, 246, 0.05));
+}
+
+.hallmark-legend-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hallmark-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.hallmark-role-title {
+  font-weight: 600;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-legend-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hallmark-stats-count {
+  font-weight: 700;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-stats-percent {
+  font-size: 11px;
+  color: var(--admin-muted, #94a3b8);
+}
+
+/* Quick Dispatch Actions */
+.hallmark-dispatch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hallmark-dispatch-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--admin-input, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.hallmark-dispatch-card:hover {
+  border-color: var(--admin-primary, #3b82f6);
+  background: var(--admin-primary-soft, rgba(59, 130, 246, 0.08));
+  transform: translateX(2px);
+}
+
+.hallmark-dispatch-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hallmark-dispatch-icon.blue {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+.hallmark-dispatch-icon.green {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.hallmark-dispatch-icon.amber {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.hallmark-dispatch-info {
+  flex: 1;
+}
+
+.hallmark-dispatch-info h4 {
+  margin: 0 0 2px 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-dispatch-info p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--admin-muted, #94a3b8);
+}
+
+.hallmark-dispatch-chevron {
+  color: var(--admin-muted, #94a3b8);
+  transition: transform 0.15s ease;
+}
+
+.hallmark-dispatch-card:hover .hallmark-dispatch-chevron {
+  color: var(--admin-primary, #3b82f6);
+  transform: translateX(3px);
+}
+
+/* Security Notice */
+.hallmark-governance-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px dashed rgba(99, 102, 241, 0.3);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--admin-text, #f1f5f9);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.hallmark-governance-icon {
+  color: #6366f1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ===== Organizational Structure Cards ===== */
+.hallmark-org-section {
+  padding: 24px;
+  background: var(--admin-card, #0f172a);
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hallmark-org-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.hallmark-org-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-org-header p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--admin-muted, #94a3b8);
+}
+
+.hallmark-org-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 16px;
+}
+
+.hallmark-org-branch {
+  background: var(--admin-input, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hallmark-branch-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--admin-border, #1e293b);
+}
+
+.hallmark-branch-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.hallmark-branch-icon.sales {
+  background: rgba(14, 165, 233, 0.15);
+  color: #0ea5e9;
+}
+
+.hallmark-branch-icon.warehouse {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.hallmark-branch-icon.hr {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.hallmark-branch-icon.system {
+  background: rgba(99, 102, 241, 0.15);
+  color: #6366f1;
+}
+
+.hallmark-branch-title h4 {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-branch-title span {
+  font-size: 11px;
+  color: var(--admin-muted, #94a3b8);
+}
+
+.hallmark-branch-staff {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hallmark-staff-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--admin-card, #0f172a);
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 6px;
+  font-size: 12.5px;
+  transition: border-color 0.15s ease;
+}
+
+.hallmark-staff-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.hallmark-staff-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hallmark-staff-role-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.hallmark-staff-role-badge.sales {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0ea5e9;
+}
+
+.hallmark-staff-role-badge.warehouse {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.hallmark-staff-role-badge.hr {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.hallmark-staff-role-badge.system {
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+}
+
+.hallmark-staff-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--admin-text, #f1f5f9);
+  background: var(--admin-border, #1e293b);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Org Summary Stat Bar */
+.hallmark-org-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--admin-input, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 8px;
+}
+
+.hallmark-org-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--admin-muted, #94a3b8);
+}
+
+.hallmark-org-summary-item strong {
+  color: var(--admin-text, #f1f5f9);
+  font-variant-numeric: tabular-nums;
+}
+
+.hallmark-org-summary-divider {
+  width: 1px;
+  height: 14px;
+  background: var(--admin-border, #1e293b);
+}
+
+.hallmark-staff-duty {
+  font-size: 11px;
+  color: var(--admin-muted, #94a3b8);
+  margin-top: 2px;
+}
+
+/* ===== 2-Tier Org Structure Styles ===== */
+.hallmark-org-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hallmark-tier-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hallmark-tier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--admin-input, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 8px;
+}
+
+.hallmark-tier-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hallmark-tier-pill {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.hallmark-tier-pill.admin {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+}
+
+.hallmark-tier-pill.staff {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.hallmark-tier-title-wrap h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-tier-badge {
+  font-size: 12px;
+  color: var(--admin-muted, #94a3b8);
+}
+
+.hallmark-tier-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.hallmark-role-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--admin-card, #0f172a);
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 8px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.hallmark-role-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.hallmark-role-card.purple { border-left: 3px solid #6366f1; }
+.hallmark-role-card.blue { border-left: 3px solid #0ea5e9; }
+.hallmark-role-card.amber { border-left: 3px solid #f59e0b; }
+.hallmark-role-card.emerald { border-left: 3px solid #10b981; }
+
+.hallmark-role-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.hallmark-role-bullet {
+  font-size: 14px;
+}
+
+.hallmark-role-card-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.hallmark-role-code {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.hallmark-role-code.system { color: #818cf8; }
+.hallmark-role-code.sales { color: #38bdf8; }
+.hallmark-role-code.warehouse { color: #fbbf24; }
+.hallmark-role-code.hr { color: #34d399; }
+
+.hallmark-role-card-title strong {
+  font-size: 13.5px;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-role-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--admin-text, #f1f5f9);
+  background: var(--admin-border, #1e293b);
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hallmark-role-desc {
+  font-size: 12px;
+  color: var(--admin-muted, #94a3b8);
+  line-height: 1.5;
+}
+
+.hallmark-tier-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.hallmark-team-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--admin-card, #0f172a);
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 10px;
+}
+
+.hallmark-team-card.blue { border-top: 3px solid #0ea5e9; }
+.hallmark-team-card.amber { border-top: 3px solid #f59e0b; }
+
+.hallmark-team-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--admin-border, #1e293b);
+}
+
+.hallmark-team-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.hallmark-team-title h5 {
+  margin: 0 0 3px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-team-duty-headline {
+  display: block;
+  font-size: 12px;
+  color: var(--admin-muted, #94a3b8);
+  line-height: 1.4;
+}
+
+.hallmark-team-subcards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hallmark-subcard {
+  padding: 10px 12px;
+  background: var(--admin-input, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--admin-border, #1e293b);
+  border-radius: 6px;
+}
+
+.hallmark-subcard-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.hallmark-subcard-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.hallmark-subcard-tag.sales {
+  background: rgba(14, 165, 233, 0.15);
+  color: #38bdf8;
+}
+
+.hallmark-subcard-tag.warehouse {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.hallmark-subcard-head strong {
+  font-size: 12.5px;
+  color: var(--admin-text, #f1f5f9);
+}
+
+.hallmark-subcard p {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--admin-muted, #94a3b8);
+  line-height: 1.4;
+}
