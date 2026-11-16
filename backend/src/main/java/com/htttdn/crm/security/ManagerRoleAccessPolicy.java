@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
 @Component
 public final class ManagerRoleAccessPolicy {
     private static final Set<String> MANAGER_ROLES = Set.of("MANAGER_HR", "MANAGER_WAREHOUSE", "MANAGER_SALES");
+    private static final Set<String> MANAGER_PORTAL_ROLES = Set.of("MANAGER_HR", "MANAGER_WAREHOUSE", "MANAGER_SALES", "EMPLOYEE");
     private static final Set<String> HR = Set.of("MANAGER_HR");
+    private static final Set<String> EMPLOYEE = Set.of("EMPLOYEE");
     private static final Set<String> WAREHOUSE = Set.of("MANAGER_WAREHOUSE");
     private static final Set<String> SALES = Set.of("MANAGER_SALES");
     private static final Set<String> PRODUCT_READERS = Set.of("MANAGER_WAREHOUSE", "MANAGER_SALES");
@@ -23,6 +25,32 @@ public final class ManagerRoleAccessPolicy {
         List<RouteRule> configured = new ArrayList<>();
 
         add(configured, "GET", "/api/manager/employees", HR);
+        add(configured, "POST", "/api/manager/employees", HR);
+        add(configured, "PUT", "/api/manager/employees/" + ID, HR);
+        add(configured, "DELETE", "/api/manager/employees/" + ID, HR);
+
+        add(configured, "GET", "/api/manager/me/profile", EMPLOYEE);
+        add(configured, "PUT", "/api/manager/me/profile", EMPLOYEE);
+        add(configured, "GET", "/api/manager/me/leave-requests", EMPLOYEE);
+        add(configured, "POST", "/api/manager/me/leave-requests", EMPLOYEE);
+        add(configured, "PATCH", "/api/manager/me/leave-requests/" + ID + "/withdraw", EMPLOYEE);
+        add(configured, "GET", "/api/manager/me/attendance", EMPLOYEE);
+        add(configured, "GET", "/api/manager/me/payslips", EMPLOYEE);
+        add(configured, "GET", "/api/manager/me/payslips/" + ID + "/" + ID, EMPLOYEE);
+        // The service must still verify that this employee has TEAM_LEAD access
+        // and scope every result to reports assigned to the authenticated user.
+        add(configured, "GET", "/api/manager/me/team", EMPLOYEE);
+        add(configured, "GET", "/api/manager/me/team/attendance", EMPLOYEE);
+
+        add(configured, "GET", "/api/manager/hr/leave-requests", HR);
+        add(configured, "PATCH", "/api/manager/hr/leave-requests/" + ID + "/decision", HR);
+        add(configured, "GET", "/api/manager/hr/attendance", HR);
+        add(configured, "PUT", "/api/manager/hr/attendance", HR);
+        add(configured, "GET", "/api/manager/hr/payroll-periods", HR);
+        add(configured, "POST", "/api/manager/hr/payroll-periods", HR);
+        add(configured, "GET", "/api/manager/hr/payroll-periods/" + ID + "/" + ID, HR);
+        add(configured, "POST", "/api/manager/hr/payroll-periods/" + ID + "/" + ID + "/publish", HR);
+        add(configured, "GET", "/api/manager/hr/reports", HR);
 
         add(configured, "GET", "/api/manager/products", PRODUCT_READERS);
         add(configured, "GET", "/api/manager/products/categories", PRODUCT_READERS);
@@ -101,6 +129,10 @@ public final class ManagerRoleAccessPolicy {
 
     public static boolean isManagerRole(String role) {
         return role != null && MANAGER_ROLES.contains(role);
+    }
+
+    public static boolean isManagerPortalRole(String role) {
+        return role != null && MANAGER_PORTAL_ROLES.contains(role);
     }
 
     private static void add(List<RouteRule> rules, String method, String pathRegex, Set<String> roles) {

@@ -22,7 +22,7 @@ public class AdminAccessGuard extends OncePerRequestFilter {
             String role = user.getRole();
             if (user.isLocked() || user.getDeletedAt()!=null || !role.equals(claims.role()))
                 throw new ApiException(HttpStatus.FORBIDDEN, manager ? "MANAGER_ROLE_REQUIRED" : "ADMIN_REQUIRED", "Không có quyền truy cập portal này.");
-            if (manager && (!ManagerRoleAccessPolicy.isManagerRole(role) || !managerRoles.allows(role, request.getMethod(), path)))
+            if (manager && (!ManagerRoleAccessPolicy.isManagerPortalRole(role) || !managerRoles.allows(role, request.getMethod(), path)))
                 throw new ApiException(HttpStatus.FORBIDDEN, "MANAGER_SCOPE_FORBIDDEN", "Vai trò này không được phép truy cập chức năng.");
             if (admin && !"ADMIN".equals(role))
                 throw new ApiException(HttpStatus.FORBIDDEN, "ADMIN_REQUIRED", "Không có quyền truy cập portal này.");

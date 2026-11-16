@@ -28,18 +28,18 @@ public class ManagerAuthService {
 
     @Transactional public Session login(String email, String password) {
         User user = users.findByEmailIgnoreCase(email == null ? "" : email.trim().toLowerCase(Locale.ROOT)).orElse(null);
-        if (user == null || !ManagerRoleAccessPolicy.isManagerRole(user.getRole()) || user.getPasswordHash() == null || !encoder.matches(password == null ? "" : password, user.getPasswordHash())) throw new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "Thông tin đăng nhập manager không đúng.");
+        if (user == null || !ManagerRoleAccessPolicy.isManagerPortalRole(user.getRole()) || user.getPasswordHash() == null || !encoder.matches(password == null ? "" : password, user.getPasswordHash())) throw new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "Thông tin đăng nhập manager không đúng.");
         if ((user.isLocked() || user.getDeletedAt()!=null)) throw new ApiException(HttpStatus.LOCKED, "ACCOUNT_LOCKED", "Tài khoản manager đang bị khóa.");
         return issue(user, UUID.randomUUID().toString());
     }
 
     @Transactional(noRollbackFor = ApiException.class) public Session refresh(String raw) {
         RefreshToken token = refreshTokens.findForUpdate(AuthService.hash(raw == null ? "" : raw)).orElseThrow(() -> invalidRefresh());
-        if (!ManagerRoleAccessPolicy.isManagerRole(token.getAudience())) throw invalidRefresh();
+        if (!ManagerRoleAccessPolicy.isManagerPortalRole(token.getAudience())) throw invalidRefresh();
         if ("ROTATED".equals(token.getStatus())) { refreshTokens.revokeFamily(token.getFamilyId(), "REUSE_DETECTED"); throw invalidRefresh(); }
         if (!"ACTIVE".equals(token.getStatus()) || token.getExpiresAt().isBefore(Instant.now())) throw invalidRefresh();
         User user = token.getUser();
-        if (!ManagerRoleAccessPolicy.isManagerRole(user.getRole()) || user.isLocked() || user.getDeletedAt()!=null) throw invalidRefresh();
+        if (!ManagerRoleAccessPolicy.isManagerPortalRole(user.getRole()) || user.isLocked() || user.getDeletedAt()!=null) throw invalidRefresh();
         if (!token.getAudience().equals(user.getRole())) {
             token.setStatus("REVOKED"); token.setRevokeReason("ROLE_CHANGED"); token.setRevokedAt(Instant.now()); refreshTokens.save(token);
             refreshTokens.revokeFamily(token.getFamilyId(), "ROLE_CHANGED");
@@ -49,20 +49,20 @@ public class ManagerAuthService {
         return issue(user, token.getFamilyId());
     }
 
-    @Transactional public void logout(String raw) { if (raw == null || raw.isBlank()) return; refreshTokens.findForUpdate(AuthService.hash(raw)).filter(t -> ManagerRoleAccessPolicy.isManagerRole(t.getAudience())).ifPresent(t -> { if ("ACTIVE".equals(t.getStatus())) { t.setStatus("REVOKED"); t.setRevokeReason("LOGOUT"); t.setRevokedAt(Instant.now()); refreshTokens.save(t); } }); }
+    @Transactional public void logout(String raw) { if (raw == null || raw.isBlank()) return; refreshTokens.findForUpdate(AuthService.hash(raw)).filter(t -> ManagerRoleAccessPolicy.isManagerPortalRole(t.getAudience())).ifPresent(t -> { if ("ACTIVE".equals(t.getStatus())) { t.setStatus("REVOKED"); t.setRevokeReason("LOGOUT"); t.setRevokedAt(Instant.now()); refreshTokens.save(t); } }); }
     @Transactional public void changePassword(String authorization, String currentPassword, String newPassword) {
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Vui lòng đăng nhập.");
         }
 
         JwtTokenService.Claims claims = jwt.parse(authorization);
-        if (!ManagerRoleAccessPolicy.isManagerRole(claims.role())) {
+        if (!ManagerRoleAccessPolicy.isManagerPortalRole(claims.role())) {
             throw new ApiException(HttpStatus.FORBIDDEN, "MANAGER_REQUIRED", "Yêu cầu quyền nhân viên quản lý.");
         }
 
         User user = users.findById(claims.userId())
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Không tìm thấy người dùng."));
-        if (!claims.role().equals(user.getRole()) || !ManagerRoleAccessPolicy.isManagerRole(user.getRole()) || user.getDeletedAt() != null) {
+        if (!claims.role().equals(user.getRole()) || !ManagerRoleAccessPolicy.isManagerPortalRole(user.getRole()) || user.getDeletedAt() != null) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Phiên làm việc không hợp lệ.");
         }
         if (user.isLocked()) {

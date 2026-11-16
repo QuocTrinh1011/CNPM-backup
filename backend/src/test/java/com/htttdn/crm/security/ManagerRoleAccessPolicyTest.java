@@ -15,6 +15,7 @@ class ManagerRoleAccessPolicyTest {
     private static final String HR = "MANAGER_HR";
     private static final String WAREHOUSE = "MANAGER_WAREHOUSE";
     private static final String SALES = "MANAGER_SALES";
+    private static final String EMPLOYEE = "EMPLOYEE";
     private final ManagerRoleAccessPolicy policy = new ManagerRoleAccessPolicy();
 
     @ParameterizedTest
@@ -33,7 +34,7 @@ class ManagerRoleAccessPolicyTest {
         for (String role : Set.of(HR, WAREHOUSE, SALES)) {
             for (RouteCase route : Stream.of(
                     new RouteCase("GET", "/api/manager/unknown", Set.of()),
-                    new RouteCase("POST", "/api/manager/employees", Set.of()),
+                    new RouteCase("POST", "/api/manager/employees/12", Set.of()),
                     new RouteCase("POST", "/api/manager/products/categories", Set.of()),
                     new RouteCase("GET", "/api/manager/products/not-a-number", Set.of()),
                     new RouteCase("GET", "/api/manager/products/12/unknown", Set.of()),
@@ -43,6 +44,54 @@ class ManagerRoleAccessPolicyTest {
                 assertTrue(policy.rolesFor(route.method(), route.path()).isEmpty(), route.toString());
                 assertFalse(policy.allows(role, route.method(), route.path()), role + " " + route);
             }
+        }
+    }
+
+    @Test
+    void employeeCanOnlyUseSelfServiceAndTeamReadRoutes() {
+        for (RouteCase route : Stream.of(
+                route("GET", "/api/manager/me/profile", Set.of(EMPLOYEE)),
+                route("PUT", "/api/manager/me/profile", Set.of(EMPLOYEE)),
+                route("GET", "/api/manager/me/leave-requests", Set.of(EMPLOYEE)),
+                route("POST", "/api/manager/me/leave-requests", Set.of(EMPLOYEE)),
+                route("PATCH", "/api/manager/me/leave-requests/12/withdraw", Set.of(EMPLOYEE)),
+                route("GET", "/api/manager/me/attendance", Set.of(EMPLOYEE)),
+                route("GET", "/api/manager/me/payslips", Set.of(EMPLOYEE)),
+                route("GET", "/api/manager/me/payslips/2026/11", Set.of(EMPLOYEE)),
+                route("GET", "/api/manager/me/team", Set.of(EMPLOYEE)),
+                route("GET", "/api/manager/me/team/attendance", Set.of(EMPLOYEE))
+        ).toList()) {
+            assertEquals(route.allowedRoles(), policy.rolesFor(route.method(), route.path()), route.toString());
+            assertTrue(policy.allows(EMPLOYEE, route.method(), route.path()), route.toString());
+            assertFalse(policy.allows(HR, route.method(), route.path()), HR + " " + route);
+            assertFalse(policy.allows(SALES, route.method(), route.path()), SALES + " " + route);
+            assertFalse(policy.allows(WAREHOUSE, route.method(), route.path()), WAREHOUSE + " " + route);
+        }
+        assertTrue(ManagerRoleAccessPolicy.isManagerPortalRole(EMPLOYEE));
+        assertFalse(ManagerRoleAccessPolicy.isManagerRole(EMPLOYEE));
+    }
+
+    @Test
+    void hrOwnsEmployeeAdministrationLeaveDecisionsAttendancePayrollAndReports() {
+        for (RouteCase route : Stream.of(
+                route("POST", "/api/manager/employees", Set.of(HR)),
+                route("PUT", "/api/manager/employees/12", Set.of(HR)),
+                route("DELETE", "/api/manager/employees/12", Set.of(HR)),
+                route("GET", "/api/manager/hr/leave-requests", Set.of(HR)),
+                route("PATCH", "/api/manager/hr/leave-requests/12/decision", Set.of(HR)),
+                route("GET", "/api/manager/hr/attendance", Set.of(HR)),
+                route("PUT", "/api/manager/hr/attendance", Set.of(HR)),
+                route("GET", "/api/manager/hr/payroll-periods", Set.of(HR)),
+                route("POST", "/api/manager/hr/payroll-periods", Set.of(HR)),
+                route("GET", "/api/manager/hr/payroll-periods/2026/11", Set.of(HR)),
+                route("POST", "/api/manager/hr/payroll-periods/2026/11/publish", Set.of(HR)),
+                route("GET", "/api/manager/hr/reports", Set.of(HR))
+        ).toList()) {
+            assertEquals(route.allowedRoles(), policy.rolesFor(route.method(), route.path()), route.toString());
+            assertTrue(policy.allows(HR, route.method(), route.path()), route.toString());
+            assertFalse(policy.allows(EMPLOYEE, route.method(), route.path()), EMPLOYEE + " " + route);
+            assertFalse(policy.allows(SALES, route.method(), route.path()), SALES + " " + route);
+            assertFalse(policy.allows(WAREHOUSE, route.method(), route.path()), WAREHOUSE + " " + route);
         }
     }
 

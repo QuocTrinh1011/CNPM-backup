@@ -71,6 +71,68 @@ class ManagerRoleSecurityIntegrationTest {
     }
 
     @Test
+    void employeeCanLoginRefreshChangePasswordAndLogoutInTheManagerSession() throws Exception {
+        User employee = account("EMPLOYEE");
+        ManagerAuthService.Session login = managerAuth.login(employee.getEmail(), PASSWORD);
+
+        assertEquals("EMPLOYEE", jwt.parse("Bearer " + login.accessToken()).role());
+        assertEquals("EMPLOYEE", refreshTokens.findForUpdate(AuthService.hash(login.refreshToken()))
+                .orElseThrow().getAudience());
+
+        ManagerAuthService.Session refreshed = managerAuth.refresh(login.refreshToken());
+        assertEquals("EMPLOYEE", jwt.parse("Bearer " + refreshed.accessToken()).role());
+
+        mvc.perform(post("/api/manager/auth/change-password")
+                        .header("Authorization", "Bearer " + refreshed.accessToken())
+                        .contentType("application/json")
+                        .content("{\"currentPassword\":\"" + PASSWORD + "\",\"newPassword\":\"EmployeePassword456!\"}"))
+                .andExpect(status().isNoContent());
+        entityManager.flush();
+        entityManager.clear();
+        assertDoesNotThrow(() -> managerAuth.login(employee.getEmail(), "EmployeePassword456!"));
+        assertThrows(ApiException.class, () -> managerAuth.refresh(refreshed.refreshToken()));
+
+        ManagerAuthService.Session current = managerAuth.login(employee.getEmail(), "EmployeePassword456!");
+        managerAuth.logout(current.refreshToken());
+        assertEquals("REVOKED", refreshTokens.findForUpdate(AuthService.hash(current.refreshToken()))
+                .orElseThrow().getStatus());
+    }
+
+    @Test
+    void employeeRoleChangeRevokesOldRefreshSession() {
+        User employee = account("EMPLOYEE");
+        ManagerAuthService.Session session = managerAuth.login(employee.getEmail(), PASSWORD);
+        employee.setRole("MANAGER_SALES");
+        users.saveAndFlush(employee);
+
+        assertThrows(ApiException.class, () -> managerAuth.refresh(session.refreshToken()));
+        assertEquals("REVOKED", refreshTokens.findForUpdate(AuthService.hash(session.refreshToken()))
+                .orElseThrow().getStatus());
+    }
+
+    @Test
+    void employeeLoginRejectsLockedAndDeactivatedAccounts() {
+        User locked = account("EMPLOYEE");
+        locked.setLocked(true);
+        users.saveAndFlush(locked);
+        assertThrows(ApiException.class, () -> managerAuth.login(locked.getEmail(), PASSWORD));
+
+        User deactivated = account("EMPLOYEE");
+        deactivated.setDeletedAt(java.time.Instant.now());
+        users.saveAndFlush(deactivated);
+        assertThrows(ApiException.class, () -> managerAuth.login(deactivated.getEmail(), PASSWORD));
+    }
+
+    @Test
+    void employeeSelfServicePathPassesTheManagerGuard() throws Exception {
+        User employee = account("EMPLOYEE");
+        String token = "Bearer " + managerAuth.login(employee.getEmail(), PASSWORD).accessToken();
+
+        mvc.perform(get("/api/manager/me/profile").header("Authorization", token))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void changingRoleInvalidatesPreviouslyIssuedAccessAndRefreshTokens() throws Exception {
         User user = account("MANAGER_SALES");
         ManagerAuthService.Session session = managerAuth.login(user.getEmail(), PASSWORD);
