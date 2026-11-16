@@ -282,6 +282,15 @@ routes can accept filters and employee IDs after role authorization.
 - Payroll settings are not prefilled with legal rates. HR must supply the
   effective `PAYROLL_RULES` JSON and standard working days before creating a
   period. The system refuses generation without a valid effective setting.
+- A `PAYROLL_RULES` tax schedule must include at least one valid bracket. A
+  configured no-withholding schedule uses an explicit open-ended zero-rate
+  bracket; an empty bracket list is invalid.
+- `UNPAID_LEAVE` and `ABSENT` attendance records cannot have paid-equivalent
+  days. Payroll generation also rejects inconsistent stored attendance so an
+  old invalid row cannot silently increase salary.
+- Resignation/termination revokes employee refresh sessions. Login and refresh
+  require an active employee profile, and self-service rejects previously
+  issued access tokens after the profile becomes inactive.
 - HR reports show the current profile salary when no published snapshot exists
   for a selected month and label that source explicitly. Reports should not be
   read as historical salary records in that case.
