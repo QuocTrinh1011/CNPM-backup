@@ -8,12 +8,26 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile, Long> {
     Optional<EmployeeProfile> findByEmployeeCodeIgnoreCase(String employeeCode);
     boolean existsByEmployeeCodeIgnoreCase(String employeeCode);
     boolean existsByReportsToEmployeeId(Long employeeId);
+
+    @EntityGraph(attributePaths = "account")
+    @Query("""
+            select profile from EmployeeProfile profile
+            where profile.reportsToEmployeeId = :teamLeadId
+              and profile.permissionProfile = 'STAFF'
+              and profile.employmentStatus = 'ACTIVE'
+              and profile.account.role = 'EMPLOYEE'
+              and profile.account.locked = false
+              and profile.account.deletedAt is null
+            order by lower(profile.account.fullName), profile.employeeId
+            """)
+    List<EmployeeProfile> findActiveDirectReports(@Param("teamLeadId") Long teamLeadId);
 
     @EntityGraph(attributePaths = "account")
     @Query(value = """
