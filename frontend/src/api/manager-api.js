@@ -107,6 +107,33 @@ export const adminEndpoints = {
     if (month != null && month !== '') params.set('month', String(month));
     return `/api/manager/reports?${params}`;
   },
+  employees: ({ q = '', page = 0, size = 15 } = {}) => `/api/manager/employees?${managerQuery({ q, page, size })}`,
+  employee: id => `/api/manager/employees/${id}`,
+  createEmployee: () => '/api/manager/employees',
+  updateEmployee: id => `/api/manager/employees/${id}`,
+  deactivateEmployee: id => `/api/manager/employees/${id}`,
+  myProfile: () => '/api/manager/me/profile',
+  myLeaveRequests: ({ page = 0, size = 50 } = {}) => `/api/manager/me/leave-requests?${managerQuery({ page, size })}`,
+  submitMyLeave: () => '/api/manager/me/leave-requests',
+  withdrawMyLeave: id => `/api/manager/me/leave-requests/${id}/withdraw`,
+  hrLeaveRequests: ({ status = '', employeeId, page = 0, size = 50 } = {}) => `/api/manager/hr/leave-requests?${managerQuery({ status, employeeId, page, size })}`,
+  decideLeave: id => `/api/manager/hr/leave-requests/${id}/decision`,
+  hrAttendance: ({ year, month, employeeId } = {}) => `/api/manager/hr/attendance?${managerQuery({ year, month, employeeId })}`,
+  upsertAttendance: () => '/api/manager/hr/attendance',
+  myAttendance: ({ year, month } = {}) => `/api/manager/me/attendance?${managerQuery({ year, month })}`,
+  myTeam: () => '/api/manager/me/team',
+  myTeamAttendance: ({ year, month } = {}) => `/api/manager/me/team/attendance?${managerQuery({ year, month })}`,
+  payrollSettings: ({ asOf } = {}) => `/api/manager/hr/payroll-settings${asOf ? `?${managerQuery({ asOf })}` : ''}`,
+  payrollPeriods: ({ year } = {}) => `/api/manager/hr/payroll-periods${year ? `?${managerQuery({ year })}` : ''}`,
+  payrollPeriod: (year, month) => `/api/manager/hr/payroll-periods/${year}/${month}`,
+  generatePayroll: () => '/api/manager/hr/payroll-periods',
+  reviewPayroll: (year, month) => `/api/manager/hr/payroll-periods/${year}/${month}/review`,
+  publishPayroll: (year, month) => `/api/manager/hr/payroll-periods/${year}/${month}/publish`,
+  adjustPayroll: (year, month) => `/api/manager/hr/payroll-periods/${year}/${month}/adjustments`,
+  correctPayslip: (year, month, employeeId) => `/api/manager/hr/payroll-periods/${year}/${month}/revisions/${employeeId}`,
+  myPayslips: year => `/api/manager/me/payslips?${managerQuery({ year })}`,
+  myPayslip: (year, month) => `/api/manager/me/payslips/${year}/${month}`,
+  hrReports: ({ year, month } = {}) => `/api/manager/hr/reports?${managerQuery({ year, month })}`,
 };
 
 export const currentApiBase = API_BASE;

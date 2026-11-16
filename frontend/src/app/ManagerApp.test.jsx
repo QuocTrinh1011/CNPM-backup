@@ -89,7 +89,7 @@ it('keeps the invoices section instead of redirecting to the dashboard', async (
 it.each([
   ['MANAGER_SALES', '/manager/orders', ['Đơn hàng', 'Khách hàng', 'Báo cáo', 'Chiến dịch khuyến mãi'], ['Nhập kho', 'Nhân viên']],
   ['MANAGER_WAREHOUSE', '/manager/products', ['Sản phẩm', 'Nhập kho'], ['Đơn hàng', 'Báo cáo', 'Nhân viên', 'Tổng quan']],
-  ['MANAGER_HR', '/manager/employees', ['Nhân viên'], ['Đơn hàng', 'Sản phẩm', 'Nhập kho', 'Báo cáo', 'Tổng quan']],
+  ['MANAGER_HR', '/manager/employees', ['Nhân viên', 'Duyệt đơn nghỉ', 'Chấm công', 'Bảng lương', 'Báo cáo nhân sự'], ['Đơn hàng', 'Sản phẩm', 'Nhập kho', 'Tổng quan']],
 ])('routes %s to its landing page and filters navigation', async (role, landing, visible, hidden) => {
   window.history.replaceState({}, '', '/manager');
   adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Role test', role } });
@@ -100,6 +100,69 @@ it.each([
   const navigation = screen.getByRole('navigation', { name: 'Chức năng quản lý' });
   for (const label of visible) expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(true);
   for (const label of hidden) expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(false);
+});
+
+it('routes employees to self-service pages without HR payroll navigation', async () => {
+  window.history.replaceState({}, '', '/manager');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Employee', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 42, fullName: 'Employee', employeeCode: 'E-42', permissionProfile: 'STAFF', employmentStatus: 'ACTIVE' }
+    : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+
+  await waitFor(() => expect(window.location.pathname).toBe('/manager/my-profile'));
+  const navigation = screen.getByRole('navigation', { name: 'Chức năng quản lý' });
+  for (const label of ['Thông tin của tôi', 'Đơn nghỉ của tôi', 'Chấm công của tôi', 'Phiếu lương của tôi']) {
+    expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(true);
+  }
+  for (const label of ['Bảng lương', 'Duyệt đơn nghỉ', 'Báo cáo nhân sự', 'Nhân viên trong nhóm']) {
+    expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(false);
+  }
+});
+
+it('lands team leads on their direct team directory while staff land on their own profile', async () => {
+  window.history.replaceState({}, '', '/manager');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Team lead', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 42, fullName: 'Team lead', employeeCode: 'TL-42', permissionProfile: 'TEAM_LEAD', employmentStatus: 'ACTIVE' }
+    : []);
+
+  render(<ManagerApp />, { wrapper });
+
+  await screen.findByRole('heading', { name: 'Nhân viên trong nhóm', level: 2 });
+  expect(window.location.pathname).toBe('/manager/my-team');
+});
+
+it('adds team views only for employees with the TEAM_LEAD profile and redirects restricted paths', async () => {
+  window.history.replaceState({}, '', '/manager/my-team');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Team lead', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => {
+    if (url === '/api/manager/me/profile') return { id: 42, fullName: 'Team lead', employeeCode: 'TL-42', permissionProfile: 'TEAM_LEAD', employmentStatus: 'ACTIVE' };
+    if (url === '/api/manager/me/team') return [];
+    return { content: [] };
+  });
+
+  render(<ManagerApp />, { wrapper });
+
+  await screen.findByRole('heading', { name: 'Nhân viên trong nhóm', level: 2 });
+  const navigation = screen.getByRole('navigation', { name: 'Chức năng quản lý' });
+  expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes('Nhân viên trong nhóm'))).toBe(true);
+  expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes('Chấm công nhóm'))).toBe(true);
+  expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes('Bảng lương'))).toBe(false);
+});
+
+it('keeps HR payroll inaccessible to a team lead even through a direct URL', async () => {
+  window.history.replaceState({}, '', '/manager/payroll');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Team lead', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 42, fullName: 'Team lead', employeeCode: 'TL-42', permissionProfile: 'TEAM_LEAD', employmentStatus: 'ACTIVE' }
+    : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+
+  await waitFor(() => expect(window.location.pathname).toBe('/manager/my-team'));
+  expect(adminApi.mock.calls.some(([url]) => String(url).includes('/payroll-periods'))).toBe(false);
 });
 
 it.each([
