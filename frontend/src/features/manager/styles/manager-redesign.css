@@ -112,6 +112,45 @@
   .manager-shell .admin-table-wrap td { padding: 12px; }
   .manager-shell .manager-product-table td:nth-child(2) { min-width: 0; max-width: none; }
 }
+.manager-shell .admin-color-gallery {
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-input);
+}
+.manager-shell .admin-color-gallery-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.manager-shell .admin-color-gallery-heading h3 {
+  margin: 0;
+  color: var(--admin-text);
+  font-size: 14px;
+  font-weight: 650;
+}
+.manager-shell .admin-color-gallery-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--admin-border);
+}
+.manager-shell .admin-color-gallery-item label {
+  grid-column: 1 / -1;
+}
+.manager-shell .admin-color-gallery-preview {
+  width: 64px;
+  height: 80px;
+  grid-column: 1 / -1;
+  object-fit: cover;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-sm);
+  background: var(--admin-card);
+}
 @media (prefers-reduced-motion: reduce) {
   .manager-shell *, .manager-login * { animation: none; transition: none; scroll-behavior: auto; }
 }

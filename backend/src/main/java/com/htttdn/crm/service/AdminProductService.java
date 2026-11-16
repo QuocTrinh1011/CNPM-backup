@@ -10,7 +10,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class AdminProductService extends AdminServiceSupport {
@@ -56,5 +64,68 @@ public class AdminProductService extends AdminServiceSupport {
         p.setPrice(r.price());
         p.setStock(r.stock());
         p.setImageUrl(r.imageUrl());
+
+        String existingColors = p.getColors();
+        String colors = r.colors() == null ? existingColors : r.colors();
+        if (r.colors() != null) p.setColors(r.colors());
+        if (r.colorImages() != null) {
+            Map<String, List<String>> colorImages = validateColorImages(colors, r.colorImages());
+            p.setColorImages(colorImages);
+            String defaultColor = firstColor(colors);
+            List<String> defaultImages = colorImages.get(defaultColor);
+            if (defaultImages == null || defaultImages.isEmpty()) {
+                defaultImages = colorImages.values().stream().filter(images -> !images.isEmpty()).findFirst().orElse(List.of());
+            }
+            if (!defaultImages.isEmpty()) p.setImageUrl(defaultImages.getFirst());
+        } else if (r.colors() != null && !Objects.equals(r.colors(), existingColors)) {
+            p.setColorImages(validateColorImages(colors, p.getColorImages()));
+        }
+    }
+
+    private Map<String, List<String>> validateColorImages(String colors, Map<String, List<String>> imagesByColor) {
+        Set<String> allowedColors = new LinkedHashSet<>();
+        for (String color : colors == null ? new String[0] : colors.split(",", -1)) {
+            String normalized = color.trim();
+            if (!normalized.isEmpty()) allowedColors.add(normalized);
+        }
+
+        Map<String, List<String>> normalizedImages = new LinkedHashMap<>();
+        if (imagesByColor == null) return normalizedImages;
+        for (Map.Entry<String, List<String>> entry : imagesByColor.entrySet()) {
+            String color = entry.getKey() == null ? "" : entry.getKey().trim();
+            List<String> urls = entry.getValue();
+            if (!allowedColors.contains(color) || normalizedImages.containsKey(color)
+                    || urls == null || urls.isEmpty() || urls.size() > 6) {
+                throw invalidColorImages();
+            }
+            List<String> normalizedUrls = new ArrayList<>();
+            for (String url : urls) {
+                String normalizedUrl = url == null ? "" : url.trim();
+                if (normalizedUrl.isEmpty() || !isAllowedProductImageUrl(normalizedUrl)) throw invalidColorImages();
+                normalizedUrls.add(normalizedUrl);
+            }
+            normalizedImages.put(color, List.copyOf(normalizedUrls));
+        }
+        return normalizedImages;
+    }
+
+    private boolean isAllowedProductImageUrl(String value) {
+        if (value.startsWith("/") && !value.startsWith("//")) return true;
+        try {
+            URI uri = URI.create(value);
+            return "https".equalsIgnoreCase(uri.getScheme()) && uri.getHost() != null && uri.getUserInfo() == null;
+        } catch (IllegalArgumentException exception) {
+            return false;
+        }
+    }
+
+    private String firstColor(String colors) {
+        if (colors == null) return "";
+        return java.util.Arrays.stream(colors.split(",", -1)).map(String::trim).filter(color -> !color.isEmpty()).findFirst().orElse("");
+    }
+
+    private com.htttdn.crm.exception.ApiException invalidColorImages() {
+        return new com.htttdn.crm.exception.ApiException(org.springframework.http.HttpStatus.BAD_REQUEST,
+                "INVALID_PRODUCT_COLOR_IMAGES", "Ảnh theo màu sản phẩm chưa hợp lệ.");
     }
 }

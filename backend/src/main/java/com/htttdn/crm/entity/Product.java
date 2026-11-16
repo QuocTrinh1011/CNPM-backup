@@ -3,9 +3,15 @@ package com.htttdn.crm.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "products")
@@ -52,6 +58,10 @@ public class Product {
     @Column(name = "image_url", length = 2000)
     private String imageUrl;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "color_images", nullable = false)
+    private Map<String, List<String>> colorImages = new LinkedHashMap<>();
+
     private String badge;
     private boolean featured = false;
     private boolean active = true;
@@ -88,6 +98,11 @@ public class Product {
     public void setStock(int value) { stock = value; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String value) { imageUrl = value; }
+    public Map<String, List<String>> getColorImages() { return colorImages; }
+    public void setColorImages(Map<String, List<String>> value) {
+        colorImages = new LinkedHashMap<>();
+        if (value != null) value.forEach((color, urls) -> colorImages.put(color, urls == null ? List.of() : new ArrayList<>(urls)));
+    }
     public String getBadge() { return badge; }
     public void setBadge(String value) { badge = value; }
     public boolean isFeatured() { return featured; }

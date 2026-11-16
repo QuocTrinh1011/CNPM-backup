@@ -2,6 +2,7 @@ import React from "react";
 import { ArrowUpRight, ChevronRight, CircleAlert, Search, SlidersHorizontal, X } from "lucide-react";
 import { csv, money } from "../../shared/utils/storefront-display";
 import { ProductCard } from "./ProductDetails";
+import { firstProductColor } from "./product-image-gallery";
 
 export default function CatalogSection({ catalogPage, products, categories, filters, setFilters, chooseCategory, filtersOpen, setFiltersOpen, loading, catalogError, setSearchInput, wishlist, openProduct, addToCart, toggleWishlist, loadProducts, openCatalog }) {
   return (
@@ -178,7 +179,7 @@ export default function CatalogSection({ catalogPage, products, categories, filt
                   key={product.id}
                   product={product}
                   onOpen={() => openProduct(product)}
-                  onAdd={() => addToCart(product, { size: csv(product.sizes)[0], color: csv(product.colors)[0] })}
+                  onAdd={() => addToCart(product, { size: csv(product.sizes)[0], color: firstProductColor(product) })}
                   isWishlisted={wishlist.some((item) => item.productId === product.id)}
                   onWishlist={() => toggleWishlist(product)}
                 />
