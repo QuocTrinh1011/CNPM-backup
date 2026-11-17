@@ -1,5 +1,5 @@
 -- Schema cho database PostgreSQL htttdn.
--- Phần đầu giữ nguyên mô hình categories/products/customers/admins/orders
+-- Phần đầu giữ mô hình categories/products/customers/orders hiện dùng
 -- của dự án; các cột/bảng mở rộng phục vụ luồng customer storefront.
 
 CREATE TABLE IF NOT EXISTS categories (
@@ -48,12 +48,6 @@ ALTER TABLE customers ADD COLUMN IF NOT EXISTS lock_reason VARCHAR(2000);
 ALTER TABLE customers ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
 
 CREATE UNIQUE INDEX IF NOT EXISTS uq_customers_email ON customers(email) WHERE email IS NOT NULL;
-
-CREATE TABLE IF NOT EXISTS admins (
-    admin_id BIGSERIAL PRIMARY KEY,
-    role VARCHAR(50) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL
-);
 
 CREATE TABLE IF NOT EXISTS orders (
     order_id BIGSERIAL PRIMARY KEY,
@@ -192,7 +186,6 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
 CREATE TABLE IF NOT EXISTS feedback (
     feedback_id BIGSERIAL PRIMARY KEY,
     customer_id BIGINT NOT NULL REFERENCES customers(customer_id),
-    admin_id BIGINT REFERENCES admins(admin_id),
     content TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
