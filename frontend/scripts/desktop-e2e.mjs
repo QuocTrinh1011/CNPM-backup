@@ -36,7 +36,8 @@ try {
     email: 'manager@example.test',
     button: /ĐĂNG NHẬP QUẢN LÝ/,
   });
-  await window.getByRole('heading', { name: 'Tổng quan' }).waitFor();
+  await window.getByRole('heading', { name: 'Danh sách đơn hàng' }).waitFor();
+  assert.equal(new URL(window.url()).pathname, '/manager/orders', 'Sales login must land on the order list');
   await verifyAuthLifecycle(window, backend, 'manager', '/api/manager/auth');
 
   await selectPortal(app, window, 'Quản trị', '/admin');

@@ -98,6 +98,13 @@ it('keeps payroll review and publication as separate HR actions', async () => {
   await waitFor(() => expect(adminApi).toHaveBeenCalledWith(`/api/manager/hr/payroll-periods/${year}/${month}/publish`, expect.objectContaining({ method: 'POST' })));
 });
 
+it('keeps payroll hooks stable when changing from employee view to HR view', () => {
+  adminApi.mockResolvedValue({});
+  const { rerender } = render(<EmployeePayrollPage />);
+
+  expect(() => rerender(<EmployeePayrollPage hr />)).not.toThrow();
+});
+
 it('renders the workforce report counts and salary basis supplied by HR reports', async () => {
   adminApi.mockResolvedValue({
     summary: { totalEmployees: 1, activeCount: 1, onApprovedLeaveCount: 0, resignedInPeriodCount: 0, terminatedInPeriodCount: 0 },

@@ -154,9 +154,9 @@ export function EmployeePayrollPage({ hr = false }) {
   const [rulesJson, setRulesJson] = useState('');
   const path = hr ? adminEndpoints.payrollPeriod(year, month) : adminEndpoints.myPayslips(year);
   const { data, error, loading } = useApiData(path, reload);
-  const periods = hr ? useApiData(adminEndpoints.payrollPeriods({ year }), reload) : { data: null, error: '', loading: false };
+  const periods = useApiData(hr ? adminEndpoints.payrollPeriods({ year }) : null, reload);
   const settingPath = adminEndpoints.payrollSettings({ asOf: `${year}-${String(month).padStart(2, '0')}-01` });
-  const setting = hr ? useApiData(settingPath, reload) : { data: null, error: '', loading: false };
+  const setting = useApiData(hr ? settingPath : null, reload);
   useEffect(() => { if (setting.data?.settingValue) setRulesJson(JSON.stringify(setting.data.settingValue, null, 2)); }, [setting.data]);
   useEffect(() => {
     const finishPrint = () => setPrintTarget(null);

@@ -92,7 +92,7 @@ function sessionFor(audience, tokenVersion) {
     ? { id: 101, fullName: 'E2E Customer', email: 'customer@example.test' }
     : audience === 'admin'
       ? { id: 201, email: 'admin@example.test', role: 'ADMIN' }
-      : { id: 301, fullName: 'E2E Manager', email: 'manager@example.test', role: 'MANAGER' };
+      : { id: 301, fullName: 'E2E Manager', email: 'manager@example.test', role: 'MANAGER_SALES' };
   return { accessToken: `${audience}-access-${tokenVersion}`, [audience]: account };
 }
 
