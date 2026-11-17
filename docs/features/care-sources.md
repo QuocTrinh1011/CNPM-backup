@@ -35,7 +35,7 @@ Chỉ MANAGER được gọi; ADMIN/CUSTOMER bị từ chối. Không đưa dữ
 - CustomerCareIntegrationTest: nguồn hợp lệ/đã đóng/đã xóa, customer sai/khóa, quyền, lọc nguồn, giữ liên kết, chống lặp và tạo lại sau hoàn thành.
 - CareSourceConcurrencyTest: hai transaction đồng thời, một công việc đang mở.
 - SourceCareCreator.test.jsx: form, người phụ trách/hạn, payload nguồn, link theo dõi, nguồn có công việc, giữ bản nháp khi conflict, chống gửi lặp, lỗi và hủy.
-- CareSourcePostgresTest (`CRM_POSTGRES_QA=true`): migration chạy lặp, partial unique index, hoàn thành cho phép tạo tiếp; rollback DDL và dữ liệu thử, không cài migration vĩnh viễn.
+- Ghi chú `CareSourcePostgresTest` thuộc test cũ; lớp này hiện không có trong source. Các PostgreSQL integration test còn lại tự chạy trên database Testcontainers riêng trong suite Maven.
 - Chạy `mvn test -q`, `npm test`, `npm run build`, `git diff --check`. Kiểm tra trực quan desktop/mobile và sáng/tối sau khi đăng nhập Manager ở môi trường thử.
 
 Giữ cấu hình và chỉnh sửa local, không push/PR. Nhật ký thao tác bản đầu không ghi các công việc chăm sóc; chưa mở rộng phạm vi audit trong đợt này.

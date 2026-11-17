@@ -51,7 +51,7 @@ Tham số tùy chọn `q`, `type`, `action`, `from`, `to`, `page`, `size`. Tìm 
 
 - `AuditLogIntegrationTest`: quyền, actor chống giả mạo, dữ liệu trước/sau, tối thiểu hóa thông tin, tìm/lọc/phân trang, API chỉ đọc, lỗi nghiệp vụ, chống lặp trạng thái, rollback.
 - `AuditLogs.test.jsx`: tra cứu, URL/back, phân trang, retry và trạng thái rỗng trên trang Admin.
-- `AuditLogPostgresTest` (bật riêng `CRM_POSTGRES_QA=true`): chạy migration hai lần và tra cứu trên PostgreSQL, rollback cả DDL và bản ghi thử; không áp dụng migration vĩnh viễn vào database đang dùng.
+- `AuditLogPostgresTest` chạy trong suite Maven với PostgreSQL 16 cô lập bằng Testcontainers; schema được nạp tự động từ `database/schema.sql`, migration chạy hai lần trong transaction thử.
 - Chạy `mvn test -q`, `npm test`, `npm run build`, `git diff --check`.
 
 Trước khi triển khai nên thử trên database staging: chạy migration, thao tác một đơn/customer thử bằng Manager, kiểm tra log; Admin thấy toàn bộ, Manager không mở được trang/API nhật ký, customer bị từ chối. Không thử trên đơn hoặc giao dịch thanh toán thật.

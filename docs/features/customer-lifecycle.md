@@ -27,7 +27,7 @@ Bộ lọc nằm trong URL; quay về danh sách từ hồ sơ giữ bộ lọc.
 
 - Backend: `mvn test -q`.
 - Frontend: `npm test`, `npm run build`.
-- PostgreSQL kiểm thử riêng: bật `CRM_POSTGRES_QA=true`, chạy `mvn test -q -Dtest=CustomerLifecyclePostgresTest` trong backend. Dữ liệu customer/đơn sinh riêng được rollback; sequence có thể tăng. Không xử lý đơn thật.
+- `CustomerLifecyclePostgresTest` chạy trong suite Maven với PostgreSQL 16 cô lập bằng Testcontainers. Dữ liệu customer/đơn sinh riêng được rollback; database `cnpm` không bị chạm tới.
 - Browser: `frontend/scripts/portal-responsive-check.cjs` dùng API giả lập, desktop/tablet/mobile sáng/tối; không tạo thanh toán thật.
 
 Sau cập nhật cần khởi động lại backend để nạp API mới; không cần migration. Không sửa `application.yml`.

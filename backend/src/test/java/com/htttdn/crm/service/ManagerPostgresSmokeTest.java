@@ -3,7 +3,6 @@ import com.htttdn.crm.entity.Order;
 import com.htttdn.crm.entity.User;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +10,9 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Opt-in only. Uses configured PostgreSQL and rolls back ALL fixtures.
-@EnabledIfEnvironmentVariable(named="CRM_POSTGRES_QA",matches="true")
 @SpringBootTest(properties={"spring.jpa.hibernate.ddl-auto=none"})
 @Transactional
-class ManagerPostgresSmokeTest {
+class ManagerPostgresSmokeTest extends PostgresTestDatabase {
  @Autowired EntityManager em; @Autowired ManagerOrderQuery query; @Autowired AuthService auth;
  @Test void realPostgresFilteringAndCountsAcrossPagesWithRollback(){
   String unique="qa-"+UUID.randomUUID();var u=new User();u.setEmail(unique+"@example.test");u.setFullName(unique);u.setRole("CUSTOMER");u.setPasswordHash("test-only-not-a-login");em.persist(u);

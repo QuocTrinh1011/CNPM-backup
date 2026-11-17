@@ -3,7 +3,6 @@ package com.htttdn.crm.service;
 import com.htttdn.crm.entity.AuditLog;
 import com.htttdn.crm.repository.AuditLogRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,9 +13,8 @@ import java.nio.file.*;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
-@EnabledIfEnvironmentVariable(named="CRM_POSTGRES_QA",matches="true")
 @SpringBootTest(properties={"spring.jpa.hibernate.ddl-auto=none"}) @Transactional
-class AuditLogPostgresTest {
+class AuditLogPostgresTest extends PostgresTestDatabase {
     @Autowired JdbcTemplate db;@Autowired AuditLogRepository logs;@Autowired AuditLogQuery query;
     @Test void migrationAndQueryOnPostgresRollback() throws Exception {
         try(var connection=db.getDataSource().getConnection()){assertTrue(connection.getMetaData().getURL().startsWith("jdbc:postgresql:"));}

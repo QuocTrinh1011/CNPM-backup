@@ -42,8 +42,7 @@ Không tự chạy migration vào dữ liệu thật. Không tự phát voucher 
 - RetentionReportIntegrationTest: phiếu đã giải quyết tính theo phiếu, loại
   customer xóa/tài khoản nội bộ, vẫn tính khách khóa; không tính phiếu mở.
 - CustomerActivityPostgresTest: truy vấn timeline, điểm, khảo sát và số phiếu
-  trên PostgreSQL với bảng temporary và transaction rollback, không sửa bảng public.
-  Chạy opt-in bằng CRM_POSTGRES_QA=true; không chạy migration vào DB thật.
+  trên PostgreSQL 16 cô lập bằng Testcontainers; dùng bảng temporary và transaction rollback.
 - Frontend: URL bộ lọc và xóa bộ lọc, timeline mở trực tiếp/liên kết đơn,
   số phiếu mở đúng bộ lọc RESOLVED; giữ test polling/chuyển trang hiện có.
 - Chưa smoke test giao diện với backend đang chạy hoặc kiểm tra hình ảnh

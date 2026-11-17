@@ -351,7 +351,7 @@ Kiểm tra whitespace, chạy tại thư mục gốc:
 git diff --check
 ```
 
-Test backend thường dùng H2 và dữ liệu thử. Một số test PostgreSQL chỉ chạy khi bật `CRM_POSTGRES_QA=true`; đọc từng lớp test trước khi bật và chỉ dùng database kiểm thử. Không phải mọi test opt-in đều dùng bảng tạm: một số tạo dữ liệu rồi rollback và có thể làm tăng sequence. Không trỏ các test này vào database vận hành.
+Test backend thường dùng H2 và dữ liệu thử. Bốn test PostgreSQL tự chạy với PostgreSQL 16 trong Testcontainers, nạp `database/schema.sql` vào database tạm riêng; cần Docker đang chạy. Không cần biến môi trường hay thông tin kết nối PostgreSQL; test không chạm database `cnpm` trên máy.
 
 GitHub Actions phân loại thay đổi để chạy backend `mvn verify`, frontend build và lint/typecheck nếu được cấu hình, kiểm tra whitespace và sơ đồ PlantUML; CodeQL kiểm tra riêng. Chỉ merge khi các kiểm tra bắt buộc đạt. Không lấy số test ghi trong tài liệu cũ làm số cố định cho mọi phiên bản; kết quả thực tế nằm trong log CI và báo cáo test.
 

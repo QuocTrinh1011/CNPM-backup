@@ -2,7 +2,6 @@ package com.htttdn.crm.service;
 import com.htttdn.crm.entity.*;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,9 +10,8 @@ import java.time.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
-@EnabledIfEnvironmentVariable(named="CRM_POSTGRES_QA",matches="true")
 @SpringBootTest(properties={"spring.jpa.hibernate.ddl-auto=none"}) @Transactional
-class CustomerLifecyclePostgresTest {
+class CustomerLifecyclePostgresTest extends PostgresTestDatabase {
  @Autowired EntityManager em;@Autowired CustomerLifecycleQuery query;@Autowired CustomerProfileService profile;@Autowired JdbcTemplate db;
  @Test void postgresAggregationFiltersAndPaginationRollback() {
   String key="lifecycle-qa-"+UUID.randomUUID();long code=System.currentTimeMillis()*100;

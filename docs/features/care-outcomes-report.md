@@ -25,7 +25,7 @@ Chỉ tab đang mở tải và polling 5 giây. Giữ dữ liệu khi lỗi cậ
 ## Kiểm tra
 
 - `CareOutcomeReportIntegrationTest`: số liệu, phân quyền, ngày Việt Nam, thiếu ngày, kết quả không hợp lệ, nhân viên không hoạt động và đối chiếu danh sách.
-- `CareOutcomeReportPostgresTest`: bật bằng `CRM_POSTGRES_QA=true`, dùng PostgreSQL đang cấu hình; dữ liệu thử rollback. Không tạo schema hoặc chạy migration; bỏ qua nếu schema chưa có các trường chăm sóc từ tính năng trước.
+- Ghi chú `CareOutcomeReportPostgresTest` thuộc test cũ; lớp này hiện không có trong source. Các PostgreSQL integration test còn lại tự chạy trên database Testcontainers riêng trong suite Maven.
 - `CareOutcomes.test.jsx`, `CustomerCare.test.jsx`, `CareDashboard.test.jsx`: drilldown, URL/back-forward, lọc ngày riêng biệt, polling, request chậm, lỗi và dữ liệu rỗng.
 
 Tính năng này không thêm bảng, cột, migration hay thay đổi `application.yml`. Sau cập nhật code cần khởi động lại backend để nạp API mới.
