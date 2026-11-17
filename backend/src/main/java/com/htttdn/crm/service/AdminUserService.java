@@ -1,6 +1,7 @@
 package com.htttdn.crm.service;
 
 import com.htttdn.crm.dto.admin.AdminDtos.LockRequest;
+import com.htttdn.crm.dto.admin.AdminDtos.AdminCustomerUpdateRequest;
 import com.htttdn.crm.dto.admin.AdminDtos.UserRequest;
 import com.htttdn.crm.entity.User;
 import com.htttdn.crm.exception.ApiException;
@@ -31,7 +32,8 @@ public class AdminUserService extends AdminServiceSupport {
     }
     public Page<User> list(String q, int page, int size) { return users.findActiveCustomers(q == null ? "" : q.trim(), page(page, size)); }
     public User get(Long id) { return users.findById(id).filter(u -> "CUSTOMER".equals(u.getRole()) && u.getDeletedAt() == null).orElseThrow(() -> new NoSuchElementException("Không tìm thấy tài khoản customer.")); }
-    @Transactional public User update(Long id, UserRequest request) { User user = get(id);var before=snapshot(user); user.setFullName(request.fullName()); user.setPhone(request.phone()); user.setPreferences(request.preferences());audit("UPDATE","CUSTOMER",id,before,user); return users.save(user); }
+    @Transactional public User update(Long id, UserRequest request) { User user = get(id);var before=snapshot(user); user.setFullName(request.fullName().trim()); user.setPhone(request.phone()); user.setPreferences(request.preferences());audit("UPDATE","CUSTOMER",id,before,user); return users.save(user); }
+    @Transactional public User updateAdminCustomer(Long id, AdminCustomerUpdateRequest request) { User user = get(id);var before=snapshot(user); user.setFullName(request.fullName().trim());String email=request.email().trim().toLowerCase(java.util.Locale.ROOT);users.findByEmailIgnoreCase(email).filter(other->!other.getId().equals(id)).ifPresent(other->{throw VoucherService.bad("EMAIL_EXISTS","Email đã tồn tại.");});user.setEmail(email); user.setPhone(request.phone()); user.setPreferences(request.preferences());audit("UPDATE","CUSTOMER",id,before,user); return users.save(user); }
     @Transactional public User lock(Long id, LockRequest request) {
         User user = get(id);
         var before=snapshot(user);

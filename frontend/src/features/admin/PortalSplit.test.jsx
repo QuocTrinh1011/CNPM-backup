@@ -89,8 +89,52 @@ it('splits admin accounts into manager, employee, and customer tabs',async()=>{
  fireEvent.click(screen.getByRole('tab',{name:'Tài khoản khách hàng'}));
  expect(await screen.findByText('Store customer')).toBeTruthy();
  expect(screen.queryByRole('button',{name:'Thêm mới'})).toBeNull();
- expect(screen.queryByRole('button',{name:/Sửa/})).toBeNull();
+ const customerRow=screen.getByText('Store customer').closest('tr');
+ expect(within(customerRow).getByRole('button',{name:'Sửa'})).toBeTruthy();
+ expect(within(customerRow).getByRole('button',{name:'Khóa tài khoản'})).toBeTruthy();
+ expect(within(customerRow).queryByRole('button',{name:'Xóa mềm'})).toBeNull();
  expect(adminApi.mock.calls.some(([url])=>new URL(url,'http://localhost').searchParams.get('group')==='customers')).toBe(true);
+});
+it('lets Admin edit, lock, and unlock customers without a delete action',async()=>{
+ window.history.replaceState({},'', '/admin/accounts');adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
+ let customer={id:4,fullName:'Store customer',email:'customer@example.test',phone:'0900000000',preferences:'Neutral colors',role:'CUSTOMER',locked:false};
+ adminApi.mockImplementation(async (url,options={})=>{
+  if(url.includes('/overview'))return {};
+  if(url==='/api/admin/customers/4'){
+   customer={...customer,...options.body};return customer;
+  }
+  if(url==='/api/admin/customers/4/lock'){
+   customer={...customer,locked:options.body.locked};return customer;
+  }
+  const group=new URL(url,'http://localhost').searchParams.get('group');
+  return {content:group==='customers'?[customer]:[],totalPages:1,totalElements:group==='customers'?1:0};
+ });
+ const previousPrompt=window.prompt;window.prompt=vi.fn().mockReturnValue('Verify customer identity');
+ try{
+  render(<SystemAdminApp/>);
+  await screen.findByRole('tab',{name:'Tài khoản khách hàng'});
+  fireEvent.click(screen.getByRole('tab',{name:'Tài khoản khách hàng'}));
+  await screen.findByText('Store customer');
+  const row=screen.getByText('Store customer').closest('tr');
+  fireEvent.click(within(row).getByRole('button',{name:'Sửa'}));
+  fireEvent.change(screen.getByLabelText('Họ tên'),{target:{value:'Updated customer'}});
+  fireEvent.change(screen.getByLabelText('Email'),{target:{value:'updated@example.test'}});
+  fireEvent.click(screen.getByRole('button',{name:'Lưu'}));
+  await waitFor(()=>expect(adminApi.mock.calls.some(([url,options])=>url==='/api/admin/customers/4'&&options?.method==='PUT')).toBe(true));
+  const [,update]=adminApi.mock.calls.find(([url,options])=>url==='/api/admin/customers/4'&&options?.method==='PUT');
+  expect(update.body).toEqual({fullName:'Updated customer',email:'updated@example.test',phone:'0900000000',preferences:'Neutral colors'});
+
+  const updatedRow=(await screen.findByText('Updated customer')).closest('tr');
+  fireEvent.click(within(updatedRow).getByRole('button',{name:'Khóa tài khoản'}));
+  await waitFor(()=>expect(adminApi.mock.calls.some(([url,options])=>url==='/api/admin/customers/4/lock'&&options?.method==='PATCH')).toBe(true));
+  const [,lock]=adminApi.mock.calls.find(([url,options])=>url==='/api/admin/customers/4/lock'&&options?.method==='PATCH');
+  expect(lock.body).toEqual({locked:true,reason:'Verify customer identity'});
+  const lockedRow=screen.getByText('Updated customer').closest('tr');
+  await waitFor(()=>expect(within(lockedRow).getByRole('button',{name:'Mở khóa'})).toBeTruthy());
+  fireEvent.click(within(lockedRow).getByRole('button',{name:'Mở khóa'}));
+  await waitFor(()=>expect(adminApi.mock.calls.some(([url,options])=>url==='/api/admin/customers/4/lock'&&options?.method==='PATCH'&&options.body.locked===false)).toBe(true));
+  expect(screen.queryByRole('button',{name:'Xóa mềm'})).toBeNull();
+ }finally{window.prompt=previousPrompt;}
 });
 it('offers the split internal roles and creates Employee without a password',async()=>{
  window.history.replaceState({},'', '/admin/accounts');adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
@@ -99,12 +143,13 @@ it('offers the split internal roles and creates Employee without a password',asy
  const role=screen.getByLabelText('Vai trò');expect(role.value).toBe('MANAGER_SALES');
  expect(Array.from(role.options,option=>option.value)).toEqual(['MANAGER_HR','MANAGER_WAREHOUSE','MANAGER_SALES','EMPLOYEE','ADMIN']);
  fireEvent.change(role,{target:{value:'EMPLOYEE'}});expect(screen.queryByLabelText(/Mật khẩu/)).toBeNull();
+ fireEvent.change(screen.getByLabelText('Loại nhân viên'),{target:{value:'SALES'}});
  fireEvent.change(screen.getByLabelText('Họ tên'),{target:{value:'Directory employee'}});
  fireEvent.change(screen.getByLabelText('Email'),{target:{value:'employee@example.test'}});
  fireEvent.click(screen.getByRole('button',{name:'Lưu'}));
  await waitFor(()=>expect(adminApi.mock.calls.some(([url,options])=>url==='/api/admin/accounts'&&options?.method==='POST')).toBe(true));
  const [,options]=adminApi.mock.calls.find(([url,request])=>url==='/api/admin/accounts'&&request?.method==='POST');
- expect(options.body).toMatchObject({fullName:'Directory employee',email:'employee@example.test',role:'EMPLOYEE'});expect(options.body).not.toHaveProperty('password');
+ expect(options.body).toMatchObject({fullName:'Directory employee',email:'employee@example.test',role:'EMPLOYEE',workArea:'SALES'});expect(options.body).not.toHaveProperty('password');
 });
 it('requires a new password when promoting Employee to a login role',async()=>{
  window.history.replaceState({},'', '/admin/accounts');adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
@@ -115,6 +160,24 @@ it('requires a new password when promoting Employee to a login role',async()=>{
  fireEvent.change(password,{target:{value:'NewPass123!'}});fireEvent.click(screen.getByRole('button',{name:'Lưu'}));
  await waitFor(()=>expect(adminApi.mock.calls.some(([url,options])=>url==='/api/admin/accounts/7'&&options?.method==='PATCH')).toBe(true));
  const [,options]=adminApi.mock.calls.find(([url,request])=>url==='/api/admin/accounts/7'&&request?.method==='PATCH');expect(options.body.password).toBe('NewPass123!');
+});
+it('shows and saves employee subtype from work area',async()=>{
+ window.history.replaceState({},'', '/admin/accounts');adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
+ adminApi.mockImplementation(async (url,options={})=>{
+  if(url.includes('/overview'))return {};
+  if(url==='/api/admin/accounts/7'&&options.method==='PATCH')return {};
+  const group=new URL(url,'http://localhost').searchParams.get('group');
+  const rows=group==='employees'?[{id:7,fullName:'Warehouse employee',email:'warehouse@example.test',role:'EMPLOYEE',workArea:'WAREHOUSE',locked:false}]:[];
+  return {content:rows,totalPages:1,totalElements:rows.length};
+ });
+ render(<SystemAdminApp/>);
+ await screen.findByRole('tab',{name:'Tài khoản nhân viên'});
+ fireEvent.click(screen.getByRole('tab',{name:'Tài khoản nhân viên'}));
+ expect(await screen.findByText('Nhân viên kho')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'Sửa'}));
+ const type=screen.getByLabelText('Loại nhân viên');expect(type.value).toBe('WAREHOUSE');
+ fireEvent.change(type,{target:{value:'SALES'}});fireEvent.click(screen.getByRole('button',{name:'Lưu'}));
+ await waitFor(()=>expect(adminApi.mock.calls.some(([url,options])=>url==='/api/admin/accounts/7'&&options?.method==='PATCH'&&options.body.workArea==='SALES')).toBe(true));
 });
 it('collapses the admin sidebar from the brand and restores the saved state', async () => {
  window.history.replaceState({}, '', '/admin');

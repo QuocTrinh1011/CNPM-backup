@@ -22,11 +22,15 @@ const ROLE_CONFIG = {
   CUSTOMER: { label: 'Khách hàng', bg: 'rgba(20, 184, 166, 0.15)', color: '#0f9f91' },
   MANAGER: { label: 'Quản lý cửa hàng', bg: 'rgba(14, 165, 233, 0.15)', color: '#0ea5e9' },
 };
-
+const WORK_AREA_LABELS = {
+  SALES: 'Nhân viên bán hàng',
+  WAREHOUSE: 'Nhân viên kho',
+  GENERAL: 'Nhân viên chưa phân loại',
+};
 const ACCOUNT_GROUPS = [
   { id: 'managers', label: 'Tài khoản quản lý', title: 'Tài khoản quản lý', description: 'Admin hệ thống và các vai trò Manager.' },
   { id: 'employees', label: 'Tài khoản nhân viên', title: 'Tài khoản nhân viên', description: 'Danh sách nhân viên nội bộ.' },
-  { id: 'customers', label: 'Tài khoản khách hàng', title: 'Tài khoản khách hàng', description: 'Danh sách tài khoản khách hàng; chỉ xem trong Admin.' },
+  { id: 'customers', label: 'Tài khoản khách hàng', title: 'Tài khoản khách hàng', description: 'Quản lý thông tin và trạng thái tài khoản khách hàng.' },
 ];
 
 export default function InternalDirectory({ kind, manager = false }) {
@@ -79,10 +83,13 @@ export default function InternalDirectory({ kind, manager = false }) {
     setBusy(true);
     setError('');
     try {
-      const body = { ...form };
+      const customerAccount = kind === 'accounts' && accountGroup === 'customers';
+      const body = customerAccount
+        ? { fullName: form.fullName, email: form.email, phone: form.phone || null, preferences: form.preferences || null }
+        : { ...form };
       if (kind === 'accounts' && body.role === 'EMPLOYEE') delete body.password;
-      await api(form.id ? `${base}/${form.id}` : base, {
-        method: form.id ? (kind === 'accounts' ? 'PATCH' : 'PUT') : 'POST',
+      await api(customerAccount ? `/api/admin/customers/${form.id}` : form.id ? `${base}/${form.id}` : base, {
+        method: customerAccount ? 'PUT' : form.id ? (kind === 'accounts' ? 'PATCH' : 'PUT') : 'POST',
         body,
       });
       setForm(null);
@@ -108,10 +115,33 @@ export default function InternalDirectory({ kind, manager = false }) {
     }
   };
 
+  const toggleCustomerLock = async (row) => {
+    const locked = !row.locked;
+    const reason = locked ? window.prompt('Nhập lý do khóa tài khoản khách hàng:') : null;
+    if (locked && (reason === null || !reason.trim())) return;
+    setBusy(true);
+    setError('');
+    try {
+      await api(`/api/admin/customers/${row.id}/lock`, {
+        method: 'PATCH',
+        body: { locked, reason: locked ? reason.trim() : null },
+      });
+      setReload((n) => n + 1);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const editable = kind === 'accounts' || (manager && kind === 'suppliers');
-  const canEditCurrentGroup = editable && !(kind === 'accounts' && accountGroup === 'customers');
+  const customerAccount = kind === 'accounts' && accountGroup === 'customers';
+  const canCreateCurrentGroup = editable && !customerAccount;
+  const canEditCurrentGroup = (editable && !customerAccount) || (customerAccount && !manager);
   const labels =
-    kind === 'accounts'
+    customerAccount
+      ? { fullName: 'Họ tên', email: 'Email', phone: 'Số điện thoại', preferences: 'Sở thích' }
+      : kind === 'accounts'
       ? { fullName: 'Họ tên', email: 'Email', password: 'Mật khẩu mới' }
       : {
           code: 'Mã nhà cung cấp',
@@ -153,7 +183,7 @@ export default function InternalDirectory({ kind, manager = false }) {
           <p style={{ margin: '6px 0 0', fontSize: '13px', color: 'var(--admin-muted)' }}>{description}</p>
         </div>
 
-        {canEditCurrentGroup && (
+        {canCreateCurrentGroup && (
           <button
             type="button"
             className="admin-primary-btn"
@@ -161,7 +191,7 @@ export default function InternalDirectory({ kind, manager = false }) {
               setPromotingEmployee(false);
               setForm(
                 kind === 'accounts'
-                  ? { fullName: '', email: '', password: '', role: accountGroup === 'employees' ? 'EMPLOYEE' : 'MANAGER_SALES', locked: false }
+                  ? { fullName: '', email: '', password: '', role: accountGroup === 'employees' ? 'EMPLOYEE' : 'MANAGER_SALES', workArea: '', locked: false }
                   : { code: '', name: '', email: '', phone: '', address: '', notes: '', active: true }
               );
             }}
@@ -301,7 +331,7 @@ export default function InternalDirectory({ kind, manager = false }) {
             </label>
           ))}
 
-          {kind === 'accounts' ? (
+          {kind === 'accounts' && !customerAccount ? (
             <>
               <label>
                 Vai trò
@@ -316,6 +346,20 @@ export default function InternalDirectory({ kind, manager = false }) {
                   <option value="ADMIN">Admin</option>
                 </select>
               </label>
+              {form.role === 'EMPLOYEE' && (
+                <label>
+                  Loại nhân viên
+                  <select
+                    required
+                    value={form.workArea === 'GENERAL' ? '' : form.workArea || ''}
+                    onChange={(e) => setForm({ ...form, workArea: e.target.value })}
+                  >
+                    <option value="">Chọn loại nhân viên</option>
+                    <option value="SALES">Nhân viên bán hàng</option>
+                    <option value="WAREHOUSE">Nhân viên kho</option>
+                  </select>
+                </label>
+              )}
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', flexDirection: 'row', cursor: 'pointer', alignSelf: 'center', marginTop: '16px' }}>
                 <input
                   type="checkbox"
@@ -325,7 +369,7 @@ export default function InternalDirectory({ kind, manager = false }) {
                 Khóa tài khoản
               </label>
             </>
-          ) : (
+          ) : kind !== 'accounts' ? (
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', flexDirection: 'row', cursor: 'pointer', alignSelf: 'center', marginTop: '16px' }}>
               <input
                 type="checkbox"
@@ -334,7 +378,7 @@ export default function InternalDirectory({ kind, manager = false }) {
               />
               Đang hoạt động
             </label>
-          )}
+          ) : null}
 
           <div style={{ width: '100%', display: 'flex', gap: '10px', marginTop: '12px' }}>
             <button disabled={busy} type="submit">
@@ -386,7 +430,7 @@ export default function InternalDirectory({ kind, manager = false }) {
                         <span>
                           {row.email} ·{' '}
                           <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600', background: ROLE_CONFIG[row.role]?.bg || 'rgba(37, 99, 235, 0.15)', color: ROLE_CONFIG[row.role]?.color || '#2563eb' }}>
-                            {ROLE_CONFIG[row.role]?.label || row.role}
+                            {row.role === 'EMPLOYEE' ? WORK_AREA_LABELS[row.workArea] || WORK_AREA_LABELS.GENERAL : ROLE_CONFIG[row.role]?.label || row.role}
                           </span>
                         </span>
                       ) : (
@@ -417,7 +461,30 @@ export default function InternalDirectory({ kind, manager = false }) {
                       )}
                     </td>
                     {canEditCurrentGroup && <td>
-                      {!(kind === 'accounts' && row.role === 'ADMIN') && <>
+                      {customerAccount ? (
+                        <>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => {
+                              setPromotingEmployee(false);
+                              setForm({ ...row, password: '' });
+                            }}
+                            title="Sửa thông tin khách hàng"
+                          >
+                            <Edit2 size={13} /> Sửa
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => toggleCustomerLock(row)}
+                            title={row.locked ? 'Mở khóa tài khoản khách hàng' : 'Khóa tài khoản khách hàng'}
+                            style={{ color: row.locked ? '#10b981' : '#ef4444' }}
+                          >
+                            <Lock size={13} /> {row.locked ? 'Mở khóa' : 'Khóa tài khoản'}
+                          </button>
+                        </>
+                      ) : !(kind === 'accounts' && row.role === 'ADMIN') && <>
                         <button
                           type="button"
                           disabled={busy}

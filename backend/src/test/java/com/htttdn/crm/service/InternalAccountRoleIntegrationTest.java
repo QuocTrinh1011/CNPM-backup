@@ -1,6 +1,7 @@
 package com.htttdn.crm.service;
 
 import com.htttdn.crm.entity.User;
+import com.htttdn.crm.repository.EmployeeProfileRepository;
 import com.htttdn.crm.repository.UserRepository;
 import com.htttdn.crm.security.JwtTokenService;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ class InternalAccountRoleIntegrationTest {
 
     @Autowired MockMvc mvc;
     @Autowired UserRepository users;
+    @Autowired EmployeeProfileRepository employeeProfiles;
     @Autowired PasswordEncoder encoder;
     @Autowired JwtTokenService jwt;
     @Autowired InternalAccountService accounts;
@@ -45,7 +47,7 @@ class InternalAccountRoleIntegrationTest {
         String employeeEmail = email("employee");
         mvc.perform(post("/api/admin/accounts").header("Authorization", adminToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"fullName\":\"Directory employee\",\"email\":\"" + employeeEmail + "\",\"role\":\"EMPLOYEE\",\"password\":\"x\"}"))
+                        .content("{\"fullName\":\"Directory employee\",\"email\":\"" + employeeEmail + "\",\"role\":\"EMPLOYEE\",\"workArea\":\"SALES\",\"password\":\"x\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.passwordHash").doesNotExist());
 
@@ -89,8 +91,96 @@ class InternalAccountRoleIntegrationTest {
     }
 
     @Test
+    void adminEmployeeSubtypeUsesEmployeeProfileWorkArea() throws Exception {
+        User admin = user("System admin", "ADMIN", PASSWORD);
+        String employeeEmail = email("warehouse-employee");
+
+        String response = mvc.perform(post("/api/admin/accounts").header("Authorization", bearer(admin))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"fullName":"Warehouse employee","email":"%s","role":"EMPLOYEE","workArea":"WAREHOUSE"}
+                                """.formatted(employeeEmail)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.workArea").value("WAREHOUSE"))
+                .andReturn().getResponse().getContentAsString();
+        long employeeId = ((Number) com.jayway.jsonpath.JsonPath.read(response, "$.id")).longValue();
+        assertEquals("WAREHOUSE", employeeProfiles.findById(employeeId).orElseThrow().getWorkArea());
+
+        mvc.perform(patch("/api/admin/accounts/" + employeeId).header("Authorization", bearer(admin))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"fullName":"Warehouse employee","email":"%s","role":"EMPLOYEE","workArea":"SALES","locked":false}
+                                """.formatted(employeeEmail)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.workArea").value("SALES"));
+        assertEquals("SALES", employeeProfiles.findById(employeeId).orElseThrow().getWorkArea());
+
+        mvc.perform(get("/api/admin/accounts").header("Authorization", bearer(admin)).param("group", "employees"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].workArea").value("SALES"));
+    }
+
+    @Test
+    void adminCanEditAndLockCustomersFromAdminPortalOnly() throws Exception {
+        User admin = user("System admin", "ADMIN", PASSWORD);
+        User manager = user("Sales manager", "MANAGER_SALES", PASSWORD);
+        User customer = user("Old customer name", "CUSTOMER", PASSWORD);
+        User anotherCustomer = user("Another customer", "CUSTOMER", PASSWORD);
+        String customerUrl = "/api/admin/customers/" + customer.getId();
+
+        mvc.perform(put(customerUrl).header("Authorization", bearer(admin))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"fullName":"Updated customer","email":"updated@example.test","phone":"0900000001","preferences":"Neutral colors"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fullName").value("Updated customer"))
+                .andExpect(jsonPath("$.email").value("updated@example.test"))
+                .andExpect(jsonPath("$.passwordHash").doesNotExist());
+        assertEquals("0900000001", users.findById(customer.getId()).orElseThrow().getPhone());
+
+        mvc.perform(put("/api/manager/users/" + customer.getId()).header("Authorization", bearer(manager))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"fullName":"Updated by manager","email":"manager-change@example.test","phone":"0900000002","preferences":"Neutral colors"}
+                                """))
+                .andExpect(status().isOk());
+        assertEquals("updated@example.test", users.findById(customer.getId()).orElseThrow().getEmail());
+
+        mvc.perform(put(customerUrl).header("Authorization", bearer(admin))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"fullName":"Updated customer","email":"%s","phone":"0900000001","preferences":"Neutral colors"}
+                                """.formatted(anotherCustomer.getEmail())))
+                .andExpect(status().is4xxClientError());
+
+        mvc.perform(patch(customerUrl + "/lock").header("Authorization", bearer(admin))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"locked":true,"reason":"Yêu cầu xác minh tài khoản"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.locked").value(true))
+                .andExpect(jsonPath("$.passwordHash").doesNotExist());
+        mvc.perform(patch(customerUrl + "/lock").header("Authorization", bearer(admin))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"locked":false}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.locked").value(false));
+
+        mvc.perform(put(customerUrl).header("Authorization", bearer(manager))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"fullName":"Unauthorized change","email":"updated@example.test"}
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void employeePromotionRequiresNewPassword() throws Exception {
-        User employee = accounts.create(new InternalAccountService.Input("Directory employee", email("promote"), "EMPLOYEE", PASSWORD, false));
+        User employee = accounts.create(new InternalAccountService.Input("Directory employee", email("promote"), "EMPLOYEE", PASSWORD, false, "WAREHOUSE"));
         User admin = user("Admin", "ADMIN", PASSWORD);
 
         mvc.perform(patch("/api/admin/accounts/" + employee.getId()).header("Authorization", bearer(admin))
