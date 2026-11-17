@@ -3,7 +3,7 @@ import React from 'react';
 import {render,screen,fireEvent,cleanup} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import ManagerOrderDetail from '../features/manager/ManagerOrderDetail';
-import {OrdersPage} from './App';
+import {OrdersPage} from './CustomerOrders';
 import {adminApi} from '../api/manager-api';
 import {api} from '../api/api';
 vi.mock('../api/manager-api',async original=>({...await original(),adminApi:vi.fn()}));

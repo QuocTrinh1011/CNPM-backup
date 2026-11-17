@@ -178,7 +178,7 @@ psql -U postgres -d cnpm -v ON_ERROR_STOP=1 -f database/schema.sql
 psql -U postgres -d cnpm -v ON_ERROR_STOP=1 -f database/seed/seed_data.sql
 ```
 
-`schema.sql` là cấu trúc khởi tạo hiện tại; `seed_data.sql` thêm dữ liệu minh họa cho local/demo. Tuyệt đối không chạy seed trên production. Nếu lỡ nạp vào môi trường thật, đổi mật khẩu của tất cả tài khoản mẫu ngay.
+`schema.sql` là cấu trúc khởi tạo hiện tại; `seed_data.sql` thêm dữ liệu minh họa cho local/demo. Tuyệt đối không chạy seed trên production. Lệnh `psql` đọc `SPRING_PROFILES_ACTIVE` và từ chối nếu danh sách profile có `prod`; file dùng meta-command riêng của `psql`, không chạy trong công cụ chỉ nhận SQL như pgAdmin. Nếu lỡ nạp vào môi trường thật, đổi mật khẩu của tất cả tài khoản mẫu ngay.
 
 Tài khoản Admin minh họa do seed tạo là `admin@shop.com`, mật khẩu mẫu được ghi trong chính script seed. Chỉ dùng tài khoản mẫu ở local, đổi mật khẩu trước khi triển khai. Đăng nhập Admin để tạo `MANAGER_HR`, `MANAGER_WAREHOUSE` hoặc `MANAGER_SALES` với mật khẩu riêng; **không có tài khoản Manager mặc định**. Account `EMPLOYEE` chỉ dùng trong danh bạ và không cần mật khẩu. Khách có thể đăng ký trên website.
 

@@ -3,6 +3,18 @@
 -- CHỈ dùng cho local/demo; tuyệt đối không chạy seed này trên production.
 -- Nếu lỡ nạp vào production, phải đổi mật khẩu của tất cả tài khoản mẫu ngay.
 
+-- Guard requires psql; the documented psql invocation inherits this environment variable.
+\set spring_profiles_active ''
+\getenv spring_profiles_active SPRING_PROFILES_ACTIVE
+SELECT coalesce(bool_or(lower(btrim(profile)) = 'prod'), false) AS active_prod
+FROM regexp_split_to_table(:'spring_profiles_active', ',') AS profiles(profile)
+\gset
+\if :active_prod
+\echo Refusing to load demo seed while SPRING_PROFILES_ACTIVE includes prod.
+DO $$ BEGIN RAISE EXCEPTION 'Demo seed is disabled for the prod profile.'; END $$;
+\quit
+\endif
+
 -- Tương thích với database cũ còn cột products.stock.
 -- Backend hiện dùng products.quantity_remaining nên chuyển dữ liệu tồn kho
 -- trước khi chạy các câu lệnh seed bên dưới.

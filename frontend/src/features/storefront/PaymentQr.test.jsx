@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
 import React from "react";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import PaymentQr from "./PaymentQr";
 import { api } from "../../api/api";
 
 vi.mock("../../api/api", async original => ({ ...await original(), api: vi.fn() }));
-afterEach(() => { cleanup(); vi.resetAllMocks(); });
+afterEach(() => { cleanup(); vi.useRealTimers(); vi.restoreAllMocks(); vi.resetAllMocks(); });
 
 const pending = { orderCode: 1001, amount: 249000, paymentStatus: "PENDING", qrCode: "000201010212", paymentUrl: "https://pay.payos.vn/web/test", expiresAt: new Date(Date.now() + 600000).toISOString() };
 it('hides QR and retry when payment needs manual reconciliation',async()=>{
@@ -60,4 +60,34 @@ it("notifies payment success once after checking the provider", async () => {
   await screen.findByText("Thanh toán thành công");
   expect(onPaid).toHaveBeenCalledTimes(1);
   expect(api).toHaveBeenCalledWith("/api/orders/5/payment/sync", expect.objectContaining({ method: "POST", signal: expect.any(AbortSignal) }));
+});
+
+it("syncs a pending payment with the provider every 10 seconds while visible", async () => {
+  vi.useFakeTimers();
+  vi.spyOn(document, "hidden", "get").mockReturnValue(false);
+  api.mockResolvedValue(pending);
+  render(<PaymentQr orderId={5} initial={pending} />);
+
+  await act(async () => { await Promise.resolve(); });
+  await act(async () => { await vi.advanceTimersByTimeAsync(9999); });
+  expect(api).toHaveBeenCalledTimes(1);
+
+  await act(async () => { await vi.advanceTimersByTimeAsync(1); });
+  expect(api).toHaveBeenCalledTimes(2);
+  expect(api).toHaveBeenLastCalledWith("/api/orders/5/payment/sync", expect.objectContaining({ method: "POST", signal: expect.any(AbortSignal) }));
+});
+
+it("stops provider sync polls after payment is marked paid", async () => {
+  vi.useFakeTimers();
+  vi.spyOn(document, "hidden", "get").mockReturnValue(false);
+  api.mockResolvedValueOnce(pending).mockResolvedValueOnce({ ...pending, paymentStatus: "PAID", qrCode: null, paymentUrl: null });
+  render(<PaymentQr orderId={5} initial={pending} />);
+
+  await act(async () => { await Promise.resolve(); });
+  await act(async () => { await vi.advanceTimersByTimeAsync(10000); });
+  expect(screen.getByText("Thanh toán thành công")).toBeTruthy();
+  expect(api).toHaveBeenCalledTimes(2);
+
+  await act(async () => { await vi.advanceTimersByTimeAsync(10000); });
+  expect(api).toHaveBeenCalledTimes(2);
 });
