@@ -36,6 +36,6 @@ Manager polling 5 giây khi tab trình duyệt hiển thị, không gửi chồn
 
 - Backend: CareReminderIntegrationTest, CareReminderConcurrencyTest (ranh giới ngày, backlog, đổi hạn/người, hoàn thành, quyền, phân trang và hai worker).
 - Frontend: ManagerCareInbox.test.jsx (URL, mở trực tiếp, back/forward, chuông, pagination, dữ liệu cũ và giữ form khi lỗi).
-- PostgreSQL: bật `CRM_POSTGRES_QA=true`, chạy `mvn test -q -Dtest=CareReminderPostgresTest`. Test dùng bảng tạm riêng theo connection, rollback; **không áp dụng migration hoặc đổi bảng public**. Đây là kiểm tra SQL trên PostgreSQL, không thay thế việc smoke test sau khi người vận hành chạy migration.
+- Ghi chú PostgreSQL trong tài liệu này thuộc test cũ; `CareReminderPostgresTest` hiện không có trong source. Các PostgreSQL integration test còn lại tự chạy trên database Testcontainers riêng trong suite Maven.
 
 Không email, thông báo hệ điều hành, trạng thái hủy công việc hoặc tự thay đổi nghiệp vụ chăm sóc.

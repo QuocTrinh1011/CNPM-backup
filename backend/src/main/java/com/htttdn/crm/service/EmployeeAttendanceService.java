@@ -78,6 +78,9 @@ public class EmployeeAttendanceService {
         row.setOvertimeRestDayHours(input.overtimeRestDayHours());
         row.setOvertimeHolidayHours(input.overtimeHolidayHours());
         row.setOvertimeNightHours(input.overtimeNightHours());
+        row.setOvertimeNightNormalHours(zeroIfNull(input.overtimeNightNormalHours()));
+        row.setOvertimeNightRestDayHours(zeroIfNull(input.overtimeNightRestDayHours()));
+        row.setOvertimeNightHolidayHours(zeroIfNull(input.overtimeNightHolidayHours()));
         row.setNote(normalizeNullable(input.note()));
         row.setRecordedBy(recorder);
         attendance.saveAndFlush(row);
@@ -145,6 +148,11 @@ public class EmployeeAttendanceService {
                 || input.overtimeHolidayHours().signum() < 0 || input.overtimeNightHours().signum() < 0) {
             throw bad("INVALID_OVERTIME", "Giờ tăng ca không được âm.");
         }
+        if (input.overtimeNightNormalHours() != null && input.overtimeNightNormalHours().signum() < 0
+                || input.overtimeNightRestDayHours() != null && input.overtimeNightRestDayHours().signum() < 0
+                || input.overtimeNightHolidayHours() != null && input.overtimeNightHolidayHours().signum() < 0) {
+            throw bad("INVALID_OVERTIME", "Giờ tăng ca ban đêm không được âm.");
+        }
     }
 
     private static boolean isAllowedDay(BigDecimal value) {
@@ -169,8 +177,13 @@ public class EmployeeAttendanceService {
         result.put("overtimeRestDayHours", row.getOvertimeRestDayHours());
         result.put("overtimeHolidayHours", row.getOvertimeHolidayHours());
         result.put("overtimeNightHours", row.getOvertimeNightHours());
+        result.put("overtimeNightNormalHours", row.getOvertimeNightNormalHours());
+        result.put("overtimeNightRestDayHours", row.getOvertimeNightRestDayHours());
+        result.put("overtimeNightHolidayHours", row.getOvertimeNightHolidayHours());
         return result;
     }
+
+    private static BigDecimal zeroIfNull(BigDecimal value) { return value == null ? BigDecimal.ZERO : value; }
 
     private static String normalize(String value) { return value == null ? "" : value.trim().toUpperCase(Locale.ROOT); }
     private static String normalizeNullable(String value) { if (value == null) return null; String result = value.trim(); return result.isEmpty() ? null : result; }

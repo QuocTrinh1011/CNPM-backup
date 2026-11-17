@@ -55,10 +55,13 @@ class EmployeeAttendanceIntegrationTest {
         long attendanceId = ((Number) com.jayway.jsonpath.JsonPath.read(created, "$.id")).longValue();
         mvc.perform(put("/api/manager/hr/attendance")
                         .header("Authorization", hrToken).contentType("application/json")
-                        .content(attendanceJson(firstId, "2026-05-04", "WORKED", "0.5", "0.5", "2", "0", "0", "1")))
+                        .content(attendanceJson(firstId, "2026-05-04", "WORKED", "0.5", "0.5", "2", "0", "0", "1", "1", "0.5", "0.25")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.overtimeNormalHours").value(2))
-                .andExpect(jsonPath("$.overtimeNightHours").value(1));
+                .andExpect(jsonPath("$.overtimeNightHours").value(1))
+                .andExpect(jsonPath("$.overtimeNightNormalHours").value(1))
+                .andExpect(jsonPath("$.overtimeNightRestDayHours").value(0.5))
+                .andExpect(jsonPath("$.overtimeNightHolidayHours").value(0.25));
         assertEquals(2, auditLogs.findAll().stream()
                 .filter(log -> "EMPLOYEE_ATTENDANCE".equals(log.getEntityType())
                         && attendanceId == log.getTargetId()
@@ -189,12 +192,20 @@ class EmployeeAttendanceIntegrationTest {
 
     private static String attendanceJson(long employeeId, String date, String status, String fraction,
                                          String paid, String normal, String rest, String holiday, String night) {
+        return attendanceJson(employeeId, date, status, fraction, paid, normal, rest, holiday, night, "0", "0", "0");
+    }
+
+    private static String attendanceJson(long employeeId, String date, String status, String fraction,
+                                         String paid, String normal, String rest, String holiday, String night,
+                                         String nightNormal, String nightRest, String nightHoliday) {
         return """
                 {"employeeId":%d,"attendanceDate":"%s","attendanceStatus":"%s",
                  "dayFraction":%s,"paidEquivalentDays":%s,"overtimeNormalHours":%s,
                  "overtimeRestDayHours":%s,"overtimeHolidayHours":%s,"overtimeNightHours":%s,
+                 "overtimeNightNormalHours":%s,"overtimeNightRestDayHours":%s,"overtimeNightHolidayHours":%s,
                  "note":"Kiểm thử"}
-                """.formatted(employeeId, date, status, fraction, paid, normal, rest, holiday, night);
+                """.formatted(employeeId, date, status, fraction, paid, normal, rest, holiday, night,
+                nightNormal, nightRest, nightHoliday);
     }
 
     private static String bearer(String token) { return "Bearer " + token; }

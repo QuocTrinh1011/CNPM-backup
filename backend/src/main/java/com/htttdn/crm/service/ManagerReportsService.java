@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -36,32 +37,48 @@ public class ManagerReportsService {
     }
 
     static PeriodWindow periodWindow(Integer requestedYear, Integer month, Clock clock) {
+        return periodWindow(requestedYear, null, month, clock);
+    }
+
+    static PeriodWindow periodWindow(Integer requestedYear, Integer quarter, Integer month, Clock clock) {
         int year = requestedYear == null
                 ? clock.instant().atZone(REPORT_ZONE).getYear()
                 : requestedYear;
-        if (year < 1900 || year > 9999 || month != null && (month < 1 || month > 12)) {
+        if (year < 1900 || year > 9999
+                || quarter != null && (quarter < 1 || quarter > 4)
+                || month != null && (month < 1 || month > 12)
+                || quarter != null && month != null) {
             throw invalidPeriod();
         }
 
-        LocalDate startDate = month == null
-                ? LocalDate.of(year, 1, 1)
-                : YearMonth.of(year, month).atDay(1);
-        LocalDate endDate = month == null
-                ? startDate.plusYears(1)
-                : YearMonth.of(year, month).plusMonths(1).atDay(1);
-        return new PeriodWindow(year, month, startDate.atStartOfDay(REPORT_ZONE).toInstant(),
+        LocalDate startDate = month != null
+                ? YearMonth.of(year, month).atDay(1)
+                : quarter != null
+                ? LocalDate.of(year, (quarter - 1) * 3 + 1, 1)
+                : LocalDate.of(year, 1, 1);
+        LocalDate endDate = month != null
+                ? startDate.plusMonths(1)
+                : quarter != null
+                ? startDate.plusMonths(3)
+                : startDate.plusYears(1);
+        return new PeriodWindow(year, quarter, month, startDate.atStartOfDay(REPORT_ZONE).toInstant(),
                 endDate.atStartOfDay(REPORT_ZONE).toInstant());
     }
 
     static List<TrendBucket> trendBuckets(int year, Integer month) {
-        if (year < 1900 || year > 9999 || month != null && (month < 1 || month > 12)) {
+        return trendBuckets(year, null, month);
+    }
+
+    static List<TrendBucket> trendBuckets(int year, Integer quarter, Integer month) {
+        if (year < 1900 || year > 9999 || quarter != null && (quarter < 1 || quarter > 4)
+                || month != null && (month < 1 || month > 12) || quarter != null && month != null) {
             throw invalidPeriod();
         }
-        int count = month == null ? 12 : YearMonth.of(year, month).lengthOfMonth();
+        int count = month != null ? YearMonth.of(year, month).lengthOfMonth() : quarter != null ? 3 : 12;
         List<TrendBucket> buckets = new ArrayList<>(count);
         for (int value = 1; value <= count; value++) {
             String label = month == null
-                    ? "Tháng " + value
+                    ? "Tháng " + (quarter == null ? value : (quarter - 1) * 3 + value)
                     : String.format(Locale.ROOT, "%02d/%02d", value, month);
             buckets.add(new TrendBucket(label, BigDecimal.ZERO, BigDecimal.ZERO));
         }
@@ -69,7 +86,21 @@ public class ManagerReportsService {
     }
 
     public ReportView report(Integer requestedYear, Integer month) {
-        PeriodWindow window = periodWindow(requestedYear, month, Clock.system(REPORT_ZONE));
+        PeriodWindow window = periodWindow(requestedYear, null, month, Clock.system(REPORT_ZONE));
+        ReportContent content = reportContent(window);
+        return new ReportView(window.year(), window.month(), content.availableYears(), content.summary(),
+                content.trend(), content.topProducts(), content.topCustomers(), content.employeeActivities());
+    }
+
+    public AdminReportView adminReport(Integer requestedYear, Integer quarter, Integer month) {
+        PeriodWindow window = periodWindow(requestedYear, quarter, month, Clock.system(REPORT_ZONE));
+        ReportContent content = reportContent(window);
+        return new AdminReportView(window.year(), window.quarter(), window.month(), content.availableYears(),
+                content.summary(), content.trend(), content.topProducts(), content.topCustomers(),
+                content.employeeActivities());
+    }
+
+    private ReportContent reportContent(PeriodWindow window) {
         Map<String, Object> args = periodArgs(window);
         Summary summary = summary(args);
         List<Integer> availableYears = availableYears(window.year());
@@ -77,8 +108,7 @@ public class ManagerReportsService {
         List<ProductVariant> topProducts = topProducts(args);
         List<CustomerSpend> topCustomers = topCustomers(args);
         List<EmployeeActivity> employeeActivities = employeeActivities(args);
-        return new ReportView(window.year(), window.month(), availableYears, summary, trend,
-                topProducts, topCustomers, employeeActivities);
+        return new ReportContent(availableYears, summary, trend, topProducts, topCustomers, employeeActivities);
     }
 
     private Summary summary(Map<String, Object> args) {
@@ -126,9 +156,10 @@ public class ManagerReportsService {
                 + "AND r.received_at < :to GROUP BY bucket", args);
 
         List<TrendBucket> result = new ArrayList<>();
-        List<TrendBucket> emptyBuckets = trendBuckets(window.year(), window.month());
+        List<TrendBucket> emptyBuckets = trendBuckets(window.year(), window.quarter(), window.month());
         for (int index = 0; index < emptyBuckets.size(); index++) {
-            int bucket = index + 1;
+            int bucket = window.month() != null ? index + 1
+                    : window.quarter() == null ? index + 1 : (window.quarter() - 1) * 3 + index + 1;
             TrendBucket empty = emptyBuckets.get(index);
             result.add(new TrendBucket(empty.label(), income.getOrDefault(bucket, BigDecimal.ZERO),
                     expense.getOrDefault(bucket, BigDecimal.ZERO)));
@@ -187,8 +218,8 @@ public class ManagerReportsService {
 
     private static Map<String, Object> periodArgs(PeriodWindow window) {
         Map<String, Object> args = new LinkedHashMap<>();
-        args.put("from", window.fromInclusive());
-        args.put("to", window.toExclusive());
+        args.put("from", Timestamp.from(window.fromInclusive()));
+        args.put("to", Timestamp.from(window.toExclusive()));
         return args;
     }
 
@@ -212,10 +243,10 @@ public class ManagerReportsService {
     }
 
     private static ApiException invalidPeriod() {
-        return new ApiException(HttpStatus.BAD_REQUEST, "INVALID_REPORT_PERIOD", "Năm hoặc tháng báo cáo không hợp lệ.");
+        return new ApiException(HttpStatus.BAD_REQUEST, "INVALID_REPORT_PERIOD", "Năm, quý hoặc tháng báo cáo không hợp lệ.");
     }
 
-    record PeriodWindow(int year, Integer month, Instant fromInclusive, Instant toExclusive) {}
+    record PeriodWindow(int year, Integer quarter, Integer month, Instant fromInclusive, Instant toExclusive) {}
 
     public record Summary(BigDecimal totalIncome, BigDecimal totalExpense, BigDecimal netBalance,
                           long paidOrdersCount, long stockReceiptsCount) {}
@@ -234,4 +265,12 @@ public class ManagerReportsService {
     public record ReportView(int year, Integer month, List<Integer> availableYears, Summary summary,
                              List<TrendBucket> trend, List<ProductVariant> topProducts,
                              List<CustomerSpend> topCustomers, List<EmployeeActivity> employeeActivities) {}
+
+    public record AdminReportView(int year, Integer quarter, Integer month, List<Integer> availableYears,
+                                  Summary summary, List<TrendBucket> trend, List<ProductVariant> topProducts,
+                                  List<CustomerSpend> topCustomers, List<EmployeeActivity> employeeActivities) {}
+
+    private record ReportContent(List<Integer> availableYears, Summary summary, List<TrendBucket> trend,
+                                 List<ProductVariant> topProducts, List<CustomerSpend> topCustomers,
+                                 List<EmployeeActivity> employeeActivities) {}
 }

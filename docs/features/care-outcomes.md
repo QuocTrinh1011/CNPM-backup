@@ -41,7 +41,7 @@ Công việc hoàn thành trước migration giữ NULL, hiển thị “Chưa g
 
 - CustomerCareIntegrationTest: bốn kết quả, thiếu/sai kết quả, ghi chú dài/trim, phiên bản, không sửa hoàn thành, dữ liệu cũ NULL, hẹn khi chưa hoàn thành, hạn quá khứ, người phụ trách khóa, khách khóa, nguồn đã đóng, giữ nguồn và quyền.
 - CareSourceConcurrencyTest: hai quản lý cùng hẹn, chỉ một công việc kế tiếp, không ghi đè.
-- CareOutcomePostgresTest (`CRM_POSTGRES_QA=true`): migration lặp, giữ dữ liệu cũ, tạo/hoàn thành việc kế tiếp, DTO và index thực trên PostgreSQL; rollback DDL và dữ liệu thử.
+- Ghi chú `CareOutcomePostgresTest` thuộc test cũ; lớp này hiện không có trong source. Các PostgreSQL integration test còn lại tự chạy trên database Testcontainers riêng trong suite Maven.
 - CustomerCare.test.jsx: kết quả bắt buộc, giữ bản nháp khi lỗi, hiển thị lịch sử cũ, payload hẹn không sửa khách/nguồn, chống gửi lặp, liên kết việc trước/sau.
 - Chạy `mvn test -q`, `npm test`, `npm run build`, `git diff --check`. Chưa tự thao tác trên dữ liệu thật hoặc thanh toán thật; kiểm tra trực quan với phiên Manager trên môi trường thử trước triển khai.
 

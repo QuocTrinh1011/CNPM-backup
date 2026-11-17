@@ -32,7 +32,21 @@ public final class PayrollCalculator {
                 .multiply(rules.holidayOvertimeMultiplier()));
         BigDecimal nightPremium = money(hourlyBase.multiply(input.overtimeNightHours())
                 .multiply(rules.nightWorkPremiumMultiplier()));
-        BigDecimal overtime = money(normalOvertime.add(restDayOvertime).add(holidayOvertime).add(nightPremium));
+        BigDecimal nightNormalBasisHours = input.overtimeNightNormalHours()
+                .subtract(input.overtimeNightNormalHoursAfterDaytimeOvertime())
+                .add(input.overtimeNightNormalHoursAfterDaytimeOvertime().multiply(rules.normalOvertimeMultiplier()));
+        BigDecimal nightNormalOvertime = money(hourlyBase.multiply(input.overtimeNightNormalHours())
+                .multiply(rules.normalOvertimeMultiplier())
+                .add(hourlyBase.multiply(input.overtimeNightNormalHours()).multiply(rules.nightWorkPremiumMultiplier()))
+                .add(hourlyBase.multiply(nightNormalBasisHours).multiply(rules.nightOvertimeAdditionalMultiplier())));
+        BigDecimal nightRestDayOvertime = money(hourlyBase.multiply(input.overtimeNightRestDayHours())
+                .multiply(rules.restDayOvertimeMultiplier().add(rules.nightWorkPremiumMultiplier())
+                        .add(rules.restDayOvertimeMultiplier().multiply(rules.nightOvertimeAdditionalMultiplier()))));
+        BigDecimal nightHolidayOvertime = money(hourlyBase.multiply(input.overtimeNightHolidayHours())
+                .multiply(rules.holidayOvertimeMultiplier().add(rules.nightWorkPremiumMultiplier())
+                        .add(rules.holidayOvertimeMultiplier().multiply(rules.nightOvertimeAdditionalMultiplier()))));
+        BigDecimal overtime = money(normalOvertime.add(restDayOvertime).add(holidayOvertime).add(nightPremium)
+                .add(nightNormalOvertime).add(nightRestDayOvertime).add(nightHolidayOvertime));
 
         BigDecimal earningsAdjustments = sum(input.adjustments(), "EARNING");
         BigDecimal benefits = sum(input.adjustments(), "BENEFIT");
@@ -65,6 +79,9 @@ public final class PayrollCalculator {
         addLine(lines, "EARNING", "OVERTIME_REST_DAY", "Tăng ca ngày nghỉ hằng tuần", restDayOvertime);
         addLine(lines, "EARNING", "OVERTIME_HOLIDAY", "Tăng ca ngày lễ", holidayOvertime);
         addLine(lines, "EARNING", "NIGHT_WORK_PREMIUM", "Phụ cấp làm việc ban đêm", nightPremium);
+        addLine(lines, "EARNING", "OVERTIME_NIGHT_NORMAL", "Tăng ca đêm ngày thường", nightNormalOvertime);
+        addLine(lines, "EARNING", "OVERTIME_NIGHT_REST_DAY", "Tăng ca đêm ngày nghỉ hằng tuần", nightRestDayOvertime);
+        addLine(lines, "EARNING", "OVERTIME_NIGHT_HOLIDAY", "Tăng ca đêm ngày lễ", nightHolidayOvertime);
         addAdjustments(lines, input.adjustments(), otherDeductionPaid);
         addLine(lines, "DEDUCTION", "EMPLOYEE_INSURANCE", "Các khoản bảo hiểm người lao động", employeeInsurance);
         addLine(lines, "DEDUCTION", "PERSONAL_INCOME_TAX", "Thuế thu nhập cá nhân", tax);
@@ -121,12 +138,23 @@ public final class PayrollCalculator {
         requireNonNegative(input.overtimeRestDayHours(), "Rest day overtime hours");
         requireNonNegative(input.overtimeHolidayHours(), "Holiday overtime hours");
         requireNonNegative(input.overtimeNightHours(), "Night overtime hours");
+        requireNonNegative(input.overtimeNightNormalHours(), "Normal night overtime hours");
+        requireNonNegative(input.overtimeNightNormalHoursAfterDaytimeOvertime(), "Normal night overtime after daytime overtime hours");
+        requireNonNegative(input.overtimeNightRestDayHours(), "Rest day night overtime hours");
+        requireNonNegative(input.overtimeNightHolidayHours(), "Holiday night overtime hours");
+        if (input.overtimeNightNormalHoursAfterDaytimeOvertime().compareTo(input.overtimeNightNormalHours()) > 0) {
+            throw new IllegalArgumentException("Night overtime after daytime overtime cannot exceed normal night overtime hours.");
+        }
         if (input.dependentCount() < 0) throw new IllegalArgumentException("Dependent count cannot be negative.");
         requirePositive(rules.hoursPerWorkday(), "Hours per workday");
         requireNonNegative(rules.normalOvertimeMultiplier(), "Normal overtime multiplier");
         requireNonNegative(rules.restDayOvertimeMultiplier(), "Rest day overtime multiplier");
         requireNonNegative(rules.holidayOvertimeMultiplier(), "Holiday overtime multiplier");
         requireNonNegative(rules.nightWorkPremiumMultiplier(), "Night work premium multiplier");
+        requireNonNegative(rules.nightOvertimeAdditionalMultiplier(), "Night overtime additional multiplier");
+        if (rules.nightOvertimeAdditionalMultiplier().compareTo(BigDecimal.ONE) > 0) {
+            throw new IllegalArgumentException("Night overtime additional multiplier must be a fraction.");
+        }
         requireNonNegative(rules.employeeInsuranceRate(), "Employee insurance rate");
         requireNonNegative(rules.employerContributionRate(), "Employer contribution rate");
         requireNonNegative(rules.personalTaxAllowance(), "Personal tax allowance");
@@ -183,13 +211,36 @@ public final class PayrollCalculator {
                         BigDecimal standardPaidWorkdays, BigDecimal paidEquivalentDays,
                         BigDecimal overtimeNormalHours, BigDecimal overtimeRestDayHours,
                         BigDecimal overtimeHolidayHours, BigDecimal overtimeNightHours,
-                        int dependentCount, List<Adjustment> adjustments) {}
+                        BigDecimal overtimeNightNormalHours, BigDecimal overtimeNightNormalHoursAfterDaytimeOvertime,
+                        BigDecimal overtimeNightRestDayHours, BigDecimal overtimeNightHolidayHours,
+                        int dependentCount, List<Adjustment> adjustments) {
+        public Input(BigDecimal contractedMonthlySalary, BigDecimal insuranceSalaryBase,
+                     BigDecimal standardPaidWorkdays, BigDecimal paidEquivalentDays,
+                     BigDecimal overtimeNormalHours, BigDecimal overtimeRestDayHours,
+                     BigDecimal overtimeHolidayHours, BigDecimal overtimeNightHours,
+                     int dependentCount, List<Adjustment> adjustments) {
+            this(contractedMonthlySalary, insuranceSalaryBase, standardPaidWorkdays, paidEquivalentDays,
+                    overtimeNormalHours, overtimeRestDayHours, overtimeHolidayHours, overtimeNightHours,
+                    BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, dependentCount, adjustments);
+        }
+    }
 
     public record Rules(BigDecimal hoursPerWorkday, BigDecimal normalOvertimeMultiplier,
                         BigDecimal restDayOvertimeMultiplier, BigDecimal holidayOvertimeMultiplier,
-                        BigDecimal nightWorkPremiumMultiplier, BigDecimal employeeInsuranceRate,
+                        BigDecimal nightWorkPremiumMultiplier, BigDecimal nightOvertimeAdditionalMultiplier,
+                        BigDecimal employeeInsuranceRate,
                         BigDecimal employerContributionRate, BigDecimal personalTaxAllowance,
-                        BigDecimal dependentTaxAllowance, List<TaxBracket> taxBrackets) {}
+                        BigDecimal dependentTaxAllowance, List<TaxBracket> taxBrackets) {
+        public Rules(BigDecimal hoursPerWorkday, BigDecimal normalOvertimeMultiplier,
+                     BigDecimal restDayOvertimeMultiplier, BigDecimal holidayOvertimeMultiplier,
+                     BigDecimal nightWorkPremiumMultiplier, BigDecimal employeeInsuranceRate,
+                     BigDecimal employerContributionRate, BigDecimal personalTaxAllowance,
+                     BigDecimal dependentTaxAllowance, List<TaxBracket> taxBrackets) {
+            this(hoursPerWorkday, normalOvertimeMultiplier, restDayOvertimeMultiplier, holidayOvertimeMultiplier,
+                    nightWorkPremiumMultiplier, new BigDecimal("0.2"), employeeInsuranceRate,
+                    employerContributionRate, personalTaxAllowance, dependentTaxAllowance, taxBrackets);
+        }
+    }
 
     public record TaxBracket(BigDecimal lowerBound, BigDecimal upperBound, BigDecimal rate) {}
     public record Adjustment(String lineType, String code, String description, BigDecimal amount) {}

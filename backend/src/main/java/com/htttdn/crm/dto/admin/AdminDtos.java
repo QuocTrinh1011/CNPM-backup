@@ -3,6 +3,8 @@ import jakarta.validation.constraints.*; import java.math.BigDecimal; import jav
 public final class AdminDtos {
  private AdminDtos(){}
  public record UserRequest(@NotBlank String fullName,String phone,String preferences){}
+ public record AdminCustomerUpdateRequest(@NotBlank String fullName,@NotBlank @jakarta.validation.constraints.Email String email,String phone,String preferences){}
+ public record AdminCustomerView(Long id,String fullName,String email,String phone,String preferences,String role,boolean locked,String lockReason){}
  public record LockRequest(boolean locked,@Size(max=2000) String reason){}
  public record FeedbackRequest(@Size(max=30) String status,@Size(max=4000) String adminResponse,Boolean hidden){}
  public record StatusRequest(@NotBlank String status,String reason){}

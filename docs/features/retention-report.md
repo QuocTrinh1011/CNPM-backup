@@ -22,7 +22,7 @@ Mở `/manager/reports?tab=retention` bằng tài khoản MANAGER. API mới: `G
 | Locked/deleted/internal, đơn sai trạng thái, đổi trả, nhiều dòng hàng | RetentionReportIntegrationTest |
 | Phân quyền Manager, DTO không lộ dữ liệu cá nhân | RetentionReportIntegrationTest |
 | Đối chiếu bộ lọc danh sách và quy tắc hồ sơ | RetentionReportIntegrationTest, CustomerLifecycleIntegrationTest |
-| PostgreSQL thật, so sánh tổng và thay đổi số đếm, dữ liệu rollback | CustomerLifecyclePostgresTest (CRM_POSTGRES_QA=true) |
+| PostgreSQL thật, so sánh tổng và thay đổi số đếm, dữ liệu rollback | CustomerLifecyclePostgresTest (PostgreSQL 16/Testcontainers cô lập, tự chạy trong Maven suite) |
 | Liên kết bộ lọc, định nghĩa, URL, tab đang mở, popstate | RetentionReport.test.jsx |
 | Polling, lỗi/thử lại, request chậm, cleanup, trang ẩn, rỗng | RetentionReport.test.jsx, ManagerPolling.test.jsx |
 

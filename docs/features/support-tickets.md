@@ -40,7 +40,7 @@
 - SupportTicketIntegrationTest: chủ sở hữu, vai trò, tạo hộ, đơn đúng khách, ghi chú kín, trạng thái, phiên bản, idempotency, thông báo, audit và rollback.
 - SupportTicketConcurrencyTest: tạo lặp đồng thời và hai tin nhắn đồng thời không mất dữ liệu.
 - SupportTickets.test.jsx: route đăng nhập/quay về, bộ lọc, tạo/gửi lỗi giữ nháp, phân công, trạng thái, polling và URL trực tiếp.
-- `CRM_POSTGRES_QA=true mvn test -q -Dtest=SupportTicketPostgresTest`: chạy SQL/JPA trên bảng tạm PostgreSQL và rollback, không áp dụng migration hoặc sửa bảng public. Không thay thế smoke test sau khi người vận hành cài migration.
+- Ghi chú `SupportTicketPostgresTest` thuộc test cũ; lớp này hiện không có trong source. Các PostgreSQL integration test còn lại tự chạy trên database Testcontainers riêng trong suite Maven.
 - Chưa kiểm thử trực quan đầy đủ trên trình duyệt kết nối backend thật. Không thực hiện thanh toán hoặc xử lý đơn thật để QA.
 
 Kết quả kiểm tra tự động đợt triển khai: 254 test frontend qua (`npm test -- --maxWorkers=2`); `mvn test -q`, build và kiểm tra whitespace qua. Đã chạy riêng hai test PostgreSQL `SupportTicketPostgresTest` và `CareReminderPostgresTest` thành công trên bảng tạm rollback; không cài migration vào database đang dùng.

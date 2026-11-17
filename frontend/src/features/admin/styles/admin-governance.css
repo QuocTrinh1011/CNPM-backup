@@ -334,6 +334,38 @@
   box-shadow: none;
 }
 
+.admin-shell.internal-portal .admin-account-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-shell.internal-portal .admin-account-tab {
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--admin-muted);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+.admin-shell.internal-portal .admin-account-tab:hover {
+  border-color: var(--admin-border);
+  color: var(--admin-text);
+}
+.admin-shell.internal-portal .admin-account-tab.is-active {
+  border-color: color-mix(in srgb, var(--admin-primary) 28%, var(--admin-border));
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+}
+.admin-shell.internal-portal .admin-account-tab:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--admin-primary) 35%, transparent);
+  outline-offset: 2px;
+}
+
 .admin-shell.internal-portal .internal-login {
   width: min(480px, calc(100vw - 32px));
   margin: auto;
@@ -402,6 +434,8 @@
   .admin-shell.internal-portal .internal-header h1 { font-size: 20px; }
   .admin-shell.internal-portal .internal-live-badge { display: none; }
   .admin-shell.internal-portal .internal-hero-banner { padding: 28px 24px; }
+  .admin-shell.internal-portal .admin-account-tabs { overflow-x: auto; }
+  .admin-shell.internal-portal .admin-account-tab { flex: 0 0 auto; }
   .admin-shell.internal-portal .internal-kpi-card { min-height: 145px; }
   .admin-shell.internal-portal .internal-directory-panel {
     margin-top: 20px;

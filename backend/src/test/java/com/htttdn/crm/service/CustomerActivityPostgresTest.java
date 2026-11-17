@@ -2,17 +2,15 @@ package com.htttdn.crm.service;
 
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
-@EnabledIfEnvironmentVariable(named="CRM_POSTGRES_QA",matches="true")
 @SpringBootTest(properties={"spring.jpa.hibernate.ddl-auto=none"})
 @Transactional
-class CustomerActivityPostgresTest {
+class CustomerActivityPostgresTest extends PostgresTestDatabase {
     @Autowired JdbcTemplate db;
     @Autowired CustomerActivityService activities;
     @Autowired CustomerLifecycleQuery customers;

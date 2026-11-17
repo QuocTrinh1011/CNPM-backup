@@ -254,7 +254,7 @@
 - [x] **Step 4: Check** migration SQL, seed idempotency, role-policy paths, `git diff --check`, and that no unrelated frontend/backend/database/docs content changed.
 - [x] **Step 5: Commit** as `docs(hr): document employee workflows and payroll rules` (`8bfe919`).
 
-**Task 9 verification:** Frontend `npm test` passed 54 files / 384 tests; `npm run build` and `npx vite build --mode user|admin|manager` succeeded (existing lucide-react directive warnings). With cached Java 21 and Maven 3.9.12, the final backend `mvn -q test` passed 298 tests across 50 suites with 0 failures/errors and 4 opt-in PostgreSQL tests skipped because `CRM_POSTGRES_QA` was unset; `mvn -q test-compile` succeeded. The skipped tests are `AuditLogPostgresTest`, `CustomerActivityPostgresTest`, `CustomerLifecyclePostgresTest`, and `ManagerPostgresSmokeTest`. Scratch PostgreSQL migration/seed idempotency and schema postconditions passed in Task 1; the active `cnpm` database was not modified. Final `git diff --check` passed.
+**Task 9 verification (historical):** Frontend `npm test` passed 54 files / 384 tests; `npm run build` and `npx vite build --mode user|admin|manager` succeeded (existing lucide-react directive warnings). With cached Java 21 and Maven 3.9.12, the backend `mvn -q test` passed 298 tests across 50 suites with 0 failures/errors; four PostgreSQL tests were opt-in and skipped in that run: `AuditLogPostgresTest`, `CustomerActivityPostgresTest`, `CustomerLifecyclePostgresTest`, and `ManagerPostgresSmokeTest`. The current versions of those four tests run automatically in an isolated Testcontainers PostgreSQL database. Scratch PostgreSQL migration/seed idempotency and schema postconditions passed in Task 1; the active `cnpm` database was not modified. Final `git diff --check` passed.
 
 ### Task 10: Independent review hardening follow-up
 
@@ -273,7 +273,7 @@
 - [x] **Step 2: Fix offboarding authorization and session revocation**; targeted tests cover HR status changes and approved resignation.
 - [x] **Step 3: Require a non-empty, valid tax bracket schedule** and cover unit calculation plus payroll-setting API validation.
 - [x] **Step 4: Reject paid days for unpaid/absent attendance** and reject inconsistent persisted rows during payroll generation.
-- [x] **Step 5: Run focused tests, full backend tests, and compile.** (`298` backend tests passed; 4 PostgreSQL-only tests skipped because `CRM_POSTGRES_QA` was unset; `mvn -q test-compile` succeeded.)
+- [x] **Step 5: Run focused tests, full backend tests, and compile.** (`298` backend tests passed; 4 PostgreSQL-only tests were skipped in that historical run; `mvn -q test-compile` succeeded.)
 - [x] **Step 6: Commit** fixes in focused commits: `45e1ef2`, `62ddb96`, `47ea76a`.
 
 **Task 10 verification:** Focused offboarding, payroll, and attendance suites passed; full backend suite passed 298 tests across 50 suites with 0 failures/errors and 4 opt-in PostgreSQL skips. No frontend, database migration, or active PostgreSQL database changes were made in this follow-up.

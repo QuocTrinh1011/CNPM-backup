@@ -46,6 +46,61 @@ class EmployeePayrollServiceTest {
     }
 
     @Test
+    void appliesNightOvertimePremiumsForNormalRestAndHolidayDays() {
+        var input = new PayrollCalculator.Input(money("2000000"), money("0"), money("20"), money("0"),
+                money("2"), money("0"), money("0"), money("0"), money("1"), money("1"),
+                money("1"), money("1"), 0, List.of());
+        var result = calculator.calculate(input,
+                rules("8", "1.5", "2", "3", "0.3", "0", "0", "0", "0", zeroTaxBrackets()));
+
+        assertMoney("146250.00", result.overtimePay());
+        assertMoney("26250.00", result.lines().stream().filter(line -> line.code().equals("OVERTIME_NIGHT_NORMAL"))
+                .findFirst().orElseThrow().amount());
+        assertMoney("33750.00", result.lines().stream().filter(line -> line.code().equals("OVERTIME_NIGHT_REST_DAY"))
+                .findFirst().orElseThrow().amount());
+        assertMoney("48750.00", result.lines().stream().filter(line -> line.code().equals("OVERTIME_NIGHT_HOLIDAY"))
+                .findFirst().orElseThrow().amount());
+    }
+
+    @Test
+    void normalNightOvertimeWithoutDaytimeOvertimeUsesOneHundredPercentForAdditionalPremiumBasis() {
+        var input = new PayrollCalculator.Input(money("2000000"), money("0"), money("20"), money("0"),
+                money("0"), money("0"), money("0"), money("0"), money("1"), money("0"),
+                money("0"), money("0"), 0, List.of());
+        var result = calculator.calculate(input,
+                rules("8", "1.5", "2", "3", "0.3", "0", "0", "0", "0", zeroTaxBrackets()));
+
+        assertMoney("25000.00", result.overtimePay());
+    }
+
+    @Test
+    void appliesThe2026MonthlyTaxBandsAndInsuranceBases() {
+        List<PayrollCalculator.TaxBracket> taxBands = List.of(
+                new PayrollCalculator.TaxBracket(money("0"), money("10000000"), money("0.05")),
+                new PayrollCalculator.TaxBracket(money("10000000"), money("30000000"), money("0.10")),
+                new PayrollCalculator.TaxBracket(money("30000000"), money("60000000"), money("0.20")),
+                new PayrollCalculator.TaxBracket(money("60000000"), money("100000000"), money("0.30")),
+                new PayrollCalculator.TaxBracket(money("100000000"), null, money("0.35")));
+        var result = calculator.calculate(input("60000000", "20000000", "20", "20", "0", "0", "0", "0", 0, List.of()),
+                new PayrollCalculator.Rules(money("8"), money("1.5"), money("2"), money("3"), money("0.3"),
+                        money("0.2"), money("0.105"), money("0.215"), money("15500000"), money("6200000"), taxBands));
+
+        assertMoney("2100000.00", result.employeeInsurance());
+        assertMoney("4980000.00", result.personalIncomeTax());
+        assertMoney("4300000.00", result.employerContributions());
+        assertMoney("52920000.00", result.takeHomePay());
+    }
+
+    @Test
+    void rejectsNightOvertimeAdditionalRateOutsideFractionRange() {
+        var invalidRules = new PayrollCalculator.Rules(money("8"), money("1.5"), money("2"), money("3"), money("0.3"),
+                money("1.1"), money("0.105"), money("0.215"), money("15500000"), money("6200000"), zeroTaxBrackets());
+
+        assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculate(input("10000000", "10000000", "20", "20", "0", "0", "0", "0", 0, List.of()), invalidRules));
+    }
+
+    @Test
     void computesInsuranceProgressiveTaxBenefitsAndDeductionsSeparately() {
         List<PayrollCalculator.TaxBracket> brackets = List.of(
                 new PayrollCalculator.TaxBracket(new BigDecimal("0"), new BigDecimal("50000"), new BigDecimal("0.05")),

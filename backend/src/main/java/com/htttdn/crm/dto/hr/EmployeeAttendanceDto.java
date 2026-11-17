@@ -19,6 +19,9 @@ public record EmployeeAttendanceDto(
         BigDecimal overtimeRestDayHours,
         BigDecimal overtimeHolidayHours,
         BigDecimal overtimeNightHours,
+        BigDecimal overtimeNightNormalHours,
+        BigDecimal overtimeNightRestDayHours,
+        BigDecimal overtimeNightHolidayHours,
         String note,
         Long recordedById,
         String recordedByName,
@@ -33,6 +36,7 @@ public record EmployeeAttendanceDto(
                 account.getFullName(), attendance.getAttendanceDate(), attendance.getAttendanceStatus(),
                 attendance.getDayFraction(), attendance.getPaidEquivalentDays(), attendance.getOvertimeNormalHours(),
                 attendance.getOvertimeRestDayHours(), attendance.getOvertimeHolidayHours(), attendance.getOvertimeNightHours(),
+                attendance.getOvertimeNightNormalHours(), attendance.getOvertimeNightRestDayHours(), attendance.getOvertimeNightHolidayHours(),
                 attendance.getNote(), recorder == null ? null : recorder.getId(), recorder == null ? null : recorder.getFullName(),
                 attendance.getCreatedAt(), attendance.getUpdatedAt());
     }

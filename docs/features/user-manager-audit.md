@@ -59,11 +59,7 @@ User 5173, Admin 5174, Manager 5175; giữ cấu hình API frontend hiện có. 
 
 Test PostgreSQL tùy chọn (dùng cấu hình local; không chạy mặc định):
 
-```powershell
-$env:CRM_POSTGRES_QA='true'
-mvn '-Dtest=ManagerPostgresSmokeTest' test -q
-Remove-Item Env:CRM_POSTGRES_QA
-```
+Chạy `mvn -q -Dtest=ManagerPostgresSmokeTest test` trong backend. Test tự tạo PostgreSQL 16 cô lập bằng Testcontainers; cần Docker đang chạy, không cần cấu hình database hoặc biến môi trường.
 
 Browser harness cần Playwright và Edge; có thể đặt `PLAYWRIGHT_MODULE` là đường dẫn module có sẵn và `QA_SCREENSHOT_DIR` là thư mục ảnh tùy chọn.
 
