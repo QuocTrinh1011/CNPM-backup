@@ -71,6 +71,7 @@
   padding: 16px 12px 14px;
   border: 0;
   border-right: 1px solid rgb(255 255 255 / 7%);
+  overflow: hidden;
   background:
     radial-gradient(circle at 0 -4%, rgb(95 215 174 / 13%), transparent 21rem),
     #0b1f19;
@@ -152,7 +153,22 @@
   margin: 0;
   padding: 12px 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 14%) transparent;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgb(255 255 255 / 12%);
+}
+
+.manager-shell.admin-shell .admin-sidebar nav::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .manager-shell.admin-shell .admin-sidebar nav::before {
@@ -301,16 +317,23 @@
   justify-content: center;
   gap: 6px;
   width: 100%;
+  min-width: 0;
   min-height: 32px;
   margin: 0;
-  padding: 0 8px;
+  padding: 0 6px;
   border: 1px solid rgb(255 255 255 / 9%);
   border-radius: 9px;
   background: transparent;
   color: #c8d8d1;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 650;
   cursor: pointer;
+}
+
+.manager-shell.admin-shell .manager-sidebar-actions .admin-logout-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .manager-shell.admin-shell .manager-sidebar-actions .admin-logout:hover {
@@ -726,6 +749,21 @@
   white-space: nowrap;
 }
 
+.manager-shell .admin-table-row-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.manager-shell .manager-customer-table td:last-child {
+  min-width: 180px;
+}
+
+.manager-shell .manager-survey-cta {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 12px;
+}
+
 .manager-shell .admin-order-filter-select {
   display: flex;
   align-items: center;
@@ -840,7 +878,7 @@
 }
 
 .manager-shell .manager-advanced-filters {
-  display: grid;
+  display: none;
   grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
   align-items: end;
   gap: 10px;
@@ -849,6 +887,10 @@
   border: 1px solid var(--admin-border);
   border-radius: 12px;
   background: var(--admin-input);
+}
+
+.manager-shell .manager-advanced-filters.is-open {
+  display: grid;
 }
 
 .manager-shell .manager-advanced-filters label {
@@ -1081,13 +1123,17 @@
 .manager-shell .admin-order-actions {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
+}
+
+.manager-shell.admin-shell .admin-order-table table {
+  min-width: 900px;
 }
 
 .manager-shell .admin-inline-status-select,
 .manager-shell .admin-order-actions select {
-  max-width: 172px;
+  max-width: 210px;
   min-height: 32px;
   padding: 0 8px;
   border: 1px solid var(--admin-border);
@@ -1354,8 +1400,12 @@
 
 .manager-shell .admin-quick-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.manager-shell .admin-quick-text small {
+  white-space: normal;
 }
 
 .manager-shell .admin-quick-card {
@@ -1790,9 +1840,14 @@
     grid-column: 1;
   }
 
+  .manager-shell .admin-quick-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .manager-shell .admin-topbar-actions {
     grid-column: 2;
     grid-row: 1 / span 2;
+    flex-direction: row;
     justify-content: flex-end;
     flex-wrap: nowrap;
   }
@@ -1813,6 +1868,40 @@
 @media (max-width: 768px) {
   .manager-shell .admin-search-wrap {
     flex-basis: 100%;
+  }
+
+  /* Empty tables collapse instead of forcing a sideways scroll */
+  .manager-shell .admin-table-wrap:has(.admin-table-empty) table {
+    min-width: 0;
+  }
+
+  .manager-shell .admin-table-wrap:has(.admin-table-empty) thead {
+    display: none;
+  }
+
+  /* Order list: stacked cards instead of a scrolling table */
+  .manager-shell .admin-order-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .manager-shell .admin-order-card {
+    min-width: 0;
+  }
+
+  .manager-shell .admin-order-card > div:first-child {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .manager-shell .admin-order-actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .manager-shell .admin-order-actions select {
+    flex: 1 1 100%;
+    max-width: none;
+    min-width: 0;
   }
 
   .manager-shell .admin-toolbar-actions {
@@ -1869,12 +1958,15 @@
     font-weight: 650;
   }
 
-  .manager-shell.admin-shell .manager-product-table td:first-child::before,
-  .manager-shell.admin-shell .manager-product-table td:last-child::before {
+  .manager-shell.admin-shell .manager-product-table td:first-child::before {
     content: none;
   }
 
-  .manager-shell.admin-shell .manager-product-table td:last-child {
+  .manager-shell.admin-shell .manager-product-table td:has(.admin-table-row-actions)::before {
+    content: none;
+  }
+
+  .manager-shell.admin-shell .manager-product-table td:has(.admin-table-row-actions) {
     justify-content: flex-end;
   }
 
@@ -1884,7 +1976,7 @@
     overflow: visible;
   }
 
-  .manager-shell .invoice-table table {
+  .manager-shell.admin-shell .invoice-table table {
     min-width: 0;
   }
 
@@ -1910,10 +2002,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 12px;
     padding: 5px 0;
     border: 0;
     white-space: normal;
+  }
+
+  .manager-shell .invoice-table td .admin-badge {
+    white-space: normal;
+    text-align: right;
   }
 
   .manager-shell .invoice-table td::before {
@@ -1945,9 +2043,27 @@
     grid-template-columns: 1fr;
   }
 
+  .manager-shell .admin-quick-grid {
+    grid-template-columns: 1fr;
+  }
+
   .manager-shell .admin-order-toolbar,
   .manager-shell .admin-table-toolbar {
     align-items: stretch;
+  }
+
+  .manager-shell .admin-order-filter-select {
+    flex: 1 1 100%;
+  }
+
+  .manager-shell .admin-order-filter-select select {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .manager-shell .admin-topbar-actions a span {
+    display: none;
   }
 
   .manager-shell .admin-order-toolbar > .manager-toolbar-count {
@@ -2022,7 +2138,7 @@
   }
 
   .manager-shell .admin-order-actions select {
-    flex: 1;
+    flex: 1 1 100%;
     max-width: none;
   }
 }
@@ -2034,4 +2150,18 @@
     transition: none;
     scroll-behavior: auto;
   }
+}
+
+/* Compact customer table columns (override legacy min-widths) */
+.manager-shell .customer-lifecycle,
+.manager-shell .customer-purchase-metrics {
+  min-width: 128px;
+}
+
+.manager-shell .admin-table-customer {
+  min-width: 140px;
+}
+
+.manager-shell .admin-table-row-actions > div {
+  display: contents;
 }
