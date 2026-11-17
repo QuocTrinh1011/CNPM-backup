@@ -4,7 +4,7 @@ import { useManagerFilters } from "../../shared/hooks/useManagerFilters";
 import { useManagerList as useAdminList, useManagerList, useManagerReadPause } from "../../shared/hooks/useManagerResource";
 import { adminApi, adminEndpoints } from "../../api/manager-api";
 import { money, pageData } from "./manager-data";
-import { ListError, PageControls, PanelLoading, PanelTitle, Table } from "./ManagerComponents";
+import { ListError, PageControls, PanelLoading, PanelTitle, Table, ToolbarButton } from "./ManagerComponents";
 
 const emptyProductForm = () => ({
   name: "",
@@ -50,6 +50,15 @@ export default function Products({ notify, readOnly = false }) {
   const productWriteLock = useRef(false);
   const [editing, setEditing] = useState(null);
   const [confirmArchive, setConfirmArchive] = useState(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const activeFilterCount = [
+    filters.minPrice,
+    filters.maxPrice,
+    filters.stock !== 'ALL',
+    filters.active === 'false',
+    filters.sort !== 'createdAt',
+    filters.direction !== 'DESC',
+  ].filter(Boolean).length;
   useManagerReadPause(dialogOpen || !!confirmArchive);
   const [form, setForm] = useState(emptyProductForm);
   const colorsInForm = productColors(form.colors);
@@ -169,7 +178,7 @@ export default function Products({ notify, readOnly = false }) {
     );
   return (
     <div className="admin-panel">
-      <PanelTitle title="Sản phẩm" subtitle="Quản lý catalog và tồn kho." />
+      <PanelTitle title="Danh mục sản phẩm" subtitle="Quản lý catalog và tồn kho." />
 
       {categories.length > 0 && (
         <div className="admin-category-pills" role="tablist" aria-label="Lọc theo danh mục">
@@ -214,6 +223,14 @@ export default function Products({ notify, readOnly = false }) {
           )}
         </div>
         <div className="admin-toolbar-actions">
+          <ToolbarButton
+            active={filtersOpen}
+            count={activeFilterCount}
+            onClick={() => setFiltersOpen((value) => !value)}
+            aria-controls="manager-product-filters"
+          >
+            Bộ lọc
+          </ToolbarButton>
           <span className="admin-toolbar-count">
             {data?.totalElements ?? filteredProducts.length} sản phẩm
           </span>
@@ -227,7 +244,7 @@ export default function Products({ notify, readOnly = false }) {
         </div>
       </div>
 
-      <div className="manager-advanced-filters">
+      <div className={`manager-advanced-filters${filtersOpen ? " is-open" : ""}`} id="manager-product-filters">
         <label>Giá từ<input type="number" min="0" value={filters.minPrice} onChange={e=>changeFilters({minPrice:e.target.value})}/></label>
         <label>Giá đến<input type="number" min="0" value={filters.maxPrice} onChange={e=>changeFilters({maxPrice:e.target.value})}/></label>
         <label>Tồn kho<select value={filters.stock} onChange={e=>changeFilters({stock:e.target.value})}><option value="ALL">Tất cả</option><option value="AVAILABLE">Còn hàng</option><option value="OUT">Hết hàng</option></select></label>
@@ -235,7 +252,7 @@ export default function Products({ notify, readOnly = false }) {
         <label>Sắp xếp<select value={filters.sort} onChange={e=>changeFilters({sort:e.target.value})}><option value="createdAt">Ngày tạo</option><option value="name">Tên</option><option value="price">Giá</option><option value="stock">Tồn kho</option></select></label>
         <label>Thứ tự<select value={filters.direction} onChange={e=>changeFilters({direction:e.target.value})}><option value="DESC">Giảm dần</option><option value="ASC">Tăng dần</option></select></label>
       </div>
-      <Table className="manager-product-table" headers={["Sản phẩm", "Danh mục", "Giá", "Tồn kho", ""]}>
+      <Table className="manager-product-table" headers={readOnly ? ["Sản phẩm", "Danh mục", "Giá", "Tồn kho"] : ["Sản phẩm", "Danh mục", "Giá", "Tồn kho", ""]}>
         {filteredProducts.map((product) => (
           <tr key={product.id}>
             <td>
@@ -283,24 +300,26 @@ export default function Products({ notify, readOnly = false }) {
                 {product.stock <= 0 ? "Hết hàng" : product.stock < 5 ? `Sắp hết (${product.stock})` : `Còn (${product.stock})`}
               </span>
             </td>
-            <td>
-              {!readOnly && <div className="admin-table-row-actions">
-                <button
-                  type="button"
-                  className="admin-action"
-                  onClick={() => openEdit(product)}
-                >
-                  Sửa
-                </button>
-                <button
-                  type="button"
-                  className="admin-action danger-text"
-                  onClick={() => setConfirmArchive(product)}
-                >
-                  Ẩn
-                </button>
-              </div>}
-            </td>
+            {!readOnly && (
+              <td>
+                <div className="admin-table-row-actions">
+                  <button
+                    type="button"
+                    className="admin-action"
+                    onClick={() => openEdit(product)}
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    type="button"
+                    className="admin-action danger-text"
+                    onClick={() => setConfirmArchive(product)}
+                  >
+                    Ẩn
+                  </button>
+                </div>
+              </td>
+            )}
           </tr>
         ))}
       </Table>

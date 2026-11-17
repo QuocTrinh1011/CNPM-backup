@@ -59,7 +59,7 @@ export default function Feedback({ notify }) {
   return (
     <div className="admin-panel admin-feedback-panel">
       <PanelTitle
-        title="Phản hồi"
+        title="Hộp thư phản hồi"
         subtitle="Theo dõi đánh giá và quản lý nội dung hiển thị."
       />
       {actionError && !deleting && !replying && (

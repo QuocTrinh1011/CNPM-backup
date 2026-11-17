@@ -4,6 +4,7 @@ import { managerQuery, useManagerFilters, vietnamDateRange } from '../../shared/
 import { useManagerList } from '../../shared/hooks/useManagerResource';
 import { money, date, orderLabels, paymentLabels } from './ManagerOrderDetail';
 import ManagerInvoiceDetail from './ManagerInvoiceDetail';
+import { PanelTitle, ToolbarButton } from './ManagerComponents';
 import './manager-invoices.css';
 
 const paymentOptions = [
@@ -20,6 +21,8 @@ const methodLabels = { COD: 'COD', PAYOS: 'PayOS / VietQR' };
 export default function ManagerInvoices() {
   const [filters, changeFilters] = useManagerFilters({ q: '', paymentStatus: '', fromDate: '', toDate: '', page: '0' });
   const [search, setSearch] = useState(filters.q);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const activeFilterCount = [filters.paymentStatus, filters.fromDate, filters.toDate].filter(Boolean).length;
   const [invoiceSelection, setInvoiceSelection] = useState(null);
   const invoiceId = invoiceSelection?.id ?? null;
   useEffect(() => setSearch(filters.q), [filters.q]);
@@ -52,11 +55,10 @@ export default function ManagerInvoices() {
 
   return (
     <div className="admin-panel manager-invoices">
-      <div className="admin-panel-title">
-        <span className="admin-eyebrow">BÁN HÀNG</span>
-        <h2>Hóa đơn</h2>
-        <p>Tra cứu hóa đơn theo mã đơn, khách hàng, ngày lập và trạng thái thanh toán.</p>
-      </div>
+      <PanelTitle
+        title="Danh sách hóa đơn"
+        subtitle="Tra cứu hóa đơn theo mã đơn, khách hàng, ngày lập và trạng thái thanh toán."
+      />
       <form className="admin-order-toolbar" onSubmit={submitSearch}>
         <div className="admin-search-wrap">
           <Search size={15} className="admin-search-icon" aria-hidden="true" />
@@ -70,9 +72,20 @@ export default function ManagerInvoices() {
           {search && <button type="button" className="admin-search-clear" onClick={clearSearch} aria-label="Xóa tìm kiếm"><X size={13} /></button>}
         </div>
         <button type="submit" className="admin-action">Tìm hóa đơn</button>
-        <span>{totalElements} hóa đơn</span>
+        <ToolbarButton
+          active={filtersOpen}
+          count={activeFilterCount}
+          onClick={() => setFiltersOpen(value => !value)}
+          aria-controls="manager-invoice-filters"
+        >
+          Bộ lọc
+        </ToolbarButton>
+        <button type="button" className="manager-icon-btn" onClick={() => load()} disabled={refreshing} aria-label="Tải lại danh sách hóa đơn">
+          <RefreshCw size={16} className={refreshing ? 'admin-spinner' : ''} />
+        </button>
+        <span className="manager-toolbar-count">{totalElements} hóa đơn</span>
       </form>
-      <div className="manager-advanced-filters invoice-filters">
+      <div className={`manager-advanced-filters invoice-filters${filtersOpen ? " is-open" : ""}`} id="manager-invoice-filters">
         <label>Thanh toán
           <select value={filters.paymentStatus} onChange={event => changeFilters({ paymentStatus: event.target.value })}>
             {paymentOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -80,9 +93,6 @@ export default function ManagerInvoices() {
         </label>
         <label>Từ ngày<input type="date" value={filters.fromDate} onChange={event => changeFilters({ fromDate: event.target.value })} /></label>
         <label>Đến ngày<input type="date" value={filters.toDate} onChange={event => changeFilters({ toDate: event.target.value })} /></label>
-        <button type="button" className="admin-action" onClick={() => load()} disabled={refreshing} aria-label="Tải lại danh sách hóa đơn">
-          <RefreshCw size={16} className={refreshing ? 'admin-spinner' : ''} /> Tải lại
-        </button>
       </div>
       <div className={`invoice-layout${invoiceId !== null ? ' has-detail' : ''}`}>
         <div className="invoice-list">

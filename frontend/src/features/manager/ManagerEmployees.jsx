@@ -92,7 +92,7 @@ export default function ManagerEmployees() {
 
   return (
     <section className="admin-panel hr-workspace">
-      <PanelTitle title="Nhân viên" subtitle="HR quản lý hồ sơ và tình trạng làm việc. Admin quản lý quyền truy cập hệ thống." />
+      <PanelTitle title="Danh sách nhân viên" subtitle="HR quản lý hồ sơ và tình trạng làm việc. Admin quản lý quyền truy cập hệ thống." />
       <div className="hr-directory-toolbar">
         <label className="admin-search-wrap">Tìm nhân viên
           <input type="search" aria-label="Tìm nhân viên" value={query} placeholder="Tên hoặc email" onChange={event => { setPage(0); setQuery(event.target.value); }} />

@@ -1,5 +1,5 @@
 import React from "react";
-import { CircleAlert, Inbox, RefreshCw } from "lucide-react";
+import { CircleAlert, Inbox, RefreshCw, SlidersHorizontal, X } from "lucide-react";
 import { displayOrderLabel, showReturn } from "../../shared/utils/order-display";
 import { statusColors, statusLabels } from "./manager-data";
 
@@ -102,14 +102,40 @@ export function PageControls({
   );
 }
 
-export function PanelTitle({ title, subtitle }) {
+export function PanelTitle({ title, subtitle, actions }) {
   return (
-    <div className="admin-panel-title">
-      <div>
-        <span className="admin-eyebrow">QUẢN LÝ CỬA HÀNG</span>
+    <div className="manager-section-head">
+      <div className="manager-section-copy">
         <h2>{title}</h2>
-        <p>{subtitle}</p>
+        {subtitle && <p>{subtitle}</p>}
       </div>
+      {actions && <div className="manager-section-actions">{actions}</div>}
     </div>
+  );
+}
+
+export function FilterChip({ label, onRemove }) {
+  return (
+    <span className="manager-filter-chip">
+      {label}
+      <button type="button" onClick={onRemove} aria-label={`Bỏ lọc ${label}`}>
+        <X size={12} aria-hidden="true" />
+      </button>
+    </span>
+  );
+}
+
+export function ToolbarButton({ active = false, count = 0, children, ...props }) {
+  return (
+    <button
+      type="button"
+      className={`manager-filter-toggle${active ? " is-active" : ""}`}
+      aria-expanded={active}
+      {...props}
+    >
+      <SlidersHorizontal size={15} aria-hidden="true" />
+      {children}
+      {count > 0 && <span className="manager-filter-count">{count}</span>}
+    </button>
   );
 }

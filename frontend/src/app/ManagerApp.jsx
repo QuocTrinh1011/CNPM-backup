@@ -115,6 +115,40 @@ const managerLandingPaths = {
   MANAGER_HR: "/manager/employees",
   EMPLOYEE: "/manager/my-profile",
 };
+const managerNavGroups = {
+  MANAGER_SALES: [
+    ["Tổng quan", ["dashboard"]],
+    ["Bán hàng", ["orders", "invoices"]],
+    ["Khách hàng & CSKH", ["users", "feedback", "surveys"]],
+    ["Danh mục", ["products", "vouchers", "promotions"]],
+    ["Phân tích", ["reports"]],
+  ],
+  MANAGER_WAREHOUSE: [
+    ["Tổng quan", ["dashboard"]],
+    ["Danh mục", ["products"]],
+    ["Kho", ["stock-receipts", "materials", "recipes"]],
+    ["Sản xuất", ["production-plans", "warehouse-approvals"]],
+    ["Phân tích", ["warehouse-reports"]],
+  ],
+  MANAGER_HR: [
+    ["Nhân sự", ["employees", "leave-requests", "attendance", "payroll", "hr-reports"]],
+  ],
+  EMPLOYEE: [
+    ["Của tôi", ["my-profile", "my-requests", "my-attendance", "my-payslips"]],
+    ["Nhóm", ["my-team", "my-team-attendance"]],
+    ["Công việc", ["warehouse-tasks"]],
+  ],
+};
+const pageSubtitles = {
+  orders: "Theo dõi và xử lý đơn hàng trong ngày.",
+  products: "Danh mục, giá bán và tồn kho.",
+  users: "Hồ sơ và lịch sử mua hàng của khách.",
+  invoices: "Đối soát hóa đơn và thanh toán.",
+  reports: "Hiệu quả bán hàng theo kỳ.",
+  feedback: "Phản hồi mới từ khách hàng.",
+  surveys: "Khảo sát và mức độ hài lòng.",
+  employees: "Hồ sơ và tình trạng làm việc.",
+};
 const navIcons = {
   dashboard: LayoutDashboard,
   employees: UsersIcon,
@@ -316,7 +350,7 @@ export default function ManagerApp() {
     );
   };
   const roleNavItems = navItems.filter(([key]) => roleSections.has(key));
-  const promotionNavItems = roleNavItems.filter(([key]) => key === "vouchers" || key === "promotions");
+  const dashboardNavItem = roleNavItems.find(([key]) => key === "dashboard");
   return (
     <div className={`admin-shell manager-shell${profileMatch ? ' manager-profile-page' : ''}`} data-theme={theme} onKeyDown={event=>{if(['DIV','SPAN'].includes(event.target.tagName)&&event.target.getAttribute('role')==='button'&&['Enter',' '].includes(event.key)){event.preventDefault();event.target.click();}}}>
       <button
@@ -360,11 +394,16 @@ export default function ManagerApp() {
           </button>
         </div>
         <nav aria-label="Chức năng quản lý">
-          {roleNavItems.filter(([key]) => key !== "vouchers" && key !== "promotions").map(renderNavItem)}
-          {promotionNavItems.length > 0 && <div className="manager-nav-group" role="group" aria-label="Khuyến mãi">
-            <span className="manager-nav-group-label" aria-hidden="true">Khuyến mãi</span>
-            {promotionNavItems.map(renderNavItem)}
-          </div>}
+          {dashboardNavItem && renderNavItem(dashboardNavItem)}
+          {(managerNavGroups[admin.role] || [])
+            .map(([label, keys]) => [label, keys.filter(key => key !== "dashboard" && roleSections.has(key))])
+            .filter(([, keys]) => keys.length > 0)
+            .map(([label, keys]) => (
+              <div className="manager-nav-group" role="group" aria-label={label} key={label}>
+                <span className="manager-nav-group-label" aria-hidden="true">{label}</span>
+                {keys.map(key => renderNavItem(navItems.find(item => item[0] === key)))}
+              </div>
+            ))}
         </nav>
         <div className="manager-sidebar-footer">
         <div className="admin-profile">
@@ -374,6 +413,7 @@ export default function ManagerApp() {
             <small>{admin.email || "Nhân viên quản lý"}</small>
           </div>
         </div>
+        <div className="manager-sidebar-actions">
         <button
           type="button"
           className="admin-logout manager-change-pw-btn"
@@ -397,6 +437,7 @@ export default function ManagerApp() {
           <span className="admin-logout-label">Đăng xuất</span>
         </button>
         </div>
+        </div>
       </aside>
       <main className="admin-main">
         <header className="admin-topbar">
@@ -407,6 +448,9 @@ export default function ManagerApp() {
                 {navItems.find((item) => item[0] === section)?.[1] ||
                   "Tổng quan"}
               </b>
+            </span>
+            <span className="manager-mobile-title">
+              {navItems.find((item) => item[0] === section)?.[1] || "Tổng quan"}
             </span>
           </div>
           <div className="admin-topbar-actions">
@@ -425,12 +469,13 @@ export default function ManagerApp() {
             </button>
             <a
               href={userOrigin}
+              aria-label="Mở storefront"
               onClick={(event) => {
                 event.preventDefault();
                 window.location.href = userOrigin;
               }}
             >
-              Mở storefront <ExternalLink size={14} aria-hidden="true" />
+              <span>Mở storefront</span> <ExternalLink size={14} aria-hidden="true" />
             </a>
           </div>
         </header>
@@ -446,7 +491,7 @@ export default function ManagerApp() {
                   month: "long",
                   year: "numeric",
                 })} — Xin chào, ${admin.fullName || "Admin"}`
-              : "Quản lý và cập nhật dữ liệu cửa hàng."}
+              : pageSubtitles[section] || "Quản lý và cập nhật dữ liệu cửa hàng."}
           </p>
         </div>
         <ManagerSyncStatus />
@@ -857,7 +902,6 @@ function Users({ notify, location, go }) {
         title="Khách hàng"
         subtitle="Theo dõi và kiểm soát tài khoản customer."
       />
-      <CustomerCreate onSaved={load}/>
       <div className="admin-table-toolbar">
         <div className="admin-search-wrap">
           <Search size={15} className="admin-search-icon" aria-hidden="true" />
@@ -879,13 +923,16 @@ function Users({ notify, location, go }) {
             </button>
           )}
         </div>
+        <CustomerCreate onSaved={load}/>
         <span className="admin-toolbar-count">
           {data?.totalElements ?? filteredUsers.length} khách hàng
         </span>
         <button className="admin-action" onClick={() => searchUsers(search)}>Tìm khách hàng</button>
       </div>
       <CustomerLifecycleFilters params={params} onChange={changeFilters}/>
-      <button type="button" className="admin-action" onClick={()=>go(groupSurveyRoute(params),{createGroupedSurvey:true})}>Tạo khảo sát cho nhóm này</button>
+      <div className="manager-survey-cta">
+        <button type="button" className="admin-action" onClick={()=>go(groupSurveyRoute(params),{createGroupedSurvey:true})}>Tạo khảo sát cho nhóm này</button>
+      </div>
       {error&&!previousData&&<ListError message={error} onRetry={load}/>}
       {loading&&<p role="status">Đang tải khách hàng...</p>}
       {!loading&&!error&&!filteredUsers.length&&<p>Không có khách hàng phù hợp bộ lọc.</p>}
@@ -934,8 +981,7 @@ function Users({ notify, location, go }) {
                   Xóa
                 </button>
                 <CustomerCreate user={user} onSaved={load}/>
-                <button className="admin-action" onClick={() => go(`invoices?q=${encodeURIComponent(user.email || user.fullName)}`)}>Hóa đơn</button>
-                <button className="admin-action" onClick={() => go(`users/${user.id}?${new URLSearchParams({q:query,page:String(page),...Object.fromEntries(params)})}`)}>Xem hồ sơ</button>
+                <button className="admin-action" onClick={() => go(`invoices?q=${encodeURIComponent(user.email || user.fullName)}`)}>Hóa đơn</button>                <button className="admin-action" onClick={() => go(`users/${user.id}?${new URLSearchParams({q:query,page:String(page),...Object.fromEntries(params)})}`)}>Xem hồ sơ</button>
               </div>
             </td>
           </tr>

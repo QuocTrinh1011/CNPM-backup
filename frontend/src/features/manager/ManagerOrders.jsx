@@ -6,7 +6,7 @@ import ManagerOrderDetail from "./ManagerOrderDetail";
 import { useManagerList, useManagerList as useAdminList } from "../../shared/hooks/useManagerResource";
 import { isFinalOrder } from "./order-transitions";
 import { money, pageData, orderStatuses, orderStatusOptions, paymentMethodLabels, paymentStatusLabels, formatDate } from "./manager-data";
-import { OrderBadge, PanelLoading, Table, ListError, PageControls, PanelTitle } from "./ManagerComponents";
+import { OrderBadge, PanelLoading, Table, ListError, PageControls, PanelTitle, FilterChip, ToolbarButton } from "./ManagerComponents";
 import { adminApi, adminEndpoints } from "../../api/manager-api";
 
 export default function Orders({ notify }) {
@@ -14,10 +14,21 @@ export default function Orders({ notify }) {
   const page=Number(filters.page)||0,setPage=value=>changeFilters({page:String(value)});
   const status=filters.status,setStatus=value=>changeFilters({status:value});
   const search=filters.q,setSearch=value=>changeFilters({q:value});
+  const activeFilters = [
+    filters.paymentStatus && { key: 'paymentStatus', label: `Thanh toán: ${paymentStatusLabels[filters.paymentStatus] || filters.paymentStatus}` },
+    filters.paymentReview && { key: 'paymentReview', label: filters.paymentReview === 'true' ? 'Cần đối soát' : 'Không cảnh báo' },
+    filters.fromDate && { key: 'fromDate', label: `Từ ${filters.fromDate}` },
+    filters.toDate && { key: 'toDate', label: `Đến ${filters.toDate}` },
+    (filters.sort !== 'createdAt' || filters.direction !== 'DESC') && {
+      key: 'sort',
+      label: `${filters.sort === 'totalAmount' ? 'Tổng tiền' : filters.sort === 'orderCode' ? 'Mã đơn' : 'Ngày đặt'} · ${filters.direction === 'ASC' ? 'Tăng' : 'Giảm'}`,
+    },
+  ].filter(Boolean);
   const query=useMemo(()=>({status:filters.status,q:filters.q,paymentStatus:filters.paymentStatus,paymentReview:filters.paymentReview,sort:filters.sort,direction:filters.direction,page,...vietnamDateRange(filters.fromDate,filters.toDate)}),[filters,page]);
   const summaryEndpoint=useCallback(()=>'/api/manager/orders/summary?'+managerQuery({q:query.q,paymentStatus:query.paymentStatus,paymentReview:query.paymentReview,from:query.from,to:query.to}),[query.q,query.paymentStatus,query.paymentReview,query.from,query.to]);
   const {data:counts}=useManagerList(summaryEndpoint);
   const [detailId, setDetailId] = useState(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const detailEndpoint = useCallback(() => adminEndpoints.order(detailId), [detailId]);
   const { data: detailData, loading: detailLoading, error: detailError, load: reloadDetail } =
     useManagerList(detailEndpoint, { enabled: detailId !== null });
@@ -95,7 +106,7 @@ export default function Orders({ notify }) {
   return (
     <div className="admin-panel">
       <PanelTitle
-        title="Đơn hàng"
+        title="Danh sách đơn hàng"
         subtitle="Theo dõi và cập nhật tiến trình giao hàng."
       />
       <div className="admin-order-status-tabs" role="tablist" aria-label="Lọc nhanh trạng thái đơn">
@@ -157,10 +168,31 @@ export default function Orders({ notify }) {
             ))}
           </select>
         </div>
-        <span>{data?.totalElements ?? 0} đơn hàng</span>
-        <button type="button" className="admin-action" onClick={load} aria-label="Tải lại trạng thái thanh toán"><RefreshCw size={16} /> Tải lại</button>
+        <ToolbarButton
+          active={filtersOpen}
+          count={activeFilters.length}
+          onClick={() => setFiltersOpen((value) => !value)}
+          aria-controls="manager-order-filters"
+        >
+          Bộ lọc
+        </ToolbarButton>
+        <span className="manager-toolbar-count">{data?.totalElements ?? 0} đơn hàng</span>
+        <button type="button" className="manager-icon-btn" onClick={load} aria-label="Tải lại trạng thái thanh toán">
+          <RefreshCw size={16} />
+        </button>
       </div>
-      <div className="manager-advanced-filters">
+      {activeFilters.length > 0 && (
+        <div className="manager-filter-chips">
+          {activeFilters.map((item) => (
+            <FilterChip
+              key={item.key}
+              label={item.label}
+              onRemove={() => changeFilters(item.key === "sort" ? { sort: "createdAt", direction: "DESC" } : { [item.key]: "" })}
+            />
+          ))}
+        </div>
+      )}
+      <div className={`manager-advanced-filters${filtersOpen ? " is-open" : ""}`} id="manager-order-filters">
         <label>Thanh toán<select value={filters.paymentStatus} onChange={e=>changeFilters({paymentStatus:e.target.value})}><option value="">Tất cả</option><option value="COD">COD</option><option value="PENDING">Chờ thanh toán</option><option value="PAID">Đã thanh toán</option><option value="EXPIRED">Hết hạn</option><option value="FAILED">Thất bại</option><option value="CANCELLED">Đã hủy thanh toán</option></select></label>
         <label>Đối soát PayOS<select value={filters.paymentReview} onChange={e=>changeFilters({paymentReview:e.target.value})}><option value="">Tất cả</option><option value="true">Thanh toán cần kiểm tra</option><option value="false">Không có cảnh báo</option></select></label>
         <label>Từ ngày<input type="date" value={filters.fromDate} onChange={e=>changeFilters({fromDate:e.target.value})}/></label>
