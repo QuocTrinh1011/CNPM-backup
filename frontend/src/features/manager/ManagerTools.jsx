@@ -2,9 +2,31 @@ import React,{useEffect,useState} from 'react';
 import {adminApi as api} from '../../api/manager-api';
 import {useManagerReadPause} from '../../shared/hooks/useManagerResource';
 export function CustomerCreate({onSaved,user}){
- const [form,setForm]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
- useManagerReadPause(!!form);
- return <div><button type="button" className="admin-action" onClick={()=>setForm(user?{fullName:user.fullName,phone:user.phone||'',preferences:user.preferences||''}:{fullName:'',email:'',password:'',phone:'',preferences:''})}>{user?'Sửa':'Thêm khách hàng'}</button>{form&&<form className="internal-filters" onSubmit={async e=>{e.preventDefault();if(busy)return;setBusy(true);setError('');try{await api(user?`/api/manager/users/${user.id}`:'/api/manager/users',{method:user?'PUT':'POST',body:form});setForm(null);onSaved()}catch(e){setError(e.message)}finally{setBusy(false)}}}>{Object.entries(user?{fullName:'Họ tên',phone:'Điện thoại',preferences:'Sở thích'}:{fullName:'Họ tên',email:'Email',password:'Mật khẩu ban đầu',phone:'Điện thoại',preferences:'Sở thích'}).map(([key,label])=><label key={key}>{label}<input required={['fullName','email','password'].includes(key)} type={key==='password'?'password':key==='email'?'email':'text'} value={form[key]} onChange={e=>setForm({...form,[key]:e.target.value})}/></label>)}<button className="admin-primary" disabled={busy}>Lưu khách hàng</button><button className="admin-action" disabled={busy} type="button" onClick={()=>setForm(null)}>Hủy</button></form>}{error&&<p role="alert">{error}</p>}</div>
+ const [open,setOpen]=useState(false),[form,setForm]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ useManagerReadPause(open);
+ useEffect(()=>{
+  if(!open)return;
+  const onKey=event=>{if(event.key==='Escape'&&!busy)setOpen(false)};
+  window.addEventListener('keydown',onKey);
+  return()=>window.removeEventListener('keydown',onKey);
+ },[open,busy]);
+ const fields=user?{fullName:'Họ tên',phone:'Điện thoại',preferences:'Sở thích'}:{fullName:'Họ tên',email:'Email',password:'Mật khẩu ban đầu',phone:'Điện thoại',preferences:'Sở thích'};
+ const close=()=>{if(busy)return;setOpen(false);setForm(null);setError('')};
+ return <div>
+  <button type="button" className="admin-action" onClick={()=>{setForm(user?{fullName:user.fullName,phone:user.phone||'',preferences:user.preferences||''}:{fullName:'',email:'',password:'',phone:'',preferences:''});setError('');setOpen(true)}}>{user?'Sửa':'Thêm khách hàng'}</button>
+  {open&&form&&<div className="admin-dialog-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)close()}}>
+   <form className="admin-dialog" role="dialog" aria-modal="true" aria-labelledby="customer-dialog-title" onSubmit={async e=>{e.preventDefault();if(busy)return;setBusy(true);setError('');try{await api(user?`/api/manager/users/${user.id}`:'/api/manager/users',{method:user?'PUT':'POST',body:form});setOpen(false);setForm(null);onSaved()}catch(e){setError(e.message)}finally{setBusy(false)}}}>
+    <h2 id="customer-dialog-title">{user?'Sửa thông tin khách hàng':'Thêm khách hàng mới'}</h2>
+    <p>{user?`Cập nhật thông tin liên hệ của ${user.fullName||'khách hàng'}.`:'Điền thông tin để tạo tài khoản khách hàng mới.'}</p>
+    {Object.entries(fields).map(([key,label],index)=><label key={key} htmlFor={`customer-dialog-${key}`}>{label}{['fullName','email','password'].includes(key)?' *':''}<input id={`customer-dialog-${key}`} required={['fullName','email','password'].includes(key)} autoFocus={index===0} type={key==='password'?'password':key==='email'?'email':'text'} value={form[key]} disabled={busy} onChange={e=>setForm({...form,[key]:e.target.value})}/></label>)}
+    {error&&<p role="alert" className="danger-text">{error}</p>}
+    <div className="admin-dialog-actions">
+     <button type="button" className="admin-action" disabled={busy} onClick={close}>Hủy</button>
+     <button className="admin-primary" disabled={busy}>{busy?'Đang lưu...':user?'Lưu thay đổi':'Thêm khách hàng'}</button>
+    </div>
+   </form>
+  </div>}
+ </div>
 }
 export function SurveyAudience({value,onChange,disabled}){
  const [q,setQ]=useState(''),[page,setPage]=useState(0),[data,setData]=useState(null),[error,setError]=useState(''),[retry,setRetry]=useState(0);
