@@ -40,7 +40,7 @@ src/
 ├── features/
 │   ├── storefront/      Shopping and checkout flows
 │   ├── customer/        Customer account pages and order feedback
-│   ├── manager/         Store operations and CRM workflows
+│   ├── manager/         Store operations, HR self-service, warehouse and production workflows
 │   └── admin/           System administration
 ├── shared/
 │   ├── address/         Shared address book, picker and shipping fields
@@ -56,7 +56,7 @@ Feature component tests and component-only styles live beside their component. A
 
 Dependency direction: app/ may import features/ and shared/; features/ may import shared/. Features do not import each other, and shared code does not import from app or features. A Vitest guard checks these boundaries.
 
-The frontend still excludes refund, support-ticket, customer-care, and personal-task screens. Manager navigation follows the signed-in role: Sales uses the customer/order/report and promotion workflows, Warehouse manages products and stock receipts, and HR reads the employee directory. Sales product lookup is read-only. Admin assigns the roles; `EMPLOYEE` is directory-only and has no login. Manager Reports shows captured order income and stock-receipt costs; its employee activity identifies who created stock receipts and does not attribute sales to staff. Backend authorization remains authoritative if a client calls an unavailable route directly.
+The frontend still excludes refund, support-ticket, customer-care, and personal-task screens. Manager navigation follows the signed-in role: Sales uses customer/order/report and promotion workflows; Warehouse manages products, suppliers, raw materials, receipts, recipes, assigned production plans, approvals and inventory reports; HR manages employee records and payroll. An `EMPLOYEE` whose HR-maintained work area is `WAREHOUSE` gets a separate task workspace for assigned plans, material requests, production postings, returns and finished-goods transfer requests. Backend authorization checks the role and work area on every API call. Sales product lookup is read-only. Admin assigns system roles; `EMPLOYEE` is a login-capable self-service role, while warehouse access is controlled separately by `employee_profiles.work_area`. Manager sales reports show captured order income and stock-receipt costs; their employee activity identifies receipt creators and does not attribute sales to staff. Warehouse reports show inventory balances and movements by location for month, quarter or year; ledger history is complete only from migration 026's opening-balance cutover. Backend authorization remains authoritative if a client calls an unavailable route directly.
 
 ## Implemented customer flows
 

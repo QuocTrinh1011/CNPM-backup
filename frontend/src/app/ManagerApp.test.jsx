@@ -87,9 +87,9 @@ it('keeps the invoices section instead of redirecting to the dashboard', async (
 });
 
 it.each([
-  ['MANAGER_SALES', '/manager/orders', ['Đơn hàng', 'Khách hàng', 'Báo cáo', 'Chiến dịch khuyến mãi'], ['Nhập kho', 'Nhân viên']],
-  ['MANAGER_WAREHOUSE', '/manager/products', ['Sản phẩm', 'Nhập kho'], ['Đơn hàng', 'Báo cáo', 'Nhân viên', 'Tổng quan']],
-  ['MANAGER_HR', '/manager/employees', ['Nhân viên'], ['Đơn hàng', 'Sản phẩm', 'Nhập kho', 'Báo cáo', 'Tổng quan']],
+  ['MANAGER_SALES', '/manager/orders', ['Đơn hàng', 'Khách hàng', 'Báo cáo', 'Chiến dịch khuyến mãi'], ['Nhập kho', 'Nguyên liệu', 'Công thức sản phẩm', 'Kế hoạch sản xuất', 'Duyệt yêu cầu kho', 'Báo cáo kho', 'Nhân viên']],
+  ['MANAGER_WAREHOUSE', '/manager/products', ['Sản phẩm', 'Nhập kho', 'Nguyên liệu', 'Công thức sản phẩm', 'Kế hoạch sản xuất', 'Duyệt yêu cầu kho', 'Báo cáo kho'], ['Đơn hàng', 'Nhân viên', 'Tổng quan']],
+  ['MANAGER_HR', '/manager/employees', ['Nhân viên', 'Duyệt đơn nghỉ', 'Chấm công', 'Bảng lương', 'Báo cáo nhân sự'], ['Đơn hàng', 'Sản phẩm', 'Nhập kho', 'Nguyên liệu', 'Công thức sản phẩm', 'Kế hoạch sản xuất', 'Duyệt yêu cầu kho', 'Báo cáo kho', 'Tổng quan']],
 ])('routes %s to its landing page and filters navigation', async (role, landing, visible, hidden) => {
   window.history.replaceState({}, '', '/manager');
   adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Role test', role } });
@@ -102,16 +102,123 @@ it.each([
   for (const label of hidden) expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(false);
 });
 
+it('routes employees to self-service pages without HR payroll navigation', async () => {
+  window.history.replaceState({}, '', '/manager');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Employee', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 42, fullName: 'Employee', employeeCode: 'E-42', permissionProfile: 'STAFF', employmentStatus: 'ACTIVE' }
+    : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+
+  await waitFor(() => expect(window.location.pathname).toBe('/manager/my-profile'));
+  const navigation = screen.getByRole('navigation', { name: 'Chức năng quản lý' });
+  for (const label of ['Thông tin của tôi', 'Đơn nghỉ của tôi', 'Chấm công của tôi', 'Phiếu lương của tôi']) {
+    expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(true);
+  }
+  for (const label of ['Nguyên liệu', 'Công thức sản phẩm', 'Kế hoạch sản xuất', 'Duyệt yêu cầu kho', 'Báo cáo kho']) {
+    expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(false);
+  }
+  for (const label of ['Bảng lương', 'Duyệt đơn nghỉ', 'Báo cáo nhân sự', 'Nhân viên trong nhóm']) {
+    expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes(label))).toBe(false);
+  }
+});
+
+it('adds the warehouse task page only to EMPLOYEE accounts assigned to the warehouse area', async () => {
+  window.history.replaceState({}, '', '/manager');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Warehouse employee', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 43, fullName: 'Warehouse employee', employeeCode: 'E-43', workArea: 'WAREHOUSE', permissionProfile: 'STAFF', employmentStatus: 'ACTIVE' }
+    : url.includes('/warehouse/me/plans?') ? { content: [], totalPages: 0, totalElements: 0 }
+      : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+  const navigation = await screen.findByRole('navigation', { name: 'Chức năng quản lý' });
+  expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes('Công việc kho'))).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: 'Công việc kho' }));
+  expect(await screen.findByRole('heading', { name: 'Công việc kho của tôi', level: 2 })).toBeTruthy();
+});
+
+it('opens the warehouse report route for warehouse managers', async () => {
+  window.history.replaceState({}, '', '/manager/warehouse-reports');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Warehouse', role: 'MANAGER_WAREHOUSE' } });
+  adminApi.mockImplementation(async url => url.includes('/warehouse/reports?')
+    ? { period: 'MONTH', year: 2026, month: 11, balances: [], movementTotals: [], historyComplete: false }
+    : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+  expect(await screen.findByRole('heading', { name: 'Báo cáo kho', level: 2 })).toBeTruthy();
+  expect(await screen.findByRole('combobox', { name: 'Loại kỳ' })).toBeTruthy();
+});
+
+it('lands team leads on their direct team directory while staff land on their own profile', async () => {
+  window.history.replaceState({}, '', '/manager');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Team lead', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 42, fullName: 'Team lead', employeeCode: 'TL-42', permissionProfile: 'TEAM_LEAD', employmentStatus: 'ACTIVE' }
+    : []);
+
+  render(<ManagerApp />, { wrapper });
+
+  await screen.findByRole('heading', { name: 'Nhân viên trong nhóm', level: 2 });
+  expect(window.location.pathname).toBe('/manager/my-team');
+});
+
+it('adds team views only for employees with the TEAM_LEAD profile and redirects restricted paths', async () => {
+  window.history.replaceState({}, '', '/manager/my-team');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Team lead', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => {
+    if (url === '/api/manager/me/profile') return { id: 42, fullName: 'Team lead', employeeCode: 'TL-42', permissionProfile: 'TEAM_LEAD', employmentStatus: 'ACTIVE' };
+    if (url === '/api/manager/me/team') return [];
+    return { content: [] };
+  });
+
+  render(<ManagerApp />, { wrapper });
+
+  await screen.findByRole('heading', { name: 'Nhân viên trong nhóm', level: 2 });
+  const navigation = screen.getByRole('navigation', { name: 'Chức năng quản lý' });
+  expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes('Nhân viên trong nhóm'))).toBe(true);
+  expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes('Chấm công nhóm'))).toBe(true);
+  expect([...navigation.querySelectorAll('button')].some(item => item.textContent.includes('Bảng lương'))).toBe(false);
+});
+
+it('keeps HR payroll inaccessible to a team lead even through a direct URL', async () => {
+  window.history.replaceState({}, '', '/manager/payroll');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Team lead', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 42, fullName: 'Team lead', employeeCode: 'TL-42', permissionProfile: 'TEAM_LEAD', employmentStatus: 'ACTIVE' }
+    : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+
+  await waitFor(() => expect(window.location.pathname).toBe('/manager/my-team'));
+  expect(adminApi.mock.calls.some(([url]) => String(url).includes('/payroll-periods'))).toBe(false);
+});
+
 it.each([
   ['MANAGER_HR', '/manager/orders', '/manager/employees', '/api/manager/orders'],
   ['MANAGER_WAREHOUSE', '/manager/reports', '/manager/products', '/api/manager/reports'],
   ['MANAGER_SALES', '/manager/stock-receipts', '/manager/orders', '/api/manager/stock-receipts'],
+  ['MANAGER_HR', '/manager/materials', '/manager/employees', '/api/manager/raw-materials'],
+  ['MANAGER_SALES', '/manager/materials', '/manager/orders', '/api/manager/raw-materials'],
 ])('redirects %s away from restricted routes before loading their data', async (role, restricted, landing, forbiddenEndpoint) => {
   window.history.replaceState({}, '', restricted);
   adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Role test', role } });
   render(<ManagerApp />, { wrapper });
   await waitFor(() => expect(window.location.pathname).toBe(landing));
   expect(adminApi.mock.calls.some(([url]) => String(url).startsWith(forbiddenEndpoint))).toBe(false);
+});
+
+it('does not expose warehouse manager pages to employees outside the warehouse work area', async () => {
+  window.history.replaceState({}, '', '/manager/materials');
+  adminRefreshSession.mockResolvedValue({ manager: { fullName: 'Sales employee', role: 'EMPLOYEE' } });
+  adminApi.mockImplementation(async url => url === '/api/manager/me/profile'
+    ? { id: 42, fullName: 'Sales employee', employeeCode: 'E-42', workArea: 'SALES', permissionProfile: 'STAFF', employmentStatus: 'ACTIVE' }
+    : { content: [] });
+
+  render(<ManagerApp />, { wrapper });
+  await waitFor(() => expect(window.location.pathname).toBe('/manager/my-profile'));
+  expect(adminApi.mock.calls.some(([url]) => String(url).startsWith('/api/manager/raw-materials'))).toBe(false);
 });
 
 it('shows Sales product lookup without write controls while Warehouse retains them', async () => {

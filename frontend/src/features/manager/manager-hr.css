@@ -1,0 +1,65 @@
+.hr-workspace { display: grid; gap: 18px; }
+.hr-directory-toolbar, .hr-filter-row, .hr-form-actions, .hr-inline-actions, .hr-period-actions, .hr-payslip-head { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; }
+.hr-directory-toolbar { justify-content: space-between; }
+.hr-directory-toolbar .admin-search-wrap { flex: 1 1 260px; max-width: 520px; }
+.hr-form-grid, .hr-settings-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 18px; border: 1px solid var(--admin-border); border-radius: 12px; background: var(--admin-card); }
+.hr-form-grid > h3, .hr-settings-form > h3, .hr-settings-form > p, .hr-form-actions { grid-column: 1 / -1; margin: 0; }
+.hr-form-help { grid-column: 1 / -1; margin: 0; color: var(--admin-muted); font-size: 12px; }
+.hr-form-grid label, .hr-settings-form label, .hr-filter-row label { display: grid; gap: 6px; color: var(--admin-text); font-size: 13px; }
+.hr-form-grid input, .hr-form-grid select, .hr-form-grid textarea, .hr-settings-form input, .hr-settings-form textarea, .hr-filter-row input, .hr-filter-row select, .hr-inline-actions input { width: 100%; min-height: 40px; padding: 9px 11px; border: 1px solid var(--admin-border); border-radius: 8px; background: var(--admin-card); color: var(--admin-text); font: inherit; }
+.hr-form-grid textarea, .hr-settings-form textarea { resize: vertical; }
+.hr-form-grid small, .hr-settings-form p { color: var(--admin-muted); font-size: 12px; line-height: 1.5; }
+.hr-form-actions { display: flex; justify-content: flex-end; }
+.hr-form-actions button, .hr-inline-actions button, .hr-period-actions button, .hr-payslip-head button, .hr-settings-form button { min-height: 38px; padding: 8px 14px; border: 1px solid var(--admin-border); border-radius: 8px; color: var(--admin-text); background: var(--admin-card); cursor: pointer; }
+.hr-danger { color: #b42318 !important; border-color: #f2b8b5 !important; }
+.hr-inline-actions { align-items: center; }
+.hr-inline-actions input { min-width: 180px; }
+.hr-notice { margin: 0; padding: 10px 12px; border-radius: 8px; color: var(--admin-text); background: color-mix(in srgb, var(--admin-primary) 10%, var(--admin-card)); }
+.hr-profile-summary { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; padding: 16px; border: 1px solid var(--admin-border); border-radius: 10px; background: var(--admin-card); color: var(--admin-text); }
+.hr-profile-summary b { font-size: 18px; }
+.hr-request-list, .hr-team-roster, .hr-payslip-list { display: grid; gap: 12px; }
+.hr-request-card, .hr-team-roster, .hr-payslip, .hr-period-actions, .hr-report-summaries > article { padding: 16px; border: 1px solid var(--admin-border); border-radius: 10px; background: var(--admin-card); color: var(--admin-text); }
+.hr-request-card { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.hr-request-card > div:first-child { display: grid; gap: 5px; }
+.hr-request-card small, .hr-request-card span, .hr-team-roster span, .hr-payslip p, .hr-payslip small { color: var(--admin-muted); }
+.hr-team-roster { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.hr-team-roster h3 { flex-basis: 100%; margin: 0; }
+.hr-team-roster span { padding: 7px 10px; border: 1px solid var(--admin-border); border-radius: 999px; }
+.hr-period-actions { justify-content: space-between; align-items: center; }
+.hr-annual-print { justify-self: start; min-height: 38px; padding: 8px 14px; border: 1px solid var(--admin-border); border-radius: 8px; color: var(--admin-text); background: var(--admin-card); cursor: pointer; }
+.hr-pay-totals, .hr-kpi-grid, .hr-report-summaries { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.hr-pay-totals span, .hr-kpi-grid article { display: grid; gap: 7px; padding: 14px; border: 1px solid var(--admin-border); border-radius: 10px; background: var(--admin-card); color: var(--admin-text); }
+.hr-kpi-grid article b { font-size: 22px; }
+.hr-report-summaries { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.hr-report-summaries h3 { margin: 0 0 10px; }
+.hr-report-summaries p { display: flex; justify-content: space-between; gap: 8px; color: var(--admin-muted); }
+.hr-report-summaries b { color: var(--admin-text); text-align: right; }
+.hr-confirm-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px; background: rgb(0 0 0 / 45%); }
+.hr-confirm-dialog { width: min(100%, 480px); padding: 22px; border: 1px solid var(--admin-border); border-radius: 14px; background: var(--admin-card); color: var(--admin-text); box-shadow: 0 20px 60px rgb(0 0 0 / 22%); }
+.hr-confirm-dialog h3 { margin-top: 0; }
+.hr-confirm-dialog p { color: var(--admin-muted); line-height: 1.55; }
+
+@media (max-width: 720px) {
+  .hr-form-grid, .hr-settings-form, .hr-report-summaries { grid-template-columns: 1fr; }
+  .hr-pay-totals, .hr-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hr-directory-toolbar { align-items: stretch; }
+  .hr-directory-toolbar > button { width: 100%; }
+}
+
+@media print {
+  body:has(.hr-payslip-list.hr-print-monthly) * { visibility: hidden !important; }
+  body:has(.hr-payslip-list.hr-print-monthly) .hr-payslip.is-print-target,
+  body:has(.hr-payslip-list.hr-print-monthly) .hr-payslip.is-print-target * { visibility: visible !important; }
+  body:has(.hr-payslip-list.hr-print-annual) * { visibility: hidden !important; }
+  body:has(.hr-payslip-list.hr-print-annual) .hr-payslip,
+  body:has(.hr-payslip-list.hr-print-annual) .hr-payslip * { visibility: visible !important; }
+  body:has(.hr-payslip-list.hr-print-annual) .hr-annual-summary,
+  body:has(.hr-payslip-list.hr-print-annual) .hr-annual-summary * { visibility: visible !important; }
+  body:has(.hr-print-monthly) .hr-payslip.is-print-target,
+  body:has(.hr-print-annual) .hr-payslip { position: relative; width: 100%; border: 0; break-after: page; }
+  body:has(.hr-payslip-list.hr-print-monthly) .hr-payslip:not(.is-print-target) { display: none !important; }
+  body:has(.hr-print-monthly) .hr-payslip button,
+  body:has(.hr-print-annual) .hr-payslip button,
+  body:has(.hr-print-annual) .hr-annual-print { display: none !important; }
+  body:has(.hr-payslip-list) .admin-table-wrap { overflow: visible; }
+}

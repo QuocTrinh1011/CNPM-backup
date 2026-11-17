@@ -3,6 +3,8 @@ package com.htttdn.crm.service;
 import com.htttdn.crm.entity.Category;
 import com.htttdn.crm.entity.Product;
 import com.htttdn.crm.entity.User;
+import com.htttdn.crm.entity.EmployeeProfile;
+import com.htttdn.crm.repository.EmployeeProfileRepository;
 import com.htttdn.crm.exception.ApiException;
 import com.htttdn.crm.repository.CategoryRepository;
 import com.htttdn.crm.repository.ProductRepository;
@@ -21,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,6 +50,7 @@ class ManagerRoleSecurityIntegrationTest {
     private static final String PASSWORD = "TestPassword123!";
 
     @Autowired UserRepository users;
+    @Autowired EmployeeProfileRepository employeeProfiles;
     @Autowired RefreshTokenRepository refreshTokens;
     @Autowired CategoryRepository categories;
     @Autowired ProductRepository products;
@@ -68,6 +73,69 @@ class ManagerRoleSecurityIntegrationTest {
             assertEquals(role, jwt.parse("Bearer " + refreshed.accessToken()).role());
             assertEquals(role, refreshTokens.findForUpdate(AuthService.hash(refreshed.refreshToken())).orElseThrow().getAudience());
         }
+    }
+
+    @Test
+    void employeeCanLoginRefreshChangePasswordAndLogoutInTheManagerSession() throws Exception {
+        User employee = account("EMPLOYEE");
+        ManagerAuthService.Session login = managerAuth.login(employee.getEmail(), PASSWORD);
+
+        assertEquals("EMPLOYEE", jwt.parse("Bearer " + login.accessToken()).role());
+        assertEquals("EMPLOYEE", refreshTokens.findForUpdate(AuthService.hash(login.refreshToken()))
+                .orElseThrow().getAudience());
+
+        ManagerAuthService.Session refreshed = managerAuth.refresh(login.refreshToken());
+        assertEquals("EMPLOYEE", jwt.parse("Bearer " + refreshed.accessToken()).role());
+
+        mvc.perform(post("/api/manager/auth/change-password")
+                        .header("Authorization", "Bearer " + refreshed.accessToken())
+                        .contentType("application/json")
+                        .content("{\"currentPassword\":\"" + PASSWORD + "\",\"newPassword\":\"EmployeePassword456!\"}"))
+                .andExpect(status().isNoContent());
+        entityManager.flush();
+        entityManager.clear();
+        assertDoesNotThrow(() -> managerAuth.login(employee.getEmail(), "EmployeePassword456!"));
+        assertThrows(ApiException.class, () -> managerAuth.refresh(refreshed.refreshToken()));
+
+        ManagerAuthService.Session current = managerAuth.login(employee.getEmail(), "EmployeePassword456!");
+        managerAuth.logout(current.refreshToken());
+        assertEquals("REVOKED", refreshTokens.findForUpdate(AuthService.hash(current.refreshToken()))
+                .orElseThrow().getStatus());
+    }
+
+    @Test
+    void employeeRoleChangeRevokesOldRefreshSession() {
+        User employee = account("EMPLOYEE");
+        ManagerAuthService.Session session = managerAuth.login(employee.getEmail(), PASSWORD);
+        employee.setRole("MANAGER_SALES");
+        users.saveAndFlush(employee);
+
+        assertThrows(ApiException.class, () -> managerAuth.refresh(session.refreshToken()));
+        assertEquals("REVOKED", refreshTokens.findForUpdate(AuthService.hash(session.refreshToken()))
+                .orElseThrow().getStatus());
+    }
+
+    @Test
+    void employeeLoginRejectsLockedAndDeactivatedAccounts() {
+        User locked = account("EMPLOYEE");
+        locked.setLocked(true);
+        users.saveAndFlush(locked);
+        assertThrows(ApiException.class, () -> managerAuth.login(locked.getEmail(), PASSWORD));
+
+        User deactivated = account("EMPLOYEE");
+        deactivated.setDeletedAt(java.time.Instant.now());
+        users.saveAndFlush(deactivated);
+        assertThrows(ApiException.class, () -> managerAuth.login(deactivated.getEmail(), PASSWORD));
+    }
+
+    @Test
+    void employeeSelfServicePathPassesTheManagerGuard() throws Exception {
+        User employee = account("EMPLOYEE");
+        String token = "Bearer " + managerAuth.login(employee.getEmail(), PASSWORD).accessToken();
+
+        mvc.perform(get("/api/manager/me/profile").header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(employee.getId()));
     }
 
     @Test
@@ -152,6 +220,19 @@ class ManagerRoleSecurityIntegrationTest {
         user.setEmail(UUID.randomUUID() + "@manager-role.test");
         user.setPasswordHash(encoder.encode(PASSWORD));
         user.setRole(role);
-        return users.saveAndFlush(user);
+        User saved = users.saveAndFlush(user);
+        if ("EMPLOYEE".equals(role)) {
+            EmployeeProfile profile = new EmployeeProfile();
+            profile.setEmployeeId(saved.getId());
+            profile.setAccount(saved);
+            profile.setEmployeeCode("T-" + UUID.randomUUID().toString().substring(0, 8));
+            profile.setJobTitle("Nhân viên kiểm thử");
+            profile.setEmploymentStatus("ACTIVE");
+            profile.setHireDate(LocalDate.of(2025, 1, 1));
+            profile.setMonthlyBaseSalary(BigDecimal.ZERO);
+            profile.setInsuranceSalaryBase(BigDecimal.ZERO);
+            employeeProfiles.saveAndFlush(profile);
+        }
+        return saved;
     }
 }

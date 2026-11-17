@@ -31,6 +31,8 @@ public class AuditTrail {
     public static Map<String,Object> snapshot(Object item){
         var m=new TreeMap<String,Object>();
         if(item instanceof User u){m.put("role",u.getRole());m.put("locked",u.isLocked());m.put("deleted",u.getDeletedAt()!=null);}
+        else if(item instanceof EmployeeProfile p){m.put("employeeCode",p.getEmployeeCode());m.put("educationLevel",p.getEducationLevel());m.put("jobTitle",p.getJobTitle());m.put("permissionProfile",p.getPermissionProfile());m.put("workArea",p.getWorkArea());m.put("employmentStatus",p.getEmploymentStatus());m.put("hireDate",p.getHireDate());m.put("resignationDate",p.getResignationDate());m.put("monthlyBaseSalary",p.getMonthlyBaseSalary());m.put("insuranceSalaryBase",p.getInsuranceSalaryBase());m.put("reportsToEmployeeId",p.getReportsToEmployeeId());}
+        else if(item instanceof RawMaterial r){m.put("code",r.getCode());m.put("name",r.getName());m.put("unit",r.getUnit());m.put("availableQuantity",r.getAvailableQuantity());m.put("active",r.isActive());}
         else if(item instanceof Order o){m.put("orderCode",o.getOrderCode());m.put("status",o.getStatus());m.put("returnStatus",o.getReturnStatus());m.put("paymentStatus",o.getPaymentStatus());}
         else if(item instanceof StockReceipt r){m.put("receiptCode",r.getReceiptCode());m.put("supplierId",r.getSupplier()==null?null:r.getSupplier().id);m.put("supplierName",r.getSupplierName());m.put("totalCost",r.getTotalCost());m.put("receivedAt",r.getReceivedAt());m.put("status",r.getStatus());}
         else if(item instanceof Product p){m.put("name",p.getName());m.put("price",p.getPrice());m.put("stock",p.getStock());m.put("active",p.isActive());m.put("category",p.getCategory());}
@@ -42,14 +44,14 @@ public class AuditTrail {
         return m;
     }
     @Transactional(propagation=Propagation.MANDATORY)
-    public void record(String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
-        recordAs(actor(),action,type,id,before,after);
+    public Long record(String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
+        return recordAs(actor(),action,type,id,before,after);
     }
     /** Service callers may pass an actor only after authenticating and checking current database access. */
     @Transactional(propagation=Propagation.MANDATORY)
-    public void recordAs(Actor actor,String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
+    public Long recordAs(Actor actor,String action,String type,Long id,Map<String,Object> before,Map<String,Object> after){
         if(actor==null)throw new IllegalStateException("Verified audit actor required");
-        try {logs.save(new AuditLog(actor.id(),actor.name(),actor.role(),action,type,id,mapper.writeValueAsString(before),mapper.writeValueAsString(after)));}
+        try {return logs.save(new AuditLog(actor.id(),actor.name(),actor.role(),action,type,id,mapper.writeValueAsString(before),mapper.writeValueAsString(after))).getId();}
         catch(com.fasterxml.jackson.core.JsonProcessingException e){throw new IllegalStateException("Cannot encode audit data",e);}
     }
 }

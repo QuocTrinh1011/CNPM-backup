@@ -86,7 +86,9 @@ public class OrderService {
         order.setDiscountAmount(discount); order.setShippingFee(shippingFee);
         order.setTotalAmount(merchandiseAfterDiscount.add(shippingFee));
         if ("PAYOS".equals(method) && order.getTotalAmount().signum() > 0) payos.requireConfigured();
-        orders.save(order); if(applied!=null) vouchers.record(order,applied);
+        orders.save(order);
+        stock.recordSaleReservation(order, new AuditTrail.Actor(customer.getId(), customer.getFullName(), "CUSTOMER"));
+        if(applied!=null) vouchers.record(order,applied);
         // Consume only purchased variants; keep unselected lines and any remaining quantity.
         Map<CartLineKey, Integer> remainingPurchase = new HashMap<>();
         grouped.forEach((key, line) -> remainingPurchase.put(key, line.quantity()));
@@ -288,7 +290,8 @@ public class OrderService {
             payments.findByOrderId(order.getId()).ifPresent(payment -> { payment.setStatus("CANCELLED"); payment.setUpdatedAt(Instant.now()); payments.save(payment); });
         }
         order.setCancelReason(clean(reason) == null ? "Khách hàng yêu cầu hủy đơn." : clean(reason));
-        stock.release(order); vouchers.release(order); order.setUpdatedAt(Instant.now()); orders.save(order);
+        stock.release(order, new AuditTrail.Actor(customer.getId(), customer.getFullName(), "CUSTOMER"));
+        vouchers.release(order); order.setUpdatedAt(Instant.now()); orders.save(order);
         notifications.create(customer, "Đã hủy đơn hàng", "Đơn hàng #" + order.getOrderCode() + " đã được hủy."
             + (paid ? " Đơn đã thanh toán; hệ thống không tự xử lý khoản tiền đã thu. Vui lòng liên hệ cửa hàng để đối soát thủ công." : ""), "ORDER_CANCELLED", order.getId());
         recordCustomerAction(customer, "CUSTOMER_CANCEL", order, before);

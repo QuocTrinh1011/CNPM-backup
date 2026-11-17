@@ -3,6 +3,9 @@ package com.htttdn.crm.service;
 import com.htttdn.crm.dto.admin.AdminDtos.ProductRequest;
 import com.htttdn.crm.dto.admin.AdminDtos.StockRequest;
 import com.htttdn.crm.entity.Category;
+import com.htttdn.crm.entity.InventoryItemType;
+import com.htttdn.crm.entity.InventoryLocation;
+import com.htttdn.crm.entity.InventoryMovementType;
 import com.htttdn.crm.entity.Product;
 import com.htttdn.crm.repository.CategoryRepository;
 import com.htttdn.crm.repository.ProductRepository;
@@ -24,9 +27,12 @@ import java.util.Set;
 public class AdminProductService extends AdminServiceSupport {
     private final ProductRepository products;
     private final CategoryRepository categories;
-    public AdminProductService(ProductRepository products, CategoryRepository categories) {
+    private final InventoryMovementService movements;
+    public AdminProductService(ProductRepository products, CategoryRepository categories,
+                               InventoryMovementService movements) {
         this.products = products;
         this.categories = categories;
+        this.movements = movements;
     }
     public Page<Product> list(String q, int page, int size) { return products.findByNameContainingIgnoreCaseAndActiveTrue(q, page(page, size)); }
     public Page<Product> search(String q,String category,java.math.BigDecimal minPrice,java.math.BigDecimal maxPrice,String stock,String active,String sort,String direction,int page,int size){
@@ -44,11 +50,55 @@ public class AdminProductService extends AdminServiceSupport {
         },org.springframework.data.domain.PageRequest.of(page,size,org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(direction),sort).and(org.springframework.data.domain.Sort.by("id").descending())));
     }
     public java.util.List<String> categoryNames(){return categories.findAll().stream().map(Category::getName).sorted().toList();}
-    @Transactional public Product create(ProductRequest request) { Product product = new Product(); copy(product, request);products.save(product);audit("CREATE","PRODUCT",product.getId(),java.util.Map.of(),product); return product; }
-    @Transactional public Product update(Long id, ProductRequest request) { Product product = get(id);var before=snapshot(product); copy(product, request); product.setUpdatedAt(Instant.now());audit("UPDATE","PRODUCT",id,before,product); return products.save(product); }
+    @Transactional public Product create(ProductRequest request) {
+        Product product = new Product();
+        copy(product, request);
+        products.save(product);
+        audit("CREATE", "PRODUCT", product.getId(), java.util.Map.of(), product);
+        movements.recordChange(InventoryItemType.PRODUCT, product.getId(), InventoryLocation.SELLABLE, null,
+                stockQuantity(product.getStock()), stockQuantity(product.getStock()), InventoryMovementType.OPENING,
+                "PRODUCT_CREATE", product.getId());
+        return product;
+    }
+    @Transactional public Product update(Long id, ProductRequest request) {
+        Product product = getForUpdate(id);
+        int beforeStock = product.getStock();
+        var before = snapshot(product);
+        copy(product, request);
+        product.setUpdatedAt(Instant.now());
+        Product saved = products.save(product);
+        Long auditId = audit("UPDATE", "PRODUCT", id, before, product);
+        recordAdjustmentIfChanged(product, beforeStock, auditId);
+        return saved;
+    }
     @Transactional public void archive(Long id) { Product product = get(id);var before=snapshot(product); product.setActive(false); products.save(product);if(!before.equals(snapshot(product)))audit("ARCHIVE","PRODUCT",id,before,product); }
-    @Transactional public Product stock(Long id, StockRequest request) { Product product = get(id);var before=snapshot(product); product.setStock(request.quantity()); product.setUpdatedAt(Instant.now());if(!before.equals(snapshot(product)))audit("STOCK","PRODUCT",id,before,product); return products.save(product); }
+    @Transactional public Product stock(Long id, StockRequest request) {
+        Product product = getForUpdate(id);
+        int beforeStock = product.getStock();
+        var before = snapshot(product);
+        product.setStock(request.quantity());
+        product.setUpdatedAt(Instant.now());
+        if (!before.equals(snapshot(product))) {
+            Long auditId = audit("STOCK", "PRODUCT", id, before, product);
+            recordAdjustmentIfChanged(product, beforeStock, auditId);
+        }
+        return products.save(product);
+    }
     public Product get(Long id) { return products.findById(id).orElseThrow(); }
+    private Product getForUpdate(Long id) {
+        return products.findLockedById(id).orElseThrow();
+    }
+    private void recordAdjustmentIfChanged(Product product, int beforeStock, Long auditId) {
+        int delta = product.getStock() - beforeStock;
+        if (delta == 0) return;
+        if (auditId == null) throw new IllegalStateException("Stock adjustments must have a verified audit event");
+        movements.recordChangeAs(AuditTrail.actor(), InventoryItemType.PRODUCT, product.getId(),
+                InventoryLocation.SELLABLE, null, stockQuantity(delta), stockQuantity(product.getStock()),
+                InventoryMovementType.SELLABLE_ADJUSTMENT, "AUDIT_LOG", auditId);
+    }
+    private static java.math.BigDecimal stockQuantity(int quantity) {
+        return java.math.BigDecimal.valueOf(quantity).setScale(3);
+    }
     private void copy(Product p, ProductRequest r) {
         p.setName(r.name());
         if (r.category() != null && !r.category().isBlank()) {

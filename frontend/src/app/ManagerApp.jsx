@@ -19,11 +19,25 @@ const ManagerInvoices = React.lazy(()=>import('../features/manager/ManagerInvoic
 const PromotionCampaigns = React.lazy(() => import('../features/manager/PromotionCampaigns'));
 const ManagerReports = React.lazy(() => import('../features/manager/ManagerReports'));
 const ManagerEmployees = React.lazy(() => import('../features/manager/ManagerEmployees'));
+const WarehouseMaterials = React.lazy(() => import('../features/manager/WarehouseMaterials'));
+const WarehouseRecipes = React.lazy(() => import('../features/manager/WarehouseRecipes'));
+const WarehouseProductionPlans = React.lazy(() => import('../features/manager/WarehouseProductionPlans'));
+const WarehouseApprovals = React.lazy(() => import('../features/manager/WarehouseApprovals'));
+const WarehouseReports = React.lazy(() => import('../features/manager/WarehouseReports'));
+const EmployeeSelfProfile = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeSelfProfile })));
+const EmployeeLeaveRequests = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeLeaveRequests })));
+const EmployeeAttendancePage = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeAttendancePage })));
+const EmployeePayrollPage = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeePayrollPage })));
+const EmployeeReportPage = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeReportPage })));
+const WarehouseEmployeeWorkspace = React.lazy(() => import('../features/manager/WarehouseEmployeeWorkspace'));
 import {
   Activity,
   LayoutDashboard,
   Users as UsersIcon,
   Package,
+  Warehouse,
+  FlaskConical,
+  Factory,
   ShoppingCart,
   MessageSquare,
   ClipboardList,
@@ -42,7 +56,12 @@ import {
   Sparkles,
   ReceiptText,
   BarChart3,
-  KeyRound
+  KeyRound,
+  UserRound,
+  CalendarDays,
+  Wallet,
+  ClipboardCheck,
+  UsersRound
 } from "lucide-react";
 import {
   adminApi,
@@ -56,9 +75,25 @@ import {
 const navItems = [
   ["dashboard", "Tổng quan"],
   ["employees", "Nhân viên"],
+  ["leave-requests", "Duyệt đơn nghỉ"],
+  ["attendance", "Chấm công"],
+  ["payroll", "Bảng lương"],
+  ["hr-reports", "Báo cáo nhân sự"],
+  ["my-profile", "Thông tin của tôi"],
+  ["my-requests", "Đơn nghỉ của tôi"],
+  ["my-attendance", "Chấm công của tôi"],
+  ["my-payslips", "Phiếu lương của tôi"],
+  ["warehouse-tasks", "Công việc kho"],
+  ["my-team", "Nhân viên trong nhóm"],
+  ["my-team-attendance", "Chấm công nhóm"],
   ["users", "Khách hàng"],
   ["products", "Sản phẩm"],
   ["stock-receipts", "Nhập kho"],
+  ["materials", "Nguyên liệu"],
+  ["recipes", "Công thức sản phẩm"],
+  ["production-plans", "Kế hoạch sản xuất"],
+  ["warehouse-approvals", "Duyệt yêu cầu kho"],
+  ["warehouse-reports", "Báo cáo kho"],
   ["orders", "Đơn hàng"],
   ["invoices", "Hóa đơn"],
   ["feedback", "Phản hồi"],
@@ -70,13 +105,15 @@ const navItems = [
 const validSections = new Set(navItems.map(([key]) => key));
 const managerRoleSections = {
   MANAGER_SALES: new Set(["dashboard", "users", "products", "orders", "invoices", "feedback", "surveys", "vouchers", "promotions", "reports"]),
-  MANAGER_WAREHOUSE: new Set(["products", "stock-receipts"]),
-  MANAGER_HR: new Set(["employees"]),
+  MANAGER_WAREHOUSE: new Set(["products", "stock-receipts", "materials", "recipes", "production-plans", "warehouse-approvals", "warehouse-reports"]),
+  MANAGER_HR: new Set(["employees", "leave-requests", "attendance", "payroll", "hr-reports"]),
+  EMPLOYEE: new Set(["my-profile", "my-requests", "my-attendance", "my-payslips"]),
 };
 const managerLandingPaths = {
   MANAGER_SALES: "/manager/orders",
   MANAGER_WAREHOUSE: "/manager/products",
   MANAGER_HR: "/manager/employees",
+  EMPLOYEE: "/manager/my-profile",
 };
 const navIcons = {
   dashboard: LayoutDashboard,
@@ -84,6 +121,11 @@ const navIcons = {
   users: UsersIcon,
   products: Package,
   'stock-receipts': Package,
+  materials: Warehouse,
+  recipes: FlaskConical,
+  'production-plans': Factory,
+  'warehouse-approvals': ClipboardCheck,
+  'warehouse-reports': BarChart3,
   orders: ShoppingCart,
   invoices: ReceiptText,
   feedback: MessageSquare,
@@ -91,6 +133,17 @@ const navIcons = {
   vouchers: TicketPercent,
   promotions: Sparkles,
   reports: BarChart3,
+  'leave-requests': ClipboardCheck,
+  attendance: CalendarDays,
+  payroll: Wallet,
+  'hr-reports': BarChart3,
+  'my-profile': UserRound,
+  'my-requests': ClipboardCheck,
+  'my-attendance': CalendarDays,
+  'my-payslips': Wallet,
+  'warehouse-tasks': Factory,
+  'my-team': UsersRound,
+  'my-team-attendance': CalendarDays,
 };
 const userOrigin = import.meta.env.VITE_USER_ORIGIN || "http://localhost:5173";
 const normalizeAdminPath = (value) => {
@@ -105,6 +158,8 @@ const normalizeAdminPath = (value) => {
 export default function ManagerApp() {
   const [path, setPath] = useState(window.location.pathname + window.location.search);
   const [admin, setAdmin] = useState(null);
+  const [employeeProfile, setEmployeeProfile] = useState(null);
+  const [employeeProfileReady, setEmployeeProfileReady] = useState(false);
   const [checking, setChecking] = useState(true);
   const [sessionError,setSessionError]=useState('');
   const [notice, setNotice] = useState(null);
@@ -172,15 +227,38 @@ export default function ManagerApp() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
   useEffect(() => {
+    if (admin?.role !== "EMPLOYEE") {
+      setEmployeeProfile(null);
+      setEmployeeProfileReady(false);
+      return undefined;
+    }
+    const controller = new AbortController();
+    setEmployeeProfile(null);
+    setEmployeeProfileReady(false);
+    adminApi(adminEndpoints.myProfile(), { signal: controller.signal })
+      .then(profile => { if (!controller.signal.aborted) setEmployeeProfile(profile); })
+      .catch(() => { if (!controller.signal.aborted) setEmployeeProfile(null); })
+      .finally(() => { if (!controller.signal.aborted) setEmployeeProfileReady(true); });
+    return () => controller.abort();
+  }, [admin?.id, admin?.role]);
+  useEffect(() => {
     if (!admin || path.split('?')[0] === "/manager/login") return;
+    if (admin.role === "EMPLOYEE" && !employeeProfileReady) return;
     const pathname = path.split('?')[0];
-    const allowed = managerRoleSections[admin.role] || new Set();
+    const employeeSections = new Set([
+      ...managerRoleSections.EMPLOYEE,
+      ...(employeeProfile?.permissionProfile === "TEAM_LEAD" ? ["my-team", "my-team-attendance"] : []),
+      ...(employeeProfile?.workArea === "WAREHOUSE" ? ["warehouse-tasks"] : []),
+    ]);
+    const allowed = admin.role === "EMPLOYEE" ? employeeSections : managerRoleSections[admin.role] || new Set();
     if (pathname === "/manager" || !allowed.has(section)) {
-      const landing = managerLandingPaths[admin.role] || "/manager/login";
+      const landing = admin.role === "EMPLOYEE" && employeeProfile?.permissionProfile === "TEAM_LEAD"
+        ? "/manager/my-team"
+        : managerLandingPaths[admin.role] || "/manager/login";
       window.history.replaceState({}, "", landing);
       setPath(landing);
     }
-  }, [admin, path, section]);
+  }, [admin, employeeProfile, employeeProfileReady, path, section]);
   useEffect(() => {
     const expired = () => {
       setAdmin(null);
@@ -200,14 +278,26 @@ export default function ManagerApp() {
         theme={theme}
         onAuthenticated={(session) => {
           setAdmin(session.manager);
-          go((managerLandingPaths[session.manager?.role] || "/manager/login").replace("/manager/", ""));
+          if (session.manager?.role === "EMPLOYEE") {
+            window.history.replaceState({}, "", "/manager");
+            setPath("/manager");
+          } else {
+            go((managerLandingPaths[session.manager?.role] || "/manager/login").replace("/manager/", ""));
+          }
         }}
         onNotice={notify}
         error={notice?.message}
       />
     );
   const allowedSections = managerRoleSections[admin.role] || new Set();
-  if (path.split('?')[0] === "/manager" || !allowedSections.has(section)) {
+  const employeeAllowedSections = new Set([
+    ...managerRoleSections.EMPLOYEE,
+    ...(employeeProfile?.permissionProfile === "TEAM_LEAD" ? ["my-team", "my-team-attendance"] : []),
+    ...(employeeProfile?.workArea === "WAREHOUSE" ? ["warehouse-tasks"] : []),
+  ]);
+  const roleSections = admin.role === "EMPLOYEE" ? employeeAllowedSections : allowedSections;
+  if (admin.role === "EMPLOYEE" && !employeeProfileReady) return <div className="admin-loading" role="status">Đang tải hồ sơ nhân viên...</div>;
+  if (path.split('?')[0] === "/manager" || !roleSections.has(section)) {
     return <div className="admin-loading" role="status">Đang mở chức năng phù hợp với vai trò...</div>;
   }
   const renderNavItem = ([key, label]) => {
@@ -225,7 +315,7 @@ export default function ManagerApp() {
       </button>
     );
   };
-  const roleNavItems = navItems.filter(([key]) => allowedSections.has(key));
+  const roleNavItems = navItems.filter(([key]) => roleSections.has(key));
   const promotionNavItems = roleNavItems.filter(([key]) => key === "vouchers" || key === "promotions");
   return (
     <div className={`admin-shell manager-shell${profileMatch ? ' manager-profile-page' : ''}`} data-theme={theme} onKeyDown={event=>{if(['DIV','SPAN'].includes(event.target.tagName)&&event.target.getAttribute('role')==='button'&&['Enter',' '].includes(event.key)){event.preventDefault();event.target.click();}}}>
@@ -365,7 +455,23 @@ export default function ManagerApp() {
         {section === "users" && (profileMatch ? <CustomerProfile key={profileMatch[1]} customerId={profileMatch[1]} location={path} go={go} /> : <Users notify={notify} location={path} go={go} />)}{" "}
         {section === "products" && <Products notify={notify} readOnly={admin.role === "MANAGER_SALES"} />}{" "}
         {section === "employees" && <ManagerEmployees />}
+        {section === "leave-requests" && <EmployeeLeaveRequests hr />}
+        {section === "attendance" && <EmployeeAttendancePage hr />}
+        {section === "payroll" && <EmployeePayrollPage hr />}
+        {section === "hr-reports" && <EmployeeReportPage />}
+        {section === "my-profile" && <EmployeeSelfProfile />}
+        {section === "my-requests" && <EmployeeLeaveRequests />}
+        {section === "my-attendance" && <EmployeeAttendancePage />}
+        {section === "my-payslips" && <EmployeePayrollPage />}
+        {section === "warehouse-tasks" && <WarehouseEmployeeWorkspace />}
+        {section === "my-team" && <EmployeeAttendancePage team />}
+        {section === "my-team-attendance" && <EmployeeAttendancePage team teamAttendance />}
         {section === "stock-receipts" && <StockReceiving />}
+        {section === "materials" && <WarehouseMaterials />}
+        {section === "recipes" && <WarehouseRecipes />}
+        {section === "production-plans" && <WarehouseProductionPlans />}
+        {section === "warehouse-approvals" && <WarehouseApprovals />}
+        {section === "warehouse-reports" && <WarehouseReports />}
         {section === "orders" && <Orders notify={notify} />}{" "}
         {section === "invoices" && <ManagerInvoices />}
         {section === "feedback" && <Feedback notify={notify} />}{" "}
