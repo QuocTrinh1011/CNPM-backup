@@ -18,5 +18,8 @@ public record AttendanceUpsertRequest(
         @NotNull @DecimalMin("0.00") BigDecimal overtimeRestDayHours,
         @NotNull @DecimalMin("0.00") BigDecimal overtimeHolidayHours,
         @NotNull @DecimalMin("0.00") BigDecimal overtimeNightHours,
+        @DecimalMin("0.00") BigDecimal overtimeNightNormalHours,
+        @DecimalMin("0.00") BigDecimal overtimeNightRestDayHours,
+        @DecimalMin("0.00") BigDecimal overtimeNightHolidayHours,
         @Size(max = 2000) String note
 ) {}

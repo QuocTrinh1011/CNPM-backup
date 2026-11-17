@@ -67,6 +67,28 @@ class InternalAccountRoleIntegrationTest {
     }
 
     @Test
+    void adminAccountGroupsFilterManagersEmployeesAndCustomersSeparately() throws Exception {
+        User admin = user("System admin", "ADMIN", PASSWORD);
+        user("Sales manager", "MANAGER_SALES", PASSWORD);
+        user("Directory employee", "EMPLOYEE", PASSWORD);
+        user("Store customer", "CUSTOMER", PASSWORD);
+        String adminToken = bearer(admin);
+
+        mvc.perform(get("/api/admin/accounts").header("Authorization", adminToken).param("group", "managers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.content[*].role").value(org.hamcrest.Matchers.containsInAnyOrder("ADMIN", "MANAGER_SALES")));
+        mvc.perform(get("/api/admin/accounts").header("Authorization", adminToken).param("group", "employees"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.content[0].role").value("EMPLOYEE"));
+        mvc.perform(get("/api/admin/accounts").header("Authorization", adminToken).param("group", "customers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.content[0].role").value("CUSTOMER"));
+    }
+
+    @Test
     void employeePromotionRequiresNewPassword() throws Exception {
         User employee = accounts.create(new InternalAccountService.Input("Directory employee", email("promote"), "EMPLOYEE", PASSWORD, false));
         User admin = user("Admin", "ADMIN", PASSWORD);

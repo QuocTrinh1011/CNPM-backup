@@ -71,10 +71,11 @@ it('lets HR record attendance with numeric API values', async () => {
   render(<EmployeeAttendancePage hr />);
   const employeePicker = (await screen.findAllByRole('combobox')).find(select => select.required);
   fireEvent.change(employeePicker, { target: { value: '12' } });
+  fireEvent.change(screen.getByLabelText('Tăng ca đêm ngày nghỉ'), { target: { value: '2' } });
   fireEvent.click(screen.getByRole('button', { name: 'Lưu chấm công' }));
 
   await waitFor(() => expect(adminApi).toHaveBeenCalledWith('/api/manager/hr/attendance', expect.objectContaining({
-    method: 'PUT', body: expect.objectContaining({ employeeId: 12, dayFraction: 1, overtimeNormalHours: 0 }),
+    method: 'PUT', body: expect.objectContaining({ employeeId: 12, dayFraction: 1, overtimeNormalHours: 0, overtimeNightRestDayHours: 2 }),
   })));
 });
 
@@ -96,6 +97,34 @@ it('keeps payroll review and publication as separate HR actions', async () => {
   fireEvent.click(await screen.findByRole('button', { name: 'Công bố phiếu lương' }));
 
   await waitFor(() => expect(adminApi).toHaveBeenCalledWith(`/api/manager/hr/payroll-periods/${year}/${month}/publish`, expect.objectContaining({ method: 'POST' })));
+});
+
+it('offers the 2026 payroll rules preset without saving it automatically', async () => {
+  adminApi.mockImplementation(async url => {
+    if (url.includes('/payroll-settings')) throw new Error('Chưa có PAYROLL_RULES');
+    if (url.includes('/payroll-periods?')) return [];
+    if (/\/payroll-periods\/\d+\/\d+$/.test(url)) return null;
+    return [];
+  });
+
+  render(<EmployeePayrollPage hr />);
+  const rulesInput = screen.getByLabelText('Quy tắc PAYROLL_RULES (JSON)');
+  expect(JSON.parse(rulesInput.value).employeeInsuranceRate).toBe(0.105);
+  fireEvent.click(await screen.findByRole('button', { name: 'Dùng cấu hình đề xuất 2026' }));
+
+  const rules = JSON.parse(rulesInput.value);
+  expect(rules.employeeInsuranceRate).toBe(0.105);
+  expect(rules.employerContributionRate).toBe(0.215);
+  expect(rules.personalTaxAllowance).toBe(15500000);
+  expect(rules.dependentTaxAllowance).toBe(6200000);
+  expect(rules.taxBrackets).toEqual([
+    { lowerBound: 0, upperBound: 10000000, rate: 0.05 },
+    { lowerBound: 10000000, upperBound: 30000000, rate: 0.1 },
+    { lowerBound: 30000000, upperBound: 60000000, rate: 0.2 },
+    { lowerBound: 60000000, upperBound: 100000000, rate: 0.3 },
+    { lowerBound: 100000000, upperBound: null, rate: 0.35 },
+  ]);
+  expect(adminApi).not.toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ method: 'PUT' }));
 });
 
 it('renders the workforce report counts and salary basis supplied by HR reports', async () => {

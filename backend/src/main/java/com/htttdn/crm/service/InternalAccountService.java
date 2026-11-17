@@ -16,7 +16,20 @@ public class InternalAccountService extends AdminServiceSupport {
  private final UserRepository users; private final RefreshTokenRepository tokens; private final PasswordEncoder encoder; private final JwtTokenService jwt;
  public InternalAccountService(UserRepository users,RefreshTokenRepository tokens,PasswordEncoder encoder,JwtTokenService jwt){this.users=users;this.tokens=tokens;this.encoder=encoder;this.jwt=jwt;}
  public record Input(@NotBlank @Size(max=150) String fullName,@NotBlank @Email String email,String role,String password,Boolean locked){}
- public Page<User> list(String q,int page,int size){String query=q==null?"":q.toLowerCase(Locale.ROOT);return users.findAll((r,x,c)->c.and(r.get("role").in("ADMIN","MANAGER_HR","MANAGER_WAREHOUSE","MANAGER_SALES","EMPLOYEE"),c.isNull(r.get("deletedAt")),c.or(c.like(c.lower(r.get("fullName")),"%"+query+"%"),c.like(c.lower(r.get("email")),"%"+query+"%"))),PageRequest.of(Math.max(0,page),Math.max(1,Math.min(100,size)),Sort.by("id").descending()));}
+ public Page<User> list(String q,int page,int size){return list(q,"all",page,size);}
+ public Page<User> list(String q,String group,int page,int size){
+  Set<String> roles=switch(group==null?"all":group.trim().toLowerCase(Locale.ROOT)){
+   case "managers"->Set.of("ADMIN","MANAGER","MANAGER_HR","MANAGER_WAREHOUSE","MANAGER_SALES");
+   case "employees"->Set.of("EMPLOYEE");
+   case "customers"->Set.of("CUSTOMER");
+   case "all"->Set.of("ADMIN","MANAGER","MANAGER_HR","MANAGER_WAREHOUSE","MANAGER_SALES","EMPLOYEE");
+   default->throw VoucherService.bad("INVALID_ACCOUNT_GROUP","Nhóm tài khoản không hợp lệ.");
+  };
+  String query=q==null?"":q.toLowerCase(Locale.ROOT);
+  return users.findAll((r,x,c)->c.and(r.get("role").in(roles),c.isNull(r.get("deletedAt")),
+    c.or(c.like(c.lower(r.get("fullName")),"%"+query+"%"),c.like(c.lower(r.get("email")),"%"+query+"%"),c.like(r.get("phone"),"%"+query+"%"))),
+    PageRequest.of(Math.max(0,page),Math.max(1,Math.min(100,size)),Sort.by("id").descending()));
+ }
  @Transactional public User create(Input in){User u=new User();copy(u,in,true);users.save(u);audit("CREATE","ACCOUNT",u.getId(),Map.of(),u);return u;}
  @Transactional public User update(Long id,Input in,String authorization){
   var all=users.lockInternalAccounts();User u=all.stream().filter(a->a.getId().equals(id)&&a.getDeletedAt()==null).findFirst().orElseThrow();

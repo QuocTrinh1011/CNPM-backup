@@ -19,8 +19,15 @@ const ROLE_CONFIG = {
   MANAGER_WAREHOUSE: { label: 'Quản lý Kho', bg: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' },
   MANAGER_HR: { label: 'Quản lý Nhân sự', bg: 'rgba(16, 185, 129, 0.15)', color: '#10b981' },
   EMPLOYEE: { label: 'Nhân viên', bg: 'rgba(148, 163, 184, 0.15)', color: '#64748b' },
+  CUSTOMER: { label: 'Khách hàng', bg: 'rgba(20, 184, 166, 0.15)', color: '#0f9f91' },
   MANAGER: { label: 'Quản lý cửa hàng', bg: 'rgba(14, 165, 233, 0.15)', color: '#0ea5e9' },
 };
+
+const ACCOUNT_GROUPS = [
+  { id: 'managers', label: 'Tài khoản quản lý', title: 'Tài khoản quản lý', description: 'Admin hệ thống và các vai trò Manager.' },
+  { id: 'employees', label: 'Tài khoản nhân viên', title: 'Tài khoản nhân viên', description: 'Danh sách nhân viên nội bộ.' },
+  { id: 'customers', label: 'Tài khoản khách hàng', title: 'Tài khoản khách hàng', description: 'Danh sách tài khoản khách hàng; chỉ xem trong Admin.' },
+];
 
 export default function InternalDirectory({ kind, manager = false }) {
   const api = manager ? managerApi : adminApi;
@@ -32,6 +39,7 @@ export default function InternalDirectory({ kind, manager = false }) {
     desc: 'false',
   });
   const [page, setPage] = useState(0);
+  const [accountGroup, setAccountGroup] = useState('managers');
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [reload, setReload] = useState(0);
@@ -44,6 +52,7 @@ export default function InternalDirectory({ kind, manager = false }) {
     setData(null);
     setError('');
     const params = new URLSearchParams({ page, size: 15 });
+    if (kind === 'accounts') params.set('group', accountGroup);
     Object.entries(filters).forEach(([k, v]) => {
       if (v !== '') params.set(k, v);
     });
@@ -57,7 +66,7 @@ export default function InternalDirectory({ kind, manager = false }) {
     return () => {
       alive = false;
     };
-  }, [base, api, page, filters, reload]);
+  }, [base, api, page, filters, reload, kind, accountGroup]);
 
   const change = (k, v) => {
     setPage(0);
@@ -100,6 +109,7 @@ export default function InternalDirectory({ kind, manager = false }) {
   };
 
   const editable = kind === 'accounts' || (manager && kind === 'suppliers');
+  const canEditCurrentGroup = editable && !(kind === 'accounts' && accountGroup === 'customers');
   const labels =
     kind === 'accounts'
       ? { fullName: 'Họ tên', email: 'Email', password: 'Mật khẩu mới' }
@@ -119,6 +129,9 @@ export default function InternalDirectory({ kind, manager = false }) {
   };
 
   const currentMeta = titles[kind] || { title: kind, desc: '', icon: Package };
+  const accountMeta = ACCOUNT_GROUPS.find((group) => group.id === accountGroup) || ACCOUNT_GROUPS[0];
+  const heading = kind === 'accounts' ? accountMeta.title : currentMeta.title;
+  const description = kind === 'accounts' ? accountMeta.description : currentMeta.desc;
   const KindIcon = currentMeta.icon;
 
   return (
@@ -131,16 +144,16 @@ export default function InternalDirectory({ kind, manager = false }) {
             </span>
             <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '700' }}>
               {kind === 'accounts'
-                ? 'Tài khoản nội bộ'
+                ? heading
                 : kind === 'products'
                 ? 'Tra cứu sản phẩm'
                 : 'Nhà cung cấp'}
             </h2>
           </div>
-          <p style={{ margin: '6px 0 0', fontSize: '13px', color: 'var(--admin-muted)' }}>{currentMeta.desc}</p>
+          <p style={{ margin: '6px 0 0', fontSize: '13px', color: 'var(--admin-muted)' }}>{description}</p>
         </div>
 
-        {editable && (
+        {canEditCurrentGroup && (
           <button
             type="button"
             className="admin-primary-btn"
@@ -148,7 +161,7 @@ export default function InternalDirectory({ kind, manager = false }) {
               setPromotingEmployee(false);
               setForm(
                 kind === 'accounts'
-                  ? { fullName: '', email: '', password: '', role: 'MANAGER_SALES', locked: false }
+                  ? { fullName: '', email: '', password: '', role: accountGroup === 'employees' ? 'EMPLOYEE' : 'MANAGER_SALES', locked: false }
                   : { code: '', name: '', email: '', phone: '', address: '', notes: '', active: true }
               );
             }}
@@ -157,6 +170,27 @@ export default function InternalDirectory({ kind, manager = false }) {
           </button>
         )}
       </div>
+
+      {kind === 'accounts' && (
+        <div className="admin-account-tabs" role="tablist" aria-label="Nhóm tài khoản">
+          {ACCOUNT_GROUPS.map((group) => (
+            <button
+              key={group.id}
+              type="button"
+              role="tab"
+              aria-selected={accountGroup === group.id}
+              className={accountGroup === group.id ? 'admin-account-tab is-active' : 'admin-account-tab'}
+              onClick={() => {
+                setAccountGroup(group.id);
+                setPage(0);
+                setForm(null);
+              }}
+            >
+              {group.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="internal-filters">
@@ -329,7 +363,7 @@ export default function InternalDirectory({ kind, manager = false }) {
             <table className="admin-table">
               <thead>
                 <tr>
-                  {['Mã', 'Tên', 'Thông tin', 'Trạng thái', 'Thao tác'].map((x) => (
+                  {['Mã', 'Tên', 'Thông tin', 'Trạng thái', ...(canEditCurrentGroup ? ['Thao tác'] : [])].map((x) => (
                     <th key={x}>{x}</th>
                   ))}
                 </tr>
@@ -382,8 +416,8 @@ export default function InternalDirectory({ kind, manager = false }) {
                         </span>
                       )}
                     </td>
-                    <td>
-                      {editable && (
+                    {canEditCurrentGroup && <td>
+                      {!(kind === 'accounts' && row.role === 'ADMIN') && <>
                         <button
                           type="button"
                           disabled={busy}
@@ -395,7 +429,6 @@ export default function InternalDirectory({ kind, manager = false }) {
                         >
                           <Edit2 size={13} /> Sửa
                         </button>
-                      )}
                       {kind === 'accounts' && (
                         <button
                           type="button"
@@ -407,7 +440,8 @@ export default function InternalDirectory({ kind, manager = false }) {
                           <Trash2 size={13} /> Xóa mềm
                         </button>
                       )}
-                    </td>
+                      </>}
+                    </td>}
                   </tr>
                 ))}
               </tbody>

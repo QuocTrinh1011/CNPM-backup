@@ -56,7 +56,7 @@ class EmployeePayrollIntegrationTest {
         saveRules(hrToken, "2026-06-01", "0.20");
 
         mvc.perform(put("/api/manager/hr/attendance").header("Authorization", hrToken).contentType("application/json")
-                        .content(attendanceJson(employeeId, "2026-05-04", "WORKED", "1", "1", "2")))
+                        .content(attendanceJson(employeeId, "2026-05-04", "WORKED", "1", "1", "2", "1", "0", "0")))
                 .andExpect(status().isOk());
         mvc.perform(put("/api/manager/hr/attendance").header("Authorization", hrToken).contentType("application/json")
                         .content(attendanceJson(employeeId, "2026-05-05", "UNPAID_LEAVE", "1", "0", "0")))
@@ -84,7 +84,9 @@ class EmployeePayrollIntegrationTest {
                 .andExpect(jsonPath("$.status").value("DRAFT"))
                 .andExpect(jsonPath("$.payslips.length()").value(2))
                 .andExpect(jsonPath("$.payslips[?(@.employeeId == " + employeeId + ")].paidEquivalentDays").value(2))
-                .andExpect(jsonPath("$.payslips[?(@.employeeId == " + employeeId + ")].grossEarnings").value(237500.0))
+                .andExpect(jsonPath("$.payslips[?(@.employeeId == " + employeeId + ")].grossEarnings").value(263750.0))
+                .andExpect(jsonPath("$.payslips[?(@.employeeId == " + employeeId + ")].sourceSnapshot.input.overtimeNightNormalHours").value("1"))
+                .andExpect(jsonPath("$.payslips[?(@.employeeId == " + employeeId + ")].sourceSnapshot.input.overtimeNightNormalHoursAfterDaytimeOvertime").value("1"))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(get("/api/manager/me/payslips/2026/5").header("Authorization", employeeToken))
@@ -93,8 +95,8 @@ class EmployeePayrollIntegrationTest {
                         .contentType("application/json")
                         .content("{\"employeeId\":" + employeeId + ",\"lineType\":\"EARNING\",\"code\":\"BONUS\",\"description\":\"Thưởng hiệu suất\",\"amount\":10000}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.grossEarnings").value(247500.0))
-                .andExpect(jsonPath("$.takeHomePay").value(147500.0));
+                .andExpect(jsonPath("$.grossEarnings").value(273750.0))
+                .andExpect(jsonPath("$.takeHomePay").value(173750.0));
         mvc.perform(post("/api/manager/hr/payroll-periods/2026/5/review").header("Authorization", hrToken))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REVIEWED"));
         mvc.perform(post("/api/manager/hr/payroll-periods/2026/5/publish").header("Authorization", hrToken))
@@ -112,7 +114,7 @@ class EmployeePayrollIntegrationTest {
                 .andExpect(jsonPath("$.employeeId").value(employeeId))
                 .andExpect(jsonPath("$.employeeName").value("Payroll Test"))
                 .andExpect(jsonPath("$.paidEquivalentDays").value(2))
-                .andExpect(jsonPath("$.takeHomePay").value(147500.0))
+                .andExpect(jsonPath("$.takeHomePay").value(173750.0))
                 .andExpect(jsonPath("$.sourceSnapshot.approvedLeave.length()").value(1));
         mvc.perform(get("/api/manager/me/payslips?year=2026").header("Authorization", employeeToken))
                 .andExpect(status().isOk())
@@ -135,11 +137,11 @@ class EmployeePayrollIntegrationTest {
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.revision").value(2))
-                .andExpect(jsonPath("$.takeHomePay").value(157500.0));
+                .andExpect(jsonPath("$.takeHomePay").value(183750.0));
         mvc.perform(get("/api/manager/me/payslips/2026/5").header("Authorization", employeeToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.revision").value(2))
-                .andExpect(jsonPath("$.takeHomePay").value(157500.0));
+                .andExpect(jsonPath("$.takeHomePay").value(183750.0));
 
         mvc.perform(get("/api/manager/me/payslips/2026/5").header("Authorization", hrToken))
                 .andExpect(status().isForbidden());
@@ -218,7 +220,7 @@ class EmployeePayrollIntegrationTest {
     private void saveRules(String hrToken, String effectiveFrom, String employeeRate) throws Exception {
         String rules = """
                 {"hoursPerWorkday":8,"normalOvertimeMultiplier":1.5,"restDayOvertimeMultiplier":2,
-                 "holidayOvertimeMultiplier":3,"nightWorkPremiumMultiplier":0.3,"employeeInsuranceRate":%s,
+                 "holidayOvertimeMultiplier":3,"nightWorkPremiumMultiplier":0.3,"nightOvertimeAdditionalMultiplier":0.2,"employeeInsuranceRate":%s,
                  "employerContributionRate":0.2,"personalTaxAllowance":0,"dependentTaxAllowance":0,
                  "workingWeekdays":[1,2,3,4,5],"publicHolidays":[],"taxBrackets":[{"lowerBound":0,"upperBound":null,"rate":0}]}
                 """.formatted(employeeRate);
@@ -266,11 +268,19 @@ class EmployeePayrollIntegrationTest {
 
     private static String attendanceJson(long employeeId, String date, String status, String dayFraction,
                                          String paidDays, String overtimeHours) {
+        return attendanceJson(employeeId, date, status, dayFraction, paidDays, overtimeHours, "0", "0", "0");
+    }
+
+    private static String attendanceJson(long employeeId, String date, String status, String dayFraction,
+                                         String paidDays, String overtimeHours, String nightNormal,
+                                         String nightRestDay, String nightHoliday) {
         return """
                 {"employeeId":%d,"attendanceDate":"%s","attendanceStatus":"%s","dayFraction":%s,
                  "paidEquivalentDays":%s,"overtimeNormalHours":%s,"overtimeRestDayHours":0,
-                 "overtimeHolidayHours":0,"overtimeNightHours":0}
-                """.formatted(employeeId, date, status, dayFraction, paidDays, overtimeHours);
+                 "overtimeHolidayHours":0,"overtimeNightHours":0,"overtimeNightNormalHours":%s,
+                 "overtimeNightRestDayHours":%s,"overtimeNightHolidayHours":%s}
+                """.formatted(employeeId, date, status, dayFraction, paidDays, overtimeHours,
+                nightNormal, nightRestDay, nightHoliday);
     }
 
     private static String bearer(String token) { return "Bearer " + token; }

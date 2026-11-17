@@ -53,6 +53,15 @@ public class EmployeeAttendance {
     @Column(name = "overtime_night_hours", nullable = false, precision = 7, scale = 2)
     private BigDecimal overtimeNightHours = BigDecimal.ZERO;
 
+    @Column(name = "overtime_night_normal_hours", nullable = false, precision = 7, scale = 2)
+    private BigDecimal overtimeNightNormalHours = BigDecimal.ZERO;
+
+    @Column(name = "overtime_night_rest_day_hours", nullable = false, precision = 7, scale = 2)
+    private BigDecimal overtimeNightRestDayHours = BigDecimal.ZERO;
+
+    @Column(name = "overtime_night_holiday_hours", nullable = false, precision = 7, scale = 2)
+    private BigDecimal overtimeNightHolidayHours = BigDecimal.ZERO;
+
     @Column(length = 2000)
     private String note;
 
@@ -95,6 +104,12 @@ public class EmployeeAttendance {
     public void setOvertimeHolidayHours(BigDecimal overtimeHolidayHours) { this.overtimeHolidayHours = overtimeHolidayHours; }
     public BigDecimal getOvertimeNightHours() { return overtimeNightHours; }
     public void setOvertimeNightHours(BigDecimal overtimeNightHours) { this.overtimeNightHours = overtimeNightHours; }
+    public BigDecimal getOvertimeNightNormalHours() { return overtimeNightNormalHours; }
+    public void setOvertimeNightNormalHours(BigDecimal overtimeNightNormalHours) { this.overtimeNightNormalHours = overtimeNightNormalHours; }
+    public BigDecimal getOvertimeNightRestDayHours() { return overtimeNightRestDayHours; }
+    public void setOvertimeNightRestDayHours(BigDecimal overtimeNightRestDayHours) { this.overtimeNightRestDayHours = overtimeNightRestDayHours; }
+    public BigDecimal getOvertimeNightHolidayHours() { return overtimeNightHolidayHours; }
+    public void setOvertimeNightHolidayHours(BigDecimal overtimeNightHolidayHours) { this.overtimeNightHolidayHours = overtimeNightHolidayHours; }
     public String getNote() { return note; }
     public void setNote(String note) { this.note = note; }
     public User getRecordedBy() { return recordedBy; }

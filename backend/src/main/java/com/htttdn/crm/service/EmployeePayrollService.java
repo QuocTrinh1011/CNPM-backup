@@ -261,6 +261,7 @@ public class EmployeePayrollService {
                                                   int dependents, ConfiguredRules rules, List<EmployeeAttendance> rows,
                                                   List<EmployeeLeaveRequest> approvedLeaves) {
         BigDecimal paid = ZERO, normal = ZERO, rest = ZERO, holiday = ZERO, night = ZERO;
+        BigDecimal nightNormal = ZERO, nightNormalAfterDaytimeOvertime = ZERO, nightRest = ZERO, nightHoliday = ZERO;
         Set<LocalDate> recordedDates = new HashSet<>();
         for (EmployeeAttendance row : rows) {
             if (!inEmployment(employee, row.getAttendanceDate())) continue;
@@ -271,13 +272,21 @@ public class EmployeePayrollService {
             }
             if (!"WORKED".equals(attendanceStatus)
                     && (row.getOvertimeNormalHours().signum() > 0 || row.getOvertimeRestDayHours().signum() > 0
-                    || row.getOvertimeHolidayHours().signum() > 0 || row.getOvertimeNightHours().signum() > 0)) {
+                    || row.getOvertimeHolidayHours().signum() > 0 || row.getOvertimeNightHours().signum() > 0
+                    || row.getOvertimeNightNormalHours().signum() > 0 || row.getOvertimeNightRestDayHours().signum() > 0
+                    || row.getOvertimeNightHolidayHours().signum() > 0)) {
                 throw bad("OVERTIME_REQUIRES_WORKED_ATTENDANCE", "Giờ tăng ca chỉ hợp lệ trên ngày có trạng thái WORKED.");
             }
             recordedDates.add(row.getAttendanceDate());
             paid = paid.add(row.getPaidEquivalentDays()); normal = normal.add(row.getOvertimeNormalHours());
             rest = rest.add(row.getOvertimeRestDayHours()); holiday = holiday.add(row.getOvertimeHolidayHours());
             night = night.add(row.getOvertimeNightHours());
+            nightNormal = nightNormal.add(row.getOvertimeNightNormalHours());
+            nightRest = nightRest.add(row.getOvertimeNightRestDayHours());
+            nightHoliday = nightHoliday.add(row.getOvertimeNightHolidayHours());
+            if (row.getOvertimeNormalHours().signum() > 0) {
+                nightNormalAfterDaytimeOvertime = nightNormalAfterDaytimeOvertime.add(row.getOvertimeNightNormalHours());
+            }
         }
         Map<LocalDate, String> approved = new HashMap<>();
         for (EmployeeLeaveRequest request : approvedLeaves) {
@@ -294,7 +303,8 @@ public class EmployeePayrollService {
         }
         if (paid.compareTo(standardDays) > 0) throw bad("PAYROLL_DAYS_EXCEED_STANDARD", "Ngày công tính lương vượt số ngày công chuẩn của " + employee.getEmployeeCode() + ".");
         return new PayrollCalculator.Input(employee.getMonthlyBaseSalary(), employee.getInsuranceSalaryBase(), standardDays,
-                paid, normal, rest, holiday, night, dependents, List.of());
+                paid, normal, rest, holiday, night, nightNormal, nightNormalAfterDaytimeOvertime,
+                nightRest, nightHoliday, dependents, List.of());
     }
 
     private static boolean inEmployment(EmployeeProfile employee, LocalDate date) {
@@ -308,10 +318,14 @@ public class EmployeePayrollService {
         snapshot.put("hireDate", employee.getHireDate()); snapshot.put("resignationDate", employee.getResignationDate());
         snapshot.put("input", inputSnapshot(input)); snapshot.put("workingWeekdays", configured.workingWeekdays());
         snapshot.put("publicHolidays", configured.publicHolidays()); snapshot.put("rounding", "HALF_UP_2_DECIMALS");
-        snapshot.put("attendance", attendanceRows.stream().map(row -> Map.of("date", row.getAttendanceDate(), "status", row.getAttendanceStatus(),
-                "dayFraction", row.getDayFraction(), "paidEquivalentDays", row.getPaidEquivalentDays(),
-                "overtimeNormalHours", row.getOvertimeNormalHours(), "overtimeRestDayHours", row.getOvertimeRestDayHours(),
-                "overtimeHolidayHours", row.getOvertimeHolidayHours(), "overtimeNightHours", row.getOvertimeNightHours())).toList());
+        snapshot.put("attendance", attendanceRows.stream().map(row -> Map.ofEntries(
+                Map.entry("date", row.getAttendanceDate()), Map.entry("status", row.getAttendanceStatus()),
+                Map.entry("dayFraction", row.getDayFraction()), Map.entry("paidEquivalentDays", row.getPaidEquivalentDays()),
+                Map.entry("overtimeNormalHours", row.getOvertimeNormalHours()), Map.entry("overtimeRestDayHours", row.getOvertimeRestDayHours()),
+                Map.entry("overtimeHolidayHours", row.getOvertimeHolidayHours()), Map.entry("overtimeNightHours", row.getOvertimeNightHours()),
+                Map.entry("overtimeNightNormalHours", row.getOvertimeNightNormalHours()),
+                Map.entry("overtimeNightRestDayHours", row.getOvertimeNightRestDayHours()),
+                Map.entry("overtimeNightHolidayHours", row.getOvertimeNightHolidayHours()))).toList());
         snapshot.put("approvedLeave", approvedLeaves.stream().map(row -> Map.of("type", row.getRequestType(), "startDate", row.getStartDate(), "endDate", row.getEndDate(), "status", row.getStatus())).toList());
         return mapper.valueToTree(snapshot);
     }
@@ -324,6 +338,10 @@ public class EmployeePayrollService {
         data.put("paidEquivalentDays", input.paidEquivalentDays().toPlainString());
         data.put("overtimeNormalHours", input.overtimeNormalHours().toPlainString()); data.put("overtimeRestDayHours", input.overtimeRestDayHours().toPlainString());
         data.put("overtimeHolidayHours", input.overtimeHolidayHours().toPlainString()); data.put("overtimeNightHours", input.overtimeNightHours().toPlainString());
+        data.put("overtimeNightNormalHours", input.overtimeNightNormalHours().toPlainString());
+        data.put("overtimeNightNormalHoursAfterDaytimeOvertime", input.overtimeNightNormalHoursAfterDaytimeOvertime().toPlainString());
+        data.put("overtimeNightRestDayHours", input.overtimeNightRestDayHours().toPlainString());
+        data.put("overtimeNightHolidayHours", input.overtimeNightHolidayHours().toPlainString());
         data.put("dependentCount", input.dependentCount()); data.put("adjustments", input.adjustments().stream().map(adjustment -> Map.of(
                 "lineType", adjustment.lineType(), "code", adjustment.code(), "description", adjustment.description(), "amount", adjustment.amount().toPlainString())).toList());
         return mapper.valueToTree(data);
@@ -336,6 +354,8 @@ public class EmployeePayrollService {
         return new PayrollCalculator.Input(decimal(node, "contractedMonthlySalary"), decimal(node, "insuranceSalaryBase"),
                 decimal(node, "standardPaidWorkdays"), decimal(node, "paidEquivalentDays"), decimal(node, "overtimeNormalHours"),
                 decimal(node, "overtimeRestDayHours"), decimal(node, "overtimeHolidayHours"), decimal(node, "overtimeNightHours"),
+                decimalOrZero(node, "overtimeNightNormalHours"), decimalOrZero(node, "overtimeNightNormalHoursAfterDaytimeOvertime"),
+                decimalOrZero(node, "overtimeNightRestDayHours"), decimalOrZero(node, "overtimeNightHolidayHours"),
                 node.path("dependentCount").asInt(0), adjustments);
     }
 
@@ -343,7 +363,8 @@ public class EmployeePayrollService {
         List<PayrollCalculator.Adjustment> all = new ArrayList<>(input.adjustments()); all.add(adjustment);
         return new PayrollCalculator.Input(input.contractedMonthlySalary(), input.insuranceSalaryBase(), input.standardPaidWorkdays(),
                 input.paidEquivalentDays(), input.overtimeNormalHours(), input.overtimeRestDayHours(), input.overtimeHolidayHours(),
-                input.overtimeNightHours(), input.dependentCount(), all);
+                input.overtimeNightHours(), input.overtimeNightNormalHours(), input.overtimeNightNormalHoursAfterDaytimeOvertime(),
+                input.overtimeNightRestDayHours(), input.overtimeNightHolidayHours(), input.dependentCount(), all);
     }
 
     private ConfiguredRules parseRules(JsonNode node) {
@@ -351,6 +372,7 @@ public class EmployeePayrollService {
             BigDecimal hours = decimal(node, "hoursPerWorkday");
             BigDecimal normal = decimal(node, "normalOvertimeMultiplier"); BigDecimal rest = decimal(node, "restDayOvertimeMultiplier");
             BigDecimal holiday = decimal(node, "holidayOvertimeMultiplier"); BigDecimal night = decimal(node, "nightWorkPremiumMultiplier");
+            BigDecimal nightAdditional = decimalOrDefault(node, "nightOvertimeAdditionalMultiplier", new BigDecimal("0.2"));
             BigDecimal employeeInsurance = decimal(node, "employeeInsuranceRate"); BigDecimal employerRate = decimal(node, "employerContributionRate");
             BigDecimal personalAllowance = decimal(node, "personalTaxAllowance"); BigDecimal dependentAllowance = decimal(node, "dependentTaxAllowance");
             List<PayrollCalculator.TaxBracket> brackets = new ArrayList<>();
@@ -367,7 +389,7 @@ public class EmployeePayrollService {
             JsonNode holidayNodes = node.path("publicHolidays");
             if (!holidayNodes.isArray()) throw new IllegalArgumentException("publicHolidays must be an array");
             holidayNodes.forEach(value -> holidays.add(LocalDate.parse(value.asText())));
-            PayrollCalculator.Rules calculation = new PayrollCalculator.Rules(hours, normal, rest, holiday, night,
+            PayrollCalculator.Rules calculation = new PayrollCalculator.Rules(hours, normal, rest, holiday, night, nightAdditional,
                     employeeInsurance, employerRate, personalAllowance, dependentAllowance, brackets);
             calculator.calculate(new PayrollCalculator.Input(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.ZERO,
                     ZERO, ZERO, ZERO, ZERO, 0, List.of()), calculation);
@@ -383,6 +405,16 @@ public class EmployeePayrollService {
         if (value == null || !(value.isNumber() || value.isTextual())) throw new IllegalArgumentException(field + " must be numeric");
         try { return value.isNumber() ? value.decimalValue() : new BigDecimal(value.asText()); }
         catch (NumberFormatException invalid) { throw new IllegalArgumentException(field + " must be numeric"); }
+    }
+
+    private static BigDecimal decimalOrZero(JsonNode node, String field) {
+        JsonNode value = node == null ? null : node.get(field);
+        return value == null || value.isNull() ? ZERO : decimal(node, field);
+    }
+
+    private static BigDecimal decimalOrDefault(JsonNode node, String field, BigDecimal fallback) {
+        JsonNode value = node == null ? null : node.get(field);
+        return value == null || value.isNull() ? fallback : decimal(node, field);
     }
 
     private PayrollSetting effective(LocalDate date) {

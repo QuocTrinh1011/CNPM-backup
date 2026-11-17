@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import React from 'react';
-import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
+import {render,screen,fireEvent,cleanup,waitFor,within} from '@testing-library/react';
 import {it,expect,vi,afterEach,beforeEach} from 'vitest';
 import SystemAdminApp from './SystemAdminApp';
 import {adminApi,adminRefreshSession} from '../../api/api';
@@ -18,20 +18,19 @@ it.each([
  adminApi.mockResolvedValue({accounts:2,products:3});
  render(<SystemAdminApp/>);
  expect((await screen.findByRole('link',{name:'Cổng quản lý (Manager)'})).getAttribute('href')).toBe(managerUrl);
- expect(screen.getByRole('link',{name:/Chuyển sang Manager Portal/}).getAttribute('href')).toBe(managerUrl);
+ expect(screen.getByRole('link',{name:/Cổng quản lý Manager/}).getAttribute('href')).toBe(managerUrl);
  expect(screen.getByRole('link',{name:'Xem trang bán hàng'}).getAttribute('href')).toBe(storefrontUrl);
 });
 it.each([
- ['Cấp tài khoản Admin & Manager', '/admin/accounts'],
- ['Xem danh mục, giá bán và tồn kho', '/admin/products'],
+ ['Tài khoản nội bộ', '/admin/accounts'],
+ ['Danh mục sản phẩm', '/admin/products'],
 ])('dashboard shortcut opens its own function: %s', async (name, path) => {
  window.history.replaceState({}, '', '/admin');
  adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
  adminApi.mockImplementation(async url=>url.includes('overview')?{}:{content:[],totalPages:0});
  render(<SystemAdminApp/>);
- const link=await screen.findByRole('link',{name:new RegExp(name)});
- expect(link.getAttribute('href')).toBe(path);
- fireEvent.click(link);
+ const shortcut=await screen.findByRole('button',{name:new RegExp(name)});
+ fireEvent.click(shortcut);
  await waitFor(()=>expect(window.location.pathname).toBe(path));
  await screen.findByText('Chưa có dữ liệu phù hợp.');
  expect(adminApi.mock.calls.some(([url])=>url.startsWith('/api'+path))).toBe(true);
@@ -61,6 +60,37 @@ it('admin has only system navigation and accounts use admin APIs',async()=>{
  expect(screen.queryByRole('link',{name:'Khách hàng'})).toBeNull();expect(screen.queryByRole('link',{name:'Đơn hàng'})).toBeNull();
  expect(adminApi.mock.calls.every(([url])=>url.startsWith('/api/admin/'))).toBe(true);
  fireEvent.click(screen.getByText('Thêm mới'));expect(screen.getByLabelText('Vai trò').value).toBe('MANAGER_SALES');
+});
+it('splits admin accounts into manager, employee, and customer tabs',async()=>{
+ window.history.replaceState({},'', '/admin/accounts');adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
+ adminApi.mockImplementation(async url=>{
+  if(url.includes('/overview'))return {};
+  const group=new URL(url,'http://localhost').searchParams.get('group');
+  const rows={
+   managers:[{id:1,fullName:'System admin',email:'admin@example.test',role:'ADMIN',locked:false},{id:2,fullName:'Sales manager',email:'sales@example.test',role:'MANAGER_SALES',locked:false}],
+   employees:[{id:3,fullName:'Shop employee',email:'employee@example.test',role:'EMPLOYEE',locked:false}],
+   customers:[{id:4,fullName:'Store customer',email:'customer@example.test',role:'CUSTOMER',locked:false}],
+  }[group]||[];
+  return {content:rows,totalPages:1,totalElements:rows.length};
+ });
+ render(<SystemAdminApp/>);
+ expect(await screen.findByText('System admin')).toBeTruthy();
+ expect(screen.getByText('Sales manager')).toBeTruthy();
+ const adminRow=screen.getByText('System admin').closest('tr');
+ const managerRow=screen.getByText('Sales manager').closest('tr');
+ expect(within(adminRow).queryByRole('button',{name:'Sửa'})).toBeNull();
+ expect(within(adminRow).queryByRole('button',{name:'Xóa mềm'})).toBeNull();
+ expect(within(managerRow).getByRole('button',{name:'Sửa'})).toBeTruthy();
+ expect(within(managerRow).getByRole('button',{name:'Xóa mềm'})).toBeTruthy();
+ fireEvent.click(screen.getByRole('tab',{name:'Tài khoản nhân viên'}));
+ expect(await screen.findByText('Shop employee')).toBeTruthy();
+ expect(screen.queryByText('Sales manager')).toBeNull();
+ expect(adminApi.mock.calls.some(([url])=>new URL(url,'http://localhost').searchParams.get('group')==='employees')).toBe(true);
+ fireEvent.click(screen.getByRole('tab',{name:'Tài khoản khách hàng'}));
+ expect(await screen.findByText('Store customer')).toBeTruthy();
+ expect(screen.queryByRole('button',{name:'Thêm mới'})).toBeNull();
+ expect(screen.queryByRole('button',{name:/Sửa/})).toBeNull();
+ expect(adminApi.mock.calls.some(([url])=>new URL(url,'http://localhost').searchParams.get('group')==='customers')).toBe(true);
 });
 it('offers the split internal roles and creates Employee without a password',async()=>{
  window.history.replaceState({},'', '/admin/accounts');adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});

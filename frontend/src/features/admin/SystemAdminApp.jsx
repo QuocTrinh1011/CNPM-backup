@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { adminApi, adminRefreshSession, adminSignIn, adminSignOut } from '../../api/api';
+import { adminRefreshSession, adminSignIn, adminSignOut } from '../../api/api';
 import InternalDirectory from './InternalDirectory';
 import AuditLogs from './AuditLogs';
 import AdminDashboard from './AdminDashboard';
@@ -59,19 +59,12 @@ export default function SystemAdminApp() {
     }
   );
   const [form, setForm] = useState({ email: 'admin@shop.com', password: '' });
-  const [overview, setOverview] = useState(null);
   const [retry, setRetry] = useState(0);
 
   const go = (url, replace = false) => {
     window.history[replace ? 'replaceState' : 'pushState']({}, '', url);
     setPath(url);
   };
-  const followInternalLink = (event) => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    go(event.currentTarget.getAttribute('href'));
-  };
-
   useEffect(() => {
     const onPop = () => setPath(window.location.pathname);
     window.addEventListener('popstate', onPop);
@@ -122,21 +115,6 @@ export default function SystemAdminApp() {
       // Keep the sidebar usable in memory when persistence is unavailable.
     }
   }, [sidebarCollapsed]);
-
-  useEffect(() => {
-    if (!session) return;
-    let alive = true;
-    adminApi('/api/admin/overview')
-      .then((d) => {
-        if (alive) setOverview(d);
-      })
-      .catch((e) => {
-        if (alive) setError(e.message);
-      });
-    return () => {
-      alive = false;
-    };
-  }, [session, retry]);
 
   async function login(e) {
     e.preventDefault();
@@ -315,12 +293,9 @@ export default function SystemAdminApp() {
 
             {section === 'dashboard' ? (
               <AdminDashboard
-                overview={overview}
                 session={session}
                 go={go}
                 managerUrl={managerUrl}
-                followInternalLink={followInternalLink}
-                setRetry={setRetry}
               />
             ) : (
               section === 'audit-logs' ? <AuditLogs /> : menu[section] && <InternalDirectory key={section} kind={section} />
