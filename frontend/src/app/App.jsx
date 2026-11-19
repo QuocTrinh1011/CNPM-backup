@@ -1,5 +1,5 @@
 import { readOrdersRoute, ordersHref } from "../features/customer/orders/customer-orders-route.js";
-import { emptyCart, readGuestCart, saveGuestCart, clearGuestCart } from "../features/storefront/cart/guest-cart-storage.js";
+import { readGuestCart, saveGuestCart, clearGuestCart } from "../features/storefront/cart/guest-cart-storage.js";
 import '../shared/styles/order-display.css';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useStorefrontDialogs } from '../shared/hooks/storefront-hooks';
