@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowUpRight, Check, MapPin, Package, ShieldCheck, CreditCar
 import { api } from "../../api/api";
 import VoucherField, { useCheckoutVoucher } from "./VoucherField";
 import { useAddresses, AddressPicker, AddressSummary, preferredAddress, addressValid, deliveryText } from "../../shared/address/AddressBook";
-import PaymentQr from "./PaymentQr";
+import PaymentQr from "../../shared/payment/PaymentQr";
 import { getShippingFee } from "./shipping-policy";
 import CheckoutState from "./CheckoutState";
 import "../../shared/address/checkout-page.css";

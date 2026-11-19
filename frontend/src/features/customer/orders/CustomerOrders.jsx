@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ChevronRight, PackageOpen, Search, Star, X } from "lucide-react";
-import { api, endpoints } from "../api/api";
-import OrderReviews from "../features/customer/OrderReviews";
-import PaymentQr from "../features/storefront/PaymentQr";
-import { showReturn, returnLabel, displayOrderLabel, deliveryLabel } from "../shared/utils/order-display";
-import { date, imageSrc, protectImage, money } from "../shared/utils/storefront-display";
-import { DEFAULT_ORDERS_ROUTE } from "./customer-orders-route";
+import { api, endpoints } from "../../../api/api";
+import OrderReviews from "../OrderReviews";
+import PaymentQr from "../../../shared/payment/PaymentQr";
+import { showReturn, returnLabel, displayOrderLabel, deliveryLabel } from "../../../shared/utils/order-display";
+import { date, imageSrc, protectImage, money } from "../../../shared/utils/storefront-display";
+import { DEFAULT_ORDERS_ROUTE } from "./default-orders-route";
 
-export { DEFAULT_ORDERS_ROUTE } from "./customer-orders-route";
+export { DEFAULT_ORDERS_ROUTE } from "./default-orders-route";
 
 const ORDER_TABS = [
   ["ALL", "Tất cả"], ["TO_PAY", "Chờ thanh toán"], ["TO_CONFIRM", "Chờ xác nhận"],

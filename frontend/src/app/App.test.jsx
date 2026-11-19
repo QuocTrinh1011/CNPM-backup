@@ -3,7 +3,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { beforeEach, afterEach, it, expect, vi } from 'vitest';
 import App from './App';
-import { OrdersModal, OrderView } from './CustomerOrders';
+import { OrdersModal, OrderView } from '../features/customer/orders/CustomerOrders';
 import CheckoutPage from '../features/storefront/CheckoutPage';
 import { api, refreshSession } from '../api/api';
 vi.mock('../api/api', async original => ({ ...(await original()), api:vi.fn(), refreshSession:vi.fn() }));

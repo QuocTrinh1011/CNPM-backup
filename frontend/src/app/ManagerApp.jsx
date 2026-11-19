@@ -1,15 +1,14 @@
+import useManagerSession from "../features/manager/shell/useManagerSession";
+import { navItems, managerRoleSections, managerLandingPaths, managerNavGroups, pageSubtitles, navIcons, userOrigin } from "../features/manager/shell/manager-navigation";
 import { AdminLogin } from "../features/manager/shell/ManagerLogin";
 import { ManagerChangePasswordDialog } from "../features/manager/shell/ManagerChangePasswordDialog";
 import { Surveys } from "../features/manager/surveys/SurveysPage";
 import { Users } from "../features/manager/customers/CustomersPage";
 import { Dashboard } from "../features/manager/dashboard/ManagerDashboard";
 
-
 import { useManagerList, ManagerSyncStatus } from "../shared/hooks/useManagerResource";
 
-
 import '../shared/styles/internal-portal.css';
-import { TicketPercent } from "lucide-react";
 
 import { PanelLoading } from "../features/manager/ManagerComponents";
 
@@ -35,133 +34,13 @@ const EmployeeAttendancePage = React.lazy(() => import('../features/manager/Empl
 const EmployeePayrollPage = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeePayrollPage })));
 const EmployeeReportPage = React.lazy(() => import('../features/manager/EmployeeWorkspaces').then(module => ({ default: module.EmployeeReportPage })));
 const WarehouseEmployeeWorkspace = React.lazy(() => import('../features/manager/WarehouseEmployeeWorkspace'));
-import { Activity, LayoutDashboard, Users as UsersIcon, Package, Warehouse, FlaskConical, Factory, ShoppingCart, MessageSquare, ClipboardList, LogOut, Menu, X, PanelLeftClose, PanelLeftOpen, Sun, Moon, ExternalLink, Sparkles, ReceiptText, BarChart3, KeyRound, UserRound, CalendarDays, Wallet, ClipboardCheck, UsersRound } from "lucide-react";
-import { adminApi, adminEndpoints, adminRefreshSession, adminSignOut } from "../api/manager-api";
-
-const navItems = [
-  ["dashboard", "Tổng quan"],
-  ["employees", "Nhân viên"],
-  ["leave-requests", "Duyệt đơn nghỉ"],
-  ["attendance", "Chấm công"],
-  ["payroll", "Bảng lương"],
-  ["hr-reports", "Báo cáo nhân sự"],
-  ["my-profile", "Thông tin của tôi"],
-  ["my-requests", "Đơn nghỉ của tôi"],
-  ["my-attendance", "Chấm công của tôi"],
-  ["my-payslips", "Phiếu lương của tôi"],
-  ["warehouse-tasks", "Công việc kho"],
-  ["my-team", "Nhân viên trong nhóm"],
-  ["my-team-attendance", "Chấm công nhóm"],
-  ["users", "Khách hàng"],
-  ["products", "Sản phẩm"],
-  ["stock-receipts", "Nhập kho"],
-  ["materials", "Nguyên liệu"],
-  ["recipes", "Công thức sản phẩm"],
-  ["production-plans", "Kế hoạch sản xuất"],
-  ["warehouse-approvals", "Duyệt yêu cầu kho"],
-  ["warehouse-reports", "Báo cáo kho"],
-  ["orders", "Đơn hàng"],
-  ["invoices", "Hóa đơn"],
-  ["feedback", "Phản hồi"],
-  ["surveys", "Khảo sát"],
-  ["vouchers", "Voucher"],
-  ["promotions", "Chiến dịch khuyến mãi"],
-  ["reports", "Báo cáo"],
-];
-const validSections = new Set(navItems.map(([key]) => key));
-const managerRoleSections = {
-  MANAGER_SALES: new Set(["dashboard", "users", "products", "orders", "invoices", "feedback", "surveys", "vouchers", "promotions", "reports"]),
-  MANAGER_WAREHOUSE: new Set(["products", "stock-receipts", "materials", "recipes", "production-plans", "warehouse-approvals", "warehouse-reports"]),
-  MANAGER_HR: new Set(["employees", "leave-requests", "attendance", "payroll", "hr-reports"]),
-  EMPLOYEE: new Set(["my-profile", "my-requests", "my-attendance", "my-payslips"]),
-};
-const managerLandingPaths = {
-  MANAGER_SALES: "/manager/orders",
-  MANAGER_WAREHOUSE: "/manager/products",
-  MANAGER_HR: "/manager/employees",
-  EMPLOYEE: "/manager/my-profile",
-};
-const managerNavGroups = {
-  MANAGER_SALES: [
-    ["Tổng quan", ["dashboard"]],
-    ["Bán hàng", ["orders", "invoices"]],
-    ["Khách hàng & CSKH", ["users", "feedback", "surveys"]],
-    ["Danh mục", ["products", "vouchers", "promotions"]],
-    ["Phân tích", ["reports"]],
-  ],
-  MANAGER_WAREHOUSE: [
-    ["Tổng quan", ["dashboard"]],
-    ["Danh mục", ["products"]],
-    ["Kho", ["stock-receipts", "materials", "recipes"]],
-    ["Sản xuất", ["production-plans", "warehouse-approvals"]],
-    ["Phân tích", ["warehouse-reports"]],
-  ],
-  MANAGER_HR: [
-    ["Nhân sự", ["employees", "leave-requests", "attendance", "payroll", "hr-reports"]],
-  ],
-  EMPLOYEE: [
-    ["Của tôi", ["my-profile", "my-requests", "my-attendance", "my-payslips"]],
-    ["Nhóm", ["my-team", "my-team-attendance"]],
-    ["Công việc", ["warehouse-tasks"]],
-  ],
-};
-const pageSubtitles = {
-  orders: "Theo dõi và xử lý đơn hàng trong ngày.",
-  products: "Danh mục, giá bán và tồn kho.",
-  users: "Hồ sơ và lịch sử mua hàng của khách.",
-  invoices: "Đối soát hóa đơn và thanh toán.",
-  reports: "Hiệu quả bán hàng theo kỳ.",
-  feedback: "Phản hồi mới từ khách hàng.",
-  surveys: "Khảo sát và mức độ hài lòng.",
-  employees: "Hồ sơ và tình trạng làm việc.",
-};
-const navIcons = {
-  dashboard: LayoutDashboard,
-  employees: UsersIcon,
-  users: UsersIcon,
-  products: Package,
-  'stock-receipts': Package,
-  materials: Warehouse,
-  recipes: FlaskConical,
-  'production-plans': Factory,
-  'warehouse-approvals': ClipboardCheck,
-  'warehouse-reports': BarChart3,
-  orders: ShoppingCart,
-  invoices: ReceiptText,
-  feedback: MessageSquare,
-  surveys: ClipboardList,
-  vouchers: TicketPercent,
-  promotions: Sparkles,
-  reports: BarChart3,
-  'leave-requests': ClipboardCheck,
-  attendance: CalendarDays,
-  payroll: Wallet,
-  'hr-reports': BarChart3,
-  'my-profile': UserRound,
-  'my-requests': ClipboardCheck,
-  'my-attendance': CalendarDays,
-  'my-payslips': Wallet,
-  'warehouse-tasks': Factory,
-  'my-team': UsersRound,
-  'my-team-attendance': CalendarDays,
-};
-const userOrigin = import.meta.env.VITE_USER_ORIGIN || "http://localhost:5173";
-const normalizeAdminPath = (value) => {
-  if (value === "/manager/login") return value;
-  if (/^\/manager\/users\/[^/]+$/.test(value)) return value;
-  const pathname = value.split("?")[0];
-  if (pathname === "/manager" || pathname === "/manager/") return "/manager";
-  const key = pathname.replace(/^\/manager\/?/, "").split("/")[0] || "dashboard";
-  return validSections.has(key) ? `/manager/${key}` : "/manager";
-};
+import { Activity, LogOut, Menu, X, PanelLeftClose, PanelLeftOpen, Sun, Moon, ExternalLink, KeyRound } from "lucide-react";
+import { adminSignOut } from "../api/manager-api";
 
 export default function ManagerApp() {
   const [path, setPath] = useState(window.location.pathname + window.location.search);
-  const [admin, setAdmin] = useState(null);
-  const [employeeProfile, setEmployeeProfile] = useState(null);
-  const [employeeProfileReady, setEmployeeProfileReady] = useState(false);
-  const [checking, setChecking] = useState(true);
-  const [sessionError,setSessionError]=useState('');
+  const { admin, setAdmin, employeeProfile, employeeProfileReady, checking, sessionError } = useManagerSession(setPath);
+
   const [notice, setNotice] = useState(null);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -207,40 +86,7 @@ export default function ManagerApp() {
       // Keep the sidebar usable in memory when persistence is unavailable.
     }
   }, [sidebarCollapsed]);
-  useEffect(() => {
-    const onPop = () => {
-      const current = window.location.pathname;
-      const normalized = normalizeAdminPath(current);
-      if (current !== normalized)
-        window.history.replaceState({}, "", normalized + window.location.search);
-      setPath(normalized + window.location.search);
-    };
-    onPop();
-    window.addEventListener("popstate", onPop);
-    adminRefreshSession()
-      .then((session) => {
-        if (session?.manager) setAdmin(session.manager);
-        else {window.history.replaceState({},'', '/manager/login');setPath('/manager/login');}
-      })
-      .catch(e=>setSessionError(e.message))
-      .finally(() => setChecking(false));
-    return () => window.removeEventListener("popstate", onPop);
-  }, []);
-  useEffect(() => {
-    if (admin?.role !== "EMPLOYEE") {
-      setEmployeeProfile(null);
-      setEmployeeProfileReady(false);
-      return undefined;
-    }
-    const controller = new AbortController();
-    setEmployeeProfile(null);
-    setEmployeeProfileReady(false);
-    adminApi(adminEndpoints.myProfile(), { signal: controller.signal })
-      .then(profile => { if (!controller.signal.aborted) setEmployeeProfile(profile); })
-      .catch(() => { if (!controller.signal.aborted) setEmployeeProfile(null); })
-      .finally(() => { if (!controller.signal.aborted) setEmployeeProfileReady(true); });
-    return () => controller.abort();
-  }, [admin?.id, admin?.role]);
+
   useEffect(() => {
     if (!admin || path.split('?')[0] === "/manager/login") return;
     if (admin.role === "EMPLOYEE" && !employeeProfileReady) return;
@@ -268,7 +114,7 @@ export default function ManagerApp() {
     };
     window.addEventListener('manager:session-expired', expired);
     return () => window.removeEventListener('manager:session-expired', expired);
-  }, []);
+  }, [setAdmin]);
   if (checking)
     return <div className="admin-loading">Đang kiểm tra phiên quản trị...</div>;
   if(sessionError)return <div role="alert">{sessionError}<button onClick={()=>window.location.reload()}>Thử lại</button></div>;
@@ -365,7 +211,12 @@ export default function ManagerApp() {
             .map(([label, keys]) => [label, keys.filter(key => key !== "dashboard" && roleSections.has(key))])
             .filter(([, keys]) => keys.length > 0)
             .map(([label, keys]) => (
-              <div className="manager-nav-group" role="group" aria-label={label} key={label}>
+              <div
+                className="manager-nav-group"
+                role="group"
+                aria-label={label}
+                key={label}
+              >
                 <span className="manager-nav-group-label" aria-hidden="true">{label}</span>
                 {keys.map(key => renderNavItem(navItems.find(item => item[0] === key)))}
               </div>
@@ -463,7 +314,12 @@ export default function ManagerApp() {
         <ManagerSyncStatus />
         <React.Suspense fallback={<PanelLoading/>}>
         {section === "dashboard" && <Dashboard go={go} />}
-        {section === "users" && (profileMatch ? <CustomerProfile key={profileMatch[1]} customerId={profileMatch[1]} location={path} go={go} /> : <Users notify={notify} location={path} go={go} />)}{" "}
+        {section === "users" && (profileMatch ? <CustomerProfile
+                  key={profileMatch[1]}
+                  customerId={profileMatch[1]}
+                  location={path}
+                  go={go}
+                /> : <Users notify={notify} location={path} go={go} />)}{" "}
         {section === "products" && <Products notify={notify} readOnly={admin.role === "MANAGER_SALES"} />}{" "}
         {section === "employees" && <ManagerEmployees />}
         {section === "leave-requests" && <EmployeeLeaveRequests hr />}
@@ -507,16 +363,5 @@ export default function ManagerApp() {
   );
 }
 
-
-
-
-
-
-
-
-
 export const useAdminList = useManagerList;
-
-
-
 

@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
 import { afterEach, it, expect, vi } from 'vitest';
-import { OrdersPage } from './CustomerOrders';
+import { OrdersPage } from '../features/customer/orders/CustomerOrders';
 import ManagerOrderDetail from '../features/manager/ManagerOrderDetail';
 import { displayOrderLabel } from '../shared/utils/order-display';
 import { api } from '../api/api';
