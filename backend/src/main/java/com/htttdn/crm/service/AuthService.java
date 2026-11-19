@@ -41,7 +41,7 @@ public class AuthService {
     @Transactional(noRollbackFor=ApiException.class) public Session refresh(String raw){
         if(raw==null || raw.isBlank()) throw new ApiException(HttpStatus.UNAUTHORIZED,"INVALID_REFRESH_TOKEN","Phiên đăng nhập đã hết hạn.");
         RefreshToken token=refreshTokens.findForUpdate(hash(raw)).orElseThrow(()->new ApiException(HttpStatus.UNAUTHORIZED,"INVALID_REFRESH_TOKEN","Phiên đăng nhập không hợp lệ."));
-        if("ADMIN".equals(token.getAudience())) throw new ApiException(HttpStatus.UNAUTHORIZED,"INVALID_REFRESH_TOKEN","Phiên customer không hợp lệ.");
+        if(!"CUSTOMER".equals(token.getAudience())) throw new ApiException(HttpStatus.UNAUTHORIZED,"INVALID_REFRESH_TOKEN","Phiên customer không hợp lệ.");
         if("ROTATED".equals(token.getStatus())){refreshTokens.revokeFamily(token.getFamilyId(),"REUSE_DETECTED");throw new ApiException(HttpStatus.UNAUTHORIZED,"REFRESH_TOKEN_REUSE_DETECTED","Phát hiện refresh token bị sử dụng lại. Vui lòng đăng nhập lại.");}
         if(!"ACTIVE".equals(token.getStatus())) throw new ApiException(HttpStatus.UNAUTHORIZED,"INVALID_REFRESH_TOKEN","Phiên đăng nhập không còn hiệu lực.");
         if(token.getExpiresAt().isBefore(Instant.now())){token.setStatus("REVOKED");token.setRevokeReason("EXPIRED");token.setRevokedAt(Instant.now());refreshTokens.save(token);throw new ApiException(HttpStatus.UNAUTHORIZED,"REFRESH_TOKEN_EXPIRED","Refresh token đã hết hạn.");}
@@ -49,7 +49,7 @@ public class AuthService {
         User user=token.getUser(); if(!"CUSTOMER".equals(user.getRole()) || user.getDeletedAt()!=null) throw new ApiException(HttpStatus.UNAUTHORIZED,"INVALID_REFRESH_TOKEN","Phiên customer không hợp lệ."); if(user.isLocked()) throw locked(user);
         return issue(user,token.getFamilyId());
     }
-    @Transactional public void logout(String raw){if(raw==null||raw.isBlank())return;refreshTokens.findForUpdate(hash(raw)).filter(t->!"ADMIN".equals(t.getAudience())).ifPresent(t->{if("ACTIVE".equals(t.getStatus())){t.setStatus("REVOKED");t.setRevokeReason("LOGOUT");t.setRevokedAt(Instant.now());refreshTokens.save(t);}});}
+    @Transactional public void logout(String raw){if(raw==null||raw.isBlank())return;refreshTokens.findForUpdate(hash(raw)).filter(t->"CUSTOMER".equals(t.getAudience())).ifPresent(t->{if("ACTIVE".equals(t.getStatus())){t.setStatus("REVOKED");t.setRevokeReason("LOGOUT");t.setRevokedAt(Instant.now());refreshTokens.save(t);}});}
     @Transactional public User saveProfile(User user){return users.save(user);}
     @Transactional public void changePassword(User user,String currentPassword,String newPassword){if(!encoder.matches(currentPassword==null?"":currentPassword,user.getPasswordHash()))throw new ApiException(HttpStatus.BAD_REQUEST,"CURRENT_PASSWORD_INVALID","Mật khẩu hiện tại không đúng.");validatePassword(newPassword);user.setPasswordHash(encoder.encode(newPassword));users.save(user);refreshTokens.revokeByUserId(user.getId());}
     @Transactional public String requestPasswordReset(String email){
