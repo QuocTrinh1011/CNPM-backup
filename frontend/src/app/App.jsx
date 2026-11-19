@@ -1,3 +1,6 @@
+import StorefrontMobileNavigation from "../features/storefront/layout/StorefrontMobileNavigation";
+import StorefrontFooter from "../features/storefront/layout/StorefrontFooter";
+import StorefrontHeader from "../features/storefront/layout/StorefrontHeader";
 import { readOrdersRoute, ordersHref } from "../features/customer/orders/customer-orders-route.js";
 import { readGuestCart, saveGuestCart, clearGuestCart } from "../features/storefront/cart/guest-cart-storage.js";
 import '../shared/styles/order-display.css';
@@ -21,32 +24,7 @@ import {
   refreshSession,
   signOut,
 } from "../api/api";
-import {
-  ArrowUp,
-  Bell,
-  Check,
-  ChevronRight,
-  CircleAlert,
-  ClipboardList,
-  Heart,
-  Headphones,
-  Home,
-  LayoutGrid,
-  LogOut,
-  Menu,
-  Package,
-  MapPin,
-  RefreshCw,
-  Search,
-  Sun,
-  Moon,
-  ShieldCheck,
-  ShoppingBag,
-  Truck,
-  KeyRound,
-  UserRound,
-  X,
-} from "lucide-react";
+import { ArrowUp, Bell, Check, ChevronRight, CircleAlert, ClipboardList, Heart, Headphones, LogOut, Package, MapPin, RefreshCw, Sun, Moon, ShieldCheck, Truck, KeyRound, UserRound, X } from "lucide-react";
 
 const lazyNamed = (load, name) => React.lazy(() => load().then(module => ({ default: module[name] })));
 const OrdersPage = lazyNamed(() => import("./CustomerOrders"), "OrdersPage");
@@ -648,93 +626,13 @@ function App() {
         <span>ĐỔI SIZE TRONG 30 NGÀY</span>
         <span className="announcement-secondary">ANH LỚN / NEW FORM</span>
       </div>
-      <header className="site-header">
-        <button
-          className="mobile-menu icon-button"
-          aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
-          aria-expanded={mobileMenuOpen}
-          onClick={() => setMobileMenuOpen((value) => !value)}
-        >
-          {mobileMenuOpen ? (
-            <X size={22} strokeWidth={1.8} />
-          ) : (
-            <Menu size={22} strokeWidth={1.8} />
-          )}
-        </button>
-        <a className="wordmark" href="/" onClick={goHome}>
-          ANH LỚN <em>SHOP · MENSWEAR</em>
-        </a>
-        <nav
-          className={`main-nav ${mobileMenuOpen ? "is-open" : ""}`}
-          aria-label="Điều hướng chính"
-        >
-          <button onClick={() => openCatalog("")}>HÀNG MỚI</button>
-          <button onClick={() => openCatalog("Áo khoác")}>ÁO KHOÁC</button>
-          <button onClick={() => openCatalog("Áo thun")}>ÁO THUN</button>
-          <button onClick={() => openCatalog("Áo polo")}>ÁO POLO</button>
-          <button onClick={() => openCatalog("Quần")}>QUẦN</button>
-          <button
-            className="sale-link"
-            onClick={() =>
-              openCatalog("", { minPrice: "", maxPrice: "500000" })
-            }
-          >
-            ƯU ĐÃI
-          </button>
-        </nav>
-            <form className="catalog-search-wrap" role="search" onSubmit={search}>
-              <Search size={19} aria-hidden="true" />
-              <input
-                className="catalog-search"
-                ref={searchRef}
-                type="search"
-                aria-label="Tìm kiếm sản phẩm"
-                value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
-                placeholder="Tìm kiếm sản phẩm..."
-              />
-              {searchInput && <button className="shop-search-clear" type="button" aria-label="Xóa từ khóa tìm kiếm" onClick={() => { setSearchInput(''); setFilters(current => ({ ...current, keyword: '', page: 0 })); searchRef.current?.focus(); }}><X size={16}/></button>}
-              <button className="shop-search-submit" type="submit">TÌM</button>
-            </form>
-        <div className="header-actions">
-          <button className="shop-theme-toggle" type="button" aria-label={shopTheme === 'dark' ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'} title={shopTheme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối'} onClick={() => setShopTheme(value => value === 'dark' ? 'light' : 'dark')}>
-            {shopTheme === 'dark' ? <Sun size={20}/> : <Moon size={20}/>}
-          </button>
-          <button
-            className="icon-button notification-button"
-            aria-label="Thông báo"
-            title="Thông báo"
-            onClick={() => user ? setNotificationsOpen(true) : openAuth("notifications")}
-          >
-            <Bell size={22} strokeWidth={1.8} />
-            {user && notificationCount > 0 && <span>{notificationCount > 9 ? "9+" : notificationCount}</span>}
-          </button>
-          <button
-            className="icon-button wishlist-button"
-            aria-label="Sản phẩm yêu thích"
-            title="Sản phẩm yêu thích"
-            onClick={() => user ? setWishlistOpen(true) : openAuth("wishlist")}
-          >
-            <Heart size={22} strokeWidth={1.8} />
-            {wishlist.length > 0 && <span>{wishlist.length > 9 ? "9+" : wishlist.length}</span>}
-          </button>
-          <AccountDropdown user={user} unreadCount={notificationCount} onAction={action => {
+      <StorefrontHeader accountDropdown={<AccountDropdown user={user} unreadCount={notificationCount} onAction={action => {
             if (action === 'login' || action === 'register') { setAuthMode(action); setAuthAfterLogin(null); setAuthOpen(true); return; }
             if (action === 'logout') { logout(); return; }
             if (action === 'orders') { navigateOrders(); return; }
             const screens = { profile: setProfileOpen, wishlist: setWishlistOpen, notifications: setNotificationsOpen, addresses: setAddressesOpen, surveys: setSurveysOpen, password: setPasswordOpen };
             screens[action]?.(true);
-          }}/>
-          <button
-            className="cart-button icon-button"
-            aria-label="Giỏ hàng"
-            onClick={() => setCartOpen(true)}
-          >
-            <ShoppingBag size={20} strokeWidth={1.8} />
-            <span>{cart.itemCount || 0}</span>
-          </button>
-        </div>
-      </header>
+          }}/>} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} goHome={goHome} openCatalog={openCatalog} search={search} searchRef={searchRef} searchInput={searchInput} setSearchInput={setSearchInput} setFilters={setFilters} shopTheme={shopTheme} setShopTheme={setShopTheme} user={user} setNotificationsOpen={setNotificationsOpen} openAuth={openAuth} notificationCount={notificationCount} setWishlistOpen={setWishlistOpen} wishlist={wishlist} setCartOpen={setCartOpen} cart={cart} />
 
       {/* Slide-out Navigation & User Drawer */}
       {mobileMenuOpen && (
@@ -1228,115 +1126,8 @@ function App() {
       </CustomerPageFrame>}
 
       {/* Mobile Bottom Navigation Bar */}
-      <footer className="footer">
-        <div className="footer-brand">
-          <a className="wordmark" href="/" onClick={goHome}>
-            ANH LỚN <em>SHOP</em>
-          </a>
-          <p>Thời trang nam tinh giản & hiện đại. Tỉ mỉ từ chất liệu, chuẩn phom dáng cho tủ đồ phái mạnh mỗi ngày.</p>
-          <div className="footer-contact-details">
-            <span>Hotline: <b>1900 6868</b> (8:30 – 22:00)</span>
-            <span>Email: <b>cskh@anhlonshop.vn</b></span>
-          </div>
-          <small>© 2026 ANH LỚN SHOP. BẢO LƯU MỌI QUYỀN.</small>
-        </div>
-        <div>
-          <b>KHÁM PHÁ</b>
-          <button onClick={() => openCatalog("")}>Hàng mới</button>
-          <button onClick={() => openCatalog("Áo polo")}>Áo polo</button>
-          <button onClick={() => openCatalog("Áo khoác")}>Áo khoác</button>
-          <button onClick={() => openCatalog("Áo thun")}>Áo thun</button>
-          <button onClick={() => openCatalog("Quần")}>Quần nam</button>
-          <button onClick={() => openCatalog("", { minPrice: "", maxPrice: "500000" })}>Ưu đãi đặc biệt</button>
-        </div>
-        <div>
-          <b>HỖ TRỢ</b>
-          <button
-            onClick={() => (user ? navigateOrders() : openAuth("orders"))}
-          >
-            Đơn hàng của tôi
-          </button>
-          <button onClick={() => (user ? navigate('/tai-khoan/voucher') : openAuth("profile"))}>
-            Kho voucher & ưu đãi
-          </button>
-          <button onClick={() => setSurveysOpen(true)}>
-            Khảo sát phong cách
-          </button>
-          <button onClick={() => (user ? setProfileOpen(true) : openAuth("profile"))}>
-            Tài khoản của tôi
-          </button>
-          <button onClick={() => openCatalog("")}>
-            Chính sách đổi trả 30 ngày
-          </button>
-        </div>
-        <div>
-          <b>THEO DÕI</b>
-          <div className="socials-wrap">
-            <span className="social-tag">Instagram</span>
-            <span className="social-tag">Facebook</span>
-            <span className="social-tag">TikTok</span>
-          </div>
-          <div className="footer-payment-tags">
-            <span>VietQR</span>
-            <span>PayOS</span>
-            <span>COD</span>
-          </div>
-          <small>Giao hàng toàn quốc · Kiểm tra khi nhận hàng</small>
-        </div>
-      </footer>
-      <nav className="mobile-bottom-nav" aria-label="Điều hướng di động">
-        <button
-          type="button"
-          className={`mobile-bottom-nav-item ${pathname === '/' ? "active" : ""}`}
-          onClick={goHome}
-        >
-          <Home size={20} strokeWidth={1.8} />
-          <span>Trang chủ</span>
-        </button>
-        <button
-          type="button"
-          className={`mobile-bottom-nav-item ${catalogPage ? "active" : ""}`}
-          onClick={() => openCatalog("")}
-        >
-          <LayoutGrid size={20} strokeWidth={1.8} />
-          <span>Sản phẩm</span>
-        </button>
-        <button
-          type="button"
-          className="mobile-bottom-nav-item"
-          onClick={() => (user ? setWishlistOpen(true) : openAuth("wishlist"))}
-        >
-          <span className="mobile-nav-icon-wrap">
-            <Heart size={20} strokeWidth={1.8} />
-            {wishlist.length > 0 && <span className="mobile-nav-badge">{wishlist.length}</span>}
-          </span>
-          <span>Yêu thích</span>
-        </button>
-        <button
-          type="button"
-          className="mobile-bottom-nav-item"
-          onClick={() => (user ? setNotificationsOpen(true) : openAuth("notifications"))}
-        >
-          <span className="mobile-nav-icon-wrap">
-            <Bell size={20} strokeWidth={1.8} />
-            {user && notificationCount > 0 && (
-              <span className="mobile-nav-badge">{notificationCount > 9 ? "9+" : notificationCount}</span>
-            )}
-          </span>
-          <span>Thông báo</span>
-        </button>
-        <button
-          type="button"
-          className="mobile-bottom-nav-item"
-          onClick={() => {
-            if (user) navigate('/tai-khoan');
-            else openAuth("profile");
-          }}
-        >
-          <UserRound size={20} strokeWidth={1.8} />
-          <span>{user ? "Cá nhân" : "Tài khoản"}</span>
-        </button>
-      </nav>
+      <StorefrontFooter goHome={goHome} openCatalog={openCatalog} user={user} navigateOrders={navigateOrders} openAuth={openAuth} navigate={navigate} setSurveysOpen={setSurveysOpen} setProfileOpen={setProfileOpen} />
+      <StorefrontMobileNavigation pathname={pathname} goHome={goHome} catalogPage={catalogPage} openCatalog={openCatalog} user={user} setWishlistOpen={setWishlistOpen} openAuth={openAuth} wishlist={wishlist} setNotificationsOpen={setNotificationsOpen} notificationCount={notificationCount} navigate={navigate} />
       {showBackToTop && (
         <button
           type="button"
