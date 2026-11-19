@@ -23,7 +23,13 @@ test('customer can register and keep a session after a reload', async ({ page })
   await page.getByRole('button', { name: 'TẠO TÀI KHOẢN →' }).click();
 
   expect((await registerResponse).status()).toBe(201);
-  expect((await loginResponse).status()).toBe(200);
+  const customerLogin = await loginResponse;
+  expect(customerLogin.status()).toBe(200);
+  const customerSession = await customerLogin.json();
+  const managerApiResponse = await page.request.get('http://localhost:8082/api/manager/orders', {
+    headers: { Authorization: `Bearer ${customerSession.accessToken}` },
+  });
+  expect([401, 403]).toContain(managerApiResponse.status());
   await expect(page).toHaveURL(/localhost:5173\/$/);
 
   await page.goto('/tai-khoan');

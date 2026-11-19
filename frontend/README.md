@@ -74,9 +74,9 @@ The frontend still excludes refund, support-ticket, customer-care, and personal-
 
 ## Full-stack E2E
 
-The Playwright suite runs the real customer portal, manager portal, Spring API, and a disposable PostgreSQL database. It covers customer registration and refresh-cookie session persistence, plus manager login and live dashboard reports.
+The Playwright suite runs the real User, Admin, and Manager portals against Spring Boot and a disposable PostgreSQL database in Chromium, Firefox, and WebKit. It covers customer registration, address creation and COD checkout; Admin employee-account creation; Sales orders, invoices, vouchers, promotions and reports; Warehouse supplier/receipt screens and stock reports; HR leave approval, attendance, payroll and reports; employee self-service; warehouse material requests and approvals; role-specific navigation and API authorization.
 
-Requirements: Docker with its engine running, Java 21, Maven, and Node.js 20 or newer.
+Requirements: Docker with its engine running, Java 21, Maven, and Node.js 20 or newer. The database must be a local disposable database named exactly `crm_e2e`; the E2E harness refuses any other database name or non-loopback host.
 
 From the repository root, start the isolated database:
 
@@ -88,11 +88,11 @@ Then run the suite from `frontend`:
 
 ```powershell
 npm ci
-npx playwright install chromium
+npx playwright install chromium firefox webkit
 $env:E2E_DATABASE_URL = 'postgresql://e2e:e2e@localhost:5433/crm_e2e'
 npm run test:e2e
 ```
 
-On Linux CI, install Chromium and its system dependencies with `npx playwright install --with-deps chromium`. Playwright starts the backend with Hibernate `create-drop`; startup refuses any E2E database whose name is not exactly `crm_e2e`. The manager test account and customer signup fixtures are isolated to this disposable database. Playwright writes traces, screenshots, video, and the HTML report under `test-results` and `playwright-report` when failures occur.
+On Linux CI, install the browser engines and their system dependencies with `npx playwright install --with-deps chromium firefox webkit`. Playwright starts the backend through a launcher that passes only required OS/runtime variables and explicit E2E datasource settings; it binds to `127.0.0.1` with Hibernate `create-drop`. Role accounts, employee profiles, catalog items and warehouse plans use E2E-only fixtures in the disposable database. The E2E backend disables request rate limiting to keep role/API checks deterministic; rate-limit behavior is outside this suite. The suite never calls email or PayOS services. Playwright writes traces, screenshots, video, and the HTML report under `test-results` and `playwright-report` when failures occur.
 
 Stop the local database from the repository root with `docker compose -f frontend/e2e/docker-compose.yml down`.
