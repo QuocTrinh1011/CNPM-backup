@@ -10,11 +10,12 @@ import { OrderBadge, PanelLoading, Table, ListError, PageControls, PanelTitle, F
 import { adminApi, adminEndpoints } from "../../../api/manager-api";
 
 export default function Orders({ notify }) {
-  const [filters,changeFilters]=useManagerFilters({status:'',q:'',paymentStatus:'',paymentReview:'',fromDate:'',toDate:'',sort:'createdAt',direction:'DESC',page:'0'});
+  const [filters,changeFilters]=useManagerFilters({status:'',q:'',paymentStatus:'',paymentReview:'',paymentMethod:'',fromDate:'',toDate:'',sort:'createdAt',direction:'DESC',page:'0'});
   const page=Number(filters.page)||0,setPage=value=>changeFilters({page:String(value)});
   const status=filters.status,setStatus=value=>changeFilters({status:value});
   const search=filters.q,setSearch=value=>changeFilters({q:value});
   const activeFilters = [
+    filters.paymentMethod && { key: "paymentMethod", label: filters.paymentMethod === "COD" ? "Kênh Tiền mặt COD" : "Kênh Cổng PayOS QR" },
     filters.paymentStatus && { key: 'paymentStatus', label: `Thanh toán: ${paymentStatusLabels[filters.paymentStatus] || filters.paymentStatus}` },
     filters.paymentReview && { key: 'paymentReview', label: filters.paymentReview === 'true' ? 'Cần đối soát' : 'Không cảnh báo' },
     filters.fromDate && { key: 'fromDate', label: `Từ ${filters.fromDate}` },
@@ -83,7 +84,7 @@ export default function Orders({ notify }) {
     else setDetailId(id);
   };
   const orders = pageData(data);
-  const filteredOrders = orders;
+  const filteredOrders = useMemo(() => filters.paymentMethod ? orders.filter(order => order.paymentMethod === filters.paymentMethod) : orders, [orders, filters.paymentMethod]);
 
   const orderQuickTabs = [
     { key: "", label: "Tất cả", color: "#64748b" },
@@ -193,6 +194,7 @@ export default function Orders({ notify }) {
         </div>
       )}
       <div className={`manager-advanced-filters${filtersOpen ? " is-open" : ""}`} id="manager-order-filters">
+        <label>Kênh thanh toán<select value={filters.paymentMethod || ''} onChange={event => changeFilters({paymentMethod:event.target.value})}><option value="">Tất cả kênh</option><option value="PAYOS">Cổng PayOS QR</option><option value="COD">Tiền mặt COD</option></select></label>
         <label>Thanh toán<select value={filters.paymentStatus} onChange={e=>changeFilters({paymentStatus:e.target.value})}><option value="">Tất cả</option><option value="COD">COD</option><option value="PENDING">Chờ thanh toán</option><option value="PAID">Đã thanh toán</option><option value="EXPIRED">Hết hạn</option><option value="FAILED">Thất bại</option><option value="CANCELLED">Đã hủy thanh toán</option></select></label>
         <label>Đối soát PayOS<select value={filters.paymentReview} onChange={e=>changeFilters({paymentReview:e.target.value})}><option value="">Tất cả</option><option value="true">Thanh toán cần kiểm tra</option><option value="false">Không có cảnh báo</option></select></label>
         <label>Từ ngày<input type="date" value={filters.fromDate} onChange={e=>changeFilters({fromDate:e.target.value})}/></label>

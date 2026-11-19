@@ -3,6 +3,7 @@ import React from "react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import ManagerProducts from "./ManagerProducts";
+import { adminEndpoints } from "../../../api/manager-api";
 
 const mocks = vi.hoisted(() => ({
   adminApi: vi.fn(),
@@ -47,7 +48,7 @@ vi.mock("../../../shared/hooks/useManagerFilters", () => ({
 vi.mock("../../../api/manager-api", () => ({
   adminApi: mocks.adminApi,
   adminEndpoints: {
-    products: () => "/api/manager/products",
+    products: vi.fn(() => "/api/manager/products"),
     product: id => `/api/manager/products/${id}`,
   },
 }));
@@ -59,6 +60,7 @@ function renderProducts() {
 }
 
 beforeEach(() => {
+  mocks.filters.stock = "ALL";
   mocks.adminApi.mockResolvedValue({});
   mocks.useManagerList.mockImplementation(endpoint => {
     const path = endpoint();
@@ -132,4 +134,27 @@ it("blocks submission when a color image URL is invalid", () => {
   expect(imageInput.checkValidity()).toBe(false);
   fireEvent.click(screen.getByRole("button", { name: "Tạo sản phẩm mới" }));
   expect(mocks.adminApi).not.toHaveBeenCalled();
+});
+
+function setProductRows(rows) {
+  mocks.useManagerList.mockImplementation(endpoint => endpoint() === "/api/manager/products/categories"
+    ? { data: [] }
+    : { data: { content: rows, totalElements: rows.length }, loading: false, error: null, stale: false, load: vi.fn() });
+}
+
+it("includes stock five in the low-stock page filter and excludes zero and six", () => {
+  mocks.filters.stock = "LOW";
+  setProductRows([0, 5, 6].map(stock => ({ ...mocks.product, id: stock + 10, name: "Stock " + stock, stock })));
+  renderProducts();
+  expect(screen.getByText("Stock 5")).toBeTruthy();
+  expect(screen.queryByText("Stock 0")).toBeNull();
+  expect(screen.queryByText("Stock 6")).toBeNull();
+  expect(adminEndpoints.products).toHaveBeenLastCalledWith(expect.objectContaining({ stock: "AVAILABLE" }));
+});
+
+it("opens the low-stock filter from the page warning", () => {
+  setProductRows([{ ...mocks.product, stock: 5 }]);
+  renderProducts();
+  fireEvent.click(screen.getByRole("button", { name: "Lọc hàng sắp hết" }));
+  expect(mocks.changeFilters).toHaveBeenCalledWith({ stock: "LOW" });
 });

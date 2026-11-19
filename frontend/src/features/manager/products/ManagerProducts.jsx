@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from "react";
-import { Package, Plus, RefreshCw, Search, X } from "lucide-react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { CircleAlert, Package, Plus, RefreshCw, Search, X } from "lucide-react";
 import { useManagerFilters } from "../../../shared/hooks/useManagerFilters";
 import { useManagerList as useAdminList, useManagerList, useManagerReadPause } from "../../../shared/hooks/useManagerResource";
 import { adminApi, adminEndpoints } from "../../../api/manager-api";
@@ -37,9 +37,15 @@ const galleryPayloadFor = (colors, gallery = {}) => Object.fromEntries(
   })
 );
 
+const isLowStock = product => {
+  const stock = Number(product.stock);
+  return stock > 0 && stock <= 5;
+};
+
 export default function Products({ notify, readOnly = false }) {
   const [filters,changeFilters]=useManagerFilters({q:'',category:'',minPrice:'',maxPrice:'',stock:'ALL',active:'true',sort:'createdAt',direction:'DESC',page:'0'});
-  const endpoint=useCallback(()=>adminEndpoints.products(filters),[filters]);
+  const apiFilters = useMemo(() => filters.stock === "LOW" ? { ...filters, stock: "AVAILABLE" } : filters, [filters]);
+  const endpoint=useCallback(()=>adminEndpoints.products(apiFilters),[apiFilters]);
   const { data:previousData, load, loading, error,stale } = useAdminList(endpoint,{keepPreviousData:true});
   const data=stale?null:previousData;
   const search=filters.q,setSearch=value=>changeFilters({q:value});
@@ -167,7 +173,8 @@ export default function Products({ notify, readOnly = false }) {
 
   const products = pageData(data);
   const categories = Array.isArray(categoryData)?categoryData:[];
-  const filteredProducts = products;
+  const lowStockCount = useMemo(() => products.filter(isLowStock).length, [products]);
+  const filteredProducts = useMemo(() => filters.stock === "LOW" ? products.filter(isLowStock) : products, [products, filters.stock]);
 
   if (loading && !previousData) return <PanelLoading />;
   if (error)
@@ -199,6 +206,48 @@ export default function Products({ notify, readOnly = false }) {
               {cat}
             </button>
           ))}
+        </div>
+      )}
+
+      {lowStockCount > 0 && (
+<div
+          className="admin-low-stock-banner"
+          role="alert"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "12px 18px",
+            marginBottom: "16px",
+            background: "rgba(245, 158, 11, 0.1)",
+            border: "1px solid rgba(245, 158, 11, 0.3)",
+            borderRadius: "8px",
+            color: "#d97706",
+            fontSize: "13px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <CircleAlert size={18} />
+            <span>
+              <strong>Cảnh báo tồn kho:</strong> Có <b>{lowStockCount}</b> sản phẩm sắp hết hàng (tồn kho từ 1 đến 5). Vui lòng kiểm tra và nhập thêm.
+            </span>
+          </div>
+          <button
+            type="button"
+            style={{
+              background: filters.stock === "LOW" ? "#d97706" : "transparent",
+              color: filters.stock === "LOW" ? "#ffffff" : "#d97706",
+              border: "1px solid #d97706",
+              padding: "4px 12px",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: "12px",
+            }}
+            onClick={() => changeFilters({ stock: filters.stock === "LOW" ? "ALL" : "LOW" })}
+          >
+            {filters.stock === "LOW" ? "Xem tất cả sản phẩm" : "Lọc hàng sắp hết"}
+          </button>
         </div>
       )}
 
@@ -247,7 +296,7 @@ export default function Products({ notify, readOnly = false }) {
       <div className={`manager-advanced-filters${filtersOpen ? " is-open" : ""}`} id="manager-product-filters">
         <label>Giá từ<input type="number" min="0" value={filters.minPrice} onChange={e=>changeFilters({minPrice:e.target.value})}/></label>
         <label>Giá đến<input type="number" min="0" value={filters.maxPrice} onChange={e=>changeFilters({maxPrice:e.target.value})}/></label>
-        <label>Tồn kho<select value={filters.stock} onChange={e=>changeFilters({stock:e.target.value})}><option value="ALL">Tất cả</option><option value="AVAILABLE">Còn hàng</option><option value="OUT">Hết hàng</option></select></label>
+        <label>Tồn kho<select value={filters.stock} onChange={e=>changeFilters({stock:e.target.value})}><option value="ALL">Tất cả</option><option value="AVAILABLE">Còn hàng</option><option value="LOW">Sắp hết hàng (≤ 5)</option><option value="OUT">Hết hàng</option></select></label>
         <label>Hiển thị<select value={filters.active} onChange={e=>changeFilters({active:e.target.value})}><option value="true">Đang bán</option><option value="false">Đã ẩn</option><option value="ALL">Tất cả</option></select></label>
         <label>Sắp xếp<select value={filters.sort} onChange={e=>changeFilters({sort:e.target.value})}><option value="createdAt">Ngày tạo</option><option value="name">Tên</option><option value="price">Giá</option><option value="stock">Tồn kho</option></select></label>
         <label>Thứ tự<select value={filters.direction} onChange={e=>changeFilters({direction:e.target.value})}><option value="DESC">Giảm dần</option><option value="ASC">Tăng dần</option></select></label>
