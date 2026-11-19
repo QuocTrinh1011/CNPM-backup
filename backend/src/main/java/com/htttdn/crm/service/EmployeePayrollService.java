@@ -31,7 +31,7 @@ public class EmployeePayrollService {
     private final PayrollSnapshotCodec snapshots;
     private final PayrollViewMapper views;
     private static final String RULE_KEY = "PAYROLL_RULES";
-    private static final Set<String> ADJUSTMENT_TYPES = Set.of("EARNING", "BENEFIT", "DEDUCTION", "EMPLOYER_COST");
+
     private static final BigDecimal ZERO = BigDecimal.ZERO;
     private final EmployeePayrollPeriodRepository periods;
     private final EmployeePayslipRepository payslips;
@@ -45,7 +45,6 @@ public class EmployeePayrollService {
     private final JwtTokenService jwt;
     private final PayrollCalculator calculator;
     private final AuditTrail audit;
-    private final ObjectMapper mapper;
 
     public EmployeePayrollService(EmployeePayrollPeriodRepository periods, EmployeePayslipRepository payslips,
                                   EmployeePayrollLineRepository lines, PayrollSettingRepository settings,
@@ -56,8 +55,7 @@ public class EmployeePayrollService {
         this.periods = periods; this.payslips = payslips; this.lines = lines; this.settings = settings;
         this.profiles = profiles; this.attendance = attendance; this.leaves = leaves;
         this.employeeAccess = employeeAccess; this.users = users; this.jwt = jwt;
-        this.calculator = calculator; this.audit = audit; this.mapper = mapper;
-        this.payrollRules = new PayrollRulesParser(calculator);
+        this.calculator = calculator; this.audit = audit; this.payrollRules = new PayrollRulesParser(calculator);
         this.snapshots = new PayrollSnapshotCodec(mapper);
         this.views = new PayrollViewMapper(payslips, lines);
     }

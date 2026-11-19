@@ -1,24 +1,14 @@
 package com.htttdn.crm.service.payroll;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.htttdn.crm.dto.hr.PayrollDtos.*;
 import com.htttdn.crm.entity.*;
 import com.htttdn.crm.exception.ApiException;
 import com.htttdn.crm.repository.*;
-import com.htttdn.crm.security.JwtTokenService;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.dao.DataIntegrityViolationException;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.ZoneId;
 import java.util.*;
-import java.util.stream.Collectors;
 import com.htttdn.crm.service.PayrollCalculator;
 import com.htttdn.crm.service.payroll.PayrollRulesParser.ConfiguredRules;
 import static com.htttdn.crm.service.payroll.PayrollJsonNumbers.*;
