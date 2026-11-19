@@ -55,7 +55,7 @@ public class OrderService {
         return orderPaymentWorkflow.paymentDetails(customer, id);
     }
 
-    
+
 
     @Transactional public PaymentView syncPayment(User customer, Long id) {
         return orderPaymentWorkflow.syncPayment(customer, id);
@@ -65,22 +65,22 @@ public class OrderService {
         return orderPaymentWorkflow.retryPayment(customer, id);
     }
 
-    
 
-    
 
-    
 
-    
+
+
+
+
 
     @Transactional public OrderView cancel(User customer, Long id, String reason) {
         return customerOrderActions.cancel(customer, id, reason);
     }
 
     // customer is resolved by AuthService, never from a client-supplied actor header/body.
-    
 
-    
+
+
 
     @Transactional public OrderView confirmReceipt(User customer, Long id) {
         return customerOrderActions.confirmReceipt(customer, id);
@@ -101,13 +101,13 @@ public class OrderService {
         }
     }
 
-    
 
-    
-    
-    
-    
-    
+
+
+
+
+
+
 
     public OrderView view(Order o) {
         return OrderViewMapper.view(o);

@@ -364,4 +364,3 @@ export default function ManagerApp() {
 }
 
 export const useAdminList = useManagerList;
-

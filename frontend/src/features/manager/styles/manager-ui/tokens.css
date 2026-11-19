@@ -58,4 +58,3 @@
 .manager-login :is(h1, h2, button, input, a, small, label) {
   font-family: inherit;
 }
-

@@ -123,39 +123,39 @@ public class WarehouseWorkService {
         return materialReturnWorkflow.decideReturn(returnId, input);
     }
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public record LineInput(@NotNull @Positive Long planMaterialId,
                             @NotNull @DecimalMin(value = "0.000", inclusive = false)

@@ -94,4 +94,3 @@
 .admin-report-bar-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; font-size: 12px; }
 .admin-report-track { height: 8px; background: var(--admin-input); border-radius: 999px; overflow: hidden; }
 .admin-report-track > div { height: 100%; background: var(--admin-primary); border-radius: 999px; }
-

@@ -572,4 +572,3 @@
 }
 .site-shell .product-card-add:hover:not(:disabled) { background: var(--accent); }
 .site-shell .product-card-add:disabled { opacity: .4; cursor: not-allowed; }
-
