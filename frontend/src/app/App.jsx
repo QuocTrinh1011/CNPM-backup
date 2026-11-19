@@ -1,3 +1,5 @@
+import { readOrdersRoute, ordersHref } from "../features/customer/orders/customer-orders-route.js";
+import { emptyCart, readGuestCart, saveGuestCart, clearGuestCart } from "../features/storefront/cart/guest-cart-storage.js";
 import '../shared/styles/order-display.css';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useStorefrontDialogs } from '../shared/hooks/storefront-hooks';
@@ -59,45 +61,13 @@ const NotificationsModal = lazyNamed(() => import("../features/customer/Customer
 const ProfileModal = lazyNamed(() => import("../features/customer/CustomerDialogs"), "ProfileModal");
 const SurveyModal = lazyNamed(() => import("../features/customer/CustomerDialogs"), "SurveyModal");
 
-const GUEST_CART_KEY = "anh-lon-shop-guest-cart";
-const emptyCart = () => ({ items: [], subtotal: 0, itemCount: 0 });
-const readGuestCart = () => {
-  if (typeof window === "undefined") return emptyCart();
-  try {
-    const value = JSON.parse(window.localStorage.getItem(GUEST_CART_KEY) || "null");
-    return value?.items ? value : emptyCart();
-  } catch {
-    return emptyCart();
-  }
-};
-const saveGuestCart = (value) => {
-  if (typeof window !== "undefined") window.localStorage.setItem(GUEST_CART_KEY, JSON.stringify(value));
-};
-const clearGuestCart = () => {
-  if (typeof window !== "undefined") window.localStorage.removeItem(GUEST_CART_KEY);
-};
-const readOrdersRoute = () => {
-  if (typeof window === "undefined") return null;
-  const match = window.location.pathname.match(/^\/don-hang(?:\/(\d+))?\/?$/);
-  if (!match) return null;
-  const params = new URLSearchParams(window.location.search);
-  const allowedTabs = new Set(["ALL", "TO_PAY", "TO_CONFIRM", "TO_SHIP", "TO_RECEIVE", "TO_CONFIRM_RECEIPT", "COMPLETED", "CANCELLED", "RETURN"]);
-  const requestedTab = (params.get("tab") || "ALL").toUpperCase();
-  return {
-    orderId: match[1] ? Number(match[1]) : null,
-    tab: allowedTabs.has(requestedTab) ? requestedTab : "ALL",
-    keyword: (params.get("keyword") || "").slice(0, 120),
-    page: Math.max(0, Number.parseInt(params.get("page") || "0", 10) || 0),
-  };
-};
-const ordersHref = ({ orderId = null, tab = "ALL", keyword = "", page = 0 } = {}) => {
-  const params = new URLSearchParams();
-  if (tab !== "ALL") params.set("tab", tab);
-  if (keyword) params.set("keyword", keyword);
-  if (page > 0) params.set("page", String(page));
-  const query = params.toString();
-  return `/don-hang${orderId ? `/${orderId}` : ""}${query ? `?${query}` : ""}`;
-};
+
+
+
+
+
+
+
 
 function App() {
   useStorefrontDialogs();
