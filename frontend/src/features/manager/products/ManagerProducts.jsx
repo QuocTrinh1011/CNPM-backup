@@ -1,10 +1,10 @@
 import React, { useCallback, useRef, useState } from "react";
 import { Package, Plus, RefreshCw, Search, X } from "lucide-react";
-import { useManagerFilters } from "../../shared/hooks/useManagerFilters";
-import { useManagerList as useAdminList, useManagerList, useManagerReadPause } from "../../shared/hooks/useManagerResource";
-import { adminApi, adminEndpoints } from "../../api/manager-api";
-import { money, pageData } from "./manager-data";
-import { ListError, PageControls, PanelLoading, PanelTitle, Table, ToolbarButton } from "./ManagerComponents";
+import { useManagerFilters } from "../../../shared/hooks/useManagerFilters";
+import { useManagerList as useAdminList, useManagerList, useManagerReadPause } from "../../../shared/hooks/useManagerResource";
+import { adminApi, adminEndpoints } from "../../../api/manager-api";
+import { money, pageData } from "../manager-data";
+import { ListError, PageControls, PanelLoading, PanelTitle, Table, ToolbarButton } from "../ManagerComponents";
 
 const emptyProductForm = () => ({
   name: "",

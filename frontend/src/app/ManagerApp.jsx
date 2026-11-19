@@ -9,9 +9,9 @@ import { money, pageData, statusLabels, statusColors } from '../features/manager
 import { OrderBadge, PanelLoading, Table, ListError, PageControls, PanelTitle } from '../features/manager/ManagerComponents';
 import SurveyRewardEditor, { RewardFields, emptyReward } from '../features/manager/SurveyRewardEditor';
 import React, { useCallback, useEffect, useState } from "react";
-import Products from "../features/manager/ManagerProducts";
-import Orders from "../features/manager/ManagerOrders";
-import Feedback from "../features/manager/ManagerFeedback";
+import Products from "../features/manager/products/ManagerProducts";
+import Orders from "../features/manager/orders/ManagerOrders";
+import Feedback from "../features/manager/feedback/ManagerFeedback";
 const AdminVouchers = React.lazy(() => import('../features/admin/AdminVouchers'));
 const CustomerProfile = React.lazy(() => import('../features/manager/CustomerProfile'));
 const StockReceiving = React.lazy(()=>import('../features/manager/StockReceiving'));

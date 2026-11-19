@@ -35,16 +35,16 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("../../shared/hooks/useManagerResource", () => ({
+vi.mock("../../../shared/hooks/useManagerResource", () => ({
   useManagerList: mocks.useManagerList,
   useManagerReadPause: vi.fn(),
 }));
 
-vi.mock("../../shared/hooks/useManagerFilters", () => ({
+vi.mock("../../../shared/hooks/useManagerFilters", () => ({
   useManagerFilters: () => [mocks.filters, mocks.changeFilters],
 }));
 
-vi.mock("../../api/manager-api", () => ({
+vi.mock("../../../api/manager-api", () => ({
   adminApi: mocks.adminApi,
   adminEndpoints: {
     products: () => "/api/manager/products",

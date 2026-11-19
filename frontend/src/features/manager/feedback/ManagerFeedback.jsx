@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
-import { useManagerList as useAdminList } from "../../shared/hooks/useManagerResource";
-import { pageData } from "./manager-data";
-import { PanelLoading, Table, ListError, PageControls, PanelTitle } from "./ManagerComponents";
-import { adminApi, adminEndpoints } from "../../api/manager-api";
+import { useManagerList as useAdminList } from "../../../shared/hooks/useManagerResource";
+import { pageData } from "../manager-data";
+import { PanelLoading, Table, ListError, PageControls, PanelTitle } from "../ManagerComponents";
+import { adminApi, adminEndpoints } from "../../../api/manager-api";
 
 export default function Feedback({ notify }) {
   const [page, setPage] = useState(0);
