@@ -1,3 +1,5 @@
+import AdminOrganizationOverview from "./AdminOrganizationOverview";
+import AdminSecurityOverview from "./AdminSecurityOverview";
 import React, { useEffect, useMemo, useState } from 'react';
 import { Activity, AlertTriangle, ArrowDownRight, ArrowUpRight, BarChart3, ChevronRight, CreditCard, Layers, Package, RefreshCw, ShieldCheck, ShoppingBag, Users } from 'lucide-react';
 import { adminApi } from '../../api/api';
@@ -343,6 +345,9 @@ export default function AdminDashboard({ session, go, managerUrl }) {
           <EmployeeTable rows={data.employeeActivities || []} />
         </section>
       </> : null}
+
+      <AdminOrganizationOverview go={go} />
+      <AdminSecurityOverview />
 
     </div>
   );

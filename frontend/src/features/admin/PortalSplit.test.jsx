@@ -229,3 +229,21 @@ it.each(['getItem', 'setItem'])('keeps the sidebar usable when %s fails', async 
    storage.mockRestore();
  }
 });
+
+it('adds the saved organization and security panels alongside current reports', async () => {
+ window.history.replaceState({}, '', '/admin');
+ adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
+ adminApi.mockResolvedValue({accounts:2,products:3,summary:{},trend:[],topProducts:[],topCustomers:[],employeeActivities:[]});
+ render(<SystemAdminApp/>);
+ expect(await screen.findByRole('heading',{name:/Sơ đồ Cơ cấu Tổ chức/})).toBeTruthy();
+ expect(screen.getByText('Chính sách an toàn thông tin')).toBeTruthy();
+ expect(await screen.findByRole('heading',{name:'Tổng thu chi'})).toBeTruthy();
+});
+
+it('shows saved preferences for account rows', async () => {
+ window.history.replaceState({}, '', '/admin/accounts');
+ adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
+ adminApi.mockResolvedValue({content:[{id:42,fullName:'Manager',email:'manager@test.vn',role:'MANAGER_SALES',preferences:'Saved local preference'}],totalPages:1,totalElements:1});
+ render(<SystemAdminApp/>);
+ expect(await screen.findByText('Saved local preference')).toBeTruthy();
+});

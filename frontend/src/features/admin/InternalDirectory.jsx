@@ -432,6 +432,11 @@ export default function InternalDirectory({ kind, manager = false }) {
                           <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600', background: ROLE_CONFIG[row.role]?.bg || 'rgba(37, 99, 235, 0.15)', color: ROLE_CONFIG[row.role]?.color || '#2563eb' }}>
                             {row.role === 'EMPLOYEE' ? WORK_AREA_LABELS[row.workArea] || WORK_AREA_LABELS.GENERAL : ROLE_CONFIG[row.role]?.label || row.role}
                           </span>
+                          {row.preferences ? (
+                            <span style={{ display: "block", fontSize: "11px", color: "var(--admin-muted)", marginTop: "2px" }}>
+                              {row.preferences}
+                            </span>
+                          ) : null}
                         </span>
                       ) : (
                         <span>
