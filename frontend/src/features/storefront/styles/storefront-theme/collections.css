@@ -1,0 +1,103 @@
+/* ── 5. Featured Collections Bento Grid ── */
+.site-shell .shop-collections {
+  max-width: 1380px;
+  margin: 0 auto 52px;
+  padding: 0 24px;
+}
+.site-shell .shop-section-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.site-shell .shop-section-title h2 {
+  font-size: clamp(26px, 3.2vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  margin: 0;
+}
+.site-shell .shop-section-title h2 i {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent);
+}
+.site-shell .shop-collection-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.site-shell .shop-collection-tile {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.25s var(--ease-spring);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.site-shell .shop-collection-tile:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card);
+}
+.site-shell .shop-collection-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.site-shell .shop-collection-top span {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent);
+}
+.site-shell .shop-collection-top svg {
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+.site-shell .shop-collection-tile:hover .shop-collection-top svg {
+  color: var(--accent);
+}
+.site-shell .shop-collection-tile h3 {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.site-shell .shop-collection-tile p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0 0 16px;
+  flex: 1;
+}
+.site-shell .shop-collection-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--ink);
+  align-self: flex-end;
+  transition: all 0.2s ease;
+}
+.site-shell .shop-collection-tile:hover .shop-collection-arrow {
+  background: var(--accent);
+  color: #fff;
+  transform: translate(2px, -2px);
+}
+

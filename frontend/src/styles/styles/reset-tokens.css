@@ -1,0 +1,8 @@
+
+:root { --ink:#181714; --muted:#77736d; --paper:#f5f2ec; --white:#fffdfa; --line:#dcd7ce; --accent:#e76647; --soft:#ebe6de; --sans:'Manrope',Arial,sans-serif; --serif:var(--sans); --mono:var(--sans); }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); }
+button,input,textarea,select { font:inherit; }
+button { cursor:pointer; border:0; background:none; color:inherit; }
+button:disabled { cursor:not-allowed; opacity:.45; }

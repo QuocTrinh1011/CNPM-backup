@@ -1,0 +1,347 @@
+/* Table & Lists */
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-card);
+}
+
+.admin-shell .admin-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 650px;
+}
+
+.admin-shell .admin-table-wrap th {
+  font: 700 11px/1.4 var(--admin-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--admin-muted);
+  background: var(--admin-input);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--admin-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.admin-shell .admin-table-wrap td {
+  padding: 15px 18px;
+  color: var(--admin-text);
+  border-bottom: 1px solid var(--admin-border);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.admin-shell .admin-table-wrap tr:last-child td { border-bottom: 0; }
+.admin-shell .admin-table-wrap tbody tr {
+  transition: background-color 0.15s ease;
+}
+.admin-shell .admin-table-wrap tbody tr:hover { background: var(--admin-primary-soft); }
+
+.admin-table-row-clickable {
+  cursor: pointer;
+}
+
+.admin-order-code-badge {
+  font-family: var(--admin-mono);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: var(--admin-radius-sm);
+  background: var(--admin-input);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-primary);
+  display: inline-block;
+  letter-spacing: 0.02em;
+}
+
+.admin-table-customer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-customer-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+}
+
+.admin-order-total-cell strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: #10b981;
+  font-family: var(--admin-mono);
+}
+
+.admin-code {
+  font-family: var(--admin-mono);
+  color: var(--admin-primary);
+  font-size: 12px;
+}
+
+/* Badges */
+.admin-shell .admin-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 999px;
+  padding: 3px 10px;
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+  border: 1px solid var(--admin-border);
+  white-space: nowrap;
+}
+
+.admin-badge-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.admin-shell .admin-badge.success {
+  background: #10b98114;
+  color: #059669;
+  border-color: #10b98133;
+}
+
+.admin-shell .admin-badge.danger {
+  background: #ef444414;
+  color: #dc2626;
+  border-color: #ef444433;
+}
+
+.admin-shell[data-theme="dark"] .admin-badge.success { color: #34d399; }
+.admin-shell[data-theme="dark"] .admin-badge.danger { color: #fca5a5; }
+
+/* Status Badges & Pills */
+.admin-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--admin-input);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.admin-status.admin-status-completed,
+.admin-status.admin-status-delivered {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+.admin-status.admin-status-shipped {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.25);
+}
+.admin-status.admin-status-confirmed {
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+  border-color: rgba(139, 92, 246, 0.25);
+}
+.admin-status.admin-status-pending,
+.admin-status.admin-status-pending_payment {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border-color: rgba(245, 158, 11, 0.25);
+}
+.admin-status.admin-status-cancelled {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+/* Payment Status Tags */
+.admin-payment-method {
+  font-weight: 500;
+  color: var(--admin-text);
+}
+.admin-payment-status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 4px;
+  background: var(--admin-input);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-muted);
+}
+.admin-payment-status-pill.is-paid {
+  color: #10b981;
+  background: #10b98114;
+  border-color: #10b98133;
+}
+.admin-payment-status-pill.is-pending {
+  color: #f59e0b;
+  background: #f59e0b14;
+  border-color: #f59e0b33;
+}
+
+/* Inline Action Controls */
+.admin-inline-status-select {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-input);
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.admin-inline-status-select:hover:not(:disabled) {
+  border-color: var(--admin-primary);
+}
+.admin-inline-status-select:focus {
+  border-color: var(--admin-primary);
+  outline: none;
+}
+.admin-inline-status-select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Stock Badges & Product Table Cells */
+.admin-stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font: 600 11px var(--admin-mono);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.admin-stock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.admin-stock-badge.in-stock { background: #10b98114; color: #10b981; border-color: #10b98133; }
+.admin-stock-badge.in-stock .admin-stock-dot { background: #10b981; }
+.admin-stock-badge.low-stock { background: #f59e0b14; color: #f59e0b; border-color: #f59e0b33; }
+.admin-stock-badge.low-stock .admin-stock-dot { background: #f59e0b; }
+.admin-stock-badge.out-of-stock { background: #ef444414; color: #ef4444; border-color: #ef444433; }
+.admin-stock-badge.out-of-stock .admin-stock-dot { background: #ef4444; }
+
+.admin-product-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-product-thumb {
+  width: 38px;
+  height: 46px;
+  border-radius: var(--admin-radius-sm);
+  object-fit: cover;
+  background: var(--admin-input);
+  border: 1px solid var(--admin-border);
+  flex-shrink: 0;
+}
+.admin-product-thumb-placeholder {
+  width: 38px;
+  height: 46px;
+  border-radius: var(--admin-radius-sm);
+  background: var(--admin-input);
+  border: 1px solid var(--admin-border);
+  display: grid;
+  place-items: center;
+  color: var(--admin-muted);
+  flex-shrink: 0;
+}
+.admin-product-desc-snippet {
+  display: block;
+  color: var(--admin-muted);
+  font-size: 11px;
+  margin-top: 2px;
+}
+.admin-category-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  background: var(--admin-input);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-sm);
+  font-size: 11px;
+  color: var(--admin-muted);
+}
+
+.admin-category-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.admin-category-pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-card);
+  color: var(--admin-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.admin-category-pill:hover {
+  border-color: var(--admin-primary);
+  color: var(--admin-text);
+  background: var(--admin-primary-soft);
+}
+.admin-category-pill.active {
+  background: var(--admin-primary);
+  color: #ffffff;
+  border-color: var(--admin-primary);
+  font-weight: 600;
+}
+
+.admin-product-img-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px dashed var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-input);
+  margin-top: 6px;
+}
+.admin-product-img-preview img {
+  width: 52px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-border);
+  background: var(--admin-card);
+}
+.admin-product-img-preview span {
+  font-size: 12px;
+  color: var(--admin-muted);
+}
+
+.admin-table-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+

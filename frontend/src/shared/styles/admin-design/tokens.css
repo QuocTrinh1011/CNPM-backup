@@ -1,0 +1,56 @@
+/* Figma Make AdminPanel layout, adapted to the existing API-backed modules.
+   Theme is isolated from the storefront. */
+
+:root {
+  --admin-radius-sm: 6px;
+  --admin-radius-md: 10px;
+  --admin-radius-lg: 14px;
+  --admin-radius-xl: 18px;
+}
+
+.admin-shell, .admin-login {
+  --admin-bg: #f8fafc;
+  --admin-card: #ffffff;
+  --admin-sidebar-bg: #ffffff;
+  --admin-text: #0f172a;
+  --admin-muted: #64748b;
+  --admin-border: #e2e8f0;
+  --admin-primary: #2563eb;
+  --admin-primary-soft: #eff6ff;
+  --admin-input: #f8fafc;
+  --admin-mono: 'JetBrains Mono', monospace;
+  --admin-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --admin-shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.07);
+  --admin-shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.55;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.admin-shell[data-theme="dark"], .admin-login[data-theme="dark"] {
+  --admin-bg: #0b0f19;
+  --admin-card: #111827;
+  --admin-sidebar-bg: #0d1527;
+  --admin-text: #f8fafc;
+  --admin-muted: #94a3b8;
+  --admin-border: #1e293b;
+  --admin-primary: #3b82f6;
+  --admin-primary-soft: rgba(59, 130, 246, 0.14);
+  --admin-input: #151e32;
+  --admin-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --admin-shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.5);
+  --admin-shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.65);
+  color-scheme: dark;
+}
+
+.admin-shell { min-height: 100dvh; display: flex; }
+.admin-shell button, .admin-login button, .admin-shell input, .admin-shell select { font-family: inherit; }
+.admin-shell button, .admin-shell a { -webkit-tap-highlight-color: transparent; }
+.admin-shell :is(button, a, input, select):focus-visible, .admin-login :is(button, a, input):focus-visible {
+  outline: 2px solid var(--admin-primary);
+  outline-offset: 2px;
+}
+

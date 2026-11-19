@@ -1,0 +1,61 @@
+/* Manager UI — single visual layer for the store-management portal.
+   Every selector is scoped to .manager-shell or .manager-login so the
+   storefront and the system Admin portal are never affected. */
+
+/* ---------------------------------------------------------------- tokens */
+.manager-shell.admin-shell,
+.manager-login.admin-login {
+  --admin-bg: #f5f8f6;
+  --admin-card: #ffffff;
+  --admin-text: #13211c;
+  --admin-muted: #5b6b64;
+  --admin-border: #dfe8e3;
+  --admin-primary: #0f7a5f;
+  --admin-primary-soft: #e4f4ed;
+  --admin-input: #f2f6f4;
+  --admin-accent: #e8834a;
+  --admin-cyan: #3aa995;
+  --admin-mono: "Manrope", system-ui, sans-serif;
+  --admin-radius-sm: 9px;
+  --admin-radius-md: 12px;
+  --admin-radius-lg: 18px;
+  --admin-radius-xl: 24px;
+  --admin-shadow-sm: 0 1px 2px rgb(19 33 28 / 4%), 0 10px 28px rgb(19 33 28 / 4%);
+  --admin-shadow-md: 0 16px 44px rgb(19 33 28 / 9%);
+  --admin-shadow-lg: 0 32px 90px rgb(3 12 9 / 34%);
+  --manager-sidebar-width: 252px;
+  --manager-sidebar-rail: 76px;
+  --manager-radius-panel: 18px;
+  --manager-radius-control: 12px;
+  background:
+    radial-gradient(circle at 62% -12%, rgb(15 122 95 / 9%), transparent 34rem),
+    var(--admin-bg);
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--admin-text);
+}
+
+.manager-shell.admin-shell[data-theme="dark"],
+.manager-login.admin-login[data-theme="dark"] {
+  --admin-bg: #080f0c;
+  --admin-card: #101b17;
+  --admin-text: #eef7f2;
+  --admin-muted: #9db1a8;
+  --admin-border: #22362e;
+  --admin-primary: #5fd7ae;
+  --admin-primary-soft: #153b2e;
+  --admin-input: #14241e;
+  --admin-accent: #ffb37c;
+  --admin-cyan: #72ddd4;
+  --admin-shadow-sm: 0 1px 2px rgb(0 0 0 / 28%), 0 12px 30px rgb(0 0 0 / 18%);
+  --admin-shadow-md: 0 18px 48px rgb(0 0 0 / 32%);
+  --admin-shadow-lg: 0 34px 96px rgb(0 0 0 / 46%);
+  color-scheme: dark;
+}
+
+.manager-shell :is(h1, h2, h3, h4, button, input, select, textarea, th),
+.manager-login :is(h1, h2, button, input, a, small, label) {
+  font-family: inherit;
+}
+

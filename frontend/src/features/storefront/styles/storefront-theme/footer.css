@@ -1,0 +1,88 @@
+/* ── 13. Global Footer Section ── */
+.site-shell .footer {
+  max-width: 1440px;
+  margin: 60px auto 0;
+  padding: 56px 32px 100px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  gap: 48px;
+  border-top: 1px solid var(--line);
+  background: var(--white);
+}
+.site-shell[data-shop-theme="dark"] .footer {
+  background: var(--white);
+}
+.site-shell .footer-brand p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 320px;
+  margin: 14px 0 20px;
+}
+.site-shell .footer-contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.site-shell .footer-contact-details b {
+  color: var(--ink);
+}
+.site-shell .footer > div b {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+.site-shell .footer > div button {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 6px 0;
+  text-align: left;
+  transition: color 0.15s ease;
+}
+.site-shell .footer > div button:hover {
+  color: var(--ink);
+}
+.site-shell .socials-wrap {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.site-shell .social-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: var(--soft);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.site-shell .footer-payment-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.site-shell .footer-payment-tags span {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--soft);
+  color: var(--muted);
+}
+.site-shell .footer small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+

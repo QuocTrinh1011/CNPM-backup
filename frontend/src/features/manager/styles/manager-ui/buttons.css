@@ -1,0 +1,97 @@
+/* --------------------------------------------------------------- buttons */
+.manager-shell .admin-primary,
+.manager-login.admin-login .admin-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #13906f, #0b6a52);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 750;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--admin-primary) 22%, transparent);
+  cursor: pointer;
+}
+
+.manager-shell .admin-primary:hover:not(:disabled),
+.manager-login.admin-login .admin-primary:hover:not(:disabled) {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+.manager-shell .admin-primary:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.manager-login.admin-login .admin-primary { background: var(--admin-primary); color: #07100d; }
+
+.manager-shell .admin-action,
+.manager-shell .admin-btn,
+.manager-shell .admin-btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.manager-shell .admin-action:hover,
+.manager-shell .admin-btn:hover,
+.manager-shell .admin-btn-refresh:hover {
+  border-color: color-mix(in srgb, var(--admin-primary) 36%, var(--admin-border));
+  color: var(--admin-primary);
+}
+
+.manager-shell .admin-danger-button {
+  background: linear-gradient(135deg, #e11d48, #be123c);
+  box-shadow: 0 8px 20px rgb(225 29 72 / 20%);
+}
+
+.manager-shell :is(input, select, textarea) {
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+}
+
+.manager-shell :is(input:not([type="checkbox"]):not([type="radio"]), select) {
+  min-height: 36px;
+}
+
+.manager-shell input:is([type="checkbox"], [type="radio"]) {
+  width: 17px;
+  height: 17px;
+  min-height: 0;
+  accent-color: var(--admin-primary);
+}
+
+.manager-shell ::placeholder {
+  color: var(--admin-muted);
+  opacity: .85;
+}
+
+.manager-shell :is(button, a, input, select, textarea):focus-visible,
+.manager-login :is(button, a, input):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--admin-primary) 70%, transparent);
+  outline-offset: 2px;
+}
+
+.manager-shell .danger-text {
+  color: #dc2626;
+}
+

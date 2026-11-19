@@ -1,0 +1,145 @@
+/* ------------------------------------------------------------------ main */
+.manager-shell.admin-shell .admin-main {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  max-width: 1680px;
+  padding: 0 32px 56px;
+}
+
+.manager-shell.admin-shell .admin-topbar {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: auto;
+  min-height: 64px;
+  margin: 0 -32px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--admin-border);
+  background: color-mix(in srgb, var(--admin-bg) 86%, transparent);
+  box-shadow: none;
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.manager-shell .admin-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.manager-shell .admin-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--admin-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.manager-shell .admin-breadcrumb b {
+  color: var(--admin-text);
+  font-weight: 700;
+}
+
+.manager-shell .admin-breadcrumb span {
+  opacity: .55;
+}
+
+.manager-shell .manager-mobile-title {
+  display: none;
+  overflow: hidden;
+  color: var(--admin-text);
+  font-size: 14px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manager-shell .admin-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.manager-shell.admin-shell .admin-live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  border: 1px solid color-mix(in srgb, var(--admin-primary) 26%, var(--admin-border));
+  border-radius: 999px;
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+  font-size: 9.5px;
+  font-weight: 750;
+  letter-spacing: .08em;
+}
+
+.manager-shell.admin-shell .admin-live-dot::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-primary) 16%, transparent);
+}
+
+.manager-shell .manager-theme-toggle,
+.manager-shell .admin-topbar a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.manager-shell .manager-theme-toggle:hover,
+.manager-shell .admin-topbar a:hover {
+  border-color: color-mix(in srgb, var(--admin-primary) 34%, var(--admin-border));
+  color: var(--admin-primary);
+}
+
+.manager-shell .admin-page-heading {
+  position: relative;
+  margin: 28px 0 20px;
+  padding: 0;
+}
+
+.manager-shell .admin-page-heading::before {
+  content: none;
+}
+
+.manager-shell .admin-page-heading h1 {
+  margin: 0;
+  color: var(--admin-text);
+  font-size: clamp(26px, 2.4vw, 34px);
+  font-weight: 750;
+  letter-spacing: -.035em;
+  line-height: 1.25;
+}
+
+.manager-shell .admin-page-heading p {
+  max-width: 72ch;
+  margin: 4px 0 0;
+  color: var(--admin-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+

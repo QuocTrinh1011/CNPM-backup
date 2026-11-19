@@ -1,0 +1,383 @@
+/* ── 2. Top Announcement Bar ── */
+.site-shell .announcement {
+  min-height: 36px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 50;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.site-shell .announcement span {
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.site-shell[data-shop-theme="dark"] .announcement {
+  background: #0f172a;
+  color: #f1f5f9;
+  border-bottom: 1px solid var(--line);
+}
+.site-shell[data-shop-theme="dark"] .announcement span {
+  color: var(--accent);
+}
+
+/* ── 3. Sticky Glass Header & Navigation ── */
+.site-shell .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 80px;
+  background: rgba(250, 248, 245, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+  transition: all 0.25s var(--ease-smooth);
+}
+.site-shell[data-shop-theme="dark"] .site-header {
+  background: rgba(9, 14, 23, 0.88);
+}
+
+/* Wordmark Logo */
+.site-shell .wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease;
+}
+.site-shell .wordmark:hover {
+  opacity: 0.9;
+}
+.site-shell .wordmark em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+/* Main Navigation */
+.site-shell .main-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto 0 24px;
+}
+.site-shell .main-nav button {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s var(--ease-spring);
+  white-space: nowrap;
+}
+.site-shell .main-nav button:hover {
+  color: var(--ink);
+  background: var(--soft);
+}
+.site-shell .main-nav .sale-link {
+  color: var(--accent) !important;
+  font-weight: 800;
+  background: var(--accent-tint) !important;
+  border-color: var(--accent-soft) !important;
+}
+.site-shell[data-shop-theme="dark"] .main-nav .sale-link {
+  background: var(--accent-soft) !important;
+}
+.site-shell .main-nav .sale-link:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
+/* Integrated Header Search Bar */
+.site-shell .site-header .catalog-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 240px;
+  max-width: 290px;
+  min-width: 170px;
+  height: 42px;
+  margin: 0;
+  padding: 4px 6px 4px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-xs);
+  transition: all 0.2s var(--ease-spring);
+}
+.site-shell .site-header .catalog-search-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  background: var(--white);
+}
+.site-shell .site-header .catalog-search-wrap > svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.site-shell .site-header .catalog-search {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0;
+}
+.site-shell .site-header .catalog-search::placeholder {
+  color: var(--muted);
+  font-size: 12px;
+}
+.site-shell .shop-search-clear {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: var(--muted);
+  background: var(--soft);
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.site-shell .shop-search-clear:hover {
+  color: var(--ink);
+  background: var(--line);
+}
+.site-shell .site-header .shop-search-submit {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius-full);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.site-shell .site-header .shop-search-submit:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.site-shell[data-shop-theme="dark"] .site-header .shop-search-submit {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Header Actions & Tool Icons */
+.site-shell .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.site-shell .header-actions .icon-button,
+.site-shell .shop-theme-toggle {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  background: var(--white);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  position: relative;
+  transition: all 0.2s var(--ease-spring);
+  box-shadow: var(--shadow-xs);
+}
+.site-shell .header-actions .icon-button:hover,
+.site-shell .shop-theme-toggle:hover {
+  background: var(--soft);
+  color: var(--accent);
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+}
+
+/* Notification & Wishlist & Cart Badges */
+.site-shell .header-actions .icon-button span,
+.site-shell .cart-button span {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--paper);
+  box-shadow: 0 2px 6px var(--accent-glow);
+  line-height: 1;
+}
+
+/* Cart Button Specific */
+.site-shell .cart-button {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+  border-color: var(--ink) !important;
+}
+.site-shell .cart-button:hover {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #fff !important;
+}
+.site-shell[data-shop-theme="dark"] .cart-button {
+  background: var(--white) !important;
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+}
+
+/* Account Dropdown Button & Panel */
+.site-shell .shop-account {
+  position: relative;
+}
+.site-shell .account-button {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: auto !important;
+  padding: 0 14px !important;
+  border-radius: var(--radius-full) !important;
+}
+.site-shell .account-btn-label {
+  font-size: 12px;
+  font-weight: 700;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.site-shell .account-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  display: inline-block;
+  box-shadow: 0 0 0 2px var(--white);
+}
+.site-shell .shop-account-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 290px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-modal);
+  z-index: 60;
+  animation: modalPop 0.2s var(--ease-spring);
+}
+.site-shell .shop-account-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 12px;
+}
+.site-shell .shop-account-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--accent-tint);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 16px;
+  border: 1px solid var(--accent-soft);
+  flex-shrink: 0;
+}
+.site-shell .shop-account-heading small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+.site-shell .shop-account-heading strong {
+  display: block;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.site-shell .shop-account-heading p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 190px;
+}
+.site-shell .shop-account-panel nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.site-shell .shop-account-panel nav button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+.site-shell .shop-account-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+}
+.site-shell .shop-account-logout {
+  color: var(--danger) !important;
+  margin-top: 6px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px !important;
+}
+

@@ -1,0 +1,32 @@
+/* Pagination */
+.admin-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.admin-pagination > div { display: flex; gap: 8px; }
+.admin-pagination button {
+  min-height: 38px;
+  padding: 7px 16px;
+  color: var(--admin-text);
+  background: var(--admin-input);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.admin-pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+.admin-pagination button:not(:disabled):hover {
+  border-color: var(--admin-primary);
+  color: var(--admin-primary);
+  background: var(--admin-primary-soft);
+}
+

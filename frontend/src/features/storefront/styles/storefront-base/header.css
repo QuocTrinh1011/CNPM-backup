@@ -1,0 +1,303 @@
+/* ── Announcement Bar ── */
+.site-shell .announcement {
+  height: 38px;
+  background: #192820;
+  color: #e5ede7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 20px;
+}
+
+.site-shell[data-shop-theme="dark"] .announcement {
+  background: #080d0a;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── Header & Navigation ── */
+.site-shell .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 84px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  background: rgba(250, 248, 245, 0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.site-shell[data-shop-theme="dark"] .site-header {
+  background: rgba(12, 19, 16, 0.88);
+}
+
+.site-shell .wordmark {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.site-shell .wordmark em {
+  font-family: var(--serif);
+  font-weight: 500;
+  color: var(--accent);
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+.site-shell .main-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.site-shell .main-nav button {
+  position: relative;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 10px 4px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.site-shell .main-nav button::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 0;
+  height: 2.5px;
+  background: var(--accent);
+  transition: width 0.2s ease, left 0.2s ease;
+  border-radius: 2px;
+}
+
+.site-shell .main-nav button:hover {
+  color: var(--ink);
+}
+
+.site-shell .main-nav button:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+.site-shell .main-nav button.sale-link {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.site-shell[data-shop-theme="dark"] .main-nav button {
+  color: #b8c7bc;
+}
+
+.site-shell[data-shop-theme="dark"] .main-nav button:hover {
+  color: #ffffff;
+}
+
+.site-shell[data-shop-theme="dark"] .main-nav button.sale-link {
+  color: var(--accent);
+}
+
+/* Header Actions */
+.site-shell .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-shell .icon-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.site-shell .icon-button:hover {
+  background: var(--soft);
+  border-color: var(--line);
+  transform: translateY(-1px);
+}
+
+.site-shell .icon-button:active {
+  transform: translateY(0);
+}
+
+.site-shell .shop-theme-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.2s ease;
+}
+
+.site-shell .shop-theme-toggle:hover {
+  background: var(--soft);
+  transform: rotate(15deg);
+}
+
+.site-shell .notification-button > span,
+.site-shell .cart-button > span {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font: 700 10px/1 var(--sans);
+  box-shadow: 0 2px 6px rgba(196, 85, 53, 0.4);
+}
+
+/* ── Account Dropdown ── */
+.site-shell .shop-account {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.site-shell .account-status-dot {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--paper);
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.site-shell .shop-account-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: -8px;
+  width: 320px;
+  z-index: 50;
+  padding: 12px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  text-align: left;
+  animation: shop-menu-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes shop-menu-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.site-shell .shop-account-heading {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px 16px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+}
+
+.site-shell .shop-account-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.site-shell .shop-account-heading strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.site-shell .shop-account-heading p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-shell .shop-account-panel nav button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: var(--border-radius-sm);
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.site-shell .shop-account-panel nav button > span { flex: 1; }
+.site-shell .shop-account-panel nav button:hover {
+  background: var(--soft);
+  color: var(--accent);
+}
+
+.site-shell .shop-account-panel nav .shop-account-logout {
+  color: #dc2626;
+  border-top: 1px solid var(--line);
+  margin-top: 8px;
+  padding-top: 12px;
+  border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
+}
+
+.site-shell .shop-account-count {
+  padding: 2px 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+

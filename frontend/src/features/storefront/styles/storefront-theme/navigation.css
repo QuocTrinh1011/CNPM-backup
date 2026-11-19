@@ -1,0 +1,150 @@
+/* ── 11. Mobile Slide-Out Menu Drawer ── */
+.site-shell .shop-menu-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: rgba(14, 20, 32, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.site-shell .shop-menu-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 380px;
+  background: var(--white);
+  box-shadow: var(--shadow-modal);
+  z-index: 111;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  animation: drawerSlideLeft 0.28s var(--ease-spring);
+}
+@keyframes drawerSlideLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.site-shell .shop-menu-drawer-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-shell .shop-menu-drawer-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.site-shell .shop-menu-user-card {
+  padding: 18px;
+  background: var(--soft);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+}
+.site-shell .shop-menu-user-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.site-shell .shop-menu-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--accent-tint);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 18px;
+  border: 1px solid var(--accent-soft);
+}
+.site-shell .shop-menu-greeting {
+  font-size: 11px;
+  color: var(--muted);
+}
+.site-shell .shop-menu-name {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.site-shell .shop-menu-email {
+  font-size: 11px;
+  color: var(--muted);
+}
+.site-shell .shop-menu-section-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.site-shell .shop-menu-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.site-shell .shop-menu-action-item {
+  padding: 12px;
+  background: var(--soft);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  position: relative;
+  transition: all 0.15s ease;
+}
+.site-shell .shop-menu-action-item:hover {
+  background: var(--white);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.site-shell .shop-menu-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 9px;
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+}
+.site-shell .shop-menu-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.site-shell .shop-menu-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  transition: background 0.15s ease;
+}
+.site-shell .shop-menu-nav-item:hover {
+  background: var(--soft);
+}
+.site-shell .shop-menu-sale-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--accent);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+

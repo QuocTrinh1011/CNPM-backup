@@ -1,0 +1,105 @@
+/* -------------------------------------------------------------- surfaces */
+.manager-shell .admin-content {
+  display: grid;
+  gap: 16px;
+}
+
+.manager-shell.admin-shell .admin-panel {
+  position: relative;
+  padding: 20px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-card);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.manager-shell .admin-panel-title,
+.manager-shell .manager-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.manager-shell .admin-panel-title h2,
+.manager-shell .manager-section-copy h2 {
+  margin: 0;
+  color: var(--admin-text);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1.35;
+}
+
+.manager-shell .admin-panel-title p,
+.manager-shell .manager-section-copy p {
+  margin: 3px 0 0;
+  color: var(--admin-muted);
+  font-size: 12.5px;
+}
+
+.manager-shell .admin-eyebrow {
+  display: none;
+}
+
+.manager-shell .manager-section-copy {
+  min-width: 0;
+}
+
+.manager-shell .manager-section-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.manager-shell .admin-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.manager-shell .admin-section-heading h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+
+.manager-shell .admin-section-heading p {
+  margin: 3px 0 0;
+  color: var(--admin-muted);
+  font-size: 12.5px;
+}
+
+.manager-shell .admin-loading,
+.manager-shell .admin-loading-panel {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 220px;
+  padding: 32px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-card);
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.manager-shell .admin-loading-panel {
+  margin: 0;
+}
+
+.manager-shell .admin-spinner {
+  animation: manager-spin .9s linear infinite;
+}
+
+@keyframes manager-spin {
+  to { transform: rotate(360deg); }
+}
+

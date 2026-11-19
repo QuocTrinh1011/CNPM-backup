@@ -1,0 +1,154 @@
+/* ------------------------------------------------------- dashboard blocks */
+.manager-shell .admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.manager-shell.admin-shell .admin-stat {
+  position: relative;
+  min-height: 132px;
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+  background: var(--admin-card);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.manager-shell.admin-shell .admin-stat.is-clickable {
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.manager-shell.admin-shell .admin-stat.is-clickable:hover {
+  border-color: color-mix(in srgb, var(--admin-primary) 36%, var(--admin-border));
+  transform: translateY(-2px);
+  box-shadow: var(--admin-shadow-md);
+}
+
+.manager-shell.admin-shell .admin-stat strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--admin-text);
+  font-size: clamp(24px, 2.2vw, 31px);
+  font-weight: 750;
+  letter-spacing: -.04em;
+  line-height: 1.15;
+}
+
+.manager-shell.admin-shell .admin-stat small {
+  display: block;
+  max-width: 220px;
+  margin-top: 2px;
+  color: var(--admin-muted);
+  font-size: 11.5px;
+}
+
+.manager-shell .admin-kpi-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+}
+
+.manager-shell .admin-kpi-icon.blue { background: #e0edff; color: #2563eb; }
+.manager-shell .admin-kpi-icon.green { background: #ddf5ea; color: #0f7a5f; }
+.manager-shell .admin-kpi-icon.violet { background: #ece8fe; color: #7c3aed; }
+.manager-shell .admin-kpi-icon.amber { background: #fdf0d9; color: #b45309; }
+.manager-shell.admin-shell[data-theme="dark"] .admin-kpi-icon.blue { background: #163152; color: #7eb5ff; }
+.manager-shell.admin-shell[data-theme="dark"] .admin-kpi-icon.green { background: #153b2e; color: #70e1ba; }
+.manager-shell.admin-shell[data-theme="dark"] .admin-kpi-icon.violet { background: #2d2456; color: #b6a1ff; }
+.manager-shell.admin-shell[data-theme="dark"] .admin-kpi-icon.amber { background: #4a3119; color: #ffc480; }
+
+.manager-shell .admin-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.manager-shell .admin-quick-text small {
+  white-space: normal;
+}
+
+.manager-shell .admin-quick-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 72px;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-input);
+  transition: transform .16s ease, border-color .16s ease, background-color .16s ease;
+}
+
+.manager-shell .admin-quick-card:hover {
+  border-color: color-mix(in srgb, var(--admin-primary) 34%, var(--admin-border));
+  background: var(--admin-card);
+  transform: translateY(-1px);
+}
+
+.manager-shell .admin-quick-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+}
+
+.manager-shell .admin-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.manager-shell .admin-status-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-input);
+}
+
+.manager-shell :is(.admin-status-strip > span, .admin-status-chip) {
+  padding: 4px 9px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-card);
+  font-size: 11.5px;
+}
+
+.manager-shell .admin-operational-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, #f59e0b 34%, var(--admin-border));
+  border-radius: 12px;
+  background: color-mix(in srgb, #f59e0b 8%, var(--admin-card));
+  font-size: 12.5px;
+}
+
+.manager-shell .admin-dashboard-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 34px;
+  padding: 0 2px;
+}
+
+.manager-shell .admin-kpi-headline {
+  color: var(--admin-muted);
+  font-size: 9.5px;
+  font-weight: 750;
+  letter-spacing: .12em;
+}
+

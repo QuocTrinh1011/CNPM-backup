@@ -1,0 +1,113 @@
+/* Order Quick Status Tabs */
+.admin-order-status-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+}
+
+.admin-status-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-card);
+  color: var(--admin-muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-status-tab-btn:hover {
+  border-color: var(--admin-primary);
+  color: var(--admin-text);
+  background: var(--admin-primary-soft);
+}
+
+.admin-status-tab-btn.active {
+  background: var(--admin-primary);
+  color: #ffffff;
+  border-color: var(--admin-primary);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.28);
+}
+
+.admin-status-tab-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.admin-status-tab-btn.active .admin-status-tab-dot {
+  background: #ffffff !important;
+}
+
+/* Order Management */
+.admin-order-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.admin-order-filter-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-order-filter-select label {
+  color: var(--admin-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.admin-order-filter-select select,
+.admin-order-actions select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-input);
+  color: var(--admin-text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.admin-order-filter-select select:focus,
+.admin-order-actions select:focus {
+  border-color: var(--admin-primary);
+}
+
+.admin-order-toolbar > span {
+  margin-left: auto;
+  color: var(--admin-muted);
+  font: 600 12px var(--admin-mono);
+}
+
+.admin-table-subline {
+  display: block;
+  margin-top: 4px;
+  color: var(--admin-muted);
+  font-size: 11.5px;
+}
+
+.admin-order-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-order-cards { display: none; }
+

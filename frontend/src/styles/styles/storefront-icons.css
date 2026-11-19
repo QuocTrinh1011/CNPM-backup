@@ -1,0 +1,48 @@
+/* Storefront icon system: keep controls consistent without touching admin styles. */
+.site-shell .icon-button,
+.site-shell .button,
+.site-shell .filter-toggle,
+.site-shell .quick-add,
+.site-shell .size-help,
+.site-shell .continue-shopping,
+.site-shell .back-link,
+.site-shell .quantity button,
+.site-shell .remove-line,
+.site-shell .close-button,
+.site-shell .order-row > svg,
+.site-shell .survey-list button > span,
+.site-shell .secure-note {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.site-shell svg { flex:none; vertical-align:middle; }
+.site-shell .icon-button { width:42px; height:42px; padding:0; border:1px solid transparent; border-radius:10px; }
+.site-shell .icon-button:hover { background:var(--soft); border-color:var(--line); }
+.site-shell .header-actions .icon-button { font-size:inherit; }
+.site-shell .quick-add { justify-content:space-between; }
+.site-shell .quick-add svg { color:var(--accent); }
+.site-shell .heart { display:grid; place-items:center; line-height:1; }
+.site-shell .filter-toggle { min-height:42px; }
+.site-shell .product-details span,
+.site-shell .feedback-heading span,
+.site-shell .feedback-item span { display:inline-flex; align-items:center; gap:6px; }
+.site-shell .rating-input button { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; }
+.site-shell .quantity button { padding:0; }
+.site-shell .product-quantity { display:flex; align-items:center; flex-wrap:wrap; gap:14px; margin:24px 0 8px; }
+.site-shell .product-quantity > label { min-width:88px; margin:0; font:500 12px var(--mono); letter-spacing:.08em; }
+.site-shell .product-quantity > label b { color:var(--accent); }
+.site-shell .product-quantity > small { color:var(--muted); font-size:12px; }
+.site-shell .product-quantity-control { margin:0; height:40px; }
+.site-shell .product-quantity-control button { width:38px; height:38px; }
+.site-shell .product-quantity-control span { min-width:24px; text-align:center; font-size:13px; }
+.site-shell .quantity button:disabled { opacity:.35; cursor:not-allowed; }
+.site-shell .remove-line { padding:4px; }
+.site-shell .close-button { padding:5px; }
+.site-shell .empty-state > svg,
+.site-shell .drawer-empty > svg { margin:0 auto 12px; color:var(--accent); }
+.site-shell .success-icon svg { color:#fff; }
+.site-shell .rotate-180 { transform:rotate(180deg); }
+

@@ -1,0 +1,48 @@
+/* Login Card */
+.admin-login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--admin-bg);
+}
+
+.admin-login .admin-login-card {
+  width: min(440px, 100%);
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-xl);
+  padding: 40px;
+  box-shadow: var(--admin-shadow-lg);
+}
+
+.admin-login .admin-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--admin-radius-lg);
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.admin-login .admin-login-card h1 {
+  font: 700 28px/1.2 'Inter', sans-serif;
+  letter-spacing: -0.03em;
+  margin: 10px 0;
+}
+
+.admin-login .admin-login-card p { color: var(--admin-muted); margin-bottom: 24px; }
+.admin-login .admin-login-card form { display: grid; gap: 16px; }
+.admin-login .admin-login-card label { display: grid; gap: 6px; font: 600 11px var(--admin-mono); letter-spacing: 0.06em; }
+.admin-login .admin-login-card input {
+  padding: 11px 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-input);
+  color: var(--admin-text);
+  font-size: 13px;
+}
+

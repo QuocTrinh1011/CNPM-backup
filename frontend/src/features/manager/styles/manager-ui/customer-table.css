@@ -1,0 +1,13 @@
+/* Compact customer table columns (override legacy min-widths) */
+.manager-shell .customer-lifecycle,
+.manager-shell .customer-purchase-metrics {
+  min-width: 128px;
+}
+
+.manager-shell .admin-table-customer {
+  min-width: 140px;
+}
+
+.manager-shell .admin-table-row-actions > div {
+  display: contents;
+}

@@ -1,0 +1,239 @@
+/* ── 6. Catalog Section & Filter Controls ── */
+.site-shell .catalog-section {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+.site-shell .catalog-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.site-shell .catalog-head h2 {
+  font-size: clamp(28px, 3.4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  margin: 0;
+}
+.site-shell .catalog-head h2 i {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--accent);
+}
+.site-shell .catalog-count {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin: 6px 0 0;
+}
+
+/* Filter Bar & Category Pills */
+.site-shell .filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 10px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  flex-wrap: wrap;
+}
+.site-shell .filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  -webkit-overflow-scrolling: touch;
+}
+.site-shell .filter-pills button {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--muted);
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: all 0.2s var(--ease-spring);
+}
+.site-shell .filter-pills button:hover {
+  color: var(--ink);
+  background: var(--soft);
+}
+.site-shell .filter-pills button.active {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+.site-shell[data-shop-theme="dark"] .filter-pills button.active {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
+/* Sort & Filter Tools */
+.site-shell .filter-tools select {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  cursor: pointer;
+}
+.site-shell .filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--soft);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.site-shell .filter-toggle:hover {
+  background: var(--white);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.site-shell .shop-filter-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+
+/* Filter Panel (Price Quick Pills & Custom Inputs) */
+.site-shell .filter-panel {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  animation: modalPop 0.25s var(--ease-spring);
+}
+.site-shell .price-quick-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.site-shell .price-pill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  background: var(--soft);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.site-shell .price-pill:hover {
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+.site-shell .price-pill.active {
+  background: var(--accent-tint) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  font-weight: 700;
+}
+.site-shell[data-shop-theme="dark"] .price-pill.active {
+  background: var(--accent-soft) !important;
+}
+
+.site-shell .filter-panel label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.site-shell .filter-panel input {
+  width: 130px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 13px;
+  font-family: var(--mono);
+}
+.site-shell .filter-panel button[type="button"] {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--soft);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  transition: all 0.15s ease;
+}
+.site-shell .filter-panel button[type="button"]:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.site-shell .shop-filter-close {
+  display: none;
+}
+
+/* Active Filter Summary Bar */
+.site-shell .shop-active-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--accent-tint);
+  border: 1px solid var(--accent-soft);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+}
+.site-shell[data-shop-theme="dark"] .shop-active-filters {
+  background: var(--accent-soft);
+  color: #fff;
+}
+.site-shell .shop-active-filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  cursor: pointer;
+}
+.site-shell[data-shop-theme="dark"] .shop-active-filters button {
+  color: #fff;
+}
+
