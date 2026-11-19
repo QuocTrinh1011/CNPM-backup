@@ -99,8 +99,8 @@ public class WarehouseReportService {
         Instant effectiveFromInclusive = historyAvailableFrom == null || historyComplete
                 ? period.fromInclusive() : historyAvailableFrom;
         Map<String, Object> bounds = new LinkedHashMap<>();
-        bounds.put("fromInclusive", effectiveFromInclusive);
-        bounds.put("toExclusive", period.toExclusive());
+        bounds.put("fromInclusive", Timestamp.from(effectiveFromInclusive));
+        bounds.put("toExclusive", Timestamp.from(period.toExclusive()));
 
         List<WarehouseReportDto.BalanceLine> balances = db.queryForList(BALANCES_SQL, bounds).stream()
                 .map(row -> new WarehouseReportDto.BalanceLine(string(row.get("item_type")), number(row.get("item_id")),

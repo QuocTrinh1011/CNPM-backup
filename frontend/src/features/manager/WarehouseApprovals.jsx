@@ -33,7 +33,8 @@ export default function WarehouseApprovals() {
   const decide = async (row, decision) => {
     setBusyId(row.id); setNotice(''); setError('');
     try {
-      await adminApi(queue[3](row.id), { method: 'PATCH', body: { decision, note: note.trim() } });
+      const apiDecision = decision === 'APPROVED' ? 'APPROVE' : 'REJECT';
+      await adminApi(queue[3](row.id), { method: 'PATCH', body: { decision: apiDecision, note: note.trim() } });
       setNotice(`${decision === 'APPROVED' ? 'Đã duyệt' : 'Đã từ chối'} yêu cầu ${row.requestCode || row.returnCode}.`);
       setNote(''); setReload(value => value + 1);
     } catch (failure) { setError(failure.message || 'Không thể xử lý yêu cầu.'); }

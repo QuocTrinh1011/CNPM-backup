@@ -22,7 +22,7 @@ it('approves a pending material request and shows the result', async () => {
   expect(await screen.findByText('YC-004')).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Duyệt YC-004' }));
   await waitFor(() => expect(adminApi).toHaveBeenCalledWith('/api/manager/warehouse/material-requests/4/decision', expect.objectContaining({
-    method: 'PATCH', body: { decision: 'APPROVED', note: '' },
+    method: 'PATCH', body: { decision: 'APPROVE', note: '' },
   })));
   expect((await screen.findByRole('status')).textContent).toContain('Đã duyệt yêu cầu YC-004.');
 });
