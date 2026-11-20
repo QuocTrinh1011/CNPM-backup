@@ -1,0 +1,56 @@
+/* Interactive Buttons & Badges */
+.button, .primary-button {
+  transition: transform var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  border-radius: var(--radius-sm);
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.quick-add {
+  transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+  border-radius: var(--radius-sm);
+}
+
+.quick-add:hover {
+  transform: scale(1.02);
+}
+
+.heart {
+  transition: transform var(--transition-bounce), color var(--transition-fast), background-color var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.heart:hover {
+  transform: scale(1.12);
+}
+
+.heart.active {
+  transform: scale(1.15);
+}
+
+.filter-pills button {
+  transition: all var(--transition-fast);
+  border-radius: 999px;
+}
+
+.filter-pills button:hover {
+  color: var(--ink);
+}
+
+.catalog-search-wrap {
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+  border: 1px solid var(--line);
+}
+
+.catalog-search-wrap:focus-within {
+  box-shadow: var(--shadow-md);
+  border-color: var(--ink);
+}

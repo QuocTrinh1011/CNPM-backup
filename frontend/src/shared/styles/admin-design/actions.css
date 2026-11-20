@@ -1,0 +1,108 @@
+/* Actions & Buttons */
+.admin-shell .admin-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-input);
+  font: 500 11px 'Inter', sans-serif;
+  color: var(--admin-text);
+  border-radius: var(--admin-radius-sm);
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.admin-shell .admin-action:hover {
+  border-color: var(--admin-primary);
+  color: var(--admin-primary);
+}
+
+.admin-shell .danger-text { color: #ef4444 !important; }
+.admin-shell .admin-action.danger-text:hover {
+  background: #ef444415;
+  border-color: #ef444444;
+}
+
+.admin-shell .admin-primary, .admin-login .admin-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--admin-primary);
+  color: white;
+  border: 0;
+  padding: 9px 18px;
+  min-height: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--admin-radius-md);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+  transition: all 0.15s ease;
+}
+
+.admin-shell .admin-primary:hover, .admin-login .admin-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.admin-shell .admin-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* Toolbar & Search Bar */
+.admin-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  height: 40px;
+  background: var(--admin-input);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  min-width: 280px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-search-wrap:focus-within {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px var(--admin-primary-soft);
+}
+
+.admin-search-icon { color: var(--admin-muted); flex-shrink: 0; }
+.admin-search-input {
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--admin-text) !important;
+  outline: none !important;
+  padding: 0 !important;
+  width: 100%;
+  font-size: 13.5px;
+}
+
+.admin-search-clear {
+  border: 0;
+  background: transparent;
+  color: var(--admin-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: grid;
+  place-items: center;
+  transition: color 0.15s ease;
+}
+.admin-search-clear:hover {
+  color: var(--admin-text);
+}
+
+.admin-toolbar-count {
+  color: var(--admin-muted);
+  font: 500 11px var(--admin-mono);
+}

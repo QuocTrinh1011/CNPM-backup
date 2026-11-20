@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { it, expect, vi, afterEach } from 'vitest';
-import { ReceiptAction } from './CustomerOrders';
+import { ReceiptAction } from '../features/customer/orders/CustomerOrders';
 import { api } from '../api/api';
 vi.mock('../api/api', async original => ({ ...await original(), api: vi.fn() }));
 afterEach(() => { cleanup(); vi.resetAllMocks(); });

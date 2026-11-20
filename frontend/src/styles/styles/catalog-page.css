@@ -1,0 +1,15 @@
+/* Trang danh mục riêng: không còn cuộn từ menu về catalog ở trang chủ */
+.site-shell:not(.catalog-page) .catalog-section { display:none; }
+.catalog-page .hero,
+.catalog-page .category-strip,
+.catalog-page .home-catalog-callout { display:none; }
+.home-catalog-callout { padding:86px clamp(22px, 4vw, 72px); text-align:center; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.home-catalog-callout h2 { margin:0 0 17px; font-size:clamp(38px, 5vw, 66px); letter-spacing:-.08em; line-height:1; }
+.home-catalog-callout p:not(.kicker) { max-width:620px; margin:0 auto 29px; color:var(--muted); font-size:17px; line-height:1.7; }
+.main-nav button:focus { outline:0; }
+.main-nav button:focus-visible { outline:2px solid var(--accent); outline-offset:5px; }
+
+@media (max-width:680px) {
+  .home-catalog-callout { padding:62px 17px; }
+  .home-catalog-callout p:not(.kicker) { font-size:15px; }
+}

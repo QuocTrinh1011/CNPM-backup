@@ -113,7 +113,7 @@ class AuthSessionBoundaryIntegrationTest {
     }
 
     private ManagerAuthService.Session managerSession() {
-        User manager = user("MANAGER", "manager@auth-boundary.test");
+        User manager = user("MANAGER_SALES", "manager@auth-boundary.test");
         return managerAuth.login(manager.getEmail(), PASSWORD);
     }
 

@@ -594,3 +594,19 @@ it.each(['getItem', 'setItem'])('keeps the sidebar usable when %s fails', async 
    storage.mockRestore();
  }
 });
+
+it("filters the loaded order page by payment method from the URL", async () => {
+  window.history.replaceState({}, "", "/manager/orders?paymentMethod=COD");
+  adminApi.mockResolvedValue({
+    content: [
+      { id: 901, orderCode: 9001, status: "PENDING", paymentMethod: "COD", paymentStatus: "COD", totalAmount: 100000 },
+      { id: 902, orderCode: 9002, status: "PENDING", paymentMethod: "PAYOS", paymentStatus: "PENDING", totalAmount: 100000 },
+    ],
+    totalPages: 1, totalElements: 2,
+  });
+  render(<ManagerApp />);
+  expect((await screen.findAllByText("#9001")).length).toBeGreaterThan(0);
+  expect(screen.queryAllByText("#9002")).toHaveLength(0);
+  fireEvent.click(screen.getByRole("button", { name: /Bộ lọc/ }));
+  expect(screen.getByLabelText("Kênh thanh toán").value).toBe("COD");
+});

@@ -1,0 +1,76 @@
+/* ── 14. Mobile Bottom Navigation Bar & Back to Top ── */
+.site-shell .mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  height: 64px;
+  background: rgba(250, 248, 245, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--line);
+  padding: 0 12px;
+  justify-content: space-around;
+  align-items: center;
+}
+.site-shell[data-shop-theme="dark"] .mobile-bottom-nav {
+  background: rgba(9, 14, 23, 0.95);
+}
+.site-shell .mobile-bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 6px 10px;
+  position: relative;
+  transition: color 0.15s ease;
+}
+.site-shell .mobile-bottom-nav-item.active,
+.site-shell .mobile-bottom-nav-item:hover {
+  color: var(--accent);
+}
+.site-shell .mobile-nav-icon-wrap {
+  position: relative;
+}
+.site-shell .mobile-nav-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+.site-shell .back-to-top-button {
+  position: fixed;
+  right: 24px;
+  bottom: 84px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  z-index: 45;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-spring);
+}
+.site-shell .back-to-top-button:hover {
+  transform: translateY(-3px);
+  color: var(--accent);
+  border-color: var(--accent);
+}

@@ -1,0 +1,148 @@
+/* ── 9. Shopping Cart Drawer ── */
+.site-shell .cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 480px;
+  background: var(--white);
+  box-shadow: var(--shadow-drawer);
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  animation: drawerSlide 0.28s var(--ease-spring);
+}
+@keyframes drawerSlide {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.site-shell .drawer-head {
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-shell .drawer-head h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+}
+.site-shell .cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.site-shell .cart-select-all {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.site-shell .cart-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: var(--soft);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+.site-shell .cart-line-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+.site-shell .cart-line img {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--white);
+  flex-shrink: 0;
+}
+.site-shell .cart-line-info {
+  flex: 1;
+  min-width: 0;
+}
+.site-shell .cart-line-info h3 {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.site-shell .cart-line-info small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+}
+.site-shell .cart-line strong {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--accent);
+}
+.site-shell .remove-line {
+  color: var(--muted);
+  padding: 4px;
+  transition: color 0.15s ease;
+}
+.site-shell .remove-line:hover {
+  color: var(--danger);
+}
+.site-shell .drawer-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+.site-shell .drawer-foot {
+  padding: 22px 24px;
+  border-top: 1px solid var(--line);
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.site-shell .drawer-foot .subtotal {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.site-shell .drawer-foot .subtotal span {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.site-shell .drawer-foot .subtotal strong {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+}
+.site-shell .drawer-foot p {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+}
+.site-shell .continue-shopping {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: center;
+  padding: 6px;
+  cursor: pointer;
+}
+.site-shell .continue-shopping:hover {
+  color: var(--ink);
+}

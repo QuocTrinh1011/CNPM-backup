@@ -1,0 +1,295 @@
+/* --------------------------------------------------------------- toolbar */
+.manager-shell .admin-table-toolbar,
+.manager-shell .admin-order-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 9px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-input);
+}
+
+.manager-shell .admin-search-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  gap: 8px;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  background: var(--admin-card);
+}
+
+.manager-shell .admin-search-wrap:focus-within {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-primary) 14%, transparent);
+}
+
+.manager-shell .admin-search-icon {
+  flex: 0 0 auto;
+  color: var(--admin-muted);
+}
+
+.manager-shell .admin-search-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 34px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--admin-text);
+  font-size: 13px;
+}
+
+.manager-shell .admin-search-input:focus {
+  outline: none;
+}
+
+.manager-shell .admin-search-clear {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--admin-input);
+  color: var(--admin-muted);
+  cursor: pointer;
+}
+
+.manager-shell .admin-toolbar-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.manager-shell .admin-toolbar-count,
+.manager-shell .manager-toolbar-count {
+  color: var(--admin-muted);
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.manager-shell .admin-table-row-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.manager-shell .manager-customer-table td:last-child {
+  min-width: 180px;
+}
+
+.manager-shell .manager-survey-cta {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 12px;
+}
+
+.manager-shell .admin-order-filter-select {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--admin-muted);
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+.manager-shell .admin-order-filter-select select {
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font-size: 12.5px;
+}
+
+/* Filter toggle, chips and advanced sheet */
+.manager-shell .manager-filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 11px;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.manager-shell .manager-filter-toggle:hover {
+  border-color: color-mix(in srgb, var(--admin-primary) 34%, var(--admin-border));
+}
+
+.manager-shell .manager-filter-toggle.is-active {
+  border-color: color-mix(in srgb, var(--admin-primary) 44%, var(--admin-border));
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+}
+
+.manager-shell .manager-filter-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--admin-primary);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+.manager-shell .manager-icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  background: var(--admin-card);
+  color: var(--admin-muted);
+  cursor: pointer;
+}
+
+.manager-shell .manager-icon-btn:hover {
+  border-color: color-mix(in srgb, var(--admin-primary) 34%, var(--admin-border));
+  color: var(--admin-primary);
+}
+
+.manager-shell .manager-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.manager-shell .manager-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 4px 3px 9px;
+  border: 1px solid color-mix(in srgb, var(--admin-primary) 24%, var(--admin-border));
+  border-radius: 999px;
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+.manager-shell .manager-filter-chip button {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.manager-shell .manager-filter-chip button:hover {
+  background: color-mix(in srgb, var(--admin-primary) 16%, transparent);
+}
+
+.manager-shell .manager-advanced-filters {
+  display: none;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  align-items: end;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-input);
+}
+
+.manager-shell .manager-advanced-filters.is-open {
+  display: grid;
+}
+
+.manager-shell .manager-advanced-filters label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.manager-shell .manager-advanced-filters :is(input, select) {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font-size: 12.5px;
+  box-sizing: border-box;
+}
+
+/* Status segmented strip */
+.manager-shell .admin-order-status-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 2px 2px 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.manager-shell .admin-order-status-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.manager-shell .admin-status-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-height: 31px;
+  padding: 0 11px;
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  background: var(--admin-card);
+  color: var(--admin-muted);
+  font-size: 11.5px;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color .15s ease, background-color .15s ease, color .15s ease;
+}
+
+.manager-shell .admin-status-tab-btn:hover {
+  border-color: color-mix(in srgb, var(--admin-primary) 30%, var(--admin-border));
+  color: var(--admin-text);
+}
+
+.manager-shell .admin-status-tab-btn.active {
+  border-color: color-mix(in srgb, var(--admin-primary) 48%, var(--admin-border));
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+}
+
+.manager-shell .admin-status-tab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+}

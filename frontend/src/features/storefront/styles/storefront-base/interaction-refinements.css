@@ -1,0 +1,368 @@
+/* ── Enhanced Storefront Features & UX ── */
+
+/* Quick Price Pills */
+.site-shell .price-quick-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+.site-shell .price-pill {
+  padding: 6px 14px;
+  border-radius: var(--border-radius-xl);
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+.site-shell .price-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.site-shell .price-pill.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  font-weight: 600;
+}
+.site-shell[data-shop-theme="dark"] .price-pill.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* Product Modal Actions: Add to Cart + Buy Now */
+.site-shell .product-modal-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+  align-items: stretch;
+}
+/* Reset the legacy standalone .add-modal margins inside the shared action row. */
+.site-shell .product-modal-actions > button {
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.site-shell .buy-now-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 18px;
+  border-radius: var(--border-radius-sm);
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(196, 85, 53, 0.28);
+}
+.site-shell .buy-now-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+.site-shell .buy-now-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.site-shell .product-modal-heart {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(4px);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.15s ease;
+}
+.site-shell[data-shop-theme="dark"] .product-modal-heart {
+  background: rgba(20, 30, 25, 0.88);
+  color: var(--ink);
+}
+.site-shell .product-modal-heart.active {
+  color: #e11d48;
+}
+
+/* Size Guide Modal */
+.site-shell .size-guide-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+.site-shell .size-guide-link:hover {
+  color: var(--accent);
+}
+.site-shell .size-guide-modal {
+  width: min(540px, 92vw);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--border-radius-lg);
+  padding: 24px 28px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  animation: modal-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.site-shell .size-guide-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.site-shell .size-guide-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.site-shell .size-guide-table-wrap {
+  overflow-x: auto;
+}
+.site-shell .size-guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.site-shell .size-guide-table th,
+.site-shell .size-guide-table td {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+.site-shell .size-guide-table th {
+  background: var(--soft);
+  font-weight: 700;
+  color: var(--ink);
+}
+.site-shell .size-guide-tip {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.site-shell .cart-line-variant {
+  display: inline-flex;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 500;
+  margin: 2px 0 6px;
+}
+
+/* Back to Top Floating Button */
+.site-shell .back-to-top-btn {
+  position: fixed;
+  bottom: 82px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 45;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+}
+.site-shell .back-to-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.site-shell .back-to-top-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  transform: translateY(-2px);
+}
+@media (max-width: 768px) {
+  .site-shell .back-to-top-btn {
+    bottom: 74px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Header Actions Refinements */
+.site-shell .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.site-shell .header-actions .icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-sm);
+  transition: all 0.18s ease;
+  color: var(--ink);
+}
+.site-shell .header-actions .icon-button:hover {
+  background: var(--soft);
+  color: var(--accent);
+}
+.site-shell .account-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: auto;
+  min-width: 42px;
+  padding: 0 10px 0 8px;
+}
+.site-shell .account-btn-label {
+  font-size: 13px;
+  font-weight: 600;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink);
+}
+.site-shell .wishlist-button {
+  position: relative;
+}
+.site-shell .wishlist-button > span {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font: 700 11px/1 var(--sans);
+}
+@media (max-width: 768px) {
+  .site-shell .account-btn-label {
+    display: none;
+  }
+  .site-shell .account-button {
+    width: 42px;
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+/* ── Toast Notifications ── */
+.site-shell .toast,
+.toast {
+  position: fixed;
+  z-index: 9999 !important;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  color: #fff;
+  background: rgba(22, 21, 18, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 4px 14px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+  max-width: min(480px, calc(100vw - 32px));
+  word-break: break-word;
+  animation: toast-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+.site-shell .toast span,
+.toast span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #fff;
+}
+
+.site-shell .toast.error span,
+.toast.error span {
+  background: #ef4444;
+}
+
+.site-shell .toast button,
+.toast button {
+  margin-left: 8px;
+  padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.site-shell .toast button:hover,
+.toast button:hover {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 680px) {
+  .site-shell .toast,
+  .toast {
+    left: 14px;
+    right: 14px;
+    top: 14px;
+    max-width: none;
+    font-size: 12px;
+    padding: 12px 16px;
+  }
+}

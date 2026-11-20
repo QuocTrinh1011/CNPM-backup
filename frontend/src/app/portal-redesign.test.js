@@ -2,10 +2,17 @@
 // CSS contracts: new portal styles must not leak into the system Admin.
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-const userStyles = readFileSync('src/features/storefront/styles/storefront-theme.css', 'utf8');
+import path from 'node:path';
+
+function readStyles(file) {
+  return readFileSync(file, 'utf8').replace(/@import\s+["']([^"']+)["'];\r?\n?/g, (_rule, imported) =>
+    readStyles(path.resolve(path.dirname(file), imported)));
+}
+
+const userStyles = readStyles('src/features/storefront/styles/storefront-theme.css');
 const managerStyles = readFileSync('src/features/manager/styles/manager-redesign.css', 'utf8');
 const newFormStyles = readFileSync('src/features/storefront/styles/storefront-customer.css', 'utf8');
-const cockpitStyles = readFileSync('src/features/manager/styles/manager-ui.css', 'utf8');
+const cockpitStyles = readStyles('src/features/manager/styles/manager-ui.css');
 const adminStyles = ['features/admin/styles/admin-governance.css','features/admin/styles/admin-aurora.css'].map(file => readFileSync(`src/${file}`, 'utf8'));
 
 function rules(css) {

@@ -1,0 +1,186 @@
+/* ── Modals & Drawers ── */
+.site-shell .modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(13, 20, 16, 0.65);
+  backdrop-filter: blur(8px);
+  animation: backdrop-in 0.2s ease-out;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.site-shell :is(.auth-modal, .profile-modal, .survey-modal, .wide-modal, .success-modal) {
+  width: min(540px, 100%);
+  max-height: min(88vh, 800px);
+  overflow-y: auto;
+  padding: 36px;
+  background: var(--white);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-lg);
+  animation: modal-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.site-shell :is(input, textarea, select) {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--border-radius-sm);
+  padding: 11px 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.site-shell :is(input, textarea, select):focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.site-shell form label {
+  display: block;
+  font: 600 11px/1.4 var(--mono);
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.site-shell form label :is(input, textarea, select) {
+  margin-top: 6px;
+}
+
+.site-shell .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 10px 22px;
+  border-radius: var(--border-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.site-shell .button-dark {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.site-shell .button-dark:hover {
+  background: var(--accent);
+}
+
+.site-shell .button-light {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.site-shell .button-light:hover {
+  background: var(--soft);
+}
+
+/* Cart Drawer */
+.site-shell .drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(13, 20, 16, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.site-shell .cart-drawer {
+  width: min(480px, 100%);
+  height: 100%;
+  background: var(--white);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  animation: drawer-slide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes drawer-slide {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.site-shell .drawer-head {
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.site-shell .drawer-head h2 { margin: 0; font-size: 22px; font-weight: 700; }
+.site-shell .cart-items { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.site-shell .cart-line {
+  display: grid;
+  grid-template-columns: 74px 1fr auto;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+
+.site-shell .cart-line img {
+  width: 74px;
+  height: 94px;
+  object-fit: cover;
+  border-radius: var(--border-radius-sm);
+  background: var(--soft);
+}
+
+.site-shell .quantity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--border-radius-sm);
+  height: 34px;
+  margin-top: 10px;
+}
+
+.site-shell .quantity button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.site-shell .drawer-foot {
+  padding: 24px 28px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.site-shell .subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.site-shell .subtotal strong { font-size: 22px; font-weight: 700; }

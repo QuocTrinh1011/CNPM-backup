@@ -1,0 +1,358 @@
+/* --------------------------------------------------------------- sidebar */
+.manager-shell.admin-shell .admin-sidebar {
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  width: var(--manager-sidebar-width);
+  height: 100dvh;
+  padding: 16px 12px 14px;
+  border: 0;
+  border-right: 1px solid rgb(255 255 255 / 7%);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 0 -4%, rgb(95 215 174 / 13%), transparent 21rem),
+    #0b1f19;
+  color: #e9f4ef;
+  box-shadow: none;
+}
+
+.manager-shell.admin-shell .admin-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 10px;
+  min-height: 58px;
+  padding: 6px 6px 16px;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+  color: #f5fbf8;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+
+.manager-shell.admin-shell .admin-brand-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #6fe4bd, #178566);
+  color: #05100c;
+  box-shadow: 0 8px 22px rgb(95 215 174 / 22%);
+}
+
+.manager-shell.admin-shell .admin-brand-copy {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.manager-shell.admin-shell .admin-brand-copy small {
+  display: block;
+  overflow: hidden;
+  max-width: 100%;
+  color: #7f978d;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.manager-shell.admin-shell .admin-collapse-toggle {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 4%);
+  color: #9db5ab;
+  cursor: pointer;
+}
+
+.manager-shell.admin-shell .admin-collapse-toggle:hover {
+  border-color: rgb(255 255 255 / 18%);
+  background: rgb(255 255 255 / 9%);
+  color: #eef7f2;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav {
+  display: grid;
+  flex: 1 1 0;
+  align-content: start;
+  gap: 2px;
+  min-height: 0;
+  margin: 0;
+  padding: 12px 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 14%) transparent;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgb(255 255 255 / 12%);
+}
+
+.manager-shell.admin-shell .admin-sidebar nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav::before {
+  content: none;
+  display: none;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #a9bdb5;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .16s ease, color .16s ease, border-color .16s ease;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav button svg {
+  flex: 0 0 auto;
+  opacity: .82;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav button:hover {
+  background: rgb(255 255 255 / 6%);
+  color: #edf7f2;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav button.active {
+  border-color: rgb(95 215 174 / 20%);
+  background: linear-gradient(90deg, rgb(95 215 174 / 17%), rgb(95 215 174 / 5%));
+  color: #7fe6c0;
+  box-shadow: inset 2px 0 0 #5fd7ae;
+}
+
+.manager-shell.admin-shell .admin-sidebar nav button.active svg {
+  opacity: 1;
+}
+
+.manager-shell.admin-shell .manager-nav-group {
+  display: grid;
+  gap: 2px;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgb(255 255 255 / 7%);
+}
+
+.manager-shell.admin-shell .manager-nav-group-label {
+  padding: 2px 11px 4px;
+  color: #6f857c;
+  font: 700 9.5px/1.2 var(--admin-mono);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.manager-shell.admin-shell .manager-nav-group:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.manager-shell.admin-shell .admin-sidebar.is-collapsed .manager-nav-group {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.manager-shell.admin-shell .admin-sidebar.is-collapsed .manager-nav-group-label {
+  display: none;
+}
+
+.manager-shell.admin-shell .manager-sidebar-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgb(255 255 255 / 8%);
+}
+
+.manager-shell.admin-shell .admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 9px;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 4%);
+  color: #eef7f3;
+}
+
+.manager-shell.admin-shell .admin-profile > span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 999px;
+  background: #1d3a30;
+  color: #7fe6c0;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.manager-shell.admin-shell .admin-profile-copy {
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.manager-shell.admin-shell .admin-profile b {
+  display: block;
+  overflow: hidden;
+  color: #eef7f3;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manager-shell.admin-shell .admin-profile small {
+  display: block;
+  overflow: hidden;
+  color: #82948d;
+  font-size: 10.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manager-shell.admin-shell .manager-sidebar-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.manager-shell.admin-shell .manager-sidebar-actions .admin-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  margin: 0;
+  padding: 0 6px;
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: 9px;
+  background: transparent;
+  color: #c8d8d1;
+  font-size: 10.5px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.manager-shell.admin-shell .manager-sidebar-actions .admin-logout-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manager-shell.admin-shell .manager-sidebar-actions .admin-logout:hover {
+  background: rgb(255 255 255 / 7%);
+  color: #fff;
+}
+
+.manager-shell.admin-shell .manager-sidebar-actions .admin-logout.manager-change-pw-btn {
+  color: #9fc6b8;
+}
+
+.manager-shell.admin-shell .manager-sidebar-actions .admin-logout:last-child {
+  color: #f3a89f;
+}
+
+.manager-shell.admin-shell .manager-sidebar-actions .admin-logout:last-child:hover {
+  border-color: rgb(255 142 127 / 26%);
+  background: rgb(255 142 127 / 10%);
+}
+
+/* Collapsed rail */
+@media (min-width: 901px) {
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed {
+    width: var(--manager-sidebar-rail);
+    padding: 16px 9px 12px;
+  }
+
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed .admin-brand {
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px 0 14px;
+  }
+
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed .admin-brand-copy {
+    display: none;
+  }
+
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed nav {
+    padding: 10px 0;
+  }
+
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed nav button {
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed .admin-nav-label,
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed .admin-logout-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed .admin-profile {
+    justify-content: center;
+    padding: 7px;
+  }
+
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed .admin-profile-copy {
+    display: none;
+  }
+
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed .manager-sidebar-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .manager-shell.admin-shell .admin-sidebar.is-collapsed .manager-sidebar-actions .admin-logout {
+    padding: 0;
+  }
+}
+
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .manager-shell.admin-shell .admin-sidebar {
+    transition: width .22s ease, padding .22s ease;
+  }
+}

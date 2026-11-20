@@ -1,0 +1,400 @@
+/* Product Dialog Modal */
+.admin-product-dialog {
+  width: min(640px, 95vw);
+  padding: 26px 30px;
+}
+
+/* Survey Dialog Modal */
+.admin-survey-dialog {
+  width: min(760px, 96vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 28px;
+}
+
+.admin-survey-dialog .admin-dialog-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.admin-survey-dialog-body {
+  overflow-y: auto;
+  padding-right: 6px;
+  margin-right: -6px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 8px;
+}
+
+.admin-survey-dialog-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-survey-dialog-body::-webkit-scrollbar-thumb {
+  background: var(--admin-border);
+  border-radius: 999px;
+}
+
+.admin-survey-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-survey-card {
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  background: var(--admin-input);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-survey-card:focus-within {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 1px var(--admin-primary-soft);
+}
+
+.admin-survey-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--admin-border);
+}
+
+.admin-survey-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-survey-card-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+  padding: 2px 8px;
+  border-radius: var(--admin-radius-sm);
+}
+
+.admin-survey-card-title h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.admin-survey-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-survey-type-select {
+  flex: 1;
+  min-width: 200px;
+}
+
+.admin-survey-required-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-top: 2px;
+}
+
+.admin-survey-required-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--admin-primary);
+  cursor: pointer;
+}
+
+.admin-survey-options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.admin-survey-options-header {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--admin-muted);
+}
+
+.admin-survey-option-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-survey-option-bullet {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--admin-muted);
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.admin-survey-option-bullet.square {
+  border-radius: 4px;
+}
+
+.admin-survey-option-row input {
+  flex: 1;
+}
+
+.admin-survey-option-delete {
+  padding: 6px 10px;
+  color: #ef4444;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--admin-radius-sm);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+
+.admin-survey-option-delete:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.admin-shell.is-dark .admin-survey-option-delete:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.admin-survey-option-delete:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.admin-survey-add-option {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--admin-primary);
+  background: transparent;
+  border: 1px dashed var(--admin-primary-soft);
+  padding: 6px 12px;
+  border-radius: var(--admin-radius-sm);
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.15s ease;
+}
+
+.admin-survey-add-option:hover {
+  background: var(--admin-primary-soft);
+}
+
+.admin-survey-add-question-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 2px dashed var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  background: transparent;
+  color: var(--admin-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-survey-add-question-btn:hover {
+  background: var(--admin-primary-soft);
+  border-color: var(--admin-primary);
+}
+
+.admin-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-dialog-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-dialog-header-title h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.admin-dialog-icon {
+  color: var(--admin-primary);
+}
+
+.admin-dialog-close {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: transparent;
+  color: var(--admin-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-dialog-close:hover {
+  color: var(--admin-text);
+  background: var(--admin-input);
+  border-color: var(--admin-muted);
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.admin-form-grid .span-2 {
+  grid-column: span 2;
+}
+
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-form-group label {
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--admin-mono);
+  color: var(--admin-muted);
+  letter-spacing: 0.05em;
+}
+
+.admin-form-group input,
+.admin-form-group textarea,
+.admin-form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-input);
+  color: var(--admin-text);
+  font-size: 13.5px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-form-group input:focus,
+.admin-form-group textarea:focus,
+.admin-form-group select:focus {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px var(--admin-primary-soft);
+  outline: none;
+}
+
+.admin-form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.admin-image-preview-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--admin-input);
+  border-radius: var(--admin-radius-md);
+  border: 1px dashed var(--admin-border);
+}
+
+.admin-preview-label {
+  font-size: 11px;
+  font-family: var(--admin-mono);
+  color: var(--admin-muted);
+}
+
+.admin-image-preview {
+  width: 64px;
+  height: 76px;
+  border-radius: var(--admin-radius-sm);
+  overflow: hidden;
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-btn-with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.admin-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.admin-dialog-cancel {
+  padding: 8px 18px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  color: var(--admin-text);
+  background: var(--admin-card);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.admin-dialog-cancel:hover {
+  background: var(--admin-input);
+  border-color: var(--admin-muted);
+}
+
+.admin-spin {
+  animation: admin-spin 1s linear infinite;
+}
+@keyframes admin-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

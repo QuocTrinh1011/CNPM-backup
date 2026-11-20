@@ -226,7 +226,7 @@ export default function SystemAdminApp() {
               <a
                 className="internal-nav-link external"
                 href={managerUrl}
-                title={sidebarCollapsed ? 'Cổng quản lý (Manager)' : 'Mở cổng quản lý đơn hàng & khách hàng'}
+                title="Cổng quản lý (Manager)"
               >
                 <Layers size={17} aria-hidden="true" />
                 <span>Cổng quản lý (Manager)</span>
@@ -236,7 +236,7 @@ export default function SystemAdminApp() {
               <a
                 className="internal-nav-link external"
                 href={storefrontUrl}
-                title={sidebarCollapsed ? 'Xem trang bán hàng' : 'Xem website bán hàng khách hàng'}
+                title="Xem trang bán hàng"
               >
                 <ExternalLink size={17} aria-hidden="true" />
                 <span>Xem trang bán hàng</span>
