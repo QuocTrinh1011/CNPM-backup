@@ -57,7 +57,7 @@ export default function CheckoutPage({ cart, onPlaced, onShop, onOrders, onCart,
   const ready = addressValid(selected) && !resource.loading && !resource.error && !busy && !voucherModel.busy;
   return <main className="shop-checkout-page">
     <button className="shop-address-link" disabled={busy} onClick={onCart || onShop}><ArrowLeft size={16}/> {onCart ? 'Quay lại giỏ để đổi lựa chọn' : 'Tiếp tục mua sắm'}</button>
-    <div className="shop-checkout-title"><p className="kicker">ANH LỚN SHOP / ĐẶT HÀNG</p><h1>Hoàn tất đơn hàng</h1><p>Kiểm tra địa chỉ và thông tin trước khi đặt hàng.</p></div>
+    <div className="shop-checkout-title"><p className="kicker">NOVA SHOP / ĐẶT HÀNG</p><h1>Hoàn tất đơn hàng</h1><p>Kiểm tra địa chỉ và thông tin trước khi đặt hàng.</p></div>
     <div className="shop-checkout-grid"><div className="shop-checkout-sections">
       <section className="shop-checkout-card shop-delivery-card"><div className="shop-checkout-heading"><h2><MapPin size={21}/> Địa chỉ nhận hàng</h2>{selected && !resource.loading && !resource.error && <button className="shop-address-link" disabled={busy} onClick={() => setPicker(true)}>Thay đổi</button>}</div>
         {resource.loading ? <p role="status">Đang tải địa chỉ...</p> : resource.error ? <div className="shop-inline-error" role="alert">{resource.error}<button className="button button-light" onClick={resource.load}>Thử lại địa chỉ</button></div> : selected ? <AddressSummary address={selected}/> : <div><p>Bạn chưa có địa chỉ nhận hàng.</p><button className="button button-light" disabled={busy} onClick={() => setPicker(true)}>Thêm địa chỉ nhận hàng</button></div>}

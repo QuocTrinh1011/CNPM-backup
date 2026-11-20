@@ -15,9 +15,6 @@
   justify-content: space-around;
   align-items: center;
 }
-.site-shell[data-shop-theme="dark"] .mobile-bottom-nav {
-  background: rgba(9, 14, 23, 0.95);
-}
 .site-shell .mobile-bottom-nav-item {
   display: flex;
   flex-direction: column;

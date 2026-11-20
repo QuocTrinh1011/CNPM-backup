@@ -139,17 +139,3 @@
 }
 
 /* Dark mode overrides */
-
-
-
-
-.site-shell[data-shop-theme="dark"] .back-to-top-button {
-  background: var(--white);
-  color: var(--ink);
-  border-color: var(--line);
-}
-
-.site-shell[data-shop-theme="dark"] .back-to-top-button:hover {
-  background: var(--ink);
-  color: #0c1310;
-}

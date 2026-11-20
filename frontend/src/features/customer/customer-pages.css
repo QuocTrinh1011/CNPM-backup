@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ANH LỚN SHOP - CUSTOMER PORTAL & ACCOUNT PAGES SYSTEM
+   NOVA SHOP - CUSTOMER PORTAL & ACCOUNT PAGES SYSTEM
    Contemporary Minimalist Luxury / High-End Menswear Styling
    Layout & Components for: Profile, Orders, Addresses, Wishlist, Notifications, Wallet
    ========================================================================== */
@@ -95,12 +95,6 @@
   color: var(--accent) !important;
   background: var(--accent-tint) !important;
   border-color: var(--accent-soft) !important;
-}
-
-.site-shell[data-shop-theme="dark"] .customer-sidebar a[aria-current="page"] {
-  color: var(--accent) !important;
-  background: var(--accent-soft) !important;
-  border-color: rgba(249, 115, 22, 0.4) !important;
 }
 
 /* Standalone Customer Container */
@@ -308,13 +302,6 @@
   border-color: var(--ink) !important;
   color: var(--paper) !important;
   box-shadow: var(--shadow-xs);
-}
-
-.site-shell[data-shop-theme="dark"] .shop-order-tabs button.active {
-  background: var(--accent) !important;
-  border-color: var(--accent) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 14px var(--accent-glow);
 }
 
 .site-shell .shop-orders-result-count {

@@ -24,8 +24,7 @@
   .site-shell .wordmark { font-size: 19px; }
   .site-shell .wordmark em { font-size: 17px; }
   .site-shell .header-actions { gap: 4px; }
-  .site-shell .header-actions .icon-button,
-  .site-shell .header-actions .shop-theme-toggle { width: 38px; height: 38px; }
+  .site-shell .header-actions .icon-button { width: 38px; height: 38px; }
   .site-shell .header-actions svg { width: 19px; height: 19px; }
 
   /* Mobile Bottom Navigation Bar */
@@ -45,10 +44,6 @@
     border-top: 1px solid var(--line);
     z-index: 55;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
-  }
-  .site-shell[data-shop-theme="dark"] .mobile-bottom-nav {
-    background: rgba(12, 19, 16, 0.95);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.35);
   }
   .site-shell .mobile-bottom-nav-item {
     flex: 1;

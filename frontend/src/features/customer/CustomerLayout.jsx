@@ -5,7 +5,7 @@ const icons = [UserRound, MapPin, KeyRound, Package, Heart, Bell, ClipboardList]
 export default function CustomerLayout({ children, pathname, user, navigate }) {
   return <main className="customer-layout">
     <aside className="customer-sidebar">
-      <div className="customer-identity"><UserRound size={26}/><div><strong>{user?.fullName || 'Tài khoản của bạn'}</strong><span>ANH LỚN SHOP</span></div></div>
+      <div className="customer-identity"><UserRound size={26}/><div><strong>{user?.fullName || 'Tài khoản của bạn'}</strong><span>NOVA SHOP</span></div></div>
       <nav aria-label="Chức năng tài khoản">{customerLinks.map(([href, label], index) => {
         const Icon = icons[index] || ClipboardList;
         const active = pathname === href || ['/don-hang', '/khao-sat'].includes(href) && pathname.startsWith(href + '/');

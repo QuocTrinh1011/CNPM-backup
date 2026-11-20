@@ -14,14 +14,11 @@ beforeEach(() => {
   api.mockImplementation(async path => path.includes('categories') ? ['Áo thun'] : {content:[product],totalPages:1,totalElements:1});
 });
 afterEach(cleanup);
-it('keeps the size-exchange announcement without a free-shipping promotion in both themes', () => {
+it('keeps the size-exchange announcement without a free-shipping promotion', () => {
   const view = render(<App/>);
   const banner = view.container.querySelector('.announcement');
   expect(banner.textContent).toContain('ĐỔI SIZE TRONG 30 NGÀY');
-  expect(banner.textContent).toContain('ANH LỚN / NEW FORM');
-  expect(banner.textContent).not.toMatch(/699|miễn phí|freeship/i);
-  fireEvent.click(screen.getByLabelText('Chuyển sang chế độ tối'));
-  expect(banner.textContent).toContain('ĐỔI SIZE TRONG 30 NGÀY');
+  expect(banner.textContent).toContain('NOVA SHOP / NEW FORM');
   expect(banner.textContent).not.toMatch(/699|miễn phí|freeship/i);
 });
 it('shows the free-shipping threshold in the storefront benefits row', () => {
@@ -42,18 +39,13 @@ it('defaults to light theme and keeps one shared product search', async () => {
   expect(screen.getAllByLabelText('Tìm kiếm sản phẩm')).toHaveLength(1);
   expect(window.location.search).toContain('keyword=polo');
 });
-it('persists customer dark mode separately from admin', async () => {
+it('keeps the storefront light and removes the theme toggle', async () => {
   localStorage.setItem('admin-theme','light');
-  localStorage.setItem('anh-lon-shop-theme','light');
+  localStorage.setItem('anh-lon-shop-theme','dark');
   const view=render(<App/>);
-  fireEvent.click(screen.getByLabelText('Chuyển sang chế độ tối'));
-  expect(view.container.querySelector('.site-shell').dataset.shopTheme).toBe('dark');
-  expect(localStorage.getItem('anh-lon-shop-theme')).toBe('dark');
+  expect(view.container.querySelector('.site-shell').dataset.shopTheme).toBe('light');
+  expect(screen.queryByLabelText(/Chuyển sang chế độ|Chuyển sang giao diện/)).toBeNull();
   expect(localStorage.getItem('admin-theme')).toBe('light');
-  view.unmount(); const next=render(<App/>);
-  expect(next.container.querySelector('.site-shell').dataset.shopTheme).toBe('dark');
-  fireEvent.click(screen.getByLabelText('Chuyển sang chế độ sáng'));
-  expect(localStorage.getItem('anh-lon-shop-theme')).toBe('light');
 });
 it('clears search keyword and restores focus', async () => {
   render(<App/>); const input=screen.getByLabelText('Tìm kiếm sản phẩm');

@@ -100,6 +100,12 @@ public class ManagerReportsService {
                 content.employeeActivities());
     }
 
+    public AdminQuarterlyReport adminQuarterlyReport(Integer requestedYear) {
+        PeriodWindow window = periodWindow(requestedYear, null, null, Clock.system(REPORT_ZONE));
+        Map<String, Object> args = periodArgs(window);
+        return new AdminQuarterlyReport(window.year(), quarterlyProducts(args), quarterlyEmployeeActivities(args));
+    }
+
     private ReportContent reportContent(PeriodWindow window) {
         Map<String, Object> args = periodArgs(window);
         Summary summary = summary(args);
@@ -216,6 +222,42 @@ public class ManagerReportsService {
                 decimal(row.get("total_receipt_cost")))).toList();
     }
 
+    private List<QuarterlyProductActivity> quarterlyProducts(Map<String, Object> args) {
+        String quarter = "CAST(EXTRACT(QUARTER FROM (" + INCOME_AT
+                + " AT TIME ZONE 'Asia/Ho_Chi_Minh')) AS INTEGER)";
+        String sql = "SELECT p.product_id, p.name AS product_name, c.name AS category_name, " + quarter
+                + " AS report_quarter, COALESCE(SUM(i.quantity), 0) AS quantity_sold, "
+                + "COALESCE(SUM(i.quantity * i.unit_price), 0) AS total_revenue "
+                + "FROM orders o JOIN order_items i ON i.order_id = o.order_id "
+                + "JOIN products p ON p.product_id = i.product_id "
+                + "JOIN categories c ON c.category_id = p.category_id WHERE " + CAPTURED_ORDER
+                + " AND " + INCOME_AT + " >= :from AND " + INCOME_AT + " < :to "
+                + "GROUP BY p.product_id, p.name, c.name, report_quarter "
+                + "ORDER BY p.name ASC, report_quarter ASC";
+        return db.queryForList(sql, args).stream().map(row -> new QuarterlyProductActivity(
+                number(row.get("product_id")), string(row.get("product_name")), string(row.get("category_name")),
+                Math.toIntExact(number(row.get("report_quarter"))), number(row.get("quantity_sold")),
+                decimal(row.get("total_revenue")))).toList();
+    }
+
+    private List<QuarterlyEmployeeActivity> quarterlyEmployeeActivities(Map<String, Object> args) {
+        String creatorId = "CASE WHEN u.customer_id IS NULL THEN NULL ELSE r.created_by END";
+        String fullName = "CASE WHEN u.customer_id IS NULL THEN '" + UNKNOWN_EMPLOYEE + "' ELSE u.full_name END";
+        String email = "CASE WHEN u.customer_id IS NULL THEN NULL ELSE u.email END";
+        String quarter = "CAST(EXTRACT(QUARTER FROM (r.received_at AT TIME ZONE 'Asia/Ho_Chi_Minh')) AS INTEGER)";
+        String sql = "SELECT " + creatorId + " AS employee_id, " + fullName + " AS full_name, " + email
+                + " AS email, " + quarter + " AS report_quarter, COUNT(*) AS receipt_count, "
+                + "COALESCE(SUM(r.total_cost), 0) AS total_receipt_cost "
+                + "FROM stock_receipts r LEFT JOIN customers u ON u.customer_id = r.created_by "
+                + "WHERE r.received_at >= :from AND r.received_at < :to "
+                + "GROUP BY " + creatorId + ", " + fullName + ", " + email + ", report_quarter "
+                + "ORDER BY full_name ASC, report_quarter ASC";
+        return db.queryForList(sql, args).stream().map(row -> new QuarterlyEmployeeActivity(
+                nullableNumber(row.get("employee_id")), string(row.get("full_name")), string(row.get("email")),
+                Math.toIntExact(number(row.get("report_quarter"))), number(row.get("receipt_count")),
+                decimal(row.get("total_receipt_cost")))).toList();
+    }
+
     private static Map<String, Object> periodArgs(PeriodWindow window) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("from", Timestamp.from(window.fromInclusive()));
@@ -261,6 +303,15 @@ public class ManagerReportsService {
 
     public record EmployeeActivity(Long employeeId, String fullName, String email, long receiptCount,
                                    BigDecimal totalReceiptCost) {}
+
+    public record QuarterlyProductActivity(long productId, String productName, String categoryName, int quarter,
+                                          long quantitySold, BigDecimal totalRevenue) {}
+
+    public record QuarterlyEmployeeActivity(Long employeeId, String fullName, String email, int quarter,
+                                            long receiptCount, BigDecimal totalReceiptCost) {}
+
+    public record AdminQuarterlyReport(int year, List<QuarterlyProductActivity> products,
+                                       List<QuarterlyEmployeeActivity> employeeActivities) {}
 
     public record ReportView(int year, Integer month, List<Integer> availableYears, Summary summary,
                              List<TrendBucket> trend, List<ProductVariant> topProducts,

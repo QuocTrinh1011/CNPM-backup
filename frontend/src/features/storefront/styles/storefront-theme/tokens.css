@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ANH LỚN SHOP · MENSWEAR — CONTEMPORARY MINIMALIST DESIGN SYSTEM
+   NOVA SHOP · MENSWEAR — CONTEMPORARY MINIMALIST DESIGN SYSTEM
    High-End Streetwear & Everyday Essentials Aesthetic Layer
    Optimized for Beauty, Responsiveness, Accessibility & Full Feature Preservation
    ========================================================================== */
@@ -63,37 +63,6 @@
 }
 
 /* ── Dark Theme: Deep Obsidian & Warm Flame ── */
-.site-shell[data-shop-theme="dark"] {
-  --paper: #090e17;
-  --white: #111827;
-  --soft: #172236;
-  --subtle: #1f2e48;
-  --ink: #f8fafc;
-  --muted: #94a3b8;
-  --line: #1e293b;
-  --line-strong: #334155;
-
-  --accent: #f97316;
-  --accent-hover: #fb923c;
-  --accent-soft: #431407;
-  --accent-tint: #271207;
-  --accent-glow: rgba(249, 115, 22, 0.32);
-
-  --success: #22c55e;
-  --success-soft: #052e16;
-  --warning: #f59e0b;
-  --warning-soft: #451a03;
-  --danger: #ef4444;
-  --danger-soft: #450a0a;
-
-  --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.45);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.55);
-  --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-hover: 0 20px 36px -6px rgba(0, 0, 0, 0.75), 0 8px 16px -4px rgba(249, 115, 22, 0.18);
-  --shadow-modal: 0 24px 60px -8px rgba(0, 0, 0, 0.85);
-  --shadow-drawer: -12px 0 40px rgba(0, 0, 0, 0.8);
-  color-scheme: dark;
-}
 
 
 /* ── Accessibility & Global Focus States ── */

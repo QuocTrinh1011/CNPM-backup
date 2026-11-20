@@ -4,12 +4,12 @@ import { csv, imageSrc, protectImage } from '../../../shared/utils/storefront-di
 import { imagesForColor } from '../product-image-gallery';
 import { colorFallback } from './productDetailsUtils';
 
-export function ProductOptions({ product, color, setColor, size, setSize, setActiveImageIndex, setShowSizeGuide }) {
+export function ProductOptions({ product, quickView, color, setColor, size, setSize, setActiveImageIndex, setShowSizeGuide }) {
   return (
     <>
           <div className="choice">
             <label>
-              MÀU SẮC <b>{color}</b>
+              {quickView ? "Màu sắc:" : "MÀU SẮC"} <b>{color}</b>
             </label>
             <div className="choice-row product-color-swatches">
               {csv(product.colors).map((item) => (
@@ -34,17 +34,17 @@ export function ProductOptions({ product, color, setColor, size, setSize, setAct
             </div>
           </div>
           <div className="choice">
-            <div className="product-option-heading">
+            <div className={`product-option-heading ${quickView ? "quick-view-option-heading" : ""}`}>
               <label>
-                KÍCH THƯỚC <b>{size}</b>
+                {quickView ? "Kích thước:" : "KÍCH THƯỚC"} <b>{size}</b>
               </label>
-              <button
+              {!quickView && <button
                 type="button"
                 className="size-guide-link"
                 onClick={() => setShowSizeGuide(true)}
               >
                 Hướng dẫn chọn size <ChevronRight size={14} />
-              </button>
+              </button>}
             </div>
             <div className="choice-row product-size-choices">
               {csv(product.sizes).map((item) => (

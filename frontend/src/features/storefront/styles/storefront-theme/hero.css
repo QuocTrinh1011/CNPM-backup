@@ -14,10 +14,6 @@
   position: relative;
   overflow: hidden;
 }
-.site-shell[data-shop-theme="dark"] .shop-editorial {
-  background: var(--white);
-  border-color: var(--line);
-}
 .site-shell .shop-editorial-copy {
   display: flex;
   flex-direction: column;

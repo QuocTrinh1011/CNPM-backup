@@ -8,8 +8,6 @@ import { MapPin } from "lucide-react";
 import { ClipboardList } from "lucide-react";
 import { KeyRound } from "lucide-react";
 import { ChevronRight } from "lucide-react";
-import { Sun } from "lucide-react";
-import { Moon } from "lucide-react";
 import { Headphones } from "lucide-react";
 import { LogOut } from "lucide-react";
 export default function StorefrontMenuDrawer({
@@ -29,8 +27,6 @@ export default function StorefrontMenuDrawer({
   setSurveysOpen,
   setPasswordOpen,
   openCatalog,
-  shopTheme,
-  setShopTheme,
   logout
 }) {
   return <div className="shop-menu-drawer-backdrop" onClick={() => setMobileMenuOpen(false)}>
@@ -48,7 +44,7 @@ export default function StorefrontMenuDrawer({
             setMobileMenuOpen(false);
             goHome();
           }}>
-                  ANH LỚN <em>SHOP</em>
+                  NOVA <em>SHOP</em>
                 </a>
               </div>
               <button className="shop-menu-drawer-close icon-button" aria-label="Đóng menu" onClick={() => setMobileMenuOpen(false)}>
@@ -209,8 +205,7 @@ export default function StorefrontMenuDrawer({
                   <button type="button" className="shop-menu-nav-item sale" onClick={() => {
               setMobileMenuOpen(false);
               openCatalog("", {
-                minPrice: "",
-                maxPrice: "500000"
+                onSale: true
               });
             }}>
                     <span>ƯU ĐÃI ĐẶC BIỆT</span>
@@ -221,18 +216,6 @@ export default function StorefrontMenuDrawer({
 
               {/* Settings & Support */}
               <div className="shop-menu-footer">
-                <div className="shop-menu-theme-row">
-                  <span>Chế độ giao diện ({shopTheme === "dark" ? "Tối" : "Sáng"})</span>
-                  <button
-                  type="button"
-                  className="shop-theme-toggle"
-                  aria-label={shopTheme === "dark" ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"}
-                  title={shopTheme === "dark" ? "Chế độ sáng" : "Chế độ tối"}
-                  onClick={() => setShopTheme(v => v === "dark" ? "light" : "dark")}
-                >
-                    {shopTheme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-                  </button>
-                </div>
                 <div className="shop-menu-hotline">
                   <Headphones size={16} />
                   <div>

@@ -106,10 +106,11 @@ export async function adminSignOut() {
 }
 
 export const endpoints = {
-  catalog: ({ keyword = '', category = '', minPrice = '', maxPrice = '', gender = 'NAM', sort = 'newest', page = 0, size = 8 } = {}) => {
+  catalog: ({ keyword = '', category = '', minPrice = '', maxPrice = '', onSale = false, gender = 'NAM', sort = 'newest', page = 0, size = 8 } = {}) => {
     const params = new URLSearchParams({ keyword, category, gender, sort, page, size });
     if (minPrice !== '') params.set('minPrice', minPrice);
     if (maxPrice !== '') params.set('maxPrice', maxPrice);
+    if (onSale) params.set('onSale', 'true');
     return `/api/products?${params}`;
   },
   product: id => `/api/products/${id}`,

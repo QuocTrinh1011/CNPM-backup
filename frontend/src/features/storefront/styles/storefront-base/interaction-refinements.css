@@ -30,11 +30,6 @@
   border-color: var(--ink);
   font-weight: 600;
 }
-.site-shell[data-shop-theme="dark"] .price-pill.active {
-  background: var(--ink);
-  color: var(--paper);
-  border-color: var(--ink);
-}
 
 /* Product Modal Actions: Add to Cart + Buy Now */
 .site-shell .product-modal-actions {
@@ -100,10 +95,6 @@
   cursor: pointer;
   z-index: 2;
   transition: all 0.15s ease;
-}
-.site-shell[data-shop-theme="dark"] .product-modal-heart {
-  background: rgba(20, 30, 25, 0.88);
-  color: var(--ink);
 }
 .site-shell .product-modal-heart.active {
   color: #e11d48;
@@ -249,19 +240,12 @@
 .site-shell .account-button {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  width: auto;
+  justify-content: center;
+  gap: 0;
+  width: 42px;
   min-width: 42px;
-  padding: 0 10px 0 8px;
-}
-.site-shell .account-btn-label {
-  font-size: 13px;
-  font-weight: 600;
-  max-width: 100px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--ink);
+  height: 42px;
+  padding: 0;
 }
 .site-shell .wishlist-button {
   position: relative;
@@ -279,16 +263,6 @@
   background: var(--accent);
   color: #fff;
   font: 700 11px/1 var(--sans);
-}
-@media (max-width: 768px) {
-  .site-shell .account-btn-label {
-    display: none;
-  }
-  .site-shell .account-button {
-    width: 42px;
-    padding: 0;
-    justify-content: center;
-  }
 }
 
 /* ── Toast Notifications ── */

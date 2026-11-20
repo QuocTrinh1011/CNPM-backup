@@ -313,26 +313,6 @@
 }
 
 /* Dark mode */
-.site-shell[data-shop-theme="dark"] .review-section {
-  background: var(--white);
-  border-color: var(--line);
-}
-.site-shell[data-shop-theme="dark"] .review-badge-done {
-  background: rgba(62, 125, 91, 0.15);
-  color: #6fcf97;
-}
-.site-shell[data-shop-theme="dark"] .review-dialog {
-  background: var(--paper);
-  color: var(--ink);
-}
-.site-shell[data-shop-theme="dark"] .review-dialog-product {
-  background: var(--soft);
-}
-.site-shell[data-shop-theme="dark"] .review-dialog-comment textarea {
-  background: var(--soft);
-  color: var(--ink);
-  border-color: var(--line);
-}
 
 /* Responsive */
 @media (max-width: 680px) {

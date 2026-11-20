@@ -1,15 +1,9 @@
-import React from "react";
-import { X } from "lucide-react";
-import { Menu } from "lucide-react";
-import { Search } from "lucide-react";
-import { Sun } from "lucide-react";
-import { Moon } from "lucide-react";
-import { Bell } from "lucide-react";
-import { Heart } from "lucide-react";
-import { ShoppingBag } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Bell, ChevronDown, Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
 export default function StorefrontHeader({
   mobileMenuOpen,
   setMobileMenuOpen,
+  categories = [],
   goHome,
   openCatalog,
   search,
@@ -17,8 +11,6 @@ export default function StorefrontHeader({
   searchInput,
   setSearchInput,
   setFilters,
-  shopTheme,
-  setShopTheme,
   user,
   setNotificationsOpen,
   openAuth,
@@ -29,6 +21,55 @@ export default function StorefrontHeader({
   setCartOpen,
   cart
 }) {
+  const [productsMenuOpen, setProductsMenuOpen] = useState(false);
+  const productsMenuRef = useRef(null);
+  const availableCategories = Array.isArray(categories) && categories.length
+    ? categories.filter(category => typeof category === "string")
+    : ["Áo thun", "Áo polo", "Áo khoác", "Quần"];
+  const categoryOrder = ["Áo thun", "Áo polo", "Áo sơ mi", "Áo khoác", "Áo nỉ", "Quần"];
+  const sortCategories = names => [...names].sort((a, b) => {
+    const aIndex = categoryOrder.findIndex(name => name.toLocaleLowerCase("vi") === a.toLocaleLowerCase("vi"));
+    const bIndex = categoryOrder.findIndex(name => name.toLocaleLowerCase("vi") === b.toLocaleLowerCase("vi"));
+    return (aIndex < 0 ? categoryOrder.length : aIndex) - (bIndex < 0 ? categoryOrder.length : bIndex) || a.localeCompare(b, "vi");
+  });
+  const topCategories = sortCategories(availableCategories.filter(category => /áo|polo|hoodie|shirt|top/i.test(category)));
+  const bottomCategories = sortCategories(availableCategories.filter(category => /quần|jean|denim|short|kaki|chino/i.test(category)));
+  const otherCategories = sortCategories(availableCategories.filter(category => !topCategories.includes(category) && !bottomCategories.includes(category)));
+  const productMenuColumns = [
+    {
+      title: "TẤT CẢ SẢN PHẨM",
+      links: [
+        { label: "Tất cả sản phẩm", category: "" },
+        { label: "Sản phẩm mới nhất", category: "", options: { sort: "newest" } },
+        { label: "Sản phẩm đang ưu đãi", category: "", options: { onSale: true }, featured: true },
+      ],
+    },
+    ...(topCategories.length ? [{ title: "ÁO NAM", links: topCategories.map(category => ({ label: category, category })) }] : []),
+    ...(bottomCategories.length ? [{ title: "QUẦN NAM", links: bottomCategories.map(category => ({ label: category, category })) }] : []),
+    ...(otherCategories.length ? [{ title: "DANH MỤC KHÁC", links: otherCategories.map(category => ({ label: category, category })) }] : []),
+  ];
+
+  useEffect(() => {
+    if (!productsMenuOpen) return undefined;
+    const closeMenu = event => {
+      if (event.key === "Escape") setProductsMenuOpen(false);
+    };
+    const closeOnOutsidePointer = event => {
+      if (!productsMenuRef.current?.contains(event.target)) setProductsMenuOpen(false);
+    };
+    window.addEventListener("keydown", closeMenu);
+    window.addEventListener("pointerdown", closeOnOutsidePointer);
+    return () => {
+      window.removeEventListener("keydown", closeMenu);
+      window.removeEventListener("pointerdown", closeOnOutsidePointer);
+    };
+  }, [productsMenuOpen]);
+
+  const chooseProductCategory = (category, options = {}) => {
+    setProductsMenuOpen(false);
+    openCatalog(category, options);
+  };
+
   return <header className="site-header">
         <button
           className="mobile-menu icon-button"
@@ -39,17 +80,42 @@ export default function StorefrontHeader({
           {mobileMenuOpen ? <X size={22} strokeWidth={1.8} /> : <Menu size={22} strokeWidth={1.8} />}
         </button>
         <a className="wordmark" href="/" onClick={goHome}>
-          ANH LỚN <em>SHOP · MENSWEAR</em>
+          NOVA <em>SHOP · MENSWEAR</em>
         </a>
         <nav className={`main-nav ${mobileMenuOpen ? "is-open" : ""}`} aria-label="Điều hướng chính">
-          <button onClick={() => openCatalog("")}>HÀNG MỚI</button>
-          <button onClick={() => openCatalog("Áo khoác")}>ÁO KHOÁC</button>
-          <button onClick={() => openCatalog("Áo thun")}>ÁO THUN</button>
-          <button onClick={() => openCatalog("Áo polo")}>ÁO POLO</button>
-          <button onClick={() => openCatalog("Quần")}>QUẦN</button>
+          <div
+            ref={productsMenuRef}
+            className={`shop-products-menu${productsMenuOpen ? " is-open" : ""}`}
+            onBlur={event => {
+              if (!event.currentTarget.contains(event.relatedTarget)) setProductsMenuOpen(false);
+            }}
+          >
+            <button
+              className="shop-products-trigger"
+              type="button"
+              aria-expanded={productsMenuOpen}
+              aria-controls="shop-products-mega-menu"
+              onClick={() => setProductsMenuOpen(value => !value)}
+            >
+              SẢN PHẨM <ChevronDown size={14} aria-hidden="true" />
+            </button>
+            {productsMenuOpen && <div className="shop-mega-menu" id="shop-products-mega-menu" aria-label="Danh mục sản phẩm">
+              {productMenuColumns.map(column => <section className="shop-mega-menu-column" key={column.title}>
+                <h2>{column.title}</h2>
+                <ul>
+                  {column.links.map(link => <li key={`${column.title}-${link.label}`}>
+                    <button
+                      type="button"
+                      className={link.featured ? "is-featured" : ""}
+                      onClick={() => chooseProductCategory(link.category, link.options)}
+                    >{link.label}</button>
+                  </li>)}
+                </ul>
+              </section>)}
+            </div>}
+          </div>
           <button className="sale-link" onClick={() => openCatalog("", {
-        minPrice: "",
-        maxPrice: "500000"
+        onSale: true
       })}>
             ƯU ĐÃI
           </button>
@@ -82,15 +148,6 @@ export default function StorefrontHeader({
               <button className="shop-search-submit" type="submit">TÌM</button>
             </form>
         <div className="header-actions">
-          <button
-            className="shop-theme-toggle"
-            type="button"
-            aria-label={shopTheme === 'dark' ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
-            title={shopTheme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối'}
-            onClick={() => setShopTheme(value => value === 'dark' ? 'light' : 'dark')}
-          >
-            {shopTheme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
           <button
             className="icon-button notification-button"
             aria-label="Thông báo"

@@ -1,15 +1,15 @@
 import React from 'react';
 import { Minus, Plus } from 'lucide-react';
 
-export function ProductPurchaseActions({ page, product, quantity, setQuantity, purchasing, purchase }) {
+export function ProductPurchaseActions({ page, quickView, product, quantity, setQuantity, purchasing, purchase }) {
   const addButton = (
     <button
       type="button"
-      className={page ? "button product-add-button" : "button button-dark add-modal"}
+      className={quickView ? "button quick-view-add-button" : page ? "button product-add-button" : "button button-dark add-modal"}
       disabled={!product.stock || purchasing}
       onClick={() => purchase()}
     >
-      {product.stock ? `THÊM ${quantity} VÀO GIỎ` : "TẠM HẾT HÀNG"}
+      {product.stock ? quickView ? "THÊM VÀO GIỎ" : `THÊM ${quantity} VÀO GIỎ` : "TẠM HẾT HÀNG"}
     </button>
   );
   const buyButton = (
@@ -24,7 +24,30 @@ export function ProductPurchaseActions({ page, product, quantity, setQuantity, p
   );
   return (
     <>
-          {page ? (
+          {quickView ? (
+            <div className="quick-view-purchase-row">
+              <div className="quantity product-quantity-control" aria-label={`Số lượng ${quantity}`}>
+                <button
+                  type="button"
+                  aria-label="Giảm số lượng sản phẩm"
+                  disabled={quantity <= 1}
+                  onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+                >
+                  <Minus size={17} />
+                </button>
+                <span>{quantity}</span>
+                <button
+                  type="button"
+                  aria-label="Tăng số lượng sản phẩm"
+                  disabled={quantity >= product.stock}
+                  onClick={() => setQuantity((current) => Math.min(product.stock, current + 1))}
+                >
+                  <Plus size={17} />
+                </button>
+              </div>
+              {addButton}
+            </div>
+          ) : page ? (
             <div className="product-page-purchase">
               <div className="product-page-purchase-row">
                 <div className="quantity product-quantity-control" aria-label={`Số lượng ${quantity}`}>

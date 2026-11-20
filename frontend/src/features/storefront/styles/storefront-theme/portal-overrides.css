@@ -22,21 +22,6 @@
   background: var(--paper);
   color: var(--ink);
 }
-.site-shell[data-shop-theme="dark"] {
-  --paper: #0b0f17;
-  --white: #161f30;
-  --soft: #1e293b;
-  --subtle: #334155;
-  --ink: #f8fafc;
-  --muted: #b0bdd0;
-  --line: #334155;
-  --line-strong: #64748b;
-  --accent: #fb923c;
-  --accent-hover: #fdba74;
-  --accent-soft: #4a2917;
-  --accent-tint: #302119;
-  color-scheme: dark;
-}
 .site-shell[data-shop-theme] :is(h1,h2,h3,h4,button,input,select,textarea,.kicker,.price-row,.wordmark em) { font-family: var(--sans); }
 .site-shell[data-shop-theme] :is(input,select,textarea) { color: var(--ink); background-color: var(--white); border-color: var(--line); }
 .site-shell[data-shop-theme] ::placeholder { color: var(--muted); opacity: 1; }
@@ -77,12 +62,10 @@
 .site-shell[data-shop-theme] .site-header .catalog-search-wrap { max-width: 300px; min-width: 180px; background: var(--soft); border-radius: 10px; padding: 5px 8px 5px 12px; }
 .site-shell[data-shop-theme] .site-header .catalog-search { background: transparent; font-size: 13px; }
 .site-shell[data-shop-theme] .site-header .shop-search-submit { min-height: 32px; border-radius: 7px; background: var(--accent); color: #fff; }
-.site-shell[data-shop-theme="dark"] .site-header .shop-search-submit { color: #0f172a; }
 .site-shell[data-shop-theme] .header-actions { gap: 8px; }
-.site-shell[data-shop-theme] .header-actions :is(.icon-button,.shop-theme-toggle) { width: 40px; min-width: 40px; height: 40px; color: var(--ink); }
+.site-shell[data-shop-theme] .header-actions .icon-button { width: 40px; min-width: 40px; height: 40px; color: var(--ink); }
 .site-shell[data-shop-theme] :is(.button,.buy-now-btn) { border-radius: 8px; padding: 12px 20px; font-size: 13px; font-weight: 700; letter-spacing: 0; }
 .site-shell[data-shop-theme] :is(.button-dark,.shop-primary,.buy-now-btn) { background: var(--accent); color: white; border: 1px solid var(--accent); }
-.site-shell[data-shop-theme="dark"] :is(.button-dark,.shop-primary,.buy-now-btn) { color: #0f172a; }
 .site-shell[data-shop-theme] .button-light { color: var(--ink); background: var(--white); border: 1px solid var(--line); }
 .site-shell[data-shop-theme] :is(.button-dark,.buy-now-btn):hover:not(:disabled) { background: var(--accent-hover); }
 .site-shell[data-shop-theme] .shop-editorial { max-width: 1280px; margin: 32px auto; padding: 40px; gap: 40px; min-height: 480px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
@@ -126,7 +109,6 @@
 .site-shell[data-shop-theme] .shop-checkout-totals { position: sticky; top: 24px; max-height: none; overflow: visible; background: var(--white); color: var(--ink); }
 .site-shell[data-shop-theme] .shop-checkout-totals :is(h2,dt,dd,label,p) { color: var(--ink); }
 .site-shell[data-shop-theme] .shop-checkout-totals .button-dark { background: var(--accent); color: #fff; border-color: var(--accent); }
-.site-shell[data-shop-theme="dark"] .shop-checkout-totals .button-dark { color: #0f172a; }
 .site-shell[data-shop-theme] .shop-payment-method { border-radius: 10px; background: var(--white); border-color: var(--line); }
 .site-shell[data-shop-theme] .shop-payment-method.selected { background: var(--accent-tint); border-color: var(--accent); }
 .site-shell[data-shop-theme] :is(.cart-line-info,.shop-order-product,.shop-checkout-products article) { min-width: 0; }
@@ -190,7 +172,7 @@
   .site-shell[data-shop-theme] .wordmark { font-size: 20px; }
   .site-shell[data-shop-theme] .site-header .catalog-search-wrap { order: 5; flex-basis: 100%; max-width: none; margin: 4px 0 0; }
   .site-shell[data-shop-theme] .header-actions { gap: 2px; margin-left: auto; }
-  .site-shell[data-shop-theme] .header-actions :is(.icon-button,.shop-theme-toggle) { min-width: 36px; width: 36px; }
+  .site-shell[data-shop-theme] .header-actions .icon-button { min-width: 36px; width: 36px; }
   .site-shell[data-shop-theme] .shop-editorial { grid-template-columns: minmax(0,1fr); margin: 16px; padding: 24px; }
   .site-shell[data-shop-theme] .shop-editorial-visual { height: 300px; }
   .site-shell[data-shop-theme] :is(.catalog-section,.shop-collections,.footer,.customer-layout,.shop-checkout-page) { padding-left: 16px; padding-right: 16px; }

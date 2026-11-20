@@ -23,14 +23,6 @@
   align-items: center;
   gap: 8px;
 }
-.site-shell[data-shop-theme="dark"] .announcement {
-  background: #0f172a;
-  color: #f1f5f9;
-  border-bottom: 1px solid var(--line);
-}
-.site-shell[data-shop-theme="dark"] .announcement span {
-  color: var(--accent);
-}
 
 /* ── 3. Sticky Glass Header & Navigation ── */
 .site-shell .site-header {
@@ -50,9 +42,6 @@
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--line);
   transition: all 0.25s var(--ease-smooth);
-}
-.site-shell[data-shop-theme="dark"] .site-header {
-  background: rgba(9, 14, 23, 0.88);
 }
 
 /* Wordmark Logo */
@@ -110,9 +99,6 @@
   font-weight: 800;
   background: var(--accent-tint) !important;
   border-color: var(--accent-soft) !important;
-}
-.site-shell[data-shop-theme="dark"] .main-nav .sale-link {
-  background: var(--accent-soft) !important;
 }
 .site-shell .main-nav .sale-link:hover {
   background: var(--accent) !important;
@@ -193,10 +179,6 @@
   background: var(--accent);
   color: #fff;
 }
-.site-shell[data-shop-theme="dark"] .site-header .shop-search-submit {
-  background: var(--accent);
-  color: #fff;
-}
 
 /* Header Actions & Tool Icons */
 .site-shell .header-actions {
@@ -205,8 +187,7 @@
   gap: 8px;
   flex-shrink: 0;
 }
-.site-shell .header-actions .icon-button,
-.site-shell .shop-theme-toggle {
+.site-shell .header-actions .icon-button {
   width: 42px;
   height: 42px;
   border-radius: var(--radius-full);
@@ -219,8 +200,7 @@
   transition: all 0.2s var(--ease-spring);
   box-shadow: var(--shadow-xs);
 }
-.site-shell .header-actions .icon-button:hover,
-.site-shell .shop-theme-toggle:hover {
+.site-shell .header-actions .icon-button:hover {
   background: var(--soft);
   color: var(--accent);
   transform: translateY(-1px);
@@ -260,11 +240,6 @@
   border-color: var(--accent) !important;
   color: #fff !important;
 }
-.site-shell[data-shop-theme="dark"] .cart-button {
-  background: var(--white) !important;
-  color: var(--ink) !important;
-  border-color: var(--line) !important;
-}
 
 /* Account Dropdown Button & Panel */
 .site-shell .shop-account {
@@ -273,18 +248,13 @@
 .site-shell .account-button {
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  width: auto !important;
-  padding: 0 14px !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  width: 42px !important;
+  min-width: 42px !important;
+  height: 42px !important;
+  padding: 0 !important;
   border-radius: var(--radius-full) !important;
-}
-.site-shell .account-btn-label {
-  font-size: 12px;
-  font-weight: 700;
-  max-width: 90px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .site-shell .account-status-dot {
   width: 7px;

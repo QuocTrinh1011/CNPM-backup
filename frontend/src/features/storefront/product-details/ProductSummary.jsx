@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowLeft, ChevronRight, TicketPercent } from 'lucide-react';
 import { money } from '../../../shared/utils/storefront-display';
 
-export function ProductSummary({ page, product, user, sale, openVoucherWallet, onClose }) {
+export function ProductSummary({ page, quickView, product, user, sale, openVoucherWallet, onClose }) {
   return (
     <>
           {page && (
@@ -17,7 +17,7 @@ export function ProductSummary({ page, product, user, sale, openVoucherWallet, o
             </button>
           )}
           <p className="kicker">
-            {product.category || "HÀNG NAM"} / ANH LỚN SHOP
+            {product.category || "HÀNG NAM"} / NOVA SHOP
           </p>
           {page ? (
             <div className="product-title-row">
@@ -27,6 +27,9 @@ export function ProductSummary({ page, product, user, sale, openVoucherWallet, o
               </span>
             </div>
           ) : <h2>{product.name}</h2>}
+          {quickView && (
+            <p className="quick-view-sku">SKU: {product.sku || product.productCode || product.code || product.id}</p>
+          )}
           <div className="modal-price">
             <strong>{money(product.salePrice || product.price)}</strong>
             {sale > 0 && (
@@ -46,10 +49,10 @@ export function ProductSummary({ page, product, user, sale, openVoucherWallet, o
               <ChevronRight size={18} aria-hidden="true" />
             </button>
           )}
-          <p className="modal-description">
+          {!quickView && <p className="modal-description">
             {product.description ||
               "Thiết kế cân bằng giữa công năng và vẻ ngoài hiện đại, phù hợp cho tủ đồ hằng ngày."}
-          </p>
+          </p>}
     </>
   );
 }

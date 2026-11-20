@@ -83,7 +83,7 @@ export function ProductFeedback({ data, user, submitFeedback, showAllFeedback, s
                       <section className="shop-feedback-reply" aria-label="Phản hồi của shop">
                         <div className="shop-reply-header">
                           <ShieldCheck size={13} className="shop-reply-badge-icon" />
-                          <b>ANH LỚN SHOP trả lời</b>
+                          <b>NOVA SHOP trả lời</b>
                         </div>
                         <p className="shop-reply-text">{item.adminResponse}</p>
                       </section>

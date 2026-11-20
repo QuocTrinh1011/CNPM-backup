@@ -1,5 +1,14 @@
-import React from 'react';
-import { ArrowUpRight, ArrowRight, Shirt, Layers, MoveUpRight, Sparkles, Zap } from 'lucide-react';
+import React, { useRef } from 'react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Layers,
+  Shirt,
+  Sparkles,
+  Zap,
+} from 'lucide-react';
+import { ProductCard } from './ProductDetails';
 import { firstProductColor, imagesForColor } from './product-image-gallery';
 
 const EDITORIAL_IMAGE = '/images/figma/daily-uniform.png';
@@ -10,74 +19,133 @@ const COLLECTIONS = [
   ['Quần', 'Thoải mái theo từng bước.', '04', Layers],
 ];
 
-export default function StorefrontHome({ products = [], onCatalog, onProduct, imageSrc = value => value }) {
-  const featured = products.find(product => product.imageUrl) || null;
-  const featuredImage = featured
-    ? imagesForColor(featured, firstProductColor(featured))[0] || featured.imageUrl
-    : null;
+export default function StorefrontHome({
+  products = [],
+  categories = [],
+  wishlist = [],
+  loading = false,
+  catalogError = '',
+  onCatalog,
+  onProduct,
+  onQuickView,
+  onWishlist,
+  onRetry,
+  imageSrc = value => value,
+}) {
+  const shelfRefs = useRef({});
+
+  const categoryNames = [...new Set([
+    ...categories,
+    ...products.map(product => product.category).filter(Boolean),
+  ])];
+  const productSections = categoryNames
+    .map(category => ({
+      category,
+      products: products.filter(product => product.category === category).slice(0, 8),
+    }))
+    .filter(section => section.products.length)
+    .slice(0, 3);
+  if (!productSections.length && products.length) {
+    productSections.push({ category: 'Sản phẩm mới', products: products.slice(0, 8) });
+  }
+
+  const scrollShelf = (index, direction) => {
+    shelfRefs.current[index]?.scrollBy({ left: direction * 760, behavior: 'smooth' });
+  };
+
   return <>
-    <section className="shop-editorial" aria-label="Khám phá phong cách Anh Lớn Shop">
+    <section className="shop-editorial" aria-label="Khám phá phong cách NOVA Shop">
       <div className="shop-editorial-copy">
-        <div className="shop-signal"><span>DROP 01</span><i>NEW SEASON / ANH LỚN</i></div>
-        <p className="shop-eyebrow"><span/> ANH LỚN / THE DAILY UNIFORM</p>
-        <h1>Mặc khác đi.<br/><em>Theo cách của anh.</em></h1>
-        <p className="shop-editorial-description">Những phom dáng mới cho tủ đồ mỗi ngày — dễ mặc, có chủ đích và đủ khác biệt để được nhớ đến.</p>
-        <div className="shop-editorial-actions"><button className="button shop-primary" onClick={() => onCatalog('')}>Khám phá sản phẩm <ArrowUpRight size={19}/></button><button className="shop-text-link" onClick={() => onCatalog('Áo thun')}>Bắt đầu với áo thun <ArrowRight size={17}/></button></div>
-        <div className="shop-tech-stats">
-          <div><strong>Mỗi ngày</strong><span>Dễ mặc, dễ phối</span></div>
-          <div><strong>04</strong><span>Danh mục khám phá</span></div>
-          <div><strong>Chất riêng</strong><span>Theo cách của anh</span></div>
+        <div className="shop-signal"><span>DROP 01</span><i>NEW SEASON / NOVA SHOP</i></div>
+        <p className="shop-eyebrow"><span /> NOVA / THE DAILY UNIFORM</p>
+        <h1>Mặc đẹp đúng gu.<br /><em>Tự tin mỗi ngày.</em></h1>
+        <p className="shop-editorial-description">Phom dáng dễ mặc, chất liệu thoải mái — để anh tự tin trong mọi nhịp sống.</p>
+        <div className="shop-editorial-actions">
+          <button className="button shop-primary" onClick={() => onCatalog('')}>Khám phá sản phẩm <ArrowUpRight size={19} /></button>
         </div>
       </div>
       <div className="shop-editorial-visual">
         <img
           className="shop-editorial-image"
-          src={featured ? imageSrc(featuredImage) : EDITORIAL_IMAGE}
-          alt={featured ? featured.name : 'Phong cách menswear tối giản của Anh Lớn Shop'}
+          src={imageSrc(EDITORIAL_IMAGE)}
+          alt="Phong cách menswear tối giản của NOVA Shop"
           fetchPriority="high"
-          onError={event => {
-            event.currentTarget.onerror = null;
-            event.currentTarget.src = EDITORIAL_IMAGE;
-          }}
         />
-        <span className="shop-editorial-stamp"><small>AL / 26</small><b>NEW FORM</b></span>
-        <div className="shop-editorial-caption"><span>FORM / FUNCTION<br/><strong>DAILY<br/>ATTITUDE.</strong></span><MoveUpRight size={36} strokeWidth={1}/></div>
-        {featured && <button className="shop-featured-link" type="button" aria-label={`KHÁM PHÁ THIẾT KẾ: ${featured.name}`} title={`Xem ${featured.name}`} onClick={() => onProduct(featured)}><span><small>KHÁM PHÁ THIẾT KẾ</small><b>{featured.name}</b></span><ArrowUpRight size={22} aria-hidden="true"/></button>}
+        <span className="shop-editorial-stamp"><small>NOVA / 26</small><b>NEW FORM</b></span>
       </div>
     </section>
-    <div className="shop-style-line" aria-hidden="true"><span><Zap size={14}/> FORM FIRST</span><i/><span><Sparkles size={14}/> MADE TO MOVE</span><i/><span>YOUR DAILY ROTATION</span></div>
+
+    <div className="shop-style-line" aria-hidden="true">
+      <span><Zap size={14} /> FORM FIRST</span><i /><span><Sparkles size={14} /> MADE TO MOVE</span><i /><span>YOUR DAILY ROTATION</span>
+    </div>
+
     <section className="shop-collections" aria-labelledby="shop-collection-title">
-      <div className="shop-section-title"><div><p className="shop-eyebrow">TÌM PHONG CÁCH CỦA BẠN</p><h2 id="shop-collection-title">Tủ đồ, theo cách của bạn.</h2></div><button className="shop-text-link" onClick={() => onCatalog('')}>Tất cả danh mục <ArrowUpRight size={18}/></button></div>
+      <div className="shop-section-title">
+        <div><p className="shop-eyebrow">TÌM PHONG CÁCH CỦA BẠN</p><h2 id="shop-collection-title">Tủ đồ, theo cách của bạn.</h2></div>
+        <button className="shop-text-link" onClick={() => onCatalog('')}>Tất cả danh mục <ArrowUpRight size={18} /></button>
+      </div>
       <div className="shop-collection-grid">
         {COLLECTIONS.map(([name, subtitle, number, Icon]) => {
           const product = products.find(item => item.category === name && item.imageUrl);
           const image = product
             ? imagesForColor(product, firstProductColor(product))[0] || product.imageUrl
             : null;
-          return (
-            <button
-              className={`shop-collection-tile${image ? ' has-image' : ''}`}
-              key={name}
-              onClick={() => onCatalog(name)}
-            >
-              {image && (
-                <img
-                  className="shop-collection-image"
-                  src={imageSrc(image)}
-                  alt=""
-                  loading="lazy"
-                  onError={event => { event.currentTarget.style.display = 'none'; }}
-                />
-              )}
-              <div className="shop-collection-content">
-                <div className="shop-collection-top"><span>{number}</span><Icon size={30} strokeWidth={1.3}/></div>
-                <div><h3>{name}</h3><p>{subtitle}</p></div>
-              </div>
-              <ArrowUpRight className="shop-collection-arrow" size={22}/>
-            </button>
-          );
+          return <button
+            className={`shop-collection-tile${image ? ' has-image' : ''}`}
+            key={name}
+            onClick={() => onCatalog(name)}
+          >
+            {image && <img
+              className="shop-collection-image"
+              src={imageSrc(image)}
+              alt=""
+              loading="lazy"
+              onError={event => { event.currentTarget.style.display = 'none'; }}
+            />}
+            <div className="shop-collection-content">
+              <div className="shop-collection-top"><span>{number}</span><Icon size={30} strokeWidth={1.3} /></div>
+              <div><h3>{name}</h3><p>{subtitle}</p></div>
+            </div>
+            <ArrowUpRight className="shop-collection-arrow" size={22} />
+          </button>;
         })}
       </div>
     </section>
+
+    {loading && !products.length && <section className="shop-home-products" aria-label="Đang tải sản phẩm">
+      <div className="loading-grid">{[1, 2, 3, 4].map(item => <div className="skeleton" key={item} />)}</div>
+    </section>}
+    {catalogError && <section className="shop-home-products" aria-label="Danh mục sản phẩm">
+      <div className="empty-state error-state" role="alert">
+        <h2>Chưa kết nối được cửa hàng</h2>
+        <p>{catalogError}</p>
+        <button className="button button-dark" onClick={onRetry}>THỬ KẾT NỐI LẠI</button>
+      </div>
+    </section>}
+    {!loading && !catalogError && productSections.map((section, index) => <section
+      className="shop-home-products"
+      key={section.category}
+      aria-labelledby={`home-products-${index}`}
+    >
+      <div className="shop-section-title">
+        <div><p className="shop-eyebrow">NOVA SELECTS / {String(index + 1).padStart(2, '0')}</p><h2 id={`home-products-${index}`}>{section.category}</h2></div>
+        <div className="shop-shelf-actions">
+          <button className="shop-text-link" onClick={() => onCatalog(section.category)}>Xem tất cả <ArrowUpRight size={18} /></button>
+          <button type="button" aria-label={`Sản phẩm ${section.category} trước`} onClick={() => scrollShelf(index, -1)}><ArrowLeft size={17} /></button>
+          <button type="button" aria-label={`Sản phẩm ${section.category} tiếp`} onClick={() => scrollShelf(index, 1)}><ArrowRight size={17} /></button>
+        </div>
+      </div>
+      <div className="shop-product-rail" ref={element => { shelfRefs.current[index] = element; }}>
+        {section.products.map(product => <div className="shop-product-rail-item" key={product.id}>
+          <ProductCard
+            product={product}
+            onOpen={() => onProduct(product)}
+            onQuickView={() => onQuickView(product)}
+            isWishlisted={wishlist.some(item => item.productId === product.id)}
+            onWishlist={() => onWishlist(product)}
+          />
+        </div>)}
+      </div>
+    </section>)}
   </>;
 }

@@ -10,10 +10,10 @@ import { ProductSizeGuide } from "./ProductSizeGuide";
 import { ProductBenefits } from "./ProductBenefits";
 import { ProductFeedback } from "./ProductFeedback";
 
-export function ProductModal({ page = false, data, user, onClose, onAdd, onBuyNow, onLogin }) {
+export function ProductModal({ page = false, quickView = false, data, user, onClose, onAdd, onBuyNow, onViewDetails, onLogin }) {
   const product = data.product;
   const [size, setSize] = useState(
-    csv(product.sizes)[1] || csv(product.sizes)[0] || "M",
+    (quickView ? csv(product.sizes)[0] : csv(product.sizes)[1]) || csv(product.sizes)[0] || "M",
   );
   const [color, setColor] = useState(firstProductColor(product));
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -48,7 +48,7 @@ export function ProductModal({ page = false, data, user, onClose, onAdd, onBuyNo
       className={page ? "customer-page-body" : "modal-backdrop"}
       onMouseDown={(event) => !page && event.target === event.currentTarget && onClose()}
     >
-      <div className="product-modal">
+      <div className={`product-modal ${page ? "product-modal--page" : "product-modal--dialog"} ${quickView ? "product-modal--quick-view" : ""}`}>
         <button
           className="close-button"
           aria-label="Đóng chi tiết sản phẩm"
@@ -57,6 +57,7 @@ export function ProductModal({ page = false, data, user, onClose, onAdd, onBuyNo
           <X size={20} />
         </button>
         <ProductGallery
+          quickView={quickView}
           product={product}
           color={color}
           galleryImages={galleryImages}
@@ -67,6 +68,7 @@ export function ProductModal({ page = false, data, user, onClose, onAdd, onBuyNo
         <div className="product-modal-content">
           <ProductSummary
             page={page}
+            quickView={quickView}
             product={product}
             user={user}
             sale={sale}
@@ -75,6 +77,7 @@ export function ProductModal({ page = false, data, user, onClose, onAdd, onBuyNo
           />
           <ProductOptions
             product={product}
+            quickView={quickView}
             color={color}
             setColor={setColor}
             size={size}
@@ -89,16 +92,22 @@ export function ProductModal({ page = false, data, user, onClose, onAdd, onBuyNo
             setQuantity={setQuantity}
             purchasing={purchasing}
             purchase={purchase}
+            quickView={quickView}
           />
+          {quickView && (
+            <button type="button" className="quick-view-details-link" onClick={onViewDetails}>
+              Xem chi tiết »
+            </button>
+          )}
           <ProductSizeGuide showSizeGuide={showSizeGuide} setShowSizeGuide={setShowSizeGuide} />
-          <ProductBenefits page={page} product={product} />
-          <ProductFeedback
+          {!quickView && <ProductBenefits page={page} product={product} />}
+          {!quickView && <ProductFeedback
             data={data}
             user={user}
             submitFeedback={submitFeedback}
             showAllFeedback={showAllFeedback}
             setShowAllFeedback={setShowAllFeedback}
-          />
+          />}
         </div>
       </div>
     </div>

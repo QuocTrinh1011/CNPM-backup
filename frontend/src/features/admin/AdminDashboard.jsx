@@ -85,22 +85,6 @@ function ReportTable({ label, columns, rows, renderRow }) {
   );
 }
 
-function ProductTable({ rows }) {
-  return <ReportTable
-    label="Sản phẩm bán chạy"
-    columns={['Sản phẩm', 'Danh mục', 'Màu', 'Cỡ', 'Số lượng', 'Doanh thu']}
-    rows={rows}
-    renderRow={(row) => <tr key={JSON.stringify([row.productId, row.color, row.size])}>
-      <td><strong>{row.productName || 'Sản phẩm'}</strong></td>
-      <td>{row.categoryName || '—'}</td>
-      <td>{row.color || 'Chưa phân loại'}</td>
-      <td>{row.size || '—'}</td>
-      <td>{row.quantitySold || 0}</td>
-      <td>{formatMoney(row.totalRevenue)}</td>
-    </tr>}
-  />;
-}
-
 function CustomerTable({ rows }) {
   return <ReportTable
     label="Khách hàng chi tiêu nhiều"
@@ -115,18 +99,90 @@ function CustomerTable({ rows }) {
   />;
 }
 
-function EmployeeTable({ rows }) {
+function QuarterCell({ amount, count, countLabel }) {
+  return <span className="admin-quarterly-cell"><strong>{formatMoney(amount)}</strong><small>{count} {countLabel}</small></span>;
+}
+
+function QuarterlyProductTable({ rows }) {
+  const grouped = new Map();
+  for (const item of rows) {
+    const key = String(item.productId);
+    if (!grouped.has(key)) {
+      grouped.set(key, {
+        productId: item.productId,
+        productName: item.productName,
+        categoryName: item.categoryName,
+        quarters: Array.from({ length: 4 }, () => ({ quantitySold: 0, totalRevenue: 0 })),
+      });
+    }
+    const quarter = Number(item.quarter);
+    if (quarter >= 1 && quarter <= 4) {
+      grouped.get(key).quarters[quarter - 1] = {
+        quantitySold: Number(item.quantitySold) || 0,
+        totalRevenue: Number(item.totalRevenue) || 0,
+      };
+    }
+  }
+  const reportRows = [...grouped.values()].map((row) => ({
+    ...row,
+    quantitySold: row.quarters.reduce((total, quarter) => total + quarter.quantitySold, 0),
+    totalRevenue: row.quarters.reduce((total, quarter) => total + quarter.totalRevenue, 0),
+  })).sort((left, right) => right.totalRevenue - left.totalRevenue || left.productName.localeCompare(right.productName, 'vi'));
+
   return <ReportTable
-    label="Hoạt động nhập kho theo nhân viên"
-    columns={['Người lập phiếu', 'Email', 'Số phiếu nhập', 'Tổng giá trị phiếu']}
-    rows={rows}
-    renderRow={(row, index) => <tr key={row.employeeId ?? `unknown-${index}`}>
-      <td><strong>{row.fullName || 'Hệ thống / Không xác định'}</strong></td>
-      <td>{row.email || '—'}</td>
-      <td>{row.receiptCount || 0}</td>
-      <td>{formatMoney(row.totalReceiptCost)}</td>
+    label="Doanh thu và số lượng sản phẩm theo quý"
+    columns={['Sản phẩm', 'Q1', 'Q2', 'Q3', 'Q4', 'Tổng năm']}
+    rows={reportRows}
+    renderRow={(row) => <tr key={row.productId}>
+      <td className="admin-quarterly-entity"><strong>{row.productName || 'Sản phẩm'}</strong><small>{row.categoryName || '—'}</small></td>
+      {row.quarters.map((quarter, index) => <td key={index}><QuarterCell amount={quarter.totalRevenue} count={quarter.quantitySold} countLabel="sp" /></td>)}
+      <td><QuarterCell amount={row.totalRevenue} count={row.quantitySold} countLabel="sp" /></td>
     </tr>}
   />;
+}
+
+function QuarterlyEmployeeTable({ rows }) {
+  const grouped = new Map();
+  for (const item of rows) {
+    const key = item.employeeId == null ? `unknown:${item.fullName || 'employee'}` : String(item.employeeId);
+    if (!grouped.has(key)) {
+      grouped.set(key, {
+        employeeId: item.employeeId,
+        fullName: item.fullName,
+        email: item.email,
+        quarters: Array.from({ length: 4 }, () => ({ receiptCount: 0, totalReceiptCost: 0 })),
+      });
+    }
+    const quarter = Number(item.quarter);
+    if (quarter >= 1 && quarter <= 4) {
+      grouped.get(key).quarters[quarter - 1] = {
+        receiptCount: Number(item.receiptCount) || 0,
+        totalReceiptCost: Number(item.totalReceiptCost) || 0,
+      };
+    }
+  }
+  const reportRows = [...grouped.values()].map((row) => ({
+    ...row,
+    receiptCount: row.quarters.reduce((total, quarter) => total + quarter.receiptCount, 0),
+    totalReceiptCost: row.quarters.reduce((total, quarter) => total + quarter.totalReceiptCost, 0),
+  })).sort((left, right) => right.totalReceiptCost - left.totalReceiptCost || left.fullName.localeCompare(right.fullName, 'vi'));
+
+  return <ReportTable
+    label="Phiếu nhập kho theo nhân viên và quý"
+    columns={['Nhân viên', 'Q1', 'Q2', 'Q3', 'Q4', 'Tổng năm']}
+    rows={reportRows}
+    renderRow={(row, index) => <tr key={row.employeeId ?? `unknown-${index}`}>
+      <td className="admin-quarterly-entity"><strong>{row.fullName || 'Hệ thống / Không xác định'}</strong><small>{row.email || 'Không có email'}</small></td>
+      {row.quarters.map((quarter, quarterIndex) => <td key={quarterIndex}><QuarterCell amount={quarter.totalReceiptCost} count={quarter.receiptCount} countLabel="phiếu" /></td>)}
+      <td><QuarterCell amount={row.totalReceiptCost} count={row.receiptCount} countLabel="phiếu" /></td>
+    </tr>}
+  />;
+}
+
+function QuarterlyTableState({ loading, error, onRetry }) {
+  if (loading) return <div className="admin-stat-message admin-quarterly-state" role="status"><RefreshCw size={15} className="admin-stat-spin" />Đang tổng hợp số liệu Q1–Q4...</div>;
+  if (error) return <div className="admin-stat-error admin-quarterly-state" role="alert"><AlertTriangle size={16} /><span>{error}</span><button type="button" className="hallmark-link-btn" onClick={onRetry}>Thử lại</button></div>;
+  return null;
 }
 
 function QuickLinks({ go, managerUrl }) {
@@ -137,7 +193,7 @@ function QuickLinks({ go, managerUrl }) {
       </div>
       <div className="admin-stat-quick-links">
         <button type="button" onClick={() => go('/admin/accounts')}><ShieldCheck size={17} /><span>Tài khoản nội bộ</span><ChevronRight size={16} /></button>
-        <button type="button" onClick={() => go('/admin/products')}><Package size={17} /><span>Danh mục sản phẩm</span><ChevronRight size={16} /></button>
+        <button type="button" onClick={() => go('/admin/products')}><Package size={17} /><span>Loại sản phẩm</span><ChevronRight size={16} /></button>
         <a href={managerUrl}><Layers size={17} /><span>Cổng quản lý Manager</span><ChevronRight size={16} /></a>
       </div>
       <div className="admin-stat-governance"><ShieldCheck size={16} /><span>Admin quản trị tài khoản và hệ thống; nghiệp vụ bán hàng, đơn hàng và kho thực hiện trong Manager Portal.</span></div>
@@ -152,8 +208,11 @@ export default function AdminDashboard({ session, go, managerUrl }) {
   const [quarter, setQuarter] = useState(Math.floor(new Date().getMonth() / 3) + 1);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [data, setData] = useState(null);
+  const [quarterlyData, setQuarterlyData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [quarterlyLoading, setQuarterlyLoading] = useState(true);
   const [error, setError] = useState('');
+  const [quarterlyError, setQuarterlyError] = useState('');
   const [retry, setLocalRetry] = useState(0);
 
   const roleChartData = useMemo(() => ({
@@ -230,6 +289,8 @@ export default function AdminDashboard({ session, go, managerUrl }) {
     return `/api/admin/reports?${params.toString()}`;
   }, [year, periodType, quarter, month]);
 
+  const quarterlyPath = useMemo(() => `/api/admin/reports/quarterly?year=${year}`, [year]);
+
   useEffect(() => {
     const controller = new AbortController();
     let current = true;
@@ -243,6 +304,20 @@ export default function AdminDashboard({ session, go, managerUrl }) {
       .finally(() => { if (current) setLoading(false); });
     return () => { current = false; controller.abort(); };
   }, [reportPath, retry]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let current = true;
+    setQuarterlyLoading(true);
+    setQuarterlyError('');
+    adminApi(quarterlyPath, { signal: controller.signal })
+      .then((report) => { if (current) setQuarterlyData(report); })
+      .catch((failure) => {
+        if (current && !controller.signal.aborted) setQuarterlyError(failure.message || 'Không tải được số liệu theo quý.');
+      })
+      .finally(() => { if (current) setQuarterlyLoading(false); });
+    return () => { current = false; controller.abort(); };
+  }, [quarterlyPath, retry]);
 
   const years = useMemo(() => {
     const available = data?.availableYears || [];
@@ -331,8 +406,9 @@ export default function AdminDashboard({ session, go, managerUrl }) {
         </section>
 
         <section className="admin-stat-panel" aria-labelledby="admin-stat-products-heading">
-          <div className="admin-stat-heading"><div><span className="admin-stat-eyebrow">02 · SẢN PHẨM</span><h2 id="admin-stat-products-heading">Sản phẩm bán chạy</h2><p>Top biến thể theo doanh thu trong {periodLabel.toLowerCase()}.</p></div><Package size={20} /></div>
-          <ProductTable rows={data.topProducts || []} />
+          <div className="admin-stat-heading"><div><span className="admin-stat-eyebrow">02 · SẢN PHẨM</span><h2 id="admin-stat-products-heading">Sản phẩm theo quý</h2><p>Số lượng bán và doanh thu từng quý trong năm {year}; tổng năm bằng tổng Q1–Q4.</p></div><Package size={20} /></div>
+          <QuarterlyTableState loading={quarterlyLoading} error={quarterlyError} onRetry={() => setLocalRetry((value) => value + 1)} />
+          {!quarterlyLoading && !quarterlyError ? <QuarterlyProductTable rows={quarterlyData?.products || []} /> : null}
         </section>
 
         <section className="admin-stat-panel" aria-labelledby="admin-stat-customers-heading">
@@ -341,8 +417,9 @@ export default function AdminDashboard({ session, go, managerUrl }) {
         </section>
 
         <section className="admin-stat-panel" aria-labelledby="admin-stat-employees-heading">
-          <div className="admin-stat-heading"><div><span className="admin-stat-eyebrow">04 · NHÂN VIÊN</span><h2 id="admin-stat-employees-heading">Hoạt động nhập kho</h2><p>Thống kê theo người lập phiếu nhập kho; không phải doanh số bán hàng theo nhân viên.</p></div><Users size={20} /></div>
-          <EmployeeTable rows={data.employeeActivities || []} />
+          <div className="admin-stat-heading"><div><span className="admin-stat-eyebrow">04 · NHÂN VIÊN</span><h2 id="admin-stat-employees-heading">Hoạt động nhập kho theo quý</h2><p>Số phiếu và tổng chi phí nhập kho từng quý trong năm {year}.</p></div><Users size={20} /></div>
+          <QuarterlyTableState loading={quarterlyLoading} error={quarterlyError} onRetry={() => setLocalRetry((value) => value + 1)} />
+          {!quarterlyLoading && !quarterlyError ? <QuarterlyEmployeeTable rows={quarterlyData?.employeeActivities || []} /> : null}
         </section>
       </> : null}
 

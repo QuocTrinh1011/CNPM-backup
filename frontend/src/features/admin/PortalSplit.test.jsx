@@ -23,7 +23,7 @@ it.each([
 });
 it.each([
  ['Tài khoản nội bộ', '/admin/accounts'],
- ['Danh mục sản phẩm', '/admin/products'],
+ ['Loại sản phẩm', '/admin/products'],
 ])('dashboard shortcut opens its own function: %s', async (name, path) => {
  window.history.replaceState({}, '', '/admin');
  adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});

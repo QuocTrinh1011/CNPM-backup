@@ -98,11 +98,6 @@
   transition: all 0.2s var(--ease-spring);
   box-shadow: var(--shadow-sm);
 }
-.site-shell[data-shop-theme="dark"] .heart {
-  background: rgba(17, 24, 39, 0.85);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: var(--muted);
-}
 .site-shell .heart:hover {
   transform: scale(1.12);
   color: var(--accent);

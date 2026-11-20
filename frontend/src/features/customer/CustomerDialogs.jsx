@@ -50,9 +50,9 @@ export function AuthModal({ page = false, mode, onModeChange, onClose, onAuthent
           <X size={20} />
         </button>
         <div className="auth-mark">
-          AL<span>SHOP</span>
+          NOVA<span>SHOP</span>
         </div>
-        <p className="kicker">ANH LỚN SHOP</p>
+        <p className="kicker">NOVA SHOP</p>
         <h2>
           {mode === "login" ? "Chào mừng trở lại." : "Tạo tài khoản mới."}
         </h2>
@@ -352,7 +352,7 @@ export function SurveyModal({ page = false, surveyId, onNavigate, user, onClose,
         </button>
         {detailLoading ? <p role="status">Đang tải khảo sát...</p> : detailError ? <div role="alert">{detailError}<button onClick={() => setRetry(value => value + 1)}>Thử lại</button></div> : !survey ? (
           <>
-            <p className="kicker">ANH LỚN SHOP / KHẢO SÁT</p>
+            <p className="kicker">NOVA SHOP / KHẢO SÁT</p>
             <h2>
               Chọn đúng gu,
               <br />
@@ -401,7 +401,7 @@ export function SurveyModal({ page = false, surveyId, onNavigate, user, onClose,
             <form className="survey-form" onSubmit={submit}>
               {completed && (
                 <div className="survey-completed-note">
-                  Bạn đã hoàn thành khảo sát này. Cảm ơn bạn đã chia sẻ cùng Anh Lớn Shop.
+                  Bạn đã hoàn thành khảo sát này. Cảm ơn bạn đã chia sẻ cùng NOVA Shop.
                 </div>
               )}
               {survey.questions?.map((question) => (

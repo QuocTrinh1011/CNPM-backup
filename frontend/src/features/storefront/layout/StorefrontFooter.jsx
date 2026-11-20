@@ -12,14 +12,14 @@ export default function StorefrontFooter({
   return <footer className="footer">
         <div className="footer-brand">
           <a className="wordmark" href="/" onClick={goHome}>
-            ANH LỚN <em>SHOP</em>
+            NOVA <em>SHOP</em>
           </a>
           <p>Thời trang nam tinh giản & hiện đại. Tỉ mỉ từ chất liệu, chuẩn phom dáng cho tủ đồ phái mạnh mỗi ngày.</p>
           <div className="footer-contact-details">
             <span>Hotline: <b>1900 6868</b> (8:30 – 22:00)</span>
             <span>Email: <b>cskh@anhlonshop.vn</b></span>
           </div>
-          <small>© 2026 ANH LỚN SHOP. BẢO LƯU MỌI QUYỀN.</small>
+          <small>© 2026 NOVA SHOP. BẢO LƯU MỌI QUYỀN.</small>
         </div>
         <div>
           <b>KHÁM PHÁ</b>
@@ -28,10 +28,7 @@ export default function StorefrontFooter({
           <button onClick={() => openCatalog("Áo khoác")}>Áo khoác</button>
           <button onClick={() => openCatalog("Áo thun")}>Áo thun</button>
           <button onClick={() => openCatalog("Quần")}>Quần nam</button>
-          <button onClick={() => openCatalog("", {
-        minPrice: "",
-        maxPrice: "500000"
-      })}>Ưu đãi đặc biệt</button>
+          <button onClick={() => openCatalog("", { onSale: true })}>Ưu đãi đặc biệt</button>
         </div>
         <div>
           <b>HỖ TRỢ</b>

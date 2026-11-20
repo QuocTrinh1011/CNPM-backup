@@ -21,4 +21,9 @@ public class AdminReportsController {
                                                       @RequestParam(required = false) Integer month) {
         return reports.adminReport(year, quarter, month);
     }
+
+    @GetMapping("/quarterly")
+    public ManagerReportsService.AdminQuarterlyReport quarterly(@RequestParam(required = false) Integer year) {
+        return reports.adminQuarterlyReport(year);
+    }
 }

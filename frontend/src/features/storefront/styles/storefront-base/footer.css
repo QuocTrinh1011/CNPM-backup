@@ -12,10 +12,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-.site-shell[data-shop-theme="dark"] .promise {
-  background: var(--soft);
-}
-
 .site-shell .promise > div {
   display: flex;
   align-items: flex-start;

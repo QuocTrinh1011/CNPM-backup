@@ -27,13 +27,10 @@ export default function AccountDropdown({ user, unreadCount = 0, onAction }) {
       onClick={event => { if (event.detail > 0 && window.matchMedia?.('(hover: hover)').matches) setOpen(true); else setOpen(value => !value); }}
       onKeyDown={event => { if (event.key === 'ArrowDown') { event.preventDefault(); setOpen(true); } }}>
       <UserRound size={20} strokeWidth={1.8}/>
-      <span className="account-btn-label">
-        {user ? (user.fullName ? user.fullName.split(' ').slice(-1)[0] : 'Tài khoản') : 'Tài khoản'}
-      </span>
       {user && <span className="account-status-dot" aria-hidden="true"/>}
     </button>
     {open && <div className="shop-account-panel" id="shop-account-panel" aria-label="Chức năng tài khoản">
-      <div className="shop-account-heading"><span className="shop-account-avatar">{user?.fullName?.slice(0, 1).toUpperCase() || <UserRound size={22}/>}</span><div><small>{user ? 'Xin chào,' : 'Chào mừng đến với'}</small><strong>{user?.fullName || 'ANH LỚN SHOP'}</strong><p>{user?.email || 'Đăng nhập để mua sắm thuận tiện hơn'}</p></div></div>
+      <div className="shop-account-heading"><span className="shop-account-avatar">{user?.fullName?.slice(0, 1).toUpperCase() || <UserRound size={22}/>}</span><div><small>{user ? 'Xin chào,' : 'Chào mừng đến với'}</small><strong>{user?.fullName || 'NOVA SHOP'}</strong><p>{user?.email || 'Đăng nhập để mua sắm thuận tiện hơn'}</p></div></div>
       <nav aria-label="Menu tài khoản">{items.map(([key, label, Icon]) => <button key={key} className={key === 'logout' ? 'shop-account-logout' : ''} onClick={() => { setOpen(false); onAction(key); }}><Icon size={18}/><span>{label}</span>{key === 'notifications' && unreadCount > 0 ? <b className="shop-account-count">{unreadCount > 99 ? '99+' : unreadCount}</b> : <ChevronRight size={14}/>}</button>)}</nav>
     </div>}
   </div>;

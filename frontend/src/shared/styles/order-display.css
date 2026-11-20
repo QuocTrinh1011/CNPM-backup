@@ -6,10 +6,6 @@
   overflow-wrap: anywhere;
   line-height: 1.5;
 }
-.site-shell[data-shop-theme="dark"] .status-pill.return-requested {
-  color: #fdba74;
-  background: #431407;
-}
 .admin-shell .admin-order-detail .admin-status-return-requested {
   color: #9a3412;
   background: #ffedd5;

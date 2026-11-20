@@ -4,7 +4,6 @@ import useCustomerCart from "../features/storefront/cart/useCustomerCart.js";
 import useCustomerSession from "../features/customer/hooks/useCustomerSession.js";
 import useCatalog from "../features/storefront/hooks/useCatalog";
 import useWishlist from "../features/customer/hooks/useWishlist";
-import useStorefrontTheme from "../features/storefront/hooks/useStorefrontTheme";
 import StorefrontMobileNavigation from "../features/storefront/layout/StorefrontMobileNavigation";
 import StorefrontFooter from "../features/storefront/layout/StorefrontFooter";
 import StorefrontHeader from "../features/storefront/layout/StorefrontHeader";
@@ -59,7 +58,6 @@ function App() {
   const productId = pathname.match(/^\/san-pham\/(\d+)$/)?.[1];
   const accountPage = isAccountPath(pathname);
   const extraPage = cartOpen || authOpen || accountPage || passwordOpen || !!productId || !isKnownPath(pathname) || pathname === '/thanh-toan';
-  const [shopTheme, setShopTheme] = useStorefrontTheme();
   const searchRef = useRef(null);
 
   const { products, catalogPage, setCatalogPage, filters, setFilters, searchInput, setSearchInput, catalogError, loading, loadProducts } = useCatalog((...args) => showNotice(...args));
@@ -67,6 +65,8 @@ function App() {
 
   const { cart, setCart, cartLoading, setCartLoading, cartError, setCartError, cartOwner, setCartOwner, cartLoad, userRef, updatingCartKeys, loadCart, addToCart, updateCart, selection } = useCustomerCart({ user, sessionChecking, sessionError, cartOpen, showNotice: (...args) => showNotice(...args) });
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  useEffect(() => setQuickViewProduct(null), [pathname]);
   const [authAfterLogin, setAuthAfterLogin] = useState(null);
   const [checkoutPage, setCheckoutPage] = useState(() => window.location.pathname === "/dat-hang");
   const [ordersRoute, setOrdersRoute] = useState(readOrdersRoute);
@@ -173,6 +173,7 @@ function App() {
       keyword: "",
       minPrice: "",
       maxPrice: "",
+      onSale: false,
       ...options,
       category,
       page: 0,
@@ -181,6 +182,7 @@ function App() {
     if (category) params.set("category", category);
     if (nextFilters.minPrice) params.set("minPrice", nextFilters.minPrice);
     if (nextFilters.maxPrice) params.set("maxPrice", nextFilters.maxPrice);
+    if (nextFilters.onSale) params.set("onSale", "true");
     setMobileMenuOpen(false);
     setSearchInput(nextFilters.keyword || "");
     setOrdersRoute(null);
@@ -203,6 +205,7 @@ function App() {
       category: "",
       minPrice: "",
       maxPrice: "",
+      onSale: false,
       page: 0,
     }));
     navigate('/');
@@ -222,6 +225,7 @@ function App() {
         category: isCatalog ? params.get("category") || "" : "",
         minPrice: isCatalog ? params.get("minPrice") || "" : "",
         maxPrice: isCatalog ? params.get("maxPrice") || "" : "",
+        onSale: isCatalog && params.get("onSale") === "true",
         sort: isCatalog && ["newest", "price_asc", "price_desc"].includes(params.get("sort")) ? params.get("sort") : "newest",
         page: isCatalog ? Math.max(0, Number.parseInt(params.get("page") || "0", 10) || 0) : 0,
       }));
@@ -232,7 +236,11 @@ function App() {
   }, [setCatalogPage, setFilters, setSearchInput]);
   const [productError, setProductError] = useState('');
   const [productReload, setProductReload] = useState(0);
-  const openProduct = product => navigate(`/san-pham/${product.id}`);
+  const openProduct = product => {
+    setQuickViewProduct(null);
+    navigate(`/san-pham/${product.id}`);
+  };
+  const openQuickView = product => setQuickViewProduct({ product, feedback: [] });
   useEffect(() => {
     const requestId = ++productRequest.current;
     setSelectedProduct(null); setProductError('');
@@ -322,12 +330,13 @@ function App() {
   }, [mobileMenuOpen]);
 
   return (
-    <div className={catalogPage ? "site-shell catalog-page" : `site-shell ${!checkoutPage && !ordersRoute && !extraPage ? 'shop-home-page' : ''}`} data-shop-theme={shopTheme}>
+    <div className={catalogPage ? "site-shell catalog-page" : `site-shell ${!checkoutPage && !ordersRoute && !extraPage ? 'shop-home-page' : ''}`} data-shop-theme="light">
       <div className="announcement">
         <span>ĐỔI SIZE TRONG 30 NGÀY</span>
-        <span className="announcement-secondary">ANH LỚN / NEW FORM</span>
+        <span className="announcement-secondary">NOVA SHOP / NEW FORM</span>
       </div>
       <StorefrontHeader
+        categories={categories}
         accountDropdown={<AccountDropdown user={user} unreadCount={notificationCount} onAction={action => {
             if (action === 'login' || action === 'register') { setAuthMode(action); setAuthAfterLogin(null); setAuthOpen(true); return; }
             if (action === 'logout') { logout(); return; }
@@ -344,8 +353,6 @@ function App() {
         searchInput={searchInput}
         setSearchInput={setSearchInput}
         setFilters={setFilters}
-        shopTheme={shopTheme}
-        setShopTheme={setShopTheme}
         user={user}
         setNotificationsOpen={setNotificationsOpen}
         openAuth={openAuth}
@@ -375,8 +382,6 @@ function App() {
           setSurveysOpen={setSurveysOpen}
           setPasswordOpen={setPasswordOpen}
           openCatalog={openCatalog}
-          shopTheme={shopTheme}
-          setShopTheme={setShopTheme}
           logout={logout}
         />
       )}
@@ -442,33 +447,43 @@ function App() {
         />
         </React.Suspense>
       ) : extraPage ? null : <main id="top">
-        {sessionError && <div className="shop-connection" role="alert"><CircleAlert size={20} /><span>{sessionError}</span><button onClick={retrySession}>Thử lại</button></div>}
-        {!catalogPage && <StorefrontHome
-                  products={products.content || []}
-                  onCatalog={openCatalog}
-                  onProduct={openProduct}
-                  imageSrc={imageSrc}
-                />}
-
-        <CatalogSection
-          catalogPage={catalogPage}
-          products={products}
-          categories={categories}
-          filters={filters}
-          setFilters={setFilters}
-          chooseCategory={chooseCategory}
-          filtersOpen={filtersOpen}
-          setFiltersOpen={setFiltersOpen}
-          loading={loading}
-          catalogError={catalogError}
-          setSearchInput={setSearchInput}
-          wishlist={wishlist}
-          openProduct={openProduct}
-          addToCart={addToCart}
-          toggleWishlist={toggleWishlist}
-          loadProducts={loadProducts}
-          openCatalog={openCatalog}
-        />
+        {catalogPage && sessionError && <div className="shop-connection" role="alert"><CircleAlert size={20} /><span>{sessionError}</span><button onClick={retrySession}>Thử lại</button></div>}
+        {catalogPage ? (
+          <CatalogSection
+            catalogPage={catalogPage}
+            products={products}
+            categories={categories}
+            filters={filters}
+            setFilters={setFilters}
+            chooseCategory={chooseCategory}
+            filtersOpen={filtersOpen}
+            setFiltersOpen={setFiltersOpen}
+            loading={loading}
+            catalogError={catalogError}
+            setSearchInput={setSearchInput}
+            wishlist={wishlist}
+            openProduct={openProduct}
+            openQuickView={openQuickView}
+            toggleWishlist={toggleWishlist}
+            loadProducts={loadProducts}
+            openCatalog={openCatalog}
+            goHome={goHome}
+          />
+        ) : (
+          <StorefrontHome
+            products={products.content || []}
+            categories={categories}
+            wishlist={wishlist}
+            loading={loading}
+            catalogError={catalogError}
+            onCatalog={openCatalog}
+            onProduct={openProduct}
+            onQuickView={openQuickView}
+            onWishlist={toggleWishlist}
+            onRetry={loadProducts}
+            imageSrc={imageSrc}
+          />
+        )}
         <section className="promise">
           <div>
             <ShieldCheck size={24} />
@@ -647,6 +662,24 @@ function App() {
       {passwordOpen && <CustomerPassword initialMode={pathname === '/quen-mat-khau' ? 'forgot' : pathname === '/dat-lai-mat-khau' ? 'reset' : 'change'} onNavigate={navigate} onNotice={showNotice} />}
       </>}
       </CustomerPageFrame>}
+
+      {quickViewProduct && !productId && (
+        <ProductModal
+          key={quickViewProduct.product.id}
+          quickView
+          data={quickViewProduct}
+          user={user}
+          onClose={() => setQuickViewProduct(null)}
+          onAdd={(variant, quantity) =>
+            addToCart(quickViewProduct.product, variant, quantity)
+          }
+          onBuyNow={(variant, quantity) =>
+            buyNow(quickViewProduct.product, variant, quantity)
+          }
+          onViewDetails={() => openProduct(quickViewProduct.product)}
+          onLogin={() => openAuth()}
+        />
+      )}
 
       {/* Mobile Bottom Navigation Bar */}
       <StorefrontFooter

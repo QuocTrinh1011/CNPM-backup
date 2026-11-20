@@ -75,7 +75,7 @@ describe('portal redesign isolation', () => {
     expect(selectors.length).toBeGreaterThan(50);
     for (const selector of selectors) expect(selector).toMatch(/^\.site-shell/);
     expect(userStyles).toContain("--sans: 'Manrope'");
-    expect(userStyles).toContain('[data-shop-theme="dark"]');
+    expect(userStyles).not.toContain('[data-shop-theme="dark"]');
   });
   it('keeps Manager selectors separate from Admin, including login and dark mode', () => {
     const selectors = rules(managerStyles);

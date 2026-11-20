@@ -151,11 +151,6 @@
   color: var(--paper) !important;
   border-color: var(--ink) !important;
 }
-.site-shell[data-shop-theme="dark"] .choice-chip.active {
-  background: var(--accent) !important;
-  color: #fff !important;
-  border-color: var(--accent) !important;
-}
 
 .site-shell .size-guide-link {
   display: inline-flex;
@@ -421,9 +416,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-}
-.site-shell[data-shop-theme="dark"] .feedback-cta-card {
-  background: var(--accent-soft);
 }
 .site-shell .feedback-submit-btn {
   font-size: 11px;

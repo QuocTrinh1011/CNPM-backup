@@ -66,16 +66,6 @@
   min-height: 76px;
   resize: vertical;
 }
-
-.site-shell[data-shop-theme="dark"] .checkout-summary {
-  background: var(--soft);
-  color: var(--ink);
-  border-color: var(--line);
-}
-.site-shell[data-shop-theme="dark"] .payment-option.active {
-  background: var(--accent-soft);
-  color: var(--ink);
-}
 .site-shell .saved-addresses,
 .site-shell .address-form { background: var(--white); }
 

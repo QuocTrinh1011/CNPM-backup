@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ANH LỚN SHOP - CONTEMPORARY EDITORIAL STOREFRONT
+   NOVA SHOP - CONTEMPORARY EDITORIAL STOREFRONT
    Independent customer theme with Scandinavian/Japanese Minimalist aesthetics.
    ========================================================================== */
 
@@ -43,28 +43,6 @@
 }
 
 /* ── Dark Mode Design Tokens ── */
-.site-shell[data-shop-theme="dark"] {
-  color-scheme: dark;
-  --paper: #0c1310;
-  --white: #141e19;
-  --ink: #edf3ec;
-  --muted: #95a599;
-  --line: #24352b;
-  --soft: #1a2821;
-  --accent: #f09a7d;
-  --accent-soft: #38241c;
-  --accent-hover: #f5b098;
-  --success: #34d399;
-  --success-soft: #133928;
-
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.65);
-  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
-
-  background: var(--paper);
-  color: var(--ink);
-}
 
 /* Keep form controls readable even when legacy/global focus rules are loaded. */
 .site-shell :is(input, textarea, select) {
@@ -81,22 +59,6 @@
   box-shadow: 0 0 0 3px var(--accent-soft) !important;
   outline: 2px solid var(--accent) !important;
   outline-offset: 2px;
-}
-.site-shell[data-shop-theme="dark"] :is(input, textarea, select) {
-  background-color: var(--soft);
-  color: var(--ink);
-  border-color: var(--line);
-}
-.site-shell[data-shop-theme="dark"] :is(input, textarea, select)::placeholder {
-  color: #aab8ad;
-}
-.site-shell[data-shop-theme="dark"] input:-webkit-autofill,
-.site-shell[data-shop-theme="dark"] input:-webkit-autofill:hover,
-.site-shell[data-shop-theme="dark"] input:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--ink);
-  caret-color: var(--ink);
-  -webkit-box-shadow: 0 0 0 1000px var(--soft) inset;
-  box-shadow: 0 0 0 1000px var(--soft) inset;
 }
 
 .site-shell * { box-sizing: border-box; }

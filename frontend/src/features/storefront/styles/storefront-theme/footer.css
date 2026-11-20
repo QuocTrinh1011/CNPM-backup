@@ -9,9 +9,6 @@
   border-top: 1px solid var(--line);
   background: var(--white);
 }
-.site-shell[data-shop-theme="dark"] .footer {
-  background: var(--white);
-}
 .site-shell .footer-brand p {
   font-size: 13px;
   line-height: 1.6;

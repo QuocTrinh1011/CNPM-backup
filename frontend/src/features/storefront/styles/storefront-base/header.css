@@ -14,11 +14,6 @@
   padding: 0 20px;
 }
 
-.site-shell[data-shop-theme="dark"] .announcement {
-  background: #080d0a;
-  border-bottom: 1px solid var(--line);
-}
-
 /* ── Header & Navigation ── */
 .site-shell .site-header {
   position: sticky;
@@ -36,10 +31,6 @@
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--line);
   transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.site-shell[data-shop-theme="dark"] .site-header {
-  background: rgba(12, 19, 16, 0.88);
 }
 
 .site-shell .wordmark {
@@ -106,18 +97,6 @@
   font-weight: 800;
 }
 
-.site-shell[data-shop-theme="dark"] .main-nav button {
-  color: #b8c7bc;
-}
-
-.site-shell[data-shop-theme="dark"] .main-nav button:hover {
-  color: #ffffff;
-}
-
-.site-shell[data-shop-theme="dark"] .main-nav button.sale-link {
-  color: var(--accent);
-}
-
 /* Header Actions */
 .site-shell .header-actions {
   display: flex;
@@ -148,25 +127,6 @@
 
 .site-shell .icon-button:active {
   transform: translateY(0);
-}
-
-.site-shell .shop-theme-toggle {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--ink);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.2s ease;
-}
-
-.site-shell .shop-theme-toggle:hover {
-  background: var(--soft);
-  transform: rotate(15deg);
 }
 
 .site-shell .notification-button > span,
