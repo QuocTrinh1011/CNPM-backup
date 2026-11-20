@@ -34,10 +34,10 @@
 ### Task 1: Add the Manager reports aggregation API
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/service/ManagerReportsService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/ManagerReportsController.java`
-- Create: `backend/src/test/java/com/htttdn/crm/service/ManagerReportsServiceTest.java`
-- Modify: `backend/src/test/java/com/htttdn/crm/service/ManagerQueryIntegrationTest.java` (exercise SQL aggregation with H2 PostgreSQL mode)
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/ManagerReportsService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/ManagerReportsController.java`
+- Create: `backend/src/test/java/com/cnpm/clothingstore/service/ManagerReportsServiceTest.java`
+- Modify: `backend/src/test/java/com/cnpm/clothingstore/service/ManagerQueryIntegrationTest.java` (exercise SQL aggregation with H2 PostgreSQL mode)
 
 **Interfaces:**
 - `ManagerReportsController.get(@RequestParam(required=false) Integer year, @RequestParam(required=false) Integer month): ManagerReportsService.ReportView`
@@ -82,7 +82,7 @@ Expose `GET /api/manager/reports` under `/api/manager/**`; rely on the existing 
 - [x] **Step 8: Commit the backend API**
 
 ```bash
-git add backend/src/main/java/com/htttdn/crm/service/ManagerReportsService.java backend/src/main/java/com/htttdn/crm/controller/ManagerReportsController.java backend/src/test/java/com/htttdn/crm/service/ManagerReportsServiceTest.java
+git add backend/src/main/java/com/cnpm/clothingstore/service/ManagerReportsService.java backend/src/main/java/com/cnpm/clothingstore/controller/ManagerReportsController.java backend/src/test/java/com/cnpm/clothingstore/service/ManagerReportsServiceTest.java
 git commit -m "feat(reports): add manager report aggregation API"
 ```
 

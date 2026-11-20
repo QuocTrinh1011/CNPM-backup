@@ -32,7 +32,7 @@
 
 ## Task 1: Batch selected survey recipients
 
-**Files:** `backend/src/main/java/com/htttdn/crm/service/AdminSurveyService.java`, `backend/src/test/java/com/htttdn/crm/service/AdminSurveyServiceTest.java`.
+**Files:** `backend/src/main/java/com/cnpm/clothingstore/service/AdminSurveyService.java`, `backend/src/test/java/com/cnpm/clothingstore/service/AdminSurveyServiceTest.java`.
 
 - [x] Add a failing test that selected recipients use one `findAllById` call and preserve validation for inactive and missing IDs.
 - [x] Run the focused test and confirm the expected failure.
@@ -42,7 +42,7 @@
 
 ## Task 2: Reject wildcard CORS origins
 
-**Files:** `backend/src/main/java/com/htttdn/crm/config/WebConfig.java`, a new `WebConfigTest.java`.
+**Files:** `backend/src/main/java/com/cnpm/clothingstore/config/WebConfig.java`, a new `WebConfigTest.java`.
 
 - [x] Add failing tests for exact `*`, whitespace around entries, and a valid explicit origin list.
 - [x] Run the focused test and confirm the wildcard case fails for the missing validation.
@@ -52,7 +52,7 @@
 
 ## Task 3: Mark SQL query fragments as trusted constants
 
-**Files:** `backend/src/main/java/com/htttdn/crm/service/CustomerProfileService.java`.
+**Files:** `backend/src/main/java/com/cnpm/clothingstore/service/CustomerProfileService.java`.
 
 - [x] Add one comment above `page(...)` documenting that SQL fragments are internal constants and must never contain request data.
 - [x] Run `git diff --check` and inspect the limited diff.

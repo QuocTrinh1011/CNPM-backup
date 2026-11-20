@@ -71,12 +71,12 @@
 ### Task 2: Shared Manager authentication and role authorization
 
 **Files:**
-- Modify: `backend/src/main/java/com/htttdn/crm/security/ManagerRoleAccessPolicy.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/security/AdminAccessGuard.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/ManagerAuthService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/ManagerEmployeeService.java`
-- Test: `backend/src/test/java/com/htttdn/crm/security/ManagerRoleAccessPolicyTest.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/ManagerRoleSecurityIntegrationTest.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/security/ManagerRoleAccessPolicy.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/security/AdminAccessGuard.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/ManagerAuthService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/ManagerEmployeeService.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/security/ManagerRoleAccessPolicyTest.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/ManagerRoleSecurityIntegrationTest.java`
 
 **Interfaces:**
 - Manager login/refresh accepts `EMPLOYEE` in the shared Manager session and continues returning the same session envelope.
@@ -97,13 +97,13 @@
 ### Task 3: Employee profile lifecycle and self-service profile
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/entity/EmployeeProfile.java`
-- Create: `backend/src/main/java/com/htttdn/crm/repository/EmployeeProfileRepository.java`
-- Create: `backend/src/main/java/com/htttdn/crm/dto/hr/EmployeeProfileDto.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/ManagerEmployeeService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/controller/ManagerEmployeeController.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/EmployeeSelfProfileController.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/ManagerEmployeeIntegrationTest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/EmployeeProfile.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/repository/EmployeeProfileRepository.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/dto/hr/EmployeeProfileDto.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/ManagerEmployeeService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/controller/ManagerEmployeeController.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/EmployeeSelfProfileController.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/ManagerEmployeeIntegrationTest.java`
 
 **Interfaces:**
 - HR endpoints: paginated/filterable employee list, create employee+profile, update HR-owned profile fields, and deactivate employee.
@@ -125,13 +125,13 @@
 ### Task 4: Leave and resignation requests
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/entity/EmployeeLeaveRequest.java`
-- Create: `backend/src/main/java/com/htttdn/crm/repository/EmployeeLeaveRequestRepository.java`
-- Create: `backend/src/main/java/com/htttdn/crm/dto/hr/EmployeeLeaveSubmission.java`, `EmployeeLeaveDecision.java`, and `EmployeeLeaveDto.java`
-- Create: `backend/src/main/java/com/htttdn/crm/service/EmployeeAccessService.java` as the shared authenticated-employee scope seam for self-service routes.
-- Create: `backend/src/main/java/com/htttdn/crm/service/EmployeeLeaveService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/EmployeeLeaveController.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/EmployeeLeaveIntegrationTest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/EmployeeLeaveRequest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/repository/EmployeeLeaveRequestRepository.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/dto/hr/EmployeeLeaveSubmission.java`, `EmployeeLeaveDecision.java`, and `EmployeeLeaveDto.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/EmployeeAccessService.java` as the shared authenticated-employee scope seam for self-service routes.
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/EmployeeLeaveService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/EmployeeLeaveController.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/EmployeeLeaveIntegrationTest.java`
 
 **Interfaces:**
 - Employee routes are `GET/POST /api/manager/me/leave-requests` and `PATCH /api/manager/me/leave-requests/{id}/withdraw`; they affect only that employee's requests.
@@ -148,13 +148,13 @@
 ### Task 5: Attendance and team-lead read-only scope
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/entity/EmployeeAttendance.java`
-- Create: `backend/src/main/java/com/htttdn/crm/repository/EmployeeAttendanceRepository.java`
-- Create: `backend/src/main/java/com/htttdn/crm/dto/hr/AttendanceUpsertRequest.java`, `EmployeeAttendanceDto.java`, `EmployeeTeamMemberDto.java`, and `TeamAttendanceDto.java`
-- Update: `backend/src/main/java/com/htttdn/crm/repository/EmployeeProfileRepository.java` with direct-report lookup.
-- Create: `backend/src/main/java/com/htttdn/crm/service/EmployeeAttendanceService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/EmployeeAttendanceController.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/EmployeeAttendanceIntegrationTest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/EmployeeAttendance.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/repository/EmployeeAttendanceRepository.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/dto/hr/AttendanceUpsertRequest.java`, `EmployeeAttendanceDto.java`, `EmployeeTeamMemberDto.java`, and `TeamAttendanceDto.java`
+- Update: `backend/src/main/java/com/cnpm/clothingstore/repository/EmployeeProfileRepository.java` with direct-report lookup.
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/EmployeeAttendanceService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/EmployeeAttendanceController.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/EmployeeAttendanceIntegrationTest.java`
 
 **Interfaces:**
 - HR creates/updates daily attendance and approved overtime for any employee.
@@ -173,13 +173,13 @@
 ### Task 6: Payroll calculation and payslip lifecycle
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/entity/EmployeePayrollPeriod.java`
-- Create: `backend/src/main/java/com/htttdn/crm/entity/EmployeePayslip.java`
-- Create: `backend/src/main/java/com/htttdn/crm/entity/EmployeePayrollLine.java`
-- Create: `backend/src/main/java/com/htttdn/crm/entity/PayrollSetting.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/EmployeePayrollPeriod.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/EmployeePayslip.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/EmployeePayrollLine.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/PayrollSetting.java`
 - Create: repositories, DTOs, and `EmployeePayrollService.java` / controller under matching `repository`, `dto/hr`, `service`, and `controller` packages.
-- Test: `backend/src/test/java/com/htttdn/crm/service/EmployeePayrollServiceTest.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/EmployeePayrollIntegrationTest.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/EmployeePayrollServiceTest.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/EmployeePayrollIntegrationTest.java`
 
 **Interfaces:**
 - HR can generate/review/publish a monthly payroll period and add documented adjustments; only HR can see all employees' salary data.
@@ -199,10 +199,10 @@
 ### Task 7: Workforce reports
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/dto/hr/EmployeeReportDto.java`
-- Create: `backend/src/main/java/com/htttdn/crm/service/EmployeeReportService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/EmployeeReportController.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/EmployeeReportIntegrationTest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/dto/hr/EmployeeReportDto.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/EmployeeReportService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/EmployeeReportController.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/EmployeeReportIntegrationTest.java`
 
 **Interfaces:**
 - HR report query accepts month/year and returns active, on-approved-leave, and resigned-in-period employees plus education, salary, and tenure summaries.
@@ -242,7 +242,7 @@
 **Files:**
 - Modify: `README.md`
 - Modify: `backend/README.md`
-- Modify: `backend/src/test/java/com/htttdn/crm/service/InternalAccountRoleIntegrationTest.java` (keep role/profile coverage aligned with the HR lifecycle)
+- Modify: `backend/src/test/java/com/cnpm/clothingstore/service/InternalAccountRoleIntegrationTest.java` (keep role/profile coverage aligned with the HR lifecycle)
 - Modify: `docs/superpowers/specs/2026-11-16-hr-employee-self-service-design.md`
 - Modify: `docs/superpowers/specs/2026-11-15-manager-role-split-design.md` (mark the initial directory-only assumptions as superseded)
 - Modify: `docs/superpowers/plans/2026-11-16-hr-employee-self-service.md`
@@ -259,8 +259,8 @@
 ### Task 10: Independent review hardening follow-up
 
 **Files:**
-- Modify: `backend/src/main/java/com/htttdn/crm/service/ManagerAuthService.java`, `EmployeeAccessService.java`, `ManagerEmployeeService.java`, `EmployeeLeaveService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/PayrollCalculator.java`, `EmployeePayrollService.java`, and `EmployeeAttendanceService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/ManagerAuthService.java`, `EmployeeAccessService.java`, `ManagerEmployeeService.java`, `EmployeeLeaveService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/PayrollCalculator.java`, `EmployeePayrollService.java`, and `EmployeeAttendanceService.java`
 - Test: `ManagerEmployeeIntegrationTest`, `EmployeeLeaveIntegrationTest`, `ManagerRoleSecurityIntegrationTest`, `EmployeePayrollServiceTest`, `EmployeePayrollIntegrationTest`, and `EmployeeAttendanceIntegrationTest`
 - Modify: this plan and the design spec to record the verified safeguards.
 

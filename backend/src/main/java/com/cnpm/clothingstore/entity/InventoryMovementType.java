@@ -1,0 +1,15 @@
+package com.cnpm.clothingstore.entity;
+
+public enum InventoryMovementType {
+    OPENING,
+    RAW_MATERIAL_RECEIPT,
+    MATERIAL_ISSUE,
+    PRODUCTION_CONSUMPTION,
+    MATERIAL_RETURN,
+    PRODUCTION_OUTPUT,
+    FINISHED_GOODS_TRANSFER,
+    PRODUCT_RECEIPT,
+    SELLABLE_ADJUSTMENT,
+    SALE_RESERVATION,
+    SALE_RELEASE
+}

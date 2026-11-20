@@ -34,14 +34,14 @@
 ### Task 1: Add transactional campaign persistence and validation
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/repository/PromotionCampaignRepository.java`
-- Create: `backend/src/main/java/com/htttdn/crm/repository/PromotionProductRuleRepository.java`
-- Create: `backend/src/main/java/com/htttdn/crm/repository/PromotionInvoiceRuleRepository.java`
-- Create: `backend/src/main/java/com/htttdn/crm/repository/PromotionVoucherRuleRepository.java`
-- Create: `backend/src/main/java/com/htttdn/crm/service/PromotionCampaignService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/AuditTrail.java`
-- Reference: `backend/src/main/java/com/htttdn/crm/entity/PromotionCampaign.java`, `PromotionProductRule.java`, `PromotionInvoiceRule.java`, `PromotionVoucherRule.java`
-- Reference: `backend/src/main/java/com/htttdn/crm/service/AdminServiceSupport.java`, `AuditTrail.java`, `backend/src/main/java/com/htttdn/crm/repository/ProductRepository.java`, `StoreVoucherRepository.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/repository/PromotionCampaignRepository.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/repository/PromotionProductRuleRepository.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/repository/PromotionInvoiceRuleRepository.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/repository/PromotionVoucherRuleRepository.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/PromotionCampaignService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/AuditTrail.java`
+- Reference: `backend/src/main/java/com/cnpm/clothingstore/entity/PromotionCampaign.java`, `PromotionProductRule.java`, `PromotionInvoiceRule.java`, `PromotionVoucherRule.java`
+- Reference: `backend/src/main/java/com/cnpm/clothingstore/service/AdminServiceSupport.java`, `AuditTrail.java`, `backend/src/main/java/com/cnpm/clothingstore/repository/ProductRepository.java`, `StoreVoucherRepository.java`
 
 **Interfaces:**
 - `PromotionCampaignService.list(search, page, size)` returns `Page<CampaignSummary>`; each summary contains campaign fields and counts for product, invoice, and voucher rules.
@@ -62,9 +62,9 @@
 ### Task 2: Expose the Manager campaign API
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/controller/PromotionCampaignController.java`
-- Reference: `backend/src/main/java/com/htttdn/crm/controller/AdminVoucherController.java`
-- Reference: `backend/src/main/java/com/htttdn/crm/security/AdminAccessGuard.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/PromotionCampaignController.java`
+- Reference: `backend/src/main/java/com/cnpm/clothingstore/controller/AdminVoucherController.java`
+- Reference: `backend/src/main/java/com/cnpm/clothingstore/security/AdminAccessGuard.java`
 
 **Interfaces:**
 - `GET /api/manager/promotions?page=&size=&search=` returns a paged campaign summary.

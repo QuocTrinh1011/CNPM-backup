@@ -1,0 +1,12 @@
+package com.cnpm.clothingstore.controller;
+
+import com.cnpm.clothingstore.entity.*; import com.cnpm.clothingstore.exception.ApiException; import com.cnpm.clothingstore.repository.CustomerNotificationRepository; import com.cnpm.clothingstore.service.AuthService; import jakarta.transaction.Transactional; import org.springframework.http.*; import org.springframework.web.bind.annotation.*; import java.time.Instant; import java.util.*;
+@RestController @RequestMapping("/api/notifications") public class NotificationController {
+    private final AuthService auth; private final CustomerNotificationRepository notifications; public NotificationController(AuthService auth,CustomerNotificationRepository notifications){this.auth=auth;this.notifications=notifications;}
+    @GetMapping public NotificationSummary list(@RequestHeader(value="Authorization",required=false) String authorization){User c=auth.requireCustomer(authorization);return new NotificationSummary(notifications.findTop50ByCustomerIdOrderByCreatedAtDesc(c.getId()).stream().map(this::view).toList(),notifications.countByCustomerIdAndReadAtIsNull(c.getId()));}
+    @PatchMapping("/{id}/read") @Transactional public NotificationView read(@RequestHeader(value="Authorization",required=false) String authorization,@PathVariable Long id){CustomerNotification n=get(auth.requireCustomer(authorization).getId(),id);n.setReadAt(Instant.now());return view(notifications.save(n));}
+    @PatchMapping("/read-all") @Transactional public ResponseEntity<Void> readAll(@RequestHeader(value="Authorization",required=false) String authorization){User c=auth.requireCustomer(authorization);notifications.findTop50ByCustomerIdOrderByCreatedAtDesc(c.getId()).forEach(n->{if(n.getReadAt()==null){n.setReadAt(Instant.now());notifications.save(n);}});return ResponseEntity.noContent().build();}
+    private CustomerNotification get(Long c,Long id){return notifications.findByIdAndCustomerId(id,c).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"NOTIFICATION_NOT_FOUND","Không tìm thấy thông báo."));}
+    private NotificationView view(CustomerNotification n){return new NotificationView(n.getId(),n.getTitle(),n.getContent(),n.getType(),n.getOrderId(),n.getReadAt(),n.getCreatedAt());}
+    public record NotificationSummary(List<NotificationView> items,long unreadCount){} public record NotificationView(Long id,String title,String content,String type,Long orderId,Instant readAt,Instant createdAt){public boolean isRead(){return readAt!=null;}}
+}

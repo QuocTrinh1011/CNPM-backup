@@ -1,6 +1,6 @@
 # Đánh giá và hướng hardening JWT
 
-Tài liệu này ghi nhận hiện trạng trong [`JwtTokenService`](../../backend/src/main/java/com/htttdn/crm/security/JwtTokenService.java) và đề xuất phạm vi nâng cấp. Đây là phân tích; chưa thay đổi code xác thực.
+Tài liệu này ghi nhận hiện trạng trong [`JwtTokenService`](../../backend/src/main/java/com/cnpm/clothingstore/security/JwtTokenService.java) và đề xuất phạm vi nâng cấp. Đây là phân tích; chưa thay đổi code xác thực.
 
 ## Hiện trạng
 

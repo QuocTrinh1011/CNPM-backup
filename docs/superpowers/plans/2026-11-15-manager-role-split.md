@@ -69,17 +69,17 @@ git commit -m "feat(database): add manager role migration"
 ### Task 2: Enforce Manager role access and role-aware authentication
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/security/ManagerRoleAccessPolicy.java`
-- Create: `backend/src/test/java/com/htttdn/crm/security/ManagerRoleAccessPolicyTest.java`
-- Create: `backend/src/test/java/com/htttdn/crm/service/ManagerRoleSecurityIntegrationTest.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/security/AdminAccessGuard.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/ManagerAuthService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/InternalAccountService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/repository/UserRepository.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/PaymentCollectionService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/ReturnManagementService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/controller/AdminProductController.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/AdminProductService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/security/ManagerRoleAccessPolicy.java`
+- Create: `backend/src/test/java/com/cnpm/clothingstore/security/ManagerRoleAccessPolicyTest.java`
+- Create: `backend/src/test/java/com/cnpm/clothingstore/service/ManagerRoleSecurityIntegrationTest.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/security/AdminAccessGuard.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/ManagerAuthService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/InternalAccountService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/repository/UserRepository.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/PaymentCollectionService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/ReturnManagementService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/controller/AdminProductController.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/AdminProductService.java`
 - Update Manager-role fixtures in the backend tests listed in Step 6.
 
 **Interfaces:**
@@ -126,20 +126,20 @@ Expected: all configured unit/integration tests pass; PostgreSQL-only tests are 
 - [x] **Step 8: Commit**
 
 ```bash
-git add backend/src/main/java/com/htttdn/crm/security/AdminAccessGuard.java backend/src/main/java/com/htttdn/crm/security/ManagerRoleAccessPolicy.java backend/src/main/java/com/htttdn/crm/service/ManagerAuthService.java backend/src/main/java/com/htttdn/crm/service/InternalAccountService.java backend/src/main/java/com/htttdn/crm/repository/UserRepository.java backend/src/main/java/com/htttdn/crm/controller/AdminProductController.java backend/src/main/java/com/htttdn/crm/service/AdminProductService.java backend/src/main/java/com/htttdn/crm/service/PaymentCollectionService.java backend/src/main/java/com/htttdn/crm/service/ReturnManagementService.java backend/src/test/java
+git add backend/src/main/java/com/cnpm/clothingstore/security/AdminAccessGuard.java backend/src/main/java/com/cnpm/clothingstore/security/ManagerRoleAccessPolicy.java backend/src/main/java/com/cnpm/clothingstore/service/ManagerAuthService.java backend/src/main/java/com/cnpm/clothingstore/service/InternalAccountService.java backend/src/main/java/com/cnpm/clothingstore/repository/UserRepository.java backend/src/main/java/com/cnpm/clothingstore/controller/AdminProductController.java backend/src/main/java/com/cnpm/clothingstore/service/AdminProductService.java backend/src/main/java/com/cnpm/clothingstore/service/PaymentCollectionService.java backend/src/main/java/com/cnpm/clothingstore/service/ReturnManagementService.java backend/src/test/java
 git commit -m "feat(auth): enforce manager role scopes"
 ```
 
 ### Task 3: Add Admin-managed Employee accounts and HR directory API
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/controller/ManagerEmployeeController.java`
-- Create: `backend/src/main/java/com/htttdn/crm/service/ManagerEmployeeService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/dto/manager/ManagerEmployeeDto.java`
-- Create: `backend/src/test/java/com/htttdn/crm/service/InternalAccountRoleIntegrationTest.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/InternalAccountService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/repository/UserRepository.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/DirectoryService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/ManagerEmployeeController.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/ManagerEmployeeService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/dto/manager/ManagerEmployeeDto.java`
+- Create: `backend/src/test/java/com/cnpm/clothingstore/service/InternalAccountRoleIntegrationTest.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/InternalAccountService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/repository/UserRepository.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/DirectoryService.java`
 
 **Interfaces:**
 - `GET /api/manager/employees?q=&page=&size=` returns a paginated list of non-deleted `EMPLOYEE` rows, read-only, with existing directory fields and lock status.
@@ -174,7 +174,7 @@ Expected: account and directory tests pass and no existing Admin account protect
 - [x] **Step 6: Commit**
 
 ```bash
-git add backend/src/main/java/com/htttdn/crm/controller/ManagerEmployeeController.java backend/src/main/java/com/htttdn/crm/service/ManagerEmployeeService.java backend/src/main/java/com/htttdn/crm/dto/manager/ManagerEmployeeDto.java backend/src/main/java/com/htttdn/crm/service/InternalAccountService.java backend/src/main/java/com/htttdn/crm/repository/UserRepository.java backend/src/main/java/com/htttdn/crm/service/DirectoryService.java backend/src/test/java/com/htttdn/crm/service/InternalAccountRoleIntegrationTest.java
+git add backend/src/main/java/com/cnpm/clothingstore/controller/ManagerEmployeeController.java backend/src/main/java/com/cnpm/clothingstore/service/ManagerEmployeeService.java backend/src/main/java/com/cnpm/clothingstore/dto/manager/ManagerEmployeeDto.java backend/src/main/java/com/cnpm/clothingstore/service/InternalAccountService.java backend/src/main/java/com/cnpm/clothingstore/repository/UserRepository.java backend/src/main/java/com/cnpm/clothingstore/service/DirectoryService.java backend/src/test/java/com/cnpm/clothingstore/service/InternalAccountRoleIntegrationTest.java
 git commit -m "feat(accounts): add employee directory role"
 ```
 

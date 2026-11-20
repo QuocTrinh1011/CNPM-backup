@@ -26,8 +26,8 @@
 
 ## Files
 
-- Modify `backend/src/main/java/com/htttdn/crm/service/ManagerReportsService.java` to support quarter windows and bucket labels while preserving existing call signatures.
-- Create `backend/src/main/java/com/htttdn/crm/controller/AdminReportsController.java` as the Admin-only reporting route.
+- Modify `backend/src/main/java/com/cnpm/clothingstore/service/ManagerReportsService.java` to support quarter windows and bucket labels while preserving existing call signatures.
+- Create `backend/src/main/java/com/cnpm/clothingstore/controller/AdminReportsController.java` as the Admin-only reporting route.
 - Modify `frontend/src/features/admin/AdminDashboard.jsx` to fetch and render the four ordered report groups with year/quarter/month filters.
 - Modify `frontend/src/features/admin/SystemAdminApp.jsx` to remove the now-unused overview request and dashboard props.
 - Modify `frontend/src/features/admin/styles/admin-dashboard.css` for report filters, summary, trend, and tables.

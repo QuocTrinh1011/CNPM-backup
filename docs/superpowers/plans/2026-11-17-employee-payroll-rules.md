@@ -40,7 +40,7 @@
 
 ### Task 2: Add day-category fields for night overtime
 
-**Files:** `database/migrations/028_employee_night_overtime.sql`, `backend/src/main/java/com/htttdn/crm/entity/EmployeeAttendance.java`, `backend/src/main/java/com/htttdn/crm/dto/hr/AttendanceUpsertRequest.java`, `backend/src/main/java/com/htttdn/crm/dto/hr/EmployeeAttendanceDto.java`, `backend/src/main/java/com/htttdn/crm/service/EmployeeAttendanceService.java`, `backend/src/test/java/com/htttdn/crm/service/EmployeeAttendanceIntegrationTest.java`, `frontend/src/features/manager/EmployeeWorkspaces.jsx`
+**Files:** `database/migrations/028_employee_night_overtime.sql`, `backend/src/main/java/com/cnpm/clothingstore/entity/EmployeeAttendance.java`, `backend/src/main/java/com/cnpm/clothingstore/dto/hr/AttendanceUpsertRequest.java`, `backend/src/main/java/com/cnpm/clothingstore/dto/hr/EmployeeAttendanceDto.java`, `backend/src/main/java/com/cnpm/clothingstore/service/EmployeeAttendanceService.java`, `backend/src/test/java/com/cnpm/clothingstore/service/EmployeeAttendanceIntegrationTest.java`, `frontend/src/features/manager/EmployeeWorkspaces.jsx`
 
 - [x] Add attendance API tests proving the three night-overtime categories are persisted and returned independently.
 - [x] Run the focused backend test and confirm it fails because the new fields are absent.
@@ -50,7 +50,7 @@
 
 ### Task 3: Calculate 2026 rules and night overtime correctly
 
-**Files:** `backend/src/main/java/com/htttdn/crm/service/PayrollCalculator.java`, `backend/src/main/java/com/htttdn/crm/service/EmployeePayrollService.java`, `backend/src/test/java/com/htttdn/crm/service/EmployeePayrollServiceTest.java`, `backend/src/test/java/com/htttdn/crm/service/EmployeePayrollIntegrationTest.java`
+**Files:** `backend/src/main/java/com/cnpm/clothingstore/service/PayrollCalculator.java`, `backend/src/main/java/com/cnpm/clothingstore/service/EmployeePayrollService.java`, `backend/src/test/java/com/cnpm/clothingstore/service/EmployeePayrollServiceTest.java`, `backend/src/test/java/com/cnpm/clothingstore/service/EmployeePayrollIntegrationTest.java`
 
 - [x] Add calculator tests for normal/rest/holiday night overtime, including the 20% additional normal-day basis with and without daytime overtime.
 - [x] Add a test for the five monthly 2026 tax bands and 2026 deductions, plus validation of the 0.2 night-overtime additional rate.

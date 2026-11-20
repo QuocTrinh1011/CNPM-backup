@@ -35,10 +35,10 @@
 **Files:**
 - Create: `database/migrations/023_product_color_images.sql`
 - Modify: `database/schema.sql`
-- Modify: `backend/src/main/java/com/htttdn/crm/entity/Product.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/dto/admin/AdminDtos.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/AdminProductService.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/ProductColorImagesIntegrationTest.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/entity/Product.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/dto/admin/AdminDtos.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/AdminProductService.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/ProductColorImagesIntegrationTest.java`
 
 **Interfaces:**
 - Product JSON adds `colorImages: Map<String, List<String>>`.

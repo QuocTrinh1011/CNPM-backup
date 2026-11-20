@@ -131,7 +131,7 @@ Các UC-A02, UC-A08, UC-A10 khớp hành vi và chỉ đổi actor Admin thành 
 
 ## 6. Danh sách controller được quét và ánh xạ
 
-Đếm theo lớp có `@RestController` trong `backend/src/main/java/com/htttdn/crm/controller`: hiện có **34 controller**, không phải 35. Không bỏ sót controller nghiệp vụ nào; các controller được ánh xạ như sau:
+Đếm theo lớp có `@RestController` trong `backend/src/main/java/com/cnpm/clothingstore/controller`: hiện có **34 controller**, không phải 35. Không bỏ sót controller nghiệp vụ nào; các controller được ánh xạ như sau:
 
 | Controller | UC được truy vết |
 |---|---|
@@ -213,7 +213,7 @@ Các nội dung dưới đây không được trình bày như hành vi đang c�
 
 ## 10. Nguồn tài liệu
 
-- Code ưu tiên đối chiếu: `backend/src/main/java/com/htttdn/crm`.
+- Code ưu tiên đối chiếu: `backend/src/main/java/com/cnpm/clothingstore`.
 - PRD: `docs/requirements/prd-htttdn-crm.md`, nhất là mục 3.1–3.2, bảng role và FR-09–FR-20.
 - Tài liệu cũ được giữ nguyên: `docs/archive/use-cases/admin/admin-use-case-specifications.docx`, `docs/archive/use-cases/customer/customer-use-case-specifications.docx`.
 

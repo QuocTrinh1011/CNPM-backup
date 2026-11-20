@@ -1,11 +1,11 @@
-# CRM Admin Backend
+# Clothing Store Backend
 
-Java 21 / Spring Boot REST backend for the Vietnamese men's clothing customer portal and the Admin/Manager CRM portals. PostgreSQL is accessed through Spring Data JPA. Hibernate `ddl-auto` defaults to `validate`: apply the schema and required migrations from the repository's `database/` directory before startup; the backend does not create or update the schema. The default database is `cnpm`, isolated for this CNPM project.
+Java 21 / Spring Boot REST backend for the Vietnamese clothing storefront and the Admin/Manager operations portals. PostgreSQL is accessed through Spring Data JPA. Hibernate `ddl-auto` defaults to `validate`: apply the schema and required migrations from the repository's `database/` directory before startup; the backend does not create or update the schema. The default database is `cnpm`, isolated for this CNPM project.
 
 ## Package structure
 
 ```text
-com.htttdn.crm
+com.cnpm.clothingstore
 ├── config/       # application and infrastructure configuration
 ├── controller/   # REST controllers and HTTP mapping
 ├── dto/          # request/response contracts (grouped by feature)
@@ -46,7 +46,7 @@ All list endpoints support `page` and `size`; users and products also support `q
 
 For an existing database created from an older schema, run the required scripts from the ordered [`database/migrations/README.md`](../database/migrations/README.md) after taking a backup. For the original admin/storefront split, `database/migrations/001_admin_user_split.sql` adds missing storefront/order columns and the refresh-token audience discriminator without deleting data.
 
-Manager API access is enforced by role and HTTP method/path. `MANAGER_SALES` handles sales/CRM workflows; `MANAGER_WAREHOUSE` handles products, suppliers, and stock receipts; both share read-only product lookup. `MANAGER_HR` can create/update/deactivate employee profiles, approve leave and resignation requests, edit attendance, configure/generate/review/publish/correct payroll, and read HR reports. `EMPLOYEE` signs in through the shared Manager auth endpoints and can access only their own profile/contact updates, requests, attendance, and published payslips. `TEAM_LEAD` is an employee permission profile rather than an account role; it grants read-only access to basic profile fields and attendance for direct reports assigned by HR. It grants no leave decisions or salary/payroll access. Admin remains the system-role administrator, while HR owns employee lifecycle records. Apply migrations 022–025 after the earlier migrations before deploying these scopes: 022 changes legacy `MANAGER` accounts to `MANAGER_SALES` and revokes their existing Manager refresh sessions; 025 allows Employee refresh sessions and creates HR tables. Existing users whose sessions were revoked must sign in again.
+Manager API access is enforced by role and HTTP method/path. `MANAGER_SALES` handles sales workflows; `MANAGER_WAREHOUSE` handles products, suppliers, and stock receipts; both share read-only product lookup. `MANAGER_HR` can create/update/deactivate employee profiles, approve leave and resignation requests, edit attendance, configure/generate/review/publish/correct payroll, and read HR reports. `EMPLOYEE` signs in through the shared Manager auth endpoints and can access only their own profile/contact updates, requests, attendance, and published payslips. `TEAM_LEAD` is an employee permission profile rather than an account role; it grants read-only access to basic profile fields and attendance for direct reports assigned by HR. It grants no leave decisions or salary/payroll access. Admin remains the system-role administrator, while HR owns employee lifecycle records. Apply migrations 022–025 after the earlier migrations before deploying these scopes: 022 changes legacy `MANAGER` accounts to `MANAGER_SALES` and revokes their existing Manager refresh sessions; 025 allows Employee refresh sessions and creates HR tables. Existing users whose sessions were revoked must sign in again.
 
 HR endpoints include `/api/manager/employees`, `/api/manager/hr/leave-requests`, `/api/manager/hr/attendance`, `/api/manager/hr/payroll-settings`, `/api/manager/hr/payroll-periods`, and `/api/manager/hr/reports`. Employee endpoints are under `/api/manager/me/` (`profile`, `leave-requests`, `attendance`, `payslips`); team-lead reads are `/api/manager/me/team` and `/api/manager/me/team/attendance`. Authorization derives the employee identity from the authenticated token, and team scope is checked against the current `TEAM_LEAD` profile and direct-report relationship.
 

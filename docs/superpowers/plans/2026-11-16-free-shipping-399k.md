@@ -33,9 +33,9 @@
 ### Task 1: Calculate and persist shipping fee in the backend
 
 **Files:**
-- Modify: `backend/src/test/java/com/htttdn/crm/service/OrderConfirmationTest.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/entity/Order.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/OrderService.java`
+- Modify: `backend/src/test/java/com/cnpm/clothingstore/service/OrderConfirmationTest.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/entity/Order.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/OrderService.java`
 - Modify: `database/schema.sql`
 - Create: `database/migrations/024_order_shipping_fee.sql`
 - Modify: `database/migrations/README.md`
@@ -77,7 +77,7 @@ Expected: PASS. Inspect the migration diff to confirm it only adds the zero-defa
 - [ ] **Step 5: Commit the backend slice**
 
 ```bash
-git add backend/src/main/java/com/htttdn/crm/entity/Order.java backend/src/main/java/com/htttdn/crm/service/OrderService.java backend/src/test/java/com/htttdn/crm/service/OrderConfirmationTest.java database/schema.sql database/migrations/024_order_shipping_fee.sql database/migrations/README.md docs/superpowers/specs/2026-11-16-free-shipping-399k-design.md docs/superpowers/plans/2026-11-16-free-shipping-399k.md
+git add backend/src/main/java/com/cnpm/clothingstore/entity/Order.java backend/src/main/java/com/cnpm/clothingstore/service/OrderService.java backend/src/test/java/com/cnpm/clothingstore/service/OrderConfirmationTest.java database/schema.sql database/migrations/024_order_shipping_fee.sql database/migrations/README.md docs/superpowers/specs/2026-11-16-free-shipping-399k-design.md docs/superpowers/plans/2026-11-16-free-shipping-399k.md
 git commit -m "feat(checkout): calculate and persist threshold shipping"
 ```
 

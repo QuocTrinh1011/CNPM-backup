@@ -62,17 +62,17 @@
 ### Task 2: Employee work area and backend authorization
 
 **Files:**
-- Modify: `backend/src/main/java/com/htttdn/crm/entity/EmployeeProfile.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/dto/hr/CreateEmployeeRequest.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/dto/hr/UpdateEmployeeRequest.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/dto/hr/EmployeeProfileDto.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/ManagerEmployeeService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/AuditTrail.java`
-- Create: `backend/src/main/java/com/htttdn/crm/service/WarehouseEmployeeAccessService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/security/ManagerRoleAccessPolicy.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/ManagerEmployeeIntegrationTest.java`
-- Test: `backend/src/test/java/com/htttdn/crm/security/ManagerRoleAccessPolicyTest.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/WarehouseEmployeeAccessIntegrationTest.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/entity/EmployeeProfile.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/dto/hr/CreateEmployeeRequest.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/dto/hr/UpdateEmployeeRequest.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/dto/hr/EmployeeProfileDto.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/ManagerEmployeeService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/AuditTrail.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/WarehouseEmployeeAccessService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/security/ManagerRoleAccessPolicy.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/ManagerEmployeeIntegrationTest.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/security/ManagerRoleAccessPolicyTest.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/WarehouseEmployeeAccessIntegrationTest.java`
 
 **Interfaces:**
 - HR create/update DTOs and profile response expose `workArea` with allowed values `GENERAL`, `SALES`, `WAREHOUSE`; absent values normalize to `GENERAL`.
@@ -89,16 +89,16 @@
 ### Task 3: Raw-material catalog, receipts, and movement writer
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/entity/RawMaterial.java`
-- Create: `backend/src/main/java/com/htttdn/crm/entity/RawMaterialReceipt.java`
-- Create: `backend/src/main/java/com/htttdn/crm/entity/RawMaterialReceiptItem.java`
-- Create: matching repositories under `backend/src/main/java/com/htttdn/crm/repository/`
-- Create: `backend/src/main/java/com/htttdn/crm/service/InventoryMovementService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/service/RawMaterialService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/service/RawMaterialReceiptService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/RawMaterialController.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/RawMaterialReceiptController.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/RawMaterialReceiptIntegrationTest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/RawMaterial.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/RawMaterialReceipt.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/RawMaterialReceiptItem.java`
+- Create: matching repositories under `backend/src/main/java/com/cnpm/clothingstore/repository/`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/InventoryMovementService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/RawMaterialService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/RawMaterialReceiptService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/RawMaterialController.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/RawMaterialReceiptController.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/RawMaterialReceiptIntegrationTest.java`
 
 **Interfaces:**
 - Manager endpoints: `GET/POST /api/manager/raw-materials`, `PUT /api/manager/raw-materials/{id}`, `GET/POST /api/manager/raw-material-receipts`, `GET /api/manager/raw-material-receipts/{id}`.
@@ -117,17 +117,17 @@
 ### Task 4: Versioned recipes and assigned production plans
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/entity/ProductRecipe.java`
-- Create: `backend/src/main/java/com/htttdn/crm/entity/ProductRecipeItem.java`
-- Create: `backend/src/main/java/com/htttdn/crm/entity/ProductionPlan.java`
-- Create: `backend/src/main/java/com/htttdn/crm/entity/ProductionPlanMaterial.java`
-- Create: matching repositories and DTOs under `backend/src/main/java/com/htttdn/crm/`
-- Create: `backend/src/main/java/com/htttdn/crm/service/ProductRecipeService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/service/ProductionPlanService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/ManagerEmployeeService.java` and `backend/src/main/java/com/htttdn/crm/repository/EmployeeProfileRepository.java` to serialize HR work-area changes/offboarding with plan assignment.
-- Create: `backend/src/main/java/com/htttdn/crm/controller/ProductRecipeController.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/ProductionPlanController.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/ProductionPlanIntegrationTest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/ProductRecipe.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/ProductRecipeItem.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/ProductionPlan.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/ProductionPlanMaterial.java`
+- Create: matching repositories and DTOs under `backend/src/main/java/com/cnpm/clothingstore/`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/ProductRecipeService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/ProductionPlanService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/ManagerEmployeeService.java` and `backend/src/main/java/com/cnpm/clothingstore/repository/EmployeeProfileRepository.java` to serialize HR work-area changes/offboarding with plan assignment.
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/ProductRecipeController.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/ProductionPlanController.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/ProductionPlanIntegrationTest.java`
 
 **Interfaces:**
 - Manager endpoints: `GET/PUT /api/manager/products/{productId}/recipe`, `GET/POST /api/manager/production-plans`, and `GET /api/manager/production-plans/{id}`.
@@ -145,13 +145,13 @@
 ### Task 5: Material requests, production posting, and returns
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/entity/MaterialIssueRequest.java` and request item entity
-- Create: `backend/src/main/java/com/htttdn/crm/entity/ProductionRun.java` and consumption entity
-- Create: `backend/src/main/java/com/htttdn/crm/entity/MaterialReturn.java` and return item entity
-- Create: `backend/src/main/java/com/htttdn/crm/service/WarehouseWorkService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/WarehouseEmployeeController.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/WarehouseApprovalController.java`
-- Create: `backend/src/test/java/com/htttdn/crm/service/WarehouseWorkIntegrationTest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/MaterialIssueRequest.java` and request item entity
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/ProductionRun.java` and consumption entity
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/MaterialReturn.java` and return item entity
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/WarehouseWorkService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/WarehouseEmployeeController.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/WarehouseApprovalController.java`
+- Create: `backend/src/test/java/com/cnpm/clothingstore/service/WarehouseWorkIntegrationTest.java`
 
 **Interfaces:**
 - Employee endpoints: `GET /api/manager/warehouse/me/plans`, `GET/POST /api/manager/warehouse/me/material-requests`, `POST /api/manager/warehouse/me/plans/{planId}/production-runs`, and `POST /api/manager/warehouse/me/plans/{planId}/material-returns`.
@@ -170,13 +170,13 @@
 ### Task 6: Finished-goods transfer and sellable-stock ledger integration
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/entity/FinishedGoodsIssueRequest.java` and item entity
-- Create: `backend/src/main/java/com/htttdn/crm/service/FinishedGoodsTransferService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/StockReceiptService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/AdminProductService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/OrderService.java`
-- Modify: `backend/src/main/java/com/htttdn/crm/service/StockService.java`
-- Test: existing product/receipt/order integration suites and `backend/src/test/java/com/htttdn/crm/service/FinishedGoodsTransferIntegrationTest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/entity/FinishedGoodsIssueRequest.java` and item entity
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/FinishedGoodsTransferService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/StockReceiptService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/AdminProductService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/OrderService.java`
+- Modify: `backend/src/main/java/com/cnpm/clothingstore/service/StockService.java`
+- Test: existing product/receipt/order integration suites and `backend/src/test/java/com/cnpm/clothingstore/service/FinishedGoodsTransferIntegrationTest.java`
 
 **Interfaces:**
 - Employee endpoint: `GET/POST /api/manager/warehouse/me/finished-goods-requests`.
@@ -194,10 +194,10 @@
 ### Task 7: Monthly, quarterly, and yearly inventory reports
 
 **Files:**
-- Create: `backend/src/main/java/com/htttdn/crm/dto/warehouse/WarehouseReportDto.java`
-- Create: `backend/src/main/java/com/htttdn/crm/service/WarehouseReportService.java`
-- Create: `backend/src/main/java/com/htttdn/crm/controller/WarehouseReportController.java`
-- Test: `backend/src/test/java/com/htttdn/crm/service/WarehouseReportIntegrationTest.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/dto/warehouse/WarehouseReportDto.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/service/WarehouseReportService.java`
+- Create: `backend/src/main/java/com/cnpm/clothingstore/controller/WarehouseReportController.java`
+- Test: `backend/src/test/java/com/cnpm/clothingstore/service/WarehouseReportIntegrationTest.java`
 
 **Interfaces:**
 - `GET /api/manager/warehouse/reports?period=MONTH|QUARTER|YEAR&year=YYYY&month=1..12&quarter=1..4` is available only to `MANAGER_WAREHOUSE`.
