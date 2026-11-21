@@ -30,6 +30,25 @@ it('loads the employee profile and saves editable contact details only', async (
   expect(adminApi.mock.calls[1][1].body).not.toHaveProperty('monthlyBaseSalary');
 });
 
+it('lets an employee edit their own full name and contact details', async () => {
+  let profile = { id: 12, fullName: 'Linh Nguyễn', employeeCode: 'NV-012', jobTitle: 'Nhân viên', phone: '0900000000', emergencyContactName: 'Minh', emergencyContactPhone: '0911111111', emergencyContactRelationship: 'Anh trai', monthlyBaseSalary: 9000000 };
+  adminApi.mockImplementation(async (_url, options = {}) => {
+    if (options.method === 'PUT') profile = { ...profile, ...options.body };
+    return profile;
+  });
+
+  render(<EmployeeSelfProfile />);
+  fireEvent.change(await screen.findByLabelText('Họ và tên'), { target: { value: 'Linh Trần' } });
+  fireEvent.change(screen.getByLabelText('Điện thoại'), { target: { value: '0988888888' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Lưu thông tin' }));
+
+  await waitFor(() => expect(adminApi).toHaveBeenCalledWith('/api/manager/me/profile', expect.objectContaining({
+    method: 'PUT', body: expect.objectContaining({ fullName: 'Linh Trần', phone: '0988888888', emergencyContactName: 'Minh' }),
+  })));
+  const status = await screen.findByRole('status');
+  expect(status.textContent).toContain('Đã cập nhật thông tin cá nhân.');
+});
+
 it('submits an employee leave request through the self-service endpoint', async () => {
   adminApi.mockImplementation(async (url, options = {}) => {
     if (options.method === 'POST') return { id: 27, requestType: 'SICK', status: 'PENDING' };

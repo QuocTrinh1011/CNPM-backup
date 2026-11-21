@@ -300,6 +300,46 @@ class ManagerEmployeeIntegrationTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    void employeeCanUpdateOwnNameAndContactWithoutChangingHrFields() throws Exception {
+        String hrToken = hrToken();
+        String email = email("self-name-edit");
+        long employeeId = createEmployee(hrToken, email, "N-" + UUID.randomUUID());
+        String employeeToken = bearer(managerAuth.login(email, "StrongPass123!").accessToken());
+
+        mvc.perform(put("/api/manager/me/profile")
+                        .header("Authorization", employeeToken)
+                        .contentType("application/json")
+                        .content("""
+                                {"fullName":"  Linh Nguyễn  ","phone":"0987654321",
+                                 "emergencyContactName":"Người thân","emergencyContactPhone":"0900000000",
+                                 "emergencyContactRelationship":"Anh chị em","monthlyBaseSalary":1,
+                                 "permissionProfile":"TEAM_LEAD","employmentStatus":"TERMINATED",
+                                 "workArea":"WAREHOUSE"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fullName").value("Linh Nguyễn"))
+                .andExpect(jsonPath("$.phone").value("0987654321"))
+                .andExpect(jsonPath("$.emergencyContactName").value("Người thân"))
+                .andExpect(jsonPath("$.permissionProfile").value("STAFF"))
+                .andExpect(jsonPath("$.employmentStatus").value("ACTIVE"))
+                .andExpect(jsonPath("$.workArea").value("GENERAL"))
+                .andExpect(jsonPath("$.monthlyBaseSalary").value(12000000));
+
+        assertEquals("Linh Nguyễn", users.findById(employeeId).orElseThrow().getFullName());
+        assertEquals("0987654321", users.findById(employeeId).orElseThrow().getPhone());
+        assertEquals("STAFF", profiles.findById(employeeId).orElseThrow().getPermissionProfile());
+        assertEquals("ACTIVE", profiles.findById(employeeId).orElseThrow().getEmploymentStatus());
+        assertEquals("GENERAL", profiles.findById(employeeId).orElseThrow().getWorkArea());
+        assertEquals(0, profiles.findById(employeeId).orElseThrow().getMonthlyBaseSalary().compareTo(new java.math.BigDecimal("12000000")));
+
+        mvc.perform(put("/api/manager/me/profile")
+                        .header("Authorization", employeeToken)
+                        .contentType("application/json")
+                        .content("{\"fullName\":\"   \"}"))
+                .andExpect(status().isBadRequest());
+    }
+
     private long createEmployee(String hrToken, String email, String code) throws Exception {
         String response = mvc.perform(post("/api/manager/employees")
                         .header("Authorization", hrToken)

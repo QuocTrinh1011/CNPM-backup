@@ -192,6 +192,7 @@ public class ManagerEmployeeService {
         User account = profile.getAccount();
         boolean contactChanged = input.phone() != null || input.emergencyContactName() != null
                 || input.emergencyContactPhone() != null || input.emergencyContactRelationship() != null;
+        if (input.fullName() != null) account.setFullName(input.fullName().trim());
         if (input.phone() != null) account.setPhone(normalizeNullable(input.phone()));
         if (input.emergencyContactName() != null) profile.setEmergencyContactName(normalizeNullable(input.emergencyContactName()));
         if (input.emergencyContactPhone() != null) profile.setEmergencyContactPhone(normalizeNullable(input.emergencyContactPhone()));
