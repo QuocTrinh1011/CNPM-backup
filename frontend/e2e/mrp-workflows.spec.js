@@ -12,6 +12,13 @@ const apiResponse = (page, path, method) => page.waitForResponse(response =>
   new URL(response.url()).pathname === path && response.request().method() === method,
 );
 
+const warehouseReportResponse = (page, expected) => page.waitForResponse(response => {
+  const url = new URL(response.url());
+  return url.pathname === '/api/manager/warehouse/reports'
+    && response.request().method() === 'GET'
+    && Object.entries(expected).every(([name, value]) => url.searchParams.get(name) === String(value));
+});
+
 async function signIn(page, email = MANAGER_WAREHOUSE_EMAIL) {
   await page.goto(`${MANAGER_ORIGIN}/manager/login`);
   await page.getByLabel('EMAIL').fill(email);
@@ -299,4 +306,51 @@ test('warehouseEmployeeRequestsMaterialProducesAndRequestsFinishedGoodsTransfer'
   } finally {
     await managerPage.close();
   }
+});
+
+test('warehouseReportsRequestMonthQuarterAndYearPeriods', async ({ page }) => {
+  test.setTimeout(90_000);
+  await signIn(page);
+
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: 'numeric',
+  }).formatToParts(new Date());
+  const year = parts.find(part => part.type === 'year').value;
+  const month = parts.find(part => part.type === 'month').value;
+  const currentQuarter = Math.floor((Number(month) - 1) / 3) + 1;
+
+  const monthReport = warehouseReportResponse(page, { period: 'MONTH', year, month });
+  await page.goto(`${MANAGER_ORIGIN}/manager/warehouse-reports`);
+  const monthResponse = await monthReport;
+  expect(monthResponse.status()).toBe(200);
+  expect(await monthResponse.json()).toMatchObject({ period: 'MONTH', year: Number(year), month: Number(month) });
+  await expect(page.locator('.warehouse-period-label')).toHaveText(`Tháng ${month}/${year}`);
+
+  const movementRows = page.locator('table[aria-label="Tổng hợp luân chuyển"] tbody tr');
+  const materialIssue = movementRows.filter({ hasText: 'RAW_MATERIAL_AVAILABLE' }).filter({ hasText: 'Cấp nguyên liệu' });
+  const productionOutput = movementRows.filter({ hasText: 'FINISHED_WAREHOUSE' }).filter({ hasText: 'Nhập thành phẩm' });
+  const finishedTransfer = movementRows.filter({ hasText: 'FINISHED_WAREHOUSE' }).filter({ hasText: 'Chuyển sang kho bán' });
+  await expect(materialIssue.locator('td').nth(4)).toHaveText('1');
+  await expect(productionOutput.locator('td').nth(3)).toHaveText('1');
+  await expect(finishedTransfer.locator('td').nth(4)).toHaveText('1');
+
+  const currentQuarterReport = warehouseReportResponse(page, {
+    period: 'QUARTER', year, quarter: currentQuarter,
+  });
+  await page.getByLabel('Loại kỳ').selectOption('QUARTER');
+  expect((await currentQuarterReport).status()).toBe(200);
+  for (const quarter of [1, 2, 3, 4].filter(value => value !== currentQuarter)) {
+    const nextReport = warehouseReportResponse(page, { period: 'QUARTER', year, quarter });
+    await page.getByLabel('Quý').selectOption(String(quarter));
+    const response = await nextReport;
+    expect(response.status(), `quarter ${quarter}`).toBe(200);
+    expect(await response.json()).toMatchObject({ period: 'QUARTER', year: Number(year), quarter });
+  }
+
+  const yearReport = warehouseReportResponse(page, { period: 'YEAR', year });
+  await page.getByLabel('Loại kỳ').selectOption('YEAR');
+  const yearResponse = await yearReport;
+  expect(yearResponse.status()).toBe(200);
+  expect(await yearResponse.json()).toMatchObject({ period: 'YEAR', year: Number(year) });
+  await expect(page.locator('.warehouse-period-label')).toHaveText(`Năm ${year}`);
 });
