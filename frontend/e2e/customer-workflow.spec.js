@@ -40,7 +40,7 @@ test('customer registers, saves delivery address, and completes a COD order', as
   await expect(page.getByRole('region', { name: 'Địa chỉ của tôi' }).getByText(fullName)).toBeVisible();
 
   await page.goto('http://localhost:5173/san-pham');
-  const product = page.getByRole('button', { name: 'Chi tiết E2E Playwright Tee', exact: true });
+  const product = page.getByRole('button', { name: 'Xem chi tiết E2E Playwright Tee', exact: true });
   await expect(product).toBeVisible();
   await product.click();
   await expect(page.getByRole('heading', { name: 'E2E Playwright Tee' })).toBeVisible();
