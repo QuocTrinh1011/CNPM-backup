@@ -163,9 +163,9 @@ class VoucherIntegrationTest {
         directory.assign(product.getId(),s.id);
         assertEquals(1,directory.products(code,"",s.id,new BigDecimal("90000"),new BigDecimal("110000"),"IN_STOCK",true,0,1,"price",true).getTotalElements());
         assertEquals(0,directory.products(code,"",s.id,null,null,"OUT",true,0,1,"price",true).getTotalElements());
-        assertEquals(1,directory.suppliers(code,true,0,1,"name",false).getTotalElements());
+        assertEquals(1,directory.suppliers(code,null,null,null,null,true,0,1,"name",false).getTotalElements());
         s.active=false;directory.save(s.id,s);
-        assertEquals(0,directory.suppliers(code,true,0,1,"name",false).getTotalElements());
+        assertEquals(0,directory.suppliers(code,null,null,null,null,true,0,1,"name",false).getTotalElements());
     }
     @Autowired AdminSurveyService adminSurveys;
     @Autowired SurveyRewardService rewards;
