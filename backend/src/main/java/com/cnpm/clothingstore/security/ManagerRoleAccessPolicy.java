@@ -79,6 +79,7 @@ public final class ManagerRoleAccessPolicy {
         add(configured, "GET", "/api/manager/raw-material-receipts", WAREHOUSE);
         add(configured, "GET", "/api/manager/raw-material-receipts/" + ID, WAREHOUSE);
         add(configured, "POST", "/api/manager/raw-material-receipts", WAREHOUSE);
+        add(configured, "GET", "/api/manager/warehouse/employees", WAREHOUSE);
         add(configured, "GET", "/api/manager/products/" + ID + "/recipe", WAREHOUSE);
         add(configured, "PUT", "/api/manager/products/" + ID + "/recipe", WAREHOUSE);
         add(configured, "GET", "/api/manager/production-plans", WAREHOUSE);

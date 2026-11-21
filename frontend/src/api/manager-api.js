@@ -108,6 +108,7 @@ export const adminEndpoints = {
     return `/api/manager/reports?${params}`;
   },
   employees: ({ q = '', status = '', permissionProfile = '', page = 0, size = 15 } = {}) => `/api/manager/employees?${managerQuery({ q, status, permissionProfile, page, size })}`,
+  warehouseEmployees: () => '/api/manager/warehouse/employees',
   rawMaterials: () => '/api/manager/raw-materials',
   rawMaterial: id => `/api/manager/raw-materials/${id}`,
   createRawMaterial: () => '/api/manager/raw-materials',

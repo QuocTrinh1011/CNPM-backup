@@ -44,6 +44,18 @@ public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile
     List<EmployeeProfile> findActiveDirectReports(@Param("teamLeadId") Long teamLeadId);
 
     @EntityGraph(attributePaths = "account")
+    @Query("""
+            select profile from EmployeeProfile profile
+            where profile.account.role = 'EMPLOYEE'
+              and profile.account.locked = false
+              and profile.account.deletedAt is null
+              and profile.employmentStatus = 'ACTIVE'
+              and profile.workArea = 'WAREHOUSE'
+            order by lower(profile.account.fullName), profile.employeeId
+            """)
+    List<EmployeeProfile> findActiveWarehouseEmployees();
+
+    @EntityGraph(attributePaths = "account")
     @Query(value = """
             select profile from EmployeeProfile profile
             where profile.account.role = 'EMPLOYEE'

@@ -4,6 +4,7 @@ import com.cnpm.clothingstore.dto.hr.CreateEmployeeRequest;
 import com.cnpm.clothingstore.dto.hr.EmployeeProfileDto;
 import com.cnpm.clothingstore.dto.hr.EmployeeSelfProfileUpdate;
 import com.cnpm.clothingstore.dto.hr.UpdateEmployeeRequest;
+import com.cnpm.clothingstore.dto.warehouse.WarehouseEmployeeOptionDto;
 import com.cnpm.clothingstore.entity.EmployeeProfile;
 import com.cnpm.clothingstore.entity.User;
 import com.cnpm.clothingstore.exception.ApiException;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,6 +62,14 @@ public class ManagerEmployeeService {
         return profiles.searchDirectory(query, normalizedStatus, normalizedPermissionProfile,
                         PageRequest.of(pageNumber, pageSize, Sort.by("employeeId").descending()))
                 .map(EmployeeProfileDto::from);
+    }
+
+    @Transactional(readOnly = true)
+    public List<WarehouseEmployeeOptionDto> listActiveWarehouseEmployeeOptions() {
+        return profiles.findActiveWarehouseEmployees().stream()
+                .map(profile -> new WarehouseEmployeeOptionDto(profile.getEmployeeId(),
+                        profile.getAccount().getFullName(), profile.getEmployeeCode()))
+                .toList();
     }
 
     @Transactional

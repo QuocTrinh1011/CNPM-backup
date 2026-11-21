@@ -356,6 +356,45 @@ class ManagerEmployeeIntegrationTest {
                 .andExpect(jsonPath("$.content[0].archived").value(true));
     }
 
+    @Test
+    void warehouseManagerCanReadOnlyActiveWarehouseEmployeeOptions() throws Exception {
+        String hrToken = hrToken();
+        long warehouseEmployeeId = createEmployee(hrToken, email("warehouse-option"), "WO-" + UUID.randomUUID());
+        long generalEmployeeId = createEmployee(hrToken, email("general-option"), "GO-" + UUID.randomUUID());
+        long archivedWarehouseId = createEmployee(hrToken, email("archived-warehouse-option"), "AW-" + UUID.randomUUID());
+        for (long employeeId : new long[]{warehouseEmployeeId, archivedWarehouseId}) {
+            mvc.perform(put("/api/manager/employees/" + employeeId)
+                            .header("Authorization", hrToken)
+                            .contentType("application/json")
+                            .content("{\"workArea\":\"WAREHOUSE\"}"))
+                    .andExpect(status().isOk());
+        }
+        mvc.perform(delete("/api/manager/employees/" + archivedWarehouseId)
+                        .header("Authorization", hrToken))
+                .andExpect(status().isNoContent());
+
+        User warehouseManager = new User();
+        warehouseManager.setEmail(email("warehouse-manager-options"));
+        warehouseManager.setFullName("Warehouse manager");
+        warehouseManager.setPasswordHash(encoder.encode(PASSWORD));
+        warehouseManager.setRole("MANAGER_WAREHOUSE");
+        users.saveAndFlush(warehouseManager);
+        String warehouseToken = bearer(managerAuth.login(warehouseManager.getEmail(), PASSWORD).accessToken());
+
+        mvc.perform(get("/api/manager/warehouse/employees").header("Authorization", warehouseToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(warehouseEmployeeId))
+                .andExpect(jsonPath("$[0].fullName").value("Employee Test"))
+                .andExpect(jsonPath("$[0].employeeCode").isNotEmpty())
+                .andExpect(jsonPath("$[0].email").doesNotExist())
+                .andExpect(jsonPath("$[0].monthlyBaseSalary").doesNotExist())
+                .andExpect(jsonPath("$[0].emergencyContactPhone").doesNotExist());
+        mvc.perform(get("/api/manager/employees").header("Authorization", warehouseToken))
+                .andExpect(status().isForbidden());
+        assertNotNull(profiles.findById(generalEmployeeId).orElseThrow());
+    }
+
     private long createEmployee(String hrToken, String email, String code) throws Exception {
         String response = mvc.perform(post("/api/manager/employees")
                         .header("Authorization", hrToken)
