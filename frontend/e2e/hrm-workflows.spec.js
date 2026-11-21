@@ -193,17 +193,24 @@ test('HR manages employee access, reports, attendance, payroll, and employee sel
 
     const report = apiResponse(page, '/api/manager/hr/reports', 'GET');
     await page.goto(`${MANAGER_ORIGIN}/manager/hr-reports`);
-    expect((await report).status()).toBe(200);
+    const reportResponse = await report;
+    expect(reportResponse.status()).toBe(200);
+    const reportData = await reportResponse.json();
     const approvedLeaveKpi = page.locator('.hr-kpi-grid article').filter({ hasText: 'Đang nghỉ được duyệt' });
     const resignationKpi = page.locator('.hr-kpi-grid article').filter({ hasText: 'Nghỉ việc trong kỳ' });
-    await expect(approvedLeaveKpi.locator('b')).toHaveText('1');
-    await expect(resignationKpi.locator('b')).toHaveText('1');
+    expect(reportData.summary.onApprovedLeaveCount).toBeGreaterThanOrEqual(1);
+    expect(reportData.summary.resignedInPeriodCount).toBeGreaterThanOrEqual(1);
+    await expect(approvedLeaveKpi.locator('b')).toHaveText(String(reportData.summary.onApprovedLeaveCount));
+    await expect(resignationKpi.locator('b')).toHaveText(String(reportData.summary.resignedInPeriodCount));
     const memberReportRow = page.locator('tr').filter({ hasText: member.employeeCode });
     await expect(memberReportRow).toContainText(`${member.fullName} cập nhật`);
     await expect(memberReportRow).toContainText('ANNUAL');
     await expect(memberReportRow).toContainText('Đại học');
     await expect(memberReportRow).toContainText('12.000.000');
     await expect(memberReportRow).toContainText(/\d+ tháng/);
+    const resigneeReportRow = page.locator('tr').filter({ hasText: resignee.employeeCode });
+    await expect(resigneeReportRow).toContainText(resignee.fullName);
+    await expect(resigneeReportRow).toContainText('Nghỉ việc');
     const educationSummary = page.locator('.hr-report-summaries article').filter({ hasText: 'Học vấn' });
     await expect(educationSummary).toContainText('Đại học');
     await expect(page.locator('.hr-report-summaries article').filter({ hasText: 'Lương tháng' })).toContainText('12.000.000');

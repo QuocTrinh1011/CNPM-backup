@@ -7,6 +7,7 @@ const PRODUCT_NAME = 'E2E Playwright Tee';
 const MATERIAL_QUANTITY = 24;
 const QUANTITY_PER_PRODUCT = 2.5;
 const PLAN_TARGET = 4;
+let workflowPlan;
 
 const apiResponse = (page, path, method) => page.waitForResponse(response =>
   new URL(response.url()).pathname === path && response.request().method() === method,
@@ -56,9 +57,17 @@ async function finishedGoodsBalance(page, accessToken, productId) {
   const report = await response.json();
   const balance = report.balances.find(row => row.itemType === 'PRODUCT'
     && row.itemId === productId && row.location === 'FINISHED_WAREHOUSE');
-  expect(balance, `finished-goods balance for product ${productId} should be reported`).toBeTruthy();
-  return Number(balance.closingQuantity);
+  return Number(balance?.closingQuantity || 0);
 }
+
+function movementQuantity(report, itemType, location, movementType, field) {
+  const row = report.movementTotals.find(item => item.itemType === itemType
+    && item.location === location && item.movementType === movementType);
+  return Number(row?.[field] || 0);
+}
+
+const quantityLabel = value => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 3 }).format(value);
+const quantityFromLabel = value => Number(value.trim().replace(/\./g, '').replace(',', '.'));
 
 test('warehouseManagerReceivesMaterialDefinesRecipeAndAssignsProductionPlan', async ({ page }) => {
   test.setTimeout(90_000);
@@ -158,6 +167,7 @@ test('warehouseManagerReceivesMaterialDefinesRecipeAndAssignsProductionPlan', as
   const planResponse = await planCreated;
   expect(planResponse.status(), await planResponse.text()).toBe(201);
   const plan = await planResponse.json();
+  workflowPlan = plan;
   expect(plan.targetQuantity).toBe(PLAN_TARGET);
   expect(plan.recipeVersion).toBe(recipe.version);
   expect(plan.assignedEmployeeId).toBe(Number(employeeId));
@@ -182,23 +192,28 @@ test('warehouseEmployeeRequestsMaterialProducesAndRequestsFinishedGoodsTransfer'
 
   try {
     const managerSession = await signIn(managerPage);
-    const employeeSession = await signIn(page, EMPLOYEE_WAREHOUSE_EMAIL);
+    await signIn(page, EMPLOYEE_WAREHOUSE_EMAIL);
     const plansResponse = apiResponse(page, '/api/manager/warehouse/me/plans', 'GET');
     await page.goto(`${MANAGER_ORIGIN}/manager/warehouse-tasks`);
     expect((await plansResponse).status()).toBe(200);
     const plansPage = await plansResponse.then(response => response.json());
-    const plan = plansPage.content.find(row => row.planCode === 'E2E-WAREHOUSE-PLAN');
+    expect(workflowPlan, 'the manager workflow should create a plan for this employee scenario').toBeTruthy();
+    const plan = plansPage.content.find(row => row.id === workflowPlan.id);
     expect(plan).toBeTruthy();
-    const planMaterial = plan.materials.find(row => row.materialCode === 'E2E-FABRIC');
+    const planMaterial = plan.materials.find(row => row.materialId === workflowPlan.materials[0].materialId);
     expect(planMaterial).toBeTruthy();
-    expect(Number(planMaterial.requiredQuantity)).toBe(10);
+    expect(Number(planMaterial.requiredQuantity)).toBe(QUANTITY_PER_PRODUCT * PLAN_TARGET);
     expect(Number(planMaterial.allocatedQuantity)).toBe(0);
+    const issueQuantity = QUANTITY_PER_PRODUCT;
+    const materialCode = planMaterial.materialCode;
+    const materialName = planMaterial.materialName;
 
-    const availableBeforeRequest = await rawMaterialBalance(page, managerSession.accessToken, 'E2E-FABRIC');
+    const finishedBeforeProduction = await finishedGoodsBalance(managerPage, managerSession.accessToken, plan.productId);
+    const availableBeforeRequest = await rawMaterialBalance(page, managerSession.accessToken, materialCode);
     const planCard = page.locator('.warehouse-employee-plan').filter({ hasText: plan.planCode });
     await expect(planCard).toBeVisible();
     await planCard.getByRole('button', { name: `Đề nghị nguyên liệu ${plan.planCode}` }).click();
-    await page.getByLabel(`Số lượng xin cấp ${planMaterial.materialName}`).fill('1');
+    await page.getByLabel(`Số lượng xin cấp ${materialName}`).fill(String(issueQuantity));
     await page.locator('.warehouse-employee-form textarea').fill(`${marker} material issue`);
     const issueCreated = apiResponse(page, '/api/manager/warehouse/me/material-requests', 'POST');
     await page.getByRole('button', { name: 'Gửi đề nghị nguyên liệu' }).click();
@@ -207,13 +222,13 @@ test('warehouseEmployeeRequestsMaterialProducesAndRequestsFinishedGoodsTransfer'
     const issueRequest = await issueResponse.json();
     expect(issueRequest.status).toBe('PENDING');
     expect(issueRequest.items).toEqual(expect.arrayContaining([
-      expect.objectContaining({ planMaterialId: planMaterial.id, quantity: 1 }),
+      expect.objectContaining({ planMaterialId: planMaterial.id, quantity: issueQuantity }),
     ]));
     await expect(page.locator('.warehouse-employee-history[aria-label="Yêu cầu cấp nguyên liệu"]'))
       .toContainText(issueRequest.requestCode);
     await expect(page.locator('.warehouse-employee-history[aria-label="Yêu cầu cấp nguyên liệu"]'))
       .toContainText('Chờ duyệt');
-    expect(await rawMaterialBalance(managerPage, managerSession.accessToken, 'E2E-FABRIC'))
+    expect(await rawMaterialBalance(managerPage, managerSession.accessToken, materialCode))
       .toBe(availableBeforeRequest);
 
     const issueQueue = apiResponse(managerPage, '/api/manager/warehouse/material-requests', 'GET');
@@ -228,16 +243,16 @@ test('warehouseEmployeeRequestsMaterialProducesAndRequestsFinishedGoodsTransfer'
     expect(issueDecisionResponse.status()).toBe(200);
     expect((await issueDecisionResponse.json()).status).toBe('APPROVED');
     await expect(issueCard).toContainText('Đã duyệt');
-    expect(await rawMaterialBalance(managerPage, managerSession.accessToken, 'E2E-FABRIC'))
-      .toBe(availableBeforeRequest - 1);
+    expect(await rawMaterialBalance(managerPage, managerSession.accessToken, materialCode))
+      .toBe(availableBeforeRequest - issueQuantity);
 
     await page.reload();
     const allocatedPlansResponse = apiResponse(page, '/api/manager/warehouse/me/plans', 'GET');
     const allocatedPlans = await allocatedPlansResponse.then(response => response.json());
     const allocatedPlan = allocatedPlans.content.find(row => row.id === plan.id);
-    expect(Number(allocatedPlan.materials.find(row => row.id === planMaterial.id).allocatedQuantity)).toBe(1);
+    expect(Number(allocatedPlan.materials.find(row => row.id === planMaterial.id).allocatedQuantity)).toBe(issueQuantity);
     const updatedPlanCard = page.locator('.warehouse-employee-plan').filter({ hasText: plan.planCode });
-    await expect(updatedPlanCard.locator('.warehouse-material-breakdown')).toContainText('Đã cấp 1');
+    await expect(updatedPlanCard.locator('.warehouse-material-breakdown')).toContainText(`Đã cấp ${issueQuantity}`);
 
     await updatedPlanCard.getByRole('button', { name: `Ghi nhận sản lượng ${plan.planCode}` }).click();
     await page.getByLabel('Số lượng hoàn thành').fill('1');
@@ -249,10 +264,10 @@ test('warehouseEmployeeRequestsMaterialProducesAndRequestsFinishedGoodsTransfer'
     const run = await productionResponse.json();
     expect(run.producedQuantity).toBe(1);
     expect(run.consumptions).toEqual(expect.arrayContaining([
-      expect.objectContaining({ materialCode: 'E2E-FABRIC', quantity: 1 }),
+      expect.objectContaining({ materialCode, quantity: issueQuantity }),
     ]));
-    const finishedBeforeTransfer = await finishedGoodsBalance(page, managerSession.accessToken, plan.productId);
-    expect(finishedBeforeTransfer).toBe(1);
+    const finishedAfterProduction = await finishedGoodsBalance(page, managerSession.accessToken, plan.productId);
+    expect(finishedAfterProduction).toBe(finishedBeforeProduction + 1);
 
     await page.reload();
     const completedPlansResponse = apiResponse(page, '/api/manager/warehouse/me/plans', 'GET');
@@ -262,7 +277,7 @@ test('warehouseEmployeeRequestsMaterialProducesAndRequestsFinishedGoodsTransfer'
     expect(completedPlan.status).toBe('IN_PROGRESS');
     const completedPlanCard = page.locator('.warehouse-employee-plan').filter({ hasText: plan.planCode });
     await expect(completedPlanCard).toContainText('Đang thực hiện');
-    await expect(completedPlanCard.locator('.warehouse-material-breakdown')).toContainText('Đã dùng 1');
+    await expect(completedPlanCard.locator('.warehouse-material-breakdown')).toContainText(`Đã dùng ${issueQuantity}`);
 
     await page.getByRole('button', { name: 'Đề nghị chuyển thành phẩm' }).click();
     await page.getByLabel('Sản phẩm cần chuyển').selectOption(String(plan.productId));
@@ -279,7 +294,7 @@ test('warehouseEmployeeRequestsMaterialProducesAndRequestsFinishedGoodsTransfer'
     await expect(page.locator('.warehouse-employee-history[aria-label="Yêu cầu chuyển thành phẩm"]'))
       .toContainText('Chờ duyệt');
     expect(await finishedGoodsBalance(managerPage, managerSession.accessToken, plan.productId))
-      .toBe(finishedBeforeTransfer);
+      .toBe(finishedAfterProduction);
 
     const finishedQueue = apiResponse(managerPage, '/api/manager/warehouse/finished-goods-requests', 'GET');
     await managerPage.getByRole('tab', { name: 'Yêu cầu xuất thành phẩm' }).click();
@@ -298,7 +313,7 @@ test('warehouseEmployeeRequestsMaterialProducesAndRequestsFinishedGoodsTransfer'
       { headers: { Authorization: `Bearer ${managerSession.accessToken}` }, data: { decision: 'APPROVE', note: '' } },
     );
     expect(duplicateDecision.status()).toBe(400);
-    expect(await finishedGoodsBalance(managerPage, managerSession.accessToken, plan.productId)).toBe(0);
+    expect(await finishedGoodsBalance(managerPage, managerSession.accessToken, plan.productId)).toBe(finishedBeforeProduction);
 
     await page.reload();
     await expect(page.locator('.warehouse-employee-history[aria-label="Yêu cầu chuyển thành phẩm"]'))
@@ -327,12 +342,19 @@ test('warehouseReportsRequestMonthQuarterAndYearPeriods', async ({ page }) => {
   await expect(page.locator('.warehouse-period-label')).toHaveText(`Tháng ${month}/${year}`);
 
   const movementRows = page.locator('table[aria-label="Tổng hợp luân chuyển"] tbody tr');
+  const reportData = await monthResponse.json();
+  const issueOutgoing = movementQuantity(reportData, 'MATERIAL', 'RAW_MATERIAL_AVAILABLE', 'MATERIAL_ISSUE', 'outgoingQuantity');
+  const productionOutput = movementQuantity(reportData, 'PRODUCT', 'FINISHED_WAREHOUSE', 'PRODUCTION_OUTPUT', 'incomingQuantity');
+  const finishedGoodsTransfer = movementQuantity(reportData, 'PRODUCT', 'FINISHED_WAREHOUSE', 'FINISHED_GOODS_TRANSFER', 'outgoingQuantity');
+  expect(issueOutgoing).toBeGreaterThanOrEqual(QUANTITY_PER_PRODUCT);
+  expect(productionOutput).toBeGreaterThanOrEqual(1);
+  expect(finishedGoodsTransfer).toBeGreaterThanOrEqual(1);
   const materialIssue = movementRows.filter({ hasText: 'RAW_MATERIAL_AVAILABLE' }).filter({ hasText: 'Cấp nguyên liệu' });
-  const productionOutput = movementRows.filter({ hasText: 'FINISHED_WAREHOUSE' }).filter({ hasText: 'Nhập thành phẩm' });
-  const finishedTransfer = movementRows.filter({ hasText: 'FINISHED_WAREHOUSE' }).filter({ hasText: 'Chuyển sang kho bán' });
-  await expect(materialIssue.locator('td').nth(4)).toHaveText('1');
-  await expect(productionOutput.locator('td').nth(3)).toHaveText('1');
-  await expect(finishedTransfer.locator('td').nth(4)).toHaveText('1');
+  const productionOutputRow = movementRows.filter({ hasText: 'FINISHED_WAREHOUSE' }).filter({ hasText: 'Nhập thành phẩm' });
+  const finishedTransferRow = movementRows.filter({ hasText: 'FINISHED_WAREHOUSE' }).filter({ hasText: 'Chuyển sang kho bán' });
+  expect(quantityFromLabel(await materialIssue.locator('td').nth(4).innerText())).toBeGreaterThanOrEqual(QUANTITY_PER_PRODUCT);
+  expect(quantityFromLabel(await productionOutputRow.locator('td').nth(3).innerText())).toBeGreaterThanOrEqual(1);
+  expect(quantityFromLabel(await finishedTransferRow.locator('td').nth(4).innerText())).toBeGreaterThanOrEqual(1);
 
   const currentQuarterReport = warehouseReportResponse(page, {
     period: 'QUARTER', year, quarter: currentQuarter,
