@@ -340,6 +340,22 @@ class ManagerEmployeeIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void hrCanIdentifyArchivedEmployeesInDirectoryResults() throws Exception {
+        String hrToken = hrToken();
+        String archivedEmail = email("archived-directory");
+        long employeeId = createEmployee(hrToken, archivedEmail, "D-" + UUID.randomUUID());
+        mvc.perform(delete("/api/manager/employees/" + employeeId)
+                        .header("Authorization", hrToken))
+                .andExpect(status().isNoContent());
+
+        mvc.perform(get("/api/manager/employees?status=ALL&q=" + archivedEmail)
+                        .header("Authorization", hrToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].archived").value(true));
+    }
+
     private long createEmployee(String hrToken, String email, String code) throws Exception {
         String response = mvc.perform(post("/api/manager/employees")
                         .header("Authorization", hrToken)

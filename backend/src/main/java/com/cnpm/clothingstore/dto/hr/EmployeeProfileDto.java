@@ -12,6 +12,7 @@ public record EmployeeProfileDto(
         String email,
         String phone,
         boolean locked,
+        boolean archived,
         String employeeCode,
         String educationLevel,
         String jobTitle,
@@ -30,7 +31,7 @@ public record EmployeeProfileDto(
     public static EmployeeProfileDto from(EmployeeProfile profile) {
         User account = profile.getAccount();
         return new EmployeeProfileDto(
-                profile.getEmployeeId(), account.getFullName(), account.getEmail(), account.getPhone(), account.isLocked(),
+                profile.getEmployeeId(), account.getFullName(), account.getEmail(), account.getPhone(), account.isLocked(), account.getDeletedAt() != null,
                 profile.getEmployeeCode(), profile.getEducationLevel(), profile.getJobTitle(),
                 profile.getPermissionProfile(), profile.getWorkArea(), profile.getEmploymentStatus(), profile.getHireDate(),
                 profile.getResignationDate(), profile.getMonthlyBaseSalary(), profile.getInsuranceSalaryBase(),

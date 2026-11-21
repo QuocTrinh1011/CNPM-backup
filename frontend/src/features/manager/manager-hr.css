@@ -2,6 +2,11 @@
 .hr-directory-toolbar, .hr-filter-row, .hr-form-actions, .hr-inline-actions, .hr-period-actions, .hr-payslip-head { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; }
 .hr-directory-toolbar { justify-content: space-between; }
 .hr-directory-toolbar .admin-search-wrap { flex: 1 1 260px; max-width: 520px; }
+.hr-status-filter { display: grid; gap: 6px; color: var(--admin-text); font-size: 13px; }
+.hr-status-filter select { min-height: 40px; padding: 9px 11px; border: 1px solid var(--admin-border); border-radius: 8px; background: var(--admin-card); color: var(--admin-text); font: inherit; }
+.hr-role-guidance { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.hr-role-guidance p { margin: 0; padding: 12px; border: 1px solid var(--admin-border); border-radius: 9px; color: var(--admin-muted); font-size: 12px; line-height: 1.5; }
+.hr-role-guidance b { color: var(--admin-text); }
 .hr-form-grid, .hr-settings-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 18px; border: 1px solid var(--admin-border); border-radius: 12px; background: var(--admin-card); }
 .hr-form-grid > h3, .hr-settings-form > h3, .hr-settings-form > p, .hr-form-actions { grid-column: 1 / -1; margin: 0; }
 .hr-form-help { grid-column: 1 / -1; margin: 0; color: var(--admin-muted); font-size: 12px; }
@@ -40,7 +45,7 @@
 .hr-confirm-dialog p { color: var(--admin-muted); line-height: 1.55; }
 
 @media (max-width: 720px) {
-  .hr-form-grid, .hr-settings-form, .hr-report-summaries { grid-template-columns: 1fr; }
+  .hr-form-grid, .hr-settings-form, .hr-report-summaries, .hr-role-guidance { grid-template-columns: 1fr; }
   .hr-pay-totals, .hr-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hr-directory-toolbar { align-items: stretch; }
   .hr-directory-toolbar > button { width: 100%; }

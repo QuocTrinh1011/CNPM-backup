@@ -17,19 +17,22 @@ const editableFields = [
   ['employeeCode', 'Mã nhân viên', 'text'], ['educationLevel', 'Trình độ', 'text'], ['jobTitle', 'Chức danh', 'text'],
   ['hireDate', 'Ngày nhận việc', 'date'], ['resignationDate', 'Ngày nghỉ việc', 'date'],
   ['monthlyBaseSalary', 'Lương tháng', 'number'], ['insuranceSalaryBase', 'Mức lương đóng bảo hiểm', 'number'],
-  ['reportsToEmployeeId', 'ID nhân viên trưởng nhóm', 'number'], ['emergencyContactName', 'Người liên hệ khẩn cấp', 'text'],
+  ['emergencyContactName', 'Người liên hệ khẩn cấp', 'text'],
   ['emergencyContactPhone', 'Số điện thoại khẩn cấp', 'tel'], ['emergencyContactRelationship', 'Mối quan hệ', 'text'],
 ];
 
 export default function ManagerEmployees() {
   const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('ACTIVE');
   const [page, setPage] = useState(0);
   const [data, setData] = useState(null);
+  const [teamLeads, setTeamLeads] = useState([]);
   const [error, setError] = useState('');
   const [reload, setReload] = useState(0);
   const [formMode, setFormMode] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [selectedId, setSelectedId] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [confirmEmployee, setConfirmEmployee] = useState(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
@@ -38,15 +41,24 @@ export default function ManagerEmployees() {
     const controller = new AbortController();
     setData(null);
     setError('');
-    adminApi(adminEndpoints.employees({ q: query, page, size: 15 }), { signal: controller.signal })
+    adminApi(adminEndpoints.employees({ q: query, status, page, size: 15 }), { signal: controller.signal })
       .then(result => { if (!controller.signal.aborted) setData(result); })
       .catch(reason => { if (!controller.signal.aborted) setError(reason.message || 'Không tải được danh sách nhân viên.'); });
     return () => controller.abort();
-  }, [query, page, reload]);
+  }, [query, status, page, reload]);
 
-  const beginCreate = () => { setSelectedId(null); setForm(emptyForm()); setFormMode('create'); setNotice(''); };
+  useEffect(() => {
+    const controller = new AbortController();
+    adminApi(adminEndpoints.employees({ status: 'ACTIVE', permissionProfile: 'TEAM_LEAD', page: 0, size: 100 }), { signal: controller.signal })
+      .then(result => { if (!controller.signal.aborted) setTeamLeads(result.content || []); })
+      .catch(() => { if (!controller.signal.aborted) setTeamLeads([]); });
+    return () => controller.abort();
+  }, [reload]);
+
+  const beginCreate = () => { setSelectedId(null); setSelectedEmployee(null); setForm(emptyForm()); setFormMode('create'); setNotice(''); };
   const beginEdit = employee => {
     setSelectedId(employee.id);
+    setSelectedEmployee(employee);
     setForm({ ...emptyForm(), ...employee, temporaryPassword: '', reportsToEmployeeId: employee.reportsToEmployeeId || '', hireDate: employee.hireDate || '', resignationDate: employee.resignationDate || '' });
     setFormMode('edit');
     setNotice('');
@@ -64,6 +76,11 @@ export default function ManagerEmployees() {
       reportsToEmployeeId: form.reportsToEmployeeId ? Number(form.reportsToEmployeeId) : null,
       ...(formMode === 'create' ? { temporaryPassword } : { resignationDate: resignationDate || null, employmentStatus }),
     };
+    if (formMode === 'edit' && selectedEmployee?.reportsToEmployeeId
+      && Number(form.reportsToEmployeeId) === selectedEmployee.reportsToEmployeeId
+      && !teamLeads.some(lead => lead.id === selectedEmployee.reportsToEmployeeId)) {
+      delete body.reportsToEmployeeId;
+    }
     for (const key of ['monthlyBaseSalary', 'insuranceSalaryBase']) if (!Number.isFinite(body[key])) delete body[key];
     try {
       await adminApi(formMode === 'create' ? adminEndpoints.createEmployee() : adminEndpoints.updateEmployee(selectedId), {
@@ -97,7 +114,17 @@ export default function ManagerEmployees() {
         <label className="admin-search-wrap">Tìm nhân viên
           <input type="search" aria-label="Tìm nhân viên" value={query} placeholder="Tên hoặc email" onChange={event => { setPage(0); setQuery(event.target.value); }} />
         </label>
+        <label className="hr-status-filter">Tình trạng nhân viên
+          <select aria-label="Tình trạng nhân viên" value={status} onChange={event => { setPage(0); setStatus(event.target.value); }}>
+            <option value="ACTIVE">Đang làm việc</option><option value="INACTIVE">Đã nghỉ / đã khóa</option><option value="ALL">Tất cả hồ sơ</option>
+          </select>
+        </label>
         <button className="admin-primary" type="button" onClick={beginCreate}>Thêm nhân viên</button>
+      </div>
+      <div className="hr-role-guidance" aria-label="Giải thích quyền nhân sự">
+        <p><b>Nhân viên (STAFF):</b> tự phục vụ hồ sơ, đơn nghỉ và bảng lương của chính mình.</p>
+        <p><b>Trưởng nhóm (TEAM_LEAD):</b> xem hồ sơ nhóm trực tiếp và chấm công cho nhóm.</p>
+        <p><b>Khu vực Kho:</b> cấp quyền tác vụ kho, không cấp quyền duyệt phiếu.</p>
       </div>
       {formMode && <form className="hr-form-grid hr-employee-form" onSubmit={save}>
         <h3>{formMode === 'create' ? 'Thêm hồ sơ nhân viên' : 'Cập nhật hồ sơ nhân viên'}</h3>
@@ -107,7 +134,13 @@ export default function ManagerEmployees() {
         {formMode === 'create' && <label>Mật khẩu tạm thời<input aria-label="Mật khẩu tạm thời" type="password" required minLength="8" autoComplete="new-password" value={form.temporaryPassword} onChange={event => setField('temporaryPassword', event.target.value)} /></label>}
         <label>Quyền trong nhóm<select value={form.permissionProfile || 'STAFF'} onChange={event => setField('permissionProfile', event.target.value)}><option value="STAFF">Nhân viên</option><option value="TEAM_LEAD">Trưởng nhóm</option></select></label>
         <label>Khu vực làm việc<select aria-label="Khu vực làm việc" value={form.workArea || 'GENERAL'} onChange={event => setField('workArea', event.target.value)}><option value="GENERAL">Chung</option><option value="SALES">Bán hàng</option><option value="WAREHOUSE">Kho</option></select></label>
-        <p className="hr-form-help">Để gán trưởng nhóm, nhập ID hồ sơ của nhân viên có quyền Trưởng nhóm. Bỏ trống nếu không thuộc nhóm.</p>
+        <label>Trưởng nhóm trực tiếp<select value={form.reportsToEmployeeId || ''} onChange={event => setField('reportsToEmployeeId', event.target.value)}>
+          {(formMode === 'create' || !selectedEmployee?.reportsToEmployeeId) && <option value="">Không gán trưởng nhóm</option>}
+          {formMode === 'edit' && selectedEmployee?.reportsToEmployeeId && !teamLeads.some(lead => lead.id === selectedEmployee.reportsToEmployeeId)
+            && <option value={selectedEmployee.reportsToEmployeeId}>ID {selectedEmployee.reportsToEmployeeId} · trưởng nhóm hiện tại (giữ nguyên)</option>}
+          {teamLeads.filter(lead => lead.id !== selectedId).map(lead => <option key={lead.id} value={lead.id}>{lead.fullName} · {lead.employeeCode || `ID ${lead.id}`}</option>)}
+        </select></label>
+        <p className="hr-form-help">Chỉ nhân sự đang làm việc có quyền Trưởng nhóm mới xuất hiện trong danh sách.</p>
         {formMode === 'edit' && <label>Tình trạng<select value={form.employmentStatus || 'ACTIVE'} onChange={event => setField('employmentStatus', event.target.value)}><option value="ACTIVE">Đang làm việc</option><option value="RESIGNED">Nghỉ việc</option><option value="TERMINATED">Đã chấm dứt</option></select></label>}
         <div className="hr-form-actions"><button className="admin-primary" type="submit" disabled={busy}>{busy ? 'Đang lưu…' : formMode === 'create' ? 'Tạo hồ sơ' : 'Lưu hồ sơ'}</button><button type="button" disabled={busy} onClick={() => setFormMode(null)}>Hủy</button></div>
       </form>}
@@ -119,8 +152,8 @@ export default function ManagerEmployees() {
             <td><b>{employee.fullName}</b><small>{employee.email || '—'}</small></td>
             <td>{employee.jobTitle || '—'}<small>{employee.permissionProfile === 'TEAM_LEAD' ? 'Trưởng nhóm' : 'Nhân viên'}</small></td>
             <td>{employee.phone || '—'}</td>
-            <td>{employee.employmentStatus === 'ACTIVE' && !employee.locked ? 'Đang làm việc' : employee.employmentStatus === 'RESIGNED' ? 'Nghỉ việc' : employee.employmentStatus === 'TERMINATED' ? 'Đã chấm dứt' : 'Đã khóa'}</td>
-            <td className="hr-inline-actions"><button type="button" onClick={() => beginEdit(employee)} aria-label={`Sửa ${employee.fullName}`}>Sửa</button><button type="button" className="hr-danger" onClick={() => setConfirmEmployee(employee)} aria-label={`Ngừng hoạt động ${employee.fullName}`}>Ngừng hoạt động</button></td>
+            <td>{employee.archived ? 'Đã lưu trữ' : employee.employmentStatus === 'ACTIVE' && !employee.locked ? 'Đang làm việc' : employee.employmentStatus === 'RESIGNED' ? 'Nghỉ việc' : employee.employmentStatus === 'TERMINATED' ? 'Đã chấm dứt' : 'Đã khóa'}</td>
+            <td className="hr-inline-actions">{employee.archived ? <span>Chỉ xem</span> : <><button type="button" onClick={() => beginEdit(employee)} aria-label={`Sửa ${employee.fullName}`}>Sửa</button><button type="button" className="hr-danger" onClick={() => setConfirmEmployee(employee)} aria-label={`Ngừng hoạt động ${employee.fullName}`}>Ngừng hoạt động</button></>}</td>
           </tr>)}
         </Table> : <p className="admin-table-empty">Chưa có nhân viên phù hợp.</p>}
         <PageControls page={page} totalPages={data.totalPages || 0} totalElements={data.totalElements} onPage={setPage} />

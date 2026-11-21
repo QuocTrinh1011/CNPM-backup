@@ -107,7 +107,7 @@ export const adminEndpoints = {
     if (month != null && month !== '') params.set('month', String(month));
     return `/api/manager/reports?${params}`;
   },
-  employees: ({ q = '', page = 0, size = 15 } = {}) => `/api/manager/employees?${managerQuery({ q, page, size })}`,
+  employees: ({ q = '', status = '', permissionProfile = '', page = 0, size = 15 } = {}) => `/api/manager/employees?${managerQuery({ q, status, permissionProfile, page, size })}`,
   rawMaterials: () => '/api/manager/raw-materials',
   rawMaterial: id => `/api/manager/raw-materials/${id}`,
   createRawMaterial: () => '/api/manager/raw-materials',

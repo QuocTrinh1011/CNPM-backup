@@ -83,7 +83,7 @@ it('searches employees and renders directory fields', async () => {
   expect(await screen.findByText('Linh Nguyễn')).toBeTruthy();
   expect(screen.getByText('linh@example.test')).toBeTruthy();
   expect(screen.getByText('0900000000')).toBeTruthy();
-  expect(screen.getByText('Đang làm việc')).toBeTruthy();
+  expect(screen.getByRole('cell', { name: 'Đang làm việc' })).toBeTruthy();
   expect(adminApi.mock.calls.some(([url]) => url.includes('q=Linh'))).toBe(true);
   expect(screen.getByRole('button', { name: 'Thêm nhân viên' })).toBeTruthy();
 });
@@ -104,4 +104,74 @@ it('requests the next page and cancels the previous request when unmounted', asy
   expect(adminApi.mock.calls.some(([url]) => url.includes('page=1'))).toBe(true);
   view.unmount();
   expect(adminApi.mock.calls.every(([, options]) => options?.signal instanceof AbortSignal)).toBe(true);
+});
+
+it('defaults to active employees and resets pagination when status changes', async () => {
+  adminApi.mockImplementation(async url => {
+    const params = new URL(url, 'http://localhost').searchParams;
+    return params.has('permissionProfile')
+      ? { content: [], totalPages: 0, totalElements: 0 }
+      : { content: [], totalPages: 2, totalElements: 30 };
+  });
+
+  render(<ManagerEmployees />);
+  await screen.findByText('Chưa có nhân viên phù hợp.');
+  const directoryCalls = () => adminApi.mock.calls
+    .map(([url]) => new URL(url, 'http://localhost').searchParams)
+    .filter(params => !params.has('permissionProfile'));
+  expect(directoryCalls().some(params => params.get('status') === 'ACTIVE' && params.get('page') === '0')).toBe(true);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Sau' }));
+  await waitFor(() => expect(directoryCalls().some(params => params.get('status') === 'ACTIVE' && params.get('page') === '1')).toBe(true));
+  fireEvent.change(screen.getByLabelText('Tình trạng nhân viên'), { target: { value: 'INACTIVE' } });
+  await waitFor(() => expect(directoryCalls().some(params => params.get('status') === 'INACTIVE' && params.get('page') === '0')).toBe(true));
+  fireEvent.change(screen.getByLabelText('Tình trạng nhân viên'), { target: { value: 'ALL' } });
+  await waitFor(() => expect(directoryCalls().some(params => params.get('status') === 'ALL' && params.get('page') === '0')).toBe(true));
+});
+
+it('loads active team leads for reporting lines and explains role access', async () => {
+  adminApi.mockImplementation(async url => {
+    const params = new URL(url, 'http://localhost').searchParams;
+    if (params.get('permissionProfile') === 'TEAM_LEAD') {
+      return { content: [{ id: 42, fullName: 'Bảo An', employeeCode: 'TL-42', permissionProfile: 'TEAM_LEAD' }], totalPages: 1, totalElements: 1 };
+    }
+    return { content: [], totalPages: 0, totalElements: 0 };
+  });
+
+  render(<ManagerEmployees />);
+  await screen.findByText('Chưa có nhân viên phù hợp.');
+  fireEvent.click(screen.getByRole('button', { name: 'Thêm nhân viên' }));
+
+  const leadSelect = screen.getByLabelText('Trưởng nhóm trực tiếp');
+  expect(screen.getByRole('option', { name: /Bảo An · TL-42/ })).toBeTruthy();
+  fireEvent.change(leadSelect, { target: { value: '42' } });
+  expect(leadSelect.value).toBe('42');
+  const guidance = screen.getByLabelText('Giải thích quyền nhân sự').textContent;
+  expect(guidance).toMatch(/Nhân viên \(STAFF\): tự phục vụ/);
+  expect(guidance).toMatch(/Trưởng nhóm \(TEAM_LEAD\): xem hồ sơ nhóm trực tiếp/);
+  expect(guidance).toMatch(/Khu vực Kho: cấp quyền tác vụ kho, không cấp quyền duyệt phiếu/);
+  expect(adminApi.mock.calls.some(([url]) => {
+    const params = new URL(url, 'http://localhost').searchParams;
+    return params.get('status') === 'ACTIVE' && params.get('permissionProfile') === 'TEAM_LEAD';
+  })).toBe(true);
+});
+
+it('shows archived employees in inactive results without unusable actions', async () => {
+  const archived = { id: 55, fullName: 'Mai đã lưu trữ', email: 'mai@example.test', employeeCode: 'NV-055', jobTitle: 'Nhân viên', employmentStatus: 'TERMINATED', locked: true, archived: true };
+  adminApi.mockImplementation(async url => {
+    const params = new URL(url, 'http://localhost').searchParams;
+    if (params.has('permissionProfile')) return { content: [], totalPages: 0, totalElements: 0 };
+    return params.get('status') === 'INACTIVE'
+      ? { content: [archived], totalPages: 1, totalElements: 1 }
+      : { content: [], totalPages: 0, totalElements: 0 };
+  });
+
+  render(<ManagerEmployees />);
+  await screen.findByText('Chưa có nhân viên phù hợp.');
+  fireEvent.change(screen.getByLabelText('Tình trạng nhân viên'), { target: { value: 'INACTIVE' } });
+
+  expect(await screen.findByText('Mai đã lưu trữ')).toBeTruthy();
+  expect(screen.getByText('Đã lưu trữ')).toBeTruthy();
+  expect(screen.queryByRole('button', { name: 'Sửa Mai đã lưu trữ' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Ngừng hoạt động Mai đã lưu trữ' })).toBeNull();
 });
