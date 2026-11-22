@@ -5,6 +5,8 @@ import {it,expect,vi,afterEach,beforeEach} from 'vitest';
 import SystemAdminApp from './SystemAdminApp';
 import {adminApi,adminRefreshSession} from '../../api/api';
 vi.mock('../../api/api',()=>({adminApi:vi.fn(),adminRefreshSession:vi.fn(),adminSignIn:vi.fn(),adminSignOut:vi.fn()}));
+const mockAdminDashboard = (fallback = {}) => adminApi.mockImplementation(async url =>
+ url.includes('/api/admin/reports/quarterly?') ? { products: [], employeeActivities: [] } : fallback);
 beforeEach(()=>{window.localStorage.removeItem('admin-sidebar-collapsed');window.localStorage.removeItem('admin-theme')});
 afterEach(()=>{cleanup();vi.resetAllMocks();vi.unstubAllEnvs()});
 it.each([
@@ -15,7 +17,7 @@ it.each([
  vi.stubEnv('VITE_USER_ORIGIN', userOrigin);
  window.history.replaceState({}, '', '/admin');
  adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
- adminApi.mockResolvedValue({accounts:2,products:3});
+ mockAdminDashboard({accounts:2,products:3});
  render(<SystemAdminApp/>);
  expect((await screen.findByRole('link',{name:'Cổng quản lý (Manager)'})).getAttribute('href')).toBe(managerUrl);
  expect(screen.getByRole('link',{name:/Cổng quản lý Manager/}).getAttribute('href')).toBe(managerUrl);
@@ -35,23 +37,53 @@ it.each([
  await screen.findByText('Chưa có dữ liệu phù hợp.');
  expect(adminApi.mock.calls.some(([url])=>url.startsWith('/api'+path))).toBe(true);
 });
-it('removes supplier navigation and redirects the old supplier URL', async () => {
+it('provides a read-only supplier directory in Admin', async () => {
  window.history.replaceState({}, '', '/admin/suppliers');
  adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
- adminApi.mockResolvedValue({accounts:2,products:3,suppliers:1});
+ adminApi.mockResolvedValue({content:[{id:2,code:'NCC-02',name:'Vải Việt',email:'vai@example.test',phone:'0900000000',address:'Hà Nội',active:true}],totalPages:1,totalElements:1});
  render(<SystemAdminApp/>);
- await waitFor(()=>expect(window.location.pathname).toBe('/admin'));
- expect(screen.queryByText(/nhà cung cấp/i)).toBeNull();
- expect(adminApi.mock.calls.some(([url])=>url.includes('/suppliers'))).toBe(false);
+ expect(await screen.findByText('Vải Việt')).toBeTruthy();
+ expect(window.location.pathname).toBe('/admin/suppliers');
+ expect(screen.getByRole('link',{name:'Nhà cung cấp'})).toBeTruthy();
+ expect(screen.queryByRole('button',{name:'Thêm mới'})).toBeNull();
+ expect(adminApi.mock.calls.some(([url])=>url.startsWith('/api/admin/suppliers'))).toBe(true);
 });
-it('product lookup no longer displays supplier filters or IDs', async () => {
+it('lets Admin filter products by their supplier without exposing edit actions', async () => {
  window.history.replaceState({}, '', '/admin/products');
  adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
- adminApi.mockImplementation(async url=>url.includes('overview')?{}:{content:[{id:1,name:'Test product',price:100,stock:2,supplierId:3}],totalPages:1});
+ adminApi.mockImplementation(async url=>{
+  const request=new URL(url,'http://localhost');
+  if(request.pathname.endsWith('/suppliers'))return request.searchParams.get('page')==='0'
+   ? {content:[],totalPages:2,totalElements:101}
+   : {content:[{id:101,code:'NCC-101',name:'Nhà cung cấp trang sau',active:true}],totalPages:2,totalElements:101};
+  return {content:[{id:1,name:'Test product',category:'Áo thun',price:100,stock:2,supplierId:101,active:true}],totalPages:2,totalElements:16};
+ });
  render(<SystemAdminApp/>);
- await screen.findByText('Test product');
- expect(screen.queryByText(/nhà cung cấp/i)).toBeNull();
- expect(screen.queryByText(/NCC:/)).toBeNull();
+ expect(await screen.findByText('Test product')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:/Tìm kiếm nâng cao/}));
+ const supplierFilter=screen.getByLabelText('Nhà cung cấp');
+ expect(await screen.findByRole('option',{name:'NCC-101 · Nhà cung cấp trang sau'})).toBeTruthy();
+ const productRow=screen.getByText('Test product').closest('tr');
+ expect(within(productRow).getByText(/NCC-101 · Nhà cung cấp trang sau/)).toBeTruthy();
+ expect(screen.queryByRole('button',{name:'Thêm mới'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'Trang sau'}));
+ await waitFor(()=>expect(screen.getByText('2/2')).toBeTruthy());
+ fireEvent.change(supplierFilter,{target:{value:'101'}});
+ await waitFor(()=>expect(adminApi.mock.calls.some(([url])=>{
+  const request=new URL(url,'http://localhost');
+  return request.pathname==='/api/admin/products'&&request.searchParams.get('supplierId')==='101'&&request.searchParams.get('page')==='0';
+ })).toBe(true));
+});
+it('shows reset when only product sorting changes and restores its default', async () => {
+ window.history.replaceState({}, '', '/admin/products');
+ adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
+ adminApi.mockImplementation(async url=>url.includes('/suppliers')?{content:[],totalPages:1}:{content:[],totalPages:1});
+ render(<SystemAdminApp/>);
+ await screen.findByText('Chưa có dữ liệu phù hợp.');
+ fireEvent.change(screen.getByLabelText('Sắp xếp theo'),{target:{value:'price'}});
+ const clear=await screen.findByRole('button',{name:/Xóa bộ lọc/});
+ fireEvent.click(clear);
+ await waitFor(()=>expect(screen.getByLabelText('Sắp xếp theo').value).toBe('createdAt'));
 });
 it('admin has only system navigation and accounts use admin APIs',async()=>{
  window.history.replaceState({},'', '/admin/accounts');adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
@@ -182,7 +214,7 @@ it('shows and saves employee subtype from work area',async()=>{
 it('collapses the admin sidebar from the brand and restores the saved state', async () => {
  window.history.replaceState({}, '', '/admin');
  adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
- adminApi.mockResolvedValue({accounts:2,products:3});
+ mockAdminDashboard({accounts:2,products:3});
  const view=render(<SystemAdminApp/>);
  const toggle=await screen.findByRole('button',{name:'Thu gọn thanh điều hướng'});
  expect(toggle.closest('.internal-brand')).toBeTruthy();
@@ -209,7 +241,7 @@ it('admin redirects anonymous requests to its login',async()=>{
 it.each(['getItem', 'setItem'])('keeps the sidebar usable when %s fails', async (method) => {
  window.history.replaceState({}, '', '/admin');
  adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
- adminApi.mockResolvedValue({accounts:2,products:3});
+ mockAdminDashboard({accounts:2,products:3});
  const original = Storage.prototype[method];
  const storage = vi.spyOn(Storage.prototype, method).mockImplementation(function (key, ...args) {
    if (key === 'admin-sidebar-collapsed') throw new DOMException('Storage unavailable', 'SecurityError');
@@ -233,7 +265,7 @@ it.each(['getItem', 'setItem'])('keeps the sidebar usable when %s fails', async 
 it('adds the saved organization and security panels alongside current reports', async () => {
  window.history.replaceState({}, '', '/admin');
  adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});
- adminApi.mockResolvedValue({accounts:2,products:3,summary:{},trend:[],topProducts:[],topCustomers:[],employeeActivities:[]});
+ mockAdminDashboard({accounts:2,products:3,summary:{},trend:[],topProducts:[],topCustomers:[],employeeActivities:[]});
  render(<SystemAdminApp/>);
  expect(await screen.findByRole('heading',{name:/Sơ đồ Cơ cấu Tổ chức/})).toBeTruthy();
  expect(screen.getByText('Chính sách an toàn thông tin')).toBeTruthy();

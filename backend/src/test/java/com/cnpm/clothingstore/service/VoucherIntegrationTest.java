@@ -161,6 +161,7 @@ class VoucherIntegrationTest {
     @Test void supplierSearchAndAssignmentUseDatabaseFilters() throws Exception {
         Supplier s=new Supplier();s.code=code;s.name="Supplier "+code;s.email="supplier@test.vn";s=directory.save(null,s);
         directory.assign(product.getId(),s.id);
+        assertEquals(1,directory.products("", "  "+code.toLowerCase(Locale.ROOT)+"  ",null,null,null,"",null,0,1,"name",false).getTotalElements());
         assertEquals(1,directory.products(code,"",s.id,new BigDecimal("90000"),new BigDecimal("110000"),"IN_STOCK",true,0,1,"price",true).getTotalElements());
         assertEquals(0,directory.products(code,"",s.id,null,null,"OUT",true,0,1,"price",true).getTotalElements());
         User root=accounts.create(new InternalAccountService.Input("Admin",code+"root@test.vn","ADMIN","TestPass123!",false));

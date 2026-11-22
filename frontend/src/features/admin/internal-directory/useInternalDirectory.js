@@ -7,12 +7,12 @@ import { Package } from 'lucide-react';
 export function useInternalDirectory({ kind, manager = false }) {
   const api = manager ? managerApi : adminApi;
   const base = `/api/${manager ? 'manager' : 'admin'}/${kind}`;
-  const [filters, setFilters] = useState({
-    q: '',
-    active: '',
-    sort: kind === 'products' ? 'createdAt' : 'name',
-    desc: 'false',
+  const defaultFilters = () => ({
+    q: '', category: '', supplierId: '', minPrice: '', maxPrice: '', stock: '',
+    code: '', email: '', phone: '', address: '', active: '',
+    sort: kind === 'products' ? 'createdAt' : 'name', desc: 'false',
   });
+  const [filters, setFilters] = useState(defaultFilters);
   const [page, setPage] = useState(0);
   const [accountGroup, setAccountGroup] = useState('managers');
   const [data, setData] = useState(null);
@@ -21,6 +21,34 @@ export function useInternalDirectory({ kind, manager = false }) {
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState(null);
   const [promotingEmployee, setPromotingEmployee] = useState(false);
+  const [supplierOptions, setSupplierOptions] = useState([]);
+
+  useEffect(() => {
+    if (kind !== 'products') {
+      setSupplierOptions([]);
+      return undefined;
+    }
+    let alive = true;
+    const supplierBase = `/api/${manager ? 'manager' : 'admin'}/suppliers`;
+    const loadSuppliers = async () => {
+      const suppliers = [];
+      let page = 0;
+      let totalPages = 1;
+      do {
+        const result = await api(`${supplierBase}?page=${page}&size=100&sort=name&desc=false`);
+        suppliers.push(...(result?.content || []));
+        totalPages = Math.max(page + 1, Number(result?.totalPages) || 1);
+        page += 1;
+      } while (alive && page < totalPages);
+      if (alive) setSupplierOptions(suppliers);
+    };
+    loadSuppliers().catch(() => {
+      if (alive) setSupplierOptions([]);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [api, kind, manager]);
 
   useEffect(() => {
     let alive = true;
@@ -46,6 +74,11 @@ export function useInternalDirectory({ kind, manager = false }) {
   const change = (k, v) => {
     setPage(0);
     setFilters((f) => ({ ...f, [k]: v }));
+  };
+
+  const clearFilters = () => {
+    setPage(0);
+    setFilters(defaultFilters());
   };
 
   const save = async (e) => {
@@ -132,7 +165,8 @@ export function useInternalDirectory({ kind, manager = false }) {
     api, base, filters, change, page, setPage, accountGroup, setAccountGroup,
     data, error, setError, reload, setReload, busy, setBusy, form, setForm,
     promotingEmployee, setPromotingEmployee, save, remove, toggleCustomerLock,
-    editable, customerAccount, canCreateCurrentGroup, canEditCurrentGroup, labels,
+    editable, customerAccount, canCreateCurrentGroup, canEditCurrentGroup, labels, supplierOptions,
+    clearFilters,
     currentMeta, heading, description, KindIcon,
   };
 }

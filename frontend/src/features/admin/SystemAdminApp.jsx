@@ -23,13 +23,15 @@ import {
   Lock,
   ArrowRight,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Truck
 } from 'lucide-react';
 
 const menu = {
   dashboard: 'Tổng quan',
   accounts: 'Tài khoản nội bộ',
   products: 'Sản phẩm',
+  suppliers: 'Nhà cung cấp',
   'audit-logs': 'Nhật ký thao tác',
 };
 
@@ -37,6 +39,7 @@ const menuIcons = {
   dashboard: LayoutDashboard,
   accounts: ShieldCheck,
   products: Package,
+  suppliers: Truck,
   'audit-logs': Activity,
 };
 

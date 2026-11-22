@@ -136,7 +136,7 @@ it('restores a direct catalog search and keeps visible card actions', async () =
   await screen.findByRole('heading', {name:'Áo kiểm thử'});
   expect(screen.getByRole('searchbox', {name:'Tìm kiếm sản phẩm'}).value).toBe('polo');
   expect(api.mock.calls.some(([path]) => path.includes('keyword=polo'))).toBe(true);
-  expect(screen.getByRole('button', {name:'Thêm Áo kiểm thử vào giỏ'})).toBeTruthy();
+  expect(screen.getByRole('button', {name:'Xem sản phẩm Áo kiểm thử'})).toBeTruthy();
 });
 it('shows recoverable session network error without pretending login expired', async () => {
   refreshSession.mockRejectedValueOnce(new Error('Máy chủ tạm ngừng'));
@@ -146,6 +146,7 @@ it('shows recoverable session network error without pretending login expired', a
 });
 
 it('filters catalog using quick price pills', async () => {
+  window.history.replaceState({}, '', '/san-pham');
   render(<App />);
   await screen.findByRole('heading', { name: 'Áo kiểm thử' });
   fireEvent.click(screen.getByLabelText(/bộ lọc giá/i));
@@ -162,7 +163,7 @@ it('opens product modal, views size guide, and handles buy now', async () => {
   });
   render(<App />);
   await screen.findByRole('heading', { name: 'Áo kiểm thử' });
-  fireEvent.click(screen.getByRole('button', { name: 'Chi tiết Áo kiểm thử' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Xem sản phẩm Áo kiểm thử' }));
   expect(await screen.findByRole('heading', { name: 'Áo kiểm thử', level: 2 })).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: /hướng dẫn chọn size/i }));
   expect(await screen.findByRole('heading', { name: 'Bảng Hướng Dẫn Kích Thước' })).toBeTruthy();

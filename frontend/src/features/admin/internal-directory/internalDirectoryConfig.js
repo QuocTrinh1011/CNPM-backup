@@ -22,6 +22,6 @@ export const ACCOUNT_GROUPS = [
 
 export const DIRECTORY_TITLES = {
   accounts: { title: 'Tài khoản nội bộ', desc: 'Quản trị Admin, các vai trò Manager và danh bạ nhân viên', icon: ShieldCheck },
-  products: { title: 'Tra cứu sản phẩm', desc: 'Xem danh mục, giá bán và số lượng tồn kho', icon: Package },
-  suppliers: { title: 'Nhà cung cấp', desc: 'Quản lý thông tin liên hệ và đối tác phân phối hàng hóa', icon: Truck },
+  products: { title: 'Tra cứu sản phẩm', desc: 'Tìm sản phẩm theo danh mục, nhà cung cấp, giá bán và tồn kho', icon: Package },
+  suppliers: { title: 'Nhà cung cấp', desc: 'Tra cứu đối tác theo mã, thông tin liên hệ và trạng thái hoạt động', icon: Truck },
 };
