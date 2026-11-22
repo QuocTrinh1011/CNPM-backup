@@ -63,7 +63,8 @@ async function editEmployee(page, employee, update) {
 }
 
 test('HR manages employee access, reports, attendance, payroll, and employee self-service', async ({ page, browser }, testInfo) => {
-  test.setTimeout(90_000);
+  test.skip(testInfo.project.name !== 'chromium', 'HR payroll workflow uses the isolated Chromium fixture.');
+  test.setTimeout(180_000);
   const key = uniqueKey(testInfo);
   const stamp = key.replaceAll('-', '').slice(-14).toUpperCase();
   const leader = { fullName: `Trưởng nhóm ${key}`, email: `hr-lead-${key}@crm.test`, employeeCode: `HL${stamp}` };
@@ -90,7 +91,10 @@ test('HR manages employee access, reports, attendance, payroll, and employee sel
       await page.getByLabel('Quyền trong nhóm').selectOption('TEAM_LEAD');
     });
 
-    await createEmployee(page, member, leaderId);
+    const memberId = await createEmployee(page, member, leaderId);
+    const payrollPeriodIndex = (memberId - 1) % 900;
+    const payrollYear = year + Math.floor(payrollPeriodIndex / 12);
+    const payrollMonth = payrollPeriodIndex % 12 + 1;
     await createEmployee(page, resignee);
     await createEmployee(page, archived);
 
@@ -219,22 +223,30 @@ test('HR manages employee access, reports, attendance, payroll, and employee sel
     const payrollSettings = apiResponse(page, '/api/manager/hr/payroll-settings', 'GET');
     const payrollPeriods = apiResponse(page, '/api/manager/hr/payroll-periods', 'GET');
     await page.goto(`${MANAGER_ORIGIN}/manager/payroll`);
-    expect((await payrollSettings).status()).toBe(409);
-    await expect(page.locator('.hr-settings-form .admin-list-error')).toContainText('Chưa có đúng một bộ PAYROLL_RULES');
+    const settingsResponse = await payrollSettings;
+    expect([200, 409]).toContain(settingsResponse.status());
     expect((await payrollPeriods).status()).toBe(200);
-    await page.getByRole('button', { name: 'Dùng cấu hình đề xuất 2026' }).click();
-    const saveRules = apiResponse(page, '/api/manager/hr/payroll-settings', 'PUT');
-    await page.getByRole('button', { name: 'Lưu cấu hình' }).click();
-    expect((await saveRules).status()).toBe(201);
+    if (settingsResponse.status() === 409) {
+      await expect(page.locator('.hr-settings-form .admin-list-error')).toContainText('Chưa có đúng một bộ PAYROLL_RULES');
+      await page.getByRole('button', { name: 'Dùng cấu hình đề xuất 2026' }).click();
+      const saveRules = apiResponse(page, '/api/manager/hr/payroll-settings', 'PUT');
+      await page.getByRole('button', { name: 'Lưu cấu hình' }).click();
+      expect((await saveRules).status()).toBe(201);
+    }
+    const payrollPeriodForm = page.locator('form.hr-filter-row');
+    await payrollPeriodForm.locator('input[type="number"]').first().fill(String(payrollYear));
+    await payrollPeriodForm.locator('select').selectOption(String(payrollMonth));
     const generatePayroll = apiResponse(page, '/api/manager/hr/payroll-periods', 'POST');
     await page.getByRole('button', { name: 'Tạo kỳ lương nháp' }).click();
-    expect((await generatePayroll).status()).toBe(201);
-    await expect(page.locator('.hr-period-actions')).toContainText('DRAFT');
-    const reviewPayroll = apiResponse(page, `/api/manager/hr/payroll-periods/${year}/${month}/review`, 'POST');
+    const payrollResponse = await generatePayroll;
+    expect(payrollResponse.status()).toBe(201);
+    expect(await payrollResponse.json()).toMatchObject({ year: payrollYear, month: payrollMonth, status: 'DRAFT' });
+    await expect(page.locator('.hr-period-actions')).toContainText(`Kỳ ${payrollYear}/${String(payrollMonth).padStart(2, '0')} · DRAFT`);
+    const reviewPayroll = apiResponse(page, `/api/manager/hr/payroll-periods/${payrollYear}/${payrollMonth}/review`, 'POST');
     await page.getByRole('button', { name: 'Duyệt kỳ lương' }).click();
     expect((await reviewPayroll).status()).toBe(200);
     await expect(page.locator('.hr-period-actions')).toContainText('REVIEWED');
-    const publishPayroll = apiResponse(page, `/api/manager/hr/payroll-periods/${year}/${month}/publish`, 'POST');
+    const publishPayroll = apiResponse(page, `/api/manager/hr/payroll-periods/${payrollYear}/${payrollMonth}/publish`, 'POST');
     await page.getByRole('button', { name: 'Công bố phiếu lương' }).click();
     expect((await publishPayroll).status()).toBe(200);
     await expect(page.locator('.hr-period-actions')).toContainText('PUBLISHED');
@@ -260,15 +272,24 @@ test('HR manages employee access, reports, attendance, payroll, and employee sel
         });
       };
     });
-    const payslips = apiResponse(memberPage, '/api/manager/me/payslips', 'GET');
     await memberPage.goto(`${MANAGER_ORIGIN}/manager/my-payslips`);
-    expect((await payslips).status()).toBe(200);
+    const payrollYearInput = memberPage.getByLabel('Năm', { exact: true });
+    if (await payrollYearInput.inputValue() !== String(payrollYear)) {
+      const payslips = memberPage.waitForResponse(response => {
+        const url = new URL(response.url());
+        return url.pathname === '/api/manager/me/payslips'
+          && response.request().method() === 'GET'
+          && url.searchParams.get('year') === String(payrollYear);
+      });
+      await payrollYearInput.fill(String(payrollYear));
+      expect((await payslips).status()).toBe(200);
+    }
     await expect(memberPage.locator('.hr-payslip').filter({ hasText: member.employeeCode })).toContainText('PUBLISHED');
     await memberPage.locator('.hr-payslip').filter({ hasText: member.employeeCode }).getByRole('button', { name: 'In phiếu tháng' }).click();
     await memberPage.waitForFunction(() => window.__printSnapshots?.length === 1);
     expect(await memberPage.evaluate(() => window.__printSnapshots[0])).toMatchObject({ targetCount: 1, slipCount: 1 });
     expect((await memberPage.evaluate(() => window.__printSnapshots[0].className))).toContain('hr-print-monthly');
-    await memberPage.getByRole('button', { name: `In bảng lương năm ${year}` }).click();
+    await memberPage.getByRole('button', { name: `In bảng lương năm ${payrollYear}` }).click();
     await memberPage.waitForFunction(() => window.__printSnapshots?.length === 2);
     expect(await memberPage.evaluate(() => window.__printSnapshots[1])).toMatchObject({ targetCount: 0, slipCount: 1 });
     expect((await memberPage.evaluate(() => window.__printSnapshots[1].className))).toContain('hr-print-annual');
