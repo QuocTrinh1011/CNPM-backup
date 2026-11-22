@@ -2,7 +2,8 @@ import React from 'react';
 import { CheckCircle2, Edit2, Lock, Trash2, XCircle } from 'lucide-react';
 import { ROLE_CONFIG, WORK_AREA_LABELS } from './internalDirectoryConfig';
 
-export function DirectoryTable({ data, error, kind, canEditCurrentGroup, page, setPage, busy, customerAccount, setPromotingEmployee, setForm, toggleCustomerLock, remove }) {
+export function DirectoryTable({ data, error, kind, canEditCurrentGroup, page, setPage, busy, customerAccount, setPromotingEmployee, setForm, toggleCustomerLock, remove, suppliers = [] }) {
+  const suppliersById = new Map(suppliers.map((supplier) => [String(supplier.id), supplier]));
   return (
     <>
       {!data && !error ? (
@@ -33,6 +34,12 @@ export function DirectoryTable({ data, error, kind, canEditCurrentGroup, page, s
                       {kind === 'products' ? (
                         <span>
                           <strong>{Number(row.price).toLocaleString('vi-VN')} đ</strong> · Tồn: {row.stock}
+                          <small className="internal-directory-row-meta">
+                            {row.category || 'Chưa phân loại'} ·{' '}
+                            {suppliersById.get(String(row.supplierId))
+                              ? `${suppliersById.get(String(row.supplierId)).code} · ${suppliersById.get(String(row.supplierId)).name}`
+                              : row.supplierId ? `NCC #${row.supplierId}` : 'Chưa gán nhà cung cấp'}
+                          </small>
                         </span>
                       ) : kind === 'accounts' ? (
                         <span>
@@ -48,7 +55,10 @@ export function DirectoryTable({ data, error, kind, canEditCurrentGroup, page, s
                         </span>
                       ) : (
                         <span>
-                          {row.email || ''} {row.phone ? `· ${row.phone}` : ''}
+                          {row.email || row.phone || 'Chưa có thông tin liên hệ'} {row.email && row.phone ? `· ${row.phone}` : ''}
+                          {kind === 'suppliers' && row.address && (
+                            <small className="internal-directory-row-meta">{row.address}</small>
+                          )}
                         </span>
                       )}
                     </td>

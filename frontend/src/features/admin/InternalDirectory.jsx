@@ -13,7 +13,7 @@ export default function InternalDirectory({ kind, manager = false }) {
     data, error, setReload, busy, form, setForm, promotingEmployee,
     setPromotingEmployee, remove, toggleCustomerLock,
     customerAccount, canCreateCurrentGroup, canEditCurrentGroup,
-    labels, heading, description, KindIcon,
+    labels, heading, description, KindIcon, supplierOptions, clearFilters,
   } = directory;
 
   return (
@@ -35,7 +35,7 @@ export default function InternalDirectory({ kind, manager = false }) {
         setPage={setPage}
         setForm={setForm}
       />
-      <DirectoryFilters kind={kind} filters={filters} change={change} />
+      <DirectoryFilters kind={kind} filters={filters} change={change} clear={clearFilters} suppliers={supplierOptions} />
 
       {error && (
         <div role="alert" style={{ padding: '12px 16px', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -69,6 +69,7 @@ export default function InternalDirectory({ kind, manager = false }) {
         setForm={setForm}
         toggleCustomerLock={toggleCustomerLock}
         remove={remove}
+        suppliers={supplierOptions}
       />
     </section>
   );

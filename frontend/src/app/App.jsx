@@ -447,7 +447,7 @@ function App() {
         />
         </React.Suspense>
       ) : extraPage ? null : <main id="top">
-        {catalogPage && sessionError && <div className="shop-connection" role="alert"><CircleAlert size={20} /><span>{sessionError}</span><button onClick={retrySession}>Thử lại</button></div>}
+        {sessionError && <div className="shop-connection" role="alert"><CircleAlert size={20} /><span>{sessionError}</span><button onClick={retrySession}>Thử lại</button></div>}
         {catalogPage ? (
           <CatalogSection
             catalogPage={catalogPage}

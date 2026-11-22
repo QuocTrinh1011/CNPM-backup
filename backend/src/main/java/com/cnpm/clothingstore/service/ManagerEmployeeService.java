@@ -4,6 +4,7 @@ import com.cnpm.clothingstore.dto.hr.CreateEmployeeRequest;
 import com.cnpm.clothingstore.dto.hr.EmployeeProfileDto;
 import com.cnpm.clothingstore.dto.hr.EmployeeSelfProfileUpdate;
 import com.cnpm.clothingstore.dto.hr.UpdateEmployeeRequest;
+import com.cnpm.clothingstore.dto.warehouse.WarehouseEmployeeOptionDto;
 import com.cnpm.clothingstore.entity.EmployeeProfile;
 import com.cnpm.clothingstore.entity.User;
 import com.cnpm.clothingstore.exception.ApiException;
@@ -22,12 +23,14 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @Service
 public class ManagerEmployeeService {
     private static final Set<String> PERMISSION_PROFILES = Set.of("STAFF", "TEAM_LEAD");
+    private static final Set<String> DIRECTORY_STATUSES = Set.of("ACTIVE", "INACTIVE", "ALL");
     private static final Set<String> WORK_AREAS = Set.of("GENERAL", "SALES", "WAREHOUSE");
     private static final Set<String> EMPLOYMENT_STATUSES = Set.of("ACTIVE", "RESIGNED", "TERMINATED");
 
@@ -50,13 +53,23 @@ public class ManagerEmployeeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<EmployeeProfileDto> list(String q, int page, int size) {
+    public Page<EmployeeProfileDto> list(String q, String status, String permissionProfile, int page, int size) {
         String query = q == null ? "" : q.trim();
+        String normalizedStatus = normalizeDirectoryStatus(status);
+        String normalizedPermissionProfile = normalizeDirectoryPermissionProfile(permissionProfile);
         int pageNumber = Math.max(0, page);
         int pageSize = Math.max(1, Math.min(100, size));
-        return profiles.searchDirectory(query,
+        return profiles.searchDirectory(query, normalizedStatus, normalizedPermissionProfile,
                         PageRequest.of(pageNumber, pageSize, Sort.by("employeeId").descending()))
                 .map(EmployeeProfileDto::from);
+    }
+
+    @Transactional(readOnly = true)
+    public List<WarehouseEmployeeOptionDto> listActiveWarehouseEmployeeOptions() {
+        return profiles.findActiveWarehouseEmployees().stream()
+                .map(profile -> new WarehouseEmployeeOptionDto(profile.getEmployeeId(),
+                        profile.getAccount().getFullName(), profile.getEmployeeCode()))
+                .toList();
     }
 
     @Transactional
@@ -189,6 +202,7 @@ public class ManagerEmployeeService {
         User account = profile.getAccount();
         boolean contactChanged = input.phone() != null || input.emergencyContactName() != null
                 || input.emergencyContactPhone() != null || input.emergencyContactRelationship() != null;
+        if (input.fullName() != null) account.setFullName(input.fullName().trim());
         if (input.phone() != null) account.setPhone(normalizeNullable(input.phone()));
         if (input.emergencyContactName() != null) profile.setEmergencyContactName(normalizeNullable(input.emergencyContactName()));
         if (input.emergencyContactPhone() != null) profile.setEmergencyContactPhone(normalizeNullable(input.emergencyContactPhone()));
@@ -255,6 +269,24 @@ public class ManagerEmployeeService {
     private static String normalizePermissionProfile(String permissionProfile) {
         String normalized = permissionProfile == null || permissionProfile.isBlank()
                 ? "STAFF" : permissionProfile.trim().toUpperCase(Locale.ROOT);
+        if (!PERMISSION_PROFILES.contains(normalized)) {
+            throw bad("INVALID_EMPLOYEE_PROFILE", "Hồ sơ quyền nhân viên không hợp lệ.");
+        }
+        return normalized;
+    }
+
+    private static String normalizeDirectoryStatus(String status) {
+        String normalized = status == null || status.isBlank()
+                ? "ALL" : status.trim().toUpperCase(Locale.ROOT);
+        if (!DIRECTORY_STATUSES.contains(normalized)) {
+            throw bad("INVALID_EMPLOYEE_DIRECTORY_STATUS", "Bộ lọc tình trạng nhân sự không hợp lệ.");
+        }
+        return normalized;
+    }
+
+    private static String normalizeDirectoryPermissionProfile(String permissionProfile) {
+        if (permissionProfile == null || permissionProfile.isBlank()) return null;
+        String normalized = permissionProfile.trim().toUpperCase(Locale.ROOT);
         if (!PERMISSION_PROFILES.contains(normalized)) {
             throw bad("INVALID_EMPLOYEE_PROFILE", "Hồ sơ quyền nhân viên không hợp lệ.");
         }

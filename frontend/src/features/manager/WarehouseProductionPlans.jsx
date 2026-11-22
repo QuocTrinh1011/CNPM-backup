@@ -29,13 +29,12 @@ export default function WarehouseProductionPlans() {
     Promise.all([
       adminApi(adminEndpoints.productionPlans(), { signal: controller.signal }),
       adminApi(adminEndpoints.products({ page: 0, size: 100, active: true }), { signal: controller.signal }),
-      adminApi(adminEndpoints.employees({ page: 0, size: 100 }), { signal: controller.signal }),
-    ]).then(([plans, productPage, employeePage]) => {
+      adminApi(adminEndpoints.warehouseEmployees(), { signal: controller.signal }),
+    ]).then(([plans, productPage, warehouseEmployees]) => {
       if (controller.signal.aborted) return;
       setData(plans);
       setProducts((productPage?.content || []).filter(product => product.active !== false));
-      const warehouseEmployees = (employeePage?.content || []).filter(employee => employee.workArea === 'WAREHOUSE' && employee.employmentStatus === 'ACTIVE' && !employee.locked);
-      setEmployees(warehouseEmployees);
+      setEmployees(warehouseEmployees || []);
     }).catch(failure => { if (!controller.signal.aborted) setError(failure.message || 'Không tải được kế hoạch sản xuất.'); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();

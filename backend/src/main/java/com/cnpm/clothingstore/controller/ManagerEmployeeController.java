@@ -21,9 +21,11 @@ public class ManagerEmployeeController {
 
     @GetMapping
     public Page<EmployeeProfileDto> list(@RequestParam(defaultValue = "") String q,
+                           @RequestParam(defaultValue = "ACTIVE") String status,
+                           @RequestParam(required = false) String permissionProfile,
                            @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "20") int size) {
-        return employees.list(q, page, size);
+        return employees.list(q, status, permissionProfile, page, size);
     }
 
     @PostMapping

@@ -15,6 +15,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import java.util.UUID;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -104,6 +105,76 @@ class ManagerEmployeeIntegrationTest {
                         .header("Authorization", hrToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(0));
+    }
+
+    @Test
+    void hrCanFilterActiveInactiveAndAllEmployeesAndFilterTeamLeads() throws Exception {
+        String hrToken = hrToken();
+        long activeStaffId = createEmployee(hrToken, email("active-staff"), "A-" + UUID.randomUUID());
+        long teamLeadId = createEmployee(hrToken, email("team-lead"), "L-" + UUID.randomUUID());
+        long resignedId = createEmployee(hrToken, email("resigned"), "R-" + UUID.randomUUID());
+        long terminatedId = createEmployee(hrToken, email("terminated"), "T-" + UUID.randomUUID());
+        long lockedId = createEmployee(hrToken, email("locked-active"), "K-" + UUID.randomUUID());
+        long archivedId = createEmployee(hrToken, email("archived"), "D-" + UUID.randomUUID());
+
+        mvc.perform(put("/api/manager/employees/" + teamLeadId)
+                        .header("Authorization", hrToken)
+                        .contentType("application/json")
+                        .content("{\"permissionProfile\":\"TEAM_LEAD\"}"))
+                .andExpect(status().isOk());
+        mvc.perform(put("/api/manager/employees/" + resignedId)
+                        .header("Authorization", hrToken)
+                        .contentType("application/json")
+                        .content("{\"employmentStatus\":\"RESIGNED\"}"))
+                .andExpect(status().isOk());
+        mvc.perform(put("/api/manager/employees/" + terminatedId)
+                        .header("Authorization", hrToken)
+                        .contentType("application/json")
+                        .content("{\"employmentStatus\":\"TERMINATED\"}"))
+                .andExpect(status().isOk());
+        User lockedAccount = users.findById(lockedId).orElseThrow();
+        lockedAccount.setLocked(true);
+        users.saveAndFlush(lockedAccount);
+        mvc.perform(delete("/api/manager/employees/" + archivedId)
+                        .header("Authorization", hrToken))
+                .andExpect(status().isNoContent());
+
+        String activeResponse = mvc.perform(get("/api/manager/employees?status=ACTIVE" )
+                        .header("Authorization", hrToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        List<Number> activeIds = com.jayway.jsonpath.JsonPath.read(activeResponse, "$.content[*].id");
+        assertEquals(2, activeIds.size());
+        assertTrue(containsId(activeIds, activeStaffId));
+        assertTrue(containsId(activeIds, teamLeadId));
+        assertTrue(!containsId(activeIds, lockedId));
+
+        String inactiveResponse = mvc.perform(get("/api/manager/employees?status=INACTIVE")
+                        .header("Authorization", hrToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        List<Number> inactiveIds = com.jayway.jsonpath.JsonPath.read(inactiveResponse, "$.content[*].id");
+        assertEquals(4, inactiveIds.size());
+        assertTrue(containsId(inactiveIds, resignedId));
+        assertTrue(containsId(inactiveIds, terminatedId));
+        assertTrue(containsId(inactiveIds, lockedId));
+        assertTrue(containsId(inactiveIds, archivedId));
+
+        String allResponse = mvc.perform(get("/api/manager/employees?status=ALL")
+                        .header("Authorization", hrToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        List<Number> allIds = com.jayway.jsonpath.JsonPath.read(allResponse, "$.content[*].id");
+        assertEquals(6, allIds.size());
+        assertTrue(containsId(allIds, archivedId));
+
+        String teamLeadsResponse = mvc.perform(get("/api/manager/employees?status=ACTIVE&permissionProfile=TEAM_LEAD")
+                        .header("Authorization", hrToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        List<Number> teamLeadIds = com.jayway.jsonpath.JsonPath.read(teamLeadsResponse, "$.content[*].id");
+        assertEquals(1, teamLeadIds.size());
+        assertTrue(containsId(teamLeadIds, teamLeadId));
     }
 
     @Test
@@ -229,6 +300,101 @@ class ManagerEmployeeIntegrationTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    void employeeCanUpdateOwnNameAndContactWithoutChangingHrFields() throws Exception {
+        String hrToken = hrToken();
+        String email = email("self-name-edit");
+        long employeeId = createEmployee(hrToken, email, "N-" + UUID.randomUUID());
+        String employeeToken = bearer(managerAuth.login(email, "StrongPass123!").accessToken());
+
+        mvc.perform(put("/api/manager/me/profile")
+                        .header("Authorization", employeeToken)
+                        .contentType("application/json")
+                        .content("""
+                                {"fullName":"  Linh Nguyễn  ","phone":"0987654321",
+                                 "emergencyContactName":"Người thân","emergencyContactPhone":"0900000000",
+                                 "emergencyContactRelationship":"Anh chị em","monthlyBaseSalary":1,
+                                 "permissionProfile":"TEAM_LEAD","employmentStatus":"TERMINATED",
+                                 "workArea":"WAREHOUSE"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fullName").value("Linh Nguyễn"))
+                .andExpect(jsonPath("$.phone").value("0987654321"))
+                .andExpect(jsonPath("$.emergencyContactName").value("Người thân"))
+                .andExpect(jsonPath("$.permissionProfile").value("STAFF"))
+                .andExpect(jsonPath("$.employmentStatus").value("ACTIVE"))
+                .andExpect(jsonPath("$.workArea").value("GENERAL"))
+                .andExpect(jsonPath("$.monthlyBaseSalary").value(12000000));
+
+        assertEquals("Linh Nguyễn", users.findById(employeeId).orElseThrow().getFullName());
+        assertEquals("0987654321", users.findById(employeeId).orElseThrow().getPhone());
+        assertEquals("STAFF", profiles.findById(employeeId).orElseThrow().getPermissionProfile());
+        assertEquals("ACTIVE", profiles.findById(employeeId).orElseThrow().getEmploymentStatus());
+        assertEquals("GENERAL", profiles.findById(employeeId).orElseThrow().getWorkArea());
+        assertEquals(0, profiles.findById(employeeId).orElseThrow().getMonthlyBaseSalary().compareTo(new java.math.BigDecimal("12000000")));
+
+        mvc.perform(put("/api/manager/me/profile")
+                        .header("Authorization", employeeToken)
+                        .contentType("application/json")
+                        .content("{\"fullName\":\"   \"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void hrCanIdentifyArchivedEmployeesInDirectoryResults() throws Exception {
+        String hrToken = hrToken();
+        String archivedEmail = email("archived-directory");
+        long employeeId = createEmployee(hrToken, archivedEmail, "D-" + UUID.randomUUID());
+        mvc.perform(delete("/api/manager/employees/" + employeeId)
+                        .header("Authorization", hrToken))
+                .andExpect(status().isNoContent());
+
+        mvc.perform(get("/api/manager/employees?status=ALL&q=" + archivedEmail)
+                        .header("Authorization", hrToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].archived").value(true));
+    }
+
+    @Test
+    void warehouseManagerCanReadOnlyActiveWarehouseEmployeeOptions() throws Exception {
+        String hrToken = hrToken();
+        long warehouseEmployeeId = createEmployee(hrToken, email("warehouse-option"), "WO-" + UUID.randomUUID());
+        long generalEmployeeId = createEmployee(hrToken, email("general-option"), "GO-" + UUID.randomUUID());
+        long archivedWarehouseId = createEmployee(hrToken, email("archived-warehouse-option"), "AW-" + UUID.randomUUID());
+        for (long employeeId : new long[]{warehouseEmployeeId, archivedWarehouseId}) {
+            mvc.perform(put("/api/manager/employees/" + employeeId)
+                            .header("Authorization", hrToken)
+                            .contentType("application/json")
+                            .content("{\"workArea\":\"WAREHOUSE\"}"))
+                    .andExpect(status().isOk());
+        }
+        mvc.perform(delete("/api/manager/employees/" + archivedWarehouseId)
+                        .header("Authorization", hrToken))
+                .andExpect(status().isNoContent());
+
+        User warehouseManager = new User();
+        warehouseManager.setEmail(email("warehouse-manager-options"));
+        warehouseManager.setFullName("Warehouse manager");
+        warehouseManager.setPasswordHash(encoder.encode(PASSWORD));
+        warehouseManager.setRole("MANAGER_WAREHOUSE");
+        users.saveAndFlush(warehouseManager);
+        String warehouseToken = bearer(managerAuth.login(warehouseManager.getEmail(), PASSWORD).accessToken());
+
+        mvc.perform(get("/api/manager/warehouse/employees").header("Authorization", warehouseToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(warehouseEmployeeId))
+                .andExpect(jsonPath("$[0].fullName").value("Employee Test"))
+                .andExpect(jsonPath("$[0].employeeCode").isNotEmpty())
+                .andExpect(jsonPath("$[0].email").doesNotExist())
+                .andExpect(jsonPath("$[0].monthlyBaseSalary").doesNotExist())
+                .andExpect(jsonPath("$[0].emergencyContactPhone").doesNotExist());
+        mvc.perform(get("/api/manager/employees").header("Authorization", warehouseToken))
+                .andExpect(status().isForbidden());
+        assertNotNull(profiles.findById(generalEmployeeId).orElseThrow());
+    }
+
     private long createEmployee(String hrToken, String email, String code) throws Exception {
         String response = mvc.perform(post("/api/manager/employees")
                         .header("Authorization", hrToken)
@@ -237,6 +403,10 @@ class ManagerEmployeeIntegrationTest {
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
         return ((Number) com.jayway.jsonpath.JsonPath.read(response, "$.id")).longValue();
+    }
+
+    private static boolean containsId(List<Number> ids, long expectedId) {
+        return ids.stream().anyMatch(id -> id.longValue() == expectedId);
     }
 
     private String hrToken() {

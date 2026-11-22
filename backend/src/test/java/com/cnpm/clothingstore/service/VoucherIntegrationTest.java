@@ -158,14 +158,23 @@ class VoucherIntegrationTest {
         mvc.perform(get("/api/surveys/"+survey.getId()).header("Authorization",otherToken)).andExpect(status().isNotFound());
         mvc.perform(post("/api/surveys/"+survey.getId()+"/responses").header("Authorization",otherToken).contentType("application/json").content("{\"answers\":[]}")).andExpect(status().isNotFound());
     }
-    @Test void supplierSearchAndAssignmentUseDatabaseFilters(){
+    @Test void supplierSearchAndAssignmentUseDatabaseFilters() throws Exception {
         Supplier s=new Supplier();s.code=code;s.name="Supplier "+code;s.email="supplier@test.vn";s=directory.save(null,s);
         directory.assign(product.getId(),s.id);
+        assertEquals(1,directory.products("", "  "+code.toLowerCase(Locale.ROOT)+"  ",null,null,null,"",null,0,1,"name",false).getTotalElements());
         assertEquals(1,directory.products(code,"",s.id,new BigDecimal("90000"),new BigDecimal("110000"),"IN_STOCK",true,0,1,"price",true).getTotalElements());
         assertEquals(0,directory.products(code,"",s.id,null,null,"OUT",true,0,1,"price",true).getTotalElements());
-        assertEquals(1,directory.suppliers(code,true,0,1,"name",false).getTotalElements());
+        User root=accounts.create(new InternalAccountService.Input("Admin",code+"root@test.vn","ADMIN","TestPass123!",false));
+        String adminToken="Bearer "+adminAuth.login(root.getEmail(),"TestPass123!").accessToken();
+        mvc.perform(get("/api/admin/suppliers").header("Authorization",adminToken).param("q",code)
+                        .param("active","true").param("page","0").param("size","1")
+                        .param("sort","name").param("desc","false"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1));
         s.active=false;directory.save(s.id,s);
-        assertEquals(0,directory.suppliers(code,true,0,1,"name",false).getTotalElements());
+        mvc.perform(get("/api/admin/suppliers").header("Authorization",adminToken).param("q",code)
+                        .param("active","true").param("page","0").param("size","1")
+                        .param("sort","name").param("desc","false"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(0));
     }
     @Autowired AdminSurveyService adminSurveys;
     @Autowired SurveyRewardService rewards;

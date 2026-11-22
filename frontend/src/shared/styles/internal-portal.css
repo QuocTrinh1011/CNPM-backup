@@ -715,6 +715,76 @@
   border: 1px solid var(--admin-border);
 }
 
+.internal-filters.internal-directory-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 14px;
+}
+
+.internal-directory-filter-toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.8fr) minmax(150px, 1fr) minmax(130px, 0.8fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.internal-directory-filter-toolbar label,
+.internal-directory-advanced label {
+  min-width: 0;
+}
+
+.internal-directory-keyword input {
+  width: 100%;
+}
+
+.internal-directory-filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.admin-shell .internal-filters .internal-filter-advanced-toggle,
+.admin-shell .internal-filters .internal-filter-clear {
+  white-space: nowrap;
+}
+
+.admin-shell.internal-portal .internal-filters .internal-filter-clear {
+  background: transparent;
+  color: var(--admin-muted);
+}
+
+.admin-shell .internal-filters .internal-filter-count {
+  display: inline-grid;
+  min-width: 19px;
+  height: 19px;
+  place-items: center;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 10px;
+}
+
+.internal-directory-advanced {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.admin-table .internal-directory-row-meta {
+  display: block;
+  margin-top: 4px;
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .admin-shell .internal-filters label {
   display: grid;
   gap: 6px;
@@ -900,6 +970,9 @@ form.internal-filters {
 @media (max-width: 1100px) {
   .internal-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .internal-info-grid { grid-template-columns: 1fr; }
+  .internal-directory-filter-toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .internal-directory-filter-toolbar .internal-directory-keyword,
+  .internal-directory-filter-actions { grid-column: 1 / -1; justify-content: flex-start; }
 }
 
 @media (max-width: 760px) {
@@ -910,6 +983,9 @@ form.internal-filters {
   .internal-actions-grid { grid-template-columns: 1fr; }
   .internal-main { padding: 16px; }
   .internal-header { flex-direction: column; align-items: flex-start; }
+  .internal-directory-filter-toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .internal-directory-filter-toolbar .internal-directory-keyword { grid-column: 1 / -1; }
+  .internal-directory-filter-actions { grid-column: 1 / -1; justify-content: flex-start; }
 }
 
 @media (max-width: 600px) {
@@ -917,5 +993,8 @@ form.internal-filters {
   .internal-kpi-grid { grid-template-columns: minmax(0, 1fr); }
   .internal-header-right { flex-wrap: wrap; }
   .admin-shell.internal-portal :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) { font-size: 16px; }
+  .internal-directory-filter-toolbar { grid-template-columns: minmax(0, 1fr); }
+  .internal-directory-filter-toolbar .internal-directory-keyword,
+  .internal-directory-filter-actions { grid-column: auto; }
 }
 .payment-review-warning{color:#92400e;font-weight:600}
