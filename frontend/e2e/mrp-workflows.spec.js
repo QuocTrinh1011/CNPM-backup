@@ -120,7 +120,7 @@ async function createProductionFixture(page, runId) {
   expect(receipt.items).toEqual(expect.arrayContaining([
     expect.objectContaining({ materialId: material.id, quantity: MATERIAL_QUANTITY }),
   ]));
-  await expect(page.locator('.warehouse-notice[role="status"]')).toContainText(receipt.receiptCode);
+  await expect(page.getByRole('status').filter({ hasText: receipt.receiptCode })).toContainText(receipt.receiptCode);
 
   await page.getByRole('tab', { name: 'Danh mục nguyên liệu' }).click();
   await expect(materialRow.locator('td').nth(3)).toHaveText(new RegExp(`^${MATERIAL_QUANTITY}(?:\\.000)?$`));
