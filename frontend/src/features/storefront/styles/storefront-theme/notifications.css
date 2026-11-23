@@ -1,5 +1,58 @@
 /* NOVA SHOP · Toast notifications */
 
+/* Session/connection banner rendered at the top of the main column. */
+.site-shell .shop-connection {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  width: calc(100% - var(--gutter) * 2);
+  max-width: var(--container);
+  margin: 20px auto 0;
+  padding: 12px 14px 12px 16px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--danger);
+  border-radius: var(--radius-xs);
+  background: var(--danger-soft);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.site-shell .shop-connection > svg {
+  flex-shrink: 0;
+  color: var(--danger);
+}
+
+.site-shell .shop-connection > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.site-shell .shop-connection > button {
+  flex-shrink: 0;
+  min-height: 34px;
+  margin-left: auto;
+  padding: 0 14px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-full);
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.site-shell .shop-connection > button:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
 .site-shell .toast {
   position: fixed;
   top: auto;

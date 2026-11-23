@@ -52,8 +52,9 @@
   letter-spacing: inherit;
 }
 
+/* The brand mark above already names the shop; skip the duplicate kicker. */
 .site-shell .auth-modal .kicker {
-  margin-top: 20px;
+  display: none;
 }
 
 .site-shell .auth-modal h1,
