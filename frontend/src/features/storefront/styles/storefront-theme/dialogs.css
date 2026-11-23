@@ -29,9 +29,13 @@
 }
 
 .site-shell .auth-mark {
-  display: inline-flex;
-  align-items: baseline;
+  display: flex;
   gap: 4px;
+  width: max-content;
+  margin: 0 auto 18px;
+  padding: 0;
+  border: 0;
+  background: none;
   color: var(--ink);
   font-family: var(--font-data);
   font-size: 11px;
@@ -42,7 +46,10 @@
 }
 
 .site-shell .auth-mark span {
+  margin: 0;
   color: var(--accent);
+  font: inherit;
+  letter-spacing: inherit;
 }
 
 .site-shell .auth-modal .kicker {
@@ -195,6 +202,8 @@
   place-items: center;
   width: 56px;
   height: 56px;
+  margin: 0 0 14px;
+  border: 0;
   border-radius: 50%;
   background: var(--ink);
   color: var(--paper);
@@ -203,6 +212,14 @@
   font-weight: 700;
   line-height: 1;
   text-transform: uppercase;
+}
+
+.site-shell .profile-cover > span {
+  width: auto;
+  height: auto;
+  border: 0;
+  font: inherit;
+  line-height: 1;
 }
 
 .site-shell .profile-modal > h2 {
@@ -577,8 +594,7 @@
   box-shadow: none;
 }
 
-/* Legacy customer-pages.css ships a pill "back" button for the product dialog;
-   the editorial layout keeps a quiet text link instead. */
+/* The editorial layout keeps a quiet text link instead of a pill button. */
 .site-shell[data-shop-theme] .product-modal-content .back-link {
   min-height: 32px;
   margin-bottom: 14px;
@@ -795,9 +811,20 @@
   border-radius: var(--radius-md);
 }
 
-.site-shell .customer-page-body > :is(.profile-modal, .survey-modal, .wide-modal) {
+.site-shell .customer-page-body:has(> :is(.profile-modal, .survey-modal, .wide-modal, .shop-address-dialog)) {
+  max-width: 880px;
+}
+
+/* On page routes the outer body is the card, so the promoted dialog drops its own surface. */
+.site-shell .customer-page-body > :is(.profile-modal, .survey-modal, .wide-modal, .shop-address-dialog) {
+  width: 100%;
+  max-width: none;
   max-height: none;
-  border-radius: var(--radius-md);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .site-shell .customer-page-body > .auth-modal form :is(input, select) {

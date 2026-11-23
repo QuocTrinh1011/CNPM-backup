@@ -66,6 +66,14 @@
   padding-inline: var(--gutter);
 }
 
+/* Inline customer routes (auth, product, cart, surveys) share the editorial container. */
+.site-shell .customer-standalone {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: clamp(24px, 4vw, 48px) var(--gutter) 96px;
+}
+
 .site-shell .shop-sr-only {
   position: absolute;
   width: 1px;

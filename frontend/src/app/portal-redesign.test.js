@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 // CSS contracts: new portal styles must not leak into the system Admin.
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 function readStyles(file) {
@@ -11,7 +11,6 @@ function readStyles(file) {
 
 const userStyles = readStyles('src/features/storefront/styles/storefront-theme.css');
 const managerStyles = readFileSync('src/features/manager/styles/manager-redesign.css', 'utf8');
-const newFormStyles = readFileSync('src/features/storefront/styles/storefront-customer.css', 'utf8');
 const cockpitStyles = readStyles('src/features/manager/styles/manager-ui.css');
 const adminStyles = ['features/admin/styles/admin-governance.css','features/admin/styles/admin-aurora.css'].map(file => readFileSync(`src/${file}`, 'utf8'));
 
@@ -62,13 +61,17 @@ describe('portal redesign isolation', () => {
     expect(cockpitStyles).toContain('.manager-product-table table { min-width: 0; }');
     expect(cockpitStyles).toContain('prefers-reduced-motion');
   });
-  it('scopes the ZIP design to User and preserves mobile toast and one-font rules', () => {
-    for (const selector of rules(newFormStyles)) expect(selector).toMatch(/^\.site-shell/);
-    expect(newFormStyles).toContain('--serif: var(--sans)');
-    expect(newFormStyles).toContain('--mono: var(--sans)');
-    expect(newFormStyles).toContain('.toast { top: auto; height: auto; }');
-    expect(newFormStyles).toContain('height: auto; padding: 12px 0;');
-    expect(newFormStyles).not.toContain('@import');
+  it('ships only the editorial theme and keeps retired storefront layers out of the bundle', () => {
+    const retired = [
+      'src/features/storefront/styles/storefront-base.css',
+      'src/features/storefront/styles/storefront-catalog.css',
+      'src/features/storefront/styles/storefront-customer.css',
+      'src/features/customer/customer-pages.css',
+      'src/styles/styles/customer-surfaces.css',
+    ];
+    for (const file of retired) expect(existsSync(file)).toBe(false);
+    const portal = readFileSync('src/app/portals/UserPortal.jsx', 'utf8');
+    expect(portal).not.toMatch(/storefront-(base|catalog|customer)/);
   });
   it('keeps every User selector inside the storefront in all breakpoints', () => {
     const selectors = rules(userStyles);
@@ -93,7 +96,7 @@ describe('portal redesign isolation', () => {
     const entry = readFileSync('index.html', 'utf8');
     expect(entry).toContain('family=Manrope');
     expect(entry.match(/fonts.googleapis.com\/css2/g)).toHaveLength(1);
-    for (const file of ['styles/styles.css', 'features/storefront/styles/storefront-base.css', 'shared/styles/admin-design.css', 'features/storefront/styles/storefront-theme.css', 'features/manager/styles/manager-redesign.css']) {
+    for (const file of ['styles/styles.css', 'shared/styles/admin-design.css', 'features/storefront/styles/storefront-theme.css', 'features/manager/styles/manager-redesign.css']) {
       expect(readFileSync(`src/${file}`, 'utf8')).not.toContain('@import url');
     }
     expect(managerStyles).toContain('--mono: var(--sans)');
