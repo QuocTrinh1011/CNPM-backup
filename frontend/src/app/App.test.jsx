@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, cleanup, within } from '@testing-library/react';
 import { beforeEach, afterEach, it, expect, vi } from 'vitest';
 import App from './App';
 import { OrdersModal, OrderView } from '../features/customer/orders/CustomerOrders';
@@ -136,7 +136,9 @@ it('restores a direct catalog search and keeps visible card actions', async () =
   await screen.findByRole('heading', {name:'Áo kiểm thử'});
   expect(screen.getByRole('searchbox', {name:'Tìm kiếm sản phẩm'}).value).toBe('polo');
   expect(api.mock.calls.some(([path]) => path.includes('keyword=polo'))).toBe(true);
-  expect(screen.getByRole('button', {name:'Xem sản phẩm Áo kiểm thử'})).toBeTruthy();
+  expect(screen.getByRole('button', {name:'Xem chi tiết Áo kiểm thử'})).toBeTruthy();
+  expect(screen.getByRole('button', {name:'MUA NGAY'})).toBeTruthy();
+  expect(screen.getByRole('button', {name:'THÊM VÀO GIỎ HÀNG'})).toBeTruthy();
 });
 it('shows recoverable session network error without pretending login expired', async () => {
   refreshSession.mockRejectedValueOnce(new Error('Máy chủ tạm ngừng'));
@@ -161,13 +163,14 @@ it('opens product modal, views size guide, and handles buy now', async () => {
     if (p.startsWith('/api/products/')) return product;
     return { content: [product], totalPages: 1, totalElements: 1 };
   });
-  render(<App />);
+  const view = render(<App />);
   await screen.findByRole('heading', { name: 'Áo kiểm thử' });
-  fireEvent.click(screen.getByRole('button', { name: 'Xem sản phẩm Áo kiểm thử' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Xem chi tiết Áo kiểm thử' }));
   expect(await screen.findByRole('heading', { name: 'Áo kiểm thử', level: 2 })).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: /hướng dẫn chọn size/i }));
   expect(await screen.findByRole('heading', { name: 'Bảng Hướng Dẫn Kích Thước' })).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Đóng bảng kích thước' }));
   expect(screen.queryByRole('heading', { name: 'Bảng Hướng Dẫn Kích Thước' })).toBeNull();
-  expect(screen.getByRole('button', { name: 'MUA NGAY' })).toBeTruthy();
+  const modal = view.container.querySelector('.product-modal');
+  expect(within(modal).getByRole('button', { name: 'MUA NGAY' })).toBeTruthy();
 });
