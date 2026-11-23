@@ -1,352 +1,486 @@
-/* ── 2. Top Announcement Bar ── */
+/* NOVA SHOP · Announcement bar, sticky header, mega menu, search, account */
+
 .site-shell .announcement {
-  min-height: 36px;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  gap: 16px;
+  min-height: 32px;
   padding: 6px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  z-index: 50;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  text-align: center;
 }
+
 .site-shell .announcement span {
-  color: #fff;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  color: #ffffff;
 }
 
-/* ── 3. Sticky Glass Header & Navigation ── */
+.site-shell .announcement .announcement-secondary {
+  color: rgba(251, 250, 247, 0.62);
+}
+
 .site-shell .site-header {
   position: sticky;
   top: 0;
-  z-index: 40;
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 14px 32px;
+  z-index: var(--z-header);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  min-height: 80px;
-  background: rgba(250, 248, 245, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  justify-content: flex-start;
+  gap: 16px;
+  width: 100%;
+  max-width: none;
+  height: 64px;
+  margin: 0;
+  padding-inline: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
+  background: rgba(251, 250, 247, 0.92);
   border-bottom: 1px solid var(--line);
-  transition: all 0.25s var(--ease-smooth);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
-/* Wordmark Logo */
+.site-shell .mobile-menu {
+  display: none;
+  order: 0;
+  flex-shrink: 0;
+}
+
 .site-shell .wordmark {
-  display: flex;
+  order: 1;
+  display: inline-flex;
   align-items: baseline;
   gap: 8px;
-  font-size: 23px;
+  flex-shrink: 0;
+  color: var(--ink);
+  font-size: 19px;
   font-weight: 800;
   letter-spacing: -0.05em;
-  color: var(--ink);
-  text-decoration: none;
+  line-height: 1;
   white-space: nowrap;
-  flex-shrink: 0;
-  transition: opacity 0.2s ease;
-}
-.site-shell .wordmark:hover {
-  opacity: 0.9;
-}
-.site-shell .wordmark em {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 19px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  color: var(--accent);
 }
 
-/* Main Navigation */
+.site-shell .wordmark em {
+  color: var(--accent);
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .site-shell .main-nav {
+  order: 2;
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 0 auto 0 24px;
+  gap: 2px;
+  margin: 0;
 }
+
 .site-shell .main-nav button {
+  position: relative;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
   font-family: var(--sans);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-  padding: 8px 14px;
-  border-radius: var(--radius-full);
-  background: transparent;
-  border: 1px solid transparent;
-  transition: all 0.2s var(--ease-spring);
+  letter-spacing: 0.08em;
+  line-height: 1;
   white-space: nowrap;
-}
-.site-shell .main-nav button:hover {
-  color: var(--ink);
-  background: var(--soft);
-}
-.site-shell .main-nav .sale-link {
-  color: var(--accent) !important;
-  font-weight: 800;
-  background: var(--accent-tint) !important;
-  border-color: var(--accent-soft) !important;
-}
-.site-shell .main-nav .sale-link:hover {
-  background: var(--accent) !important;
-  color: #fff !important;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 
-/* Integrated Header Search Bar */
-.site-shell .site-header .catalog-search-wrap {
+.site-shell .main-nav button::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  height: 1.5px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.site-shell .main-nav button:hover::after,
+.site-shell .main-nav button[aria-expanded="true"]::after {
+  transform: scaleX(1);
+}
+
+.site-shell .main-nav .sale-link {
+  color: var(--accent);
+}
+
+.site-shell .shop-products-menu {
+  position: relative;
+}
+
+.site-shell .shop-products-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.site-shell .shop-mega-menu {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: -32px;
+  z-index: 60;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px;
+  width: min(780px, calc(100vw - 48px));
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  box-shadow: var(--shadow-md);
+  animation: shop-menu-in var(--dur-base) var(--ease-out);
+}
+
+/* Invisible bridge across the 16px gap so hover keeps the menu open. */
+.site-shell .shop-mega-menu::before {
+  content: "";
+  position: absolute;
+  top: -17px;
+  left: 0;
+  right: 0;
+  height: 17px;
+}
+
+@keyframes shop-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.site-shell .shop-mega-menu h2 {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.site-shell .shop-mega-menu ul {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-shell .shop-mega-menu button {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.site-shell .shop-mega-menu button:hover {
+  background: var(--surface);
+}
+
+.site-shell .shop-mega-menu button.is-featured {
+  color: var(--accent);
+}
+
+.site-shell .catalog-search-wrap {
+  order: 3;
   display: flex;
+  flex: 1 1 240px;
   align-items: center;
   gap: 8px;
-  flex: 1 1 240px;
-  max-width: 290px;
-  min-width: 170px;
-  height: 42px;
+  max-width: 320px;
+  min-width: 180px;
+  height: 44px;
   margin: 0;
-  padding: 4px 6px 4px 14px;
-  background: var(--white);
+  padding: 0 6px 0 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-xs);
-  transition: all 0.2s var(--ease-spring);
+  background: var(--white);
+  transition: border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
-.site-shell .site-header .catalog-search-wrap:focus-within {
+
+.site-shell .catalog-search-wrap:focus-within {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
-  background: var(--white);
 }
-.site-shell .site-header .catalog-search-wrap > svg {
-  color: var(--muted);
+
+.site-shell .catalog-search-wrap > svg {
   flex-shrink: 0;
+  color: var(--muted);
 }
-.site-shell .site-header .catalog-search {
+
+.site-shell .catalog-search {
   flex: 1;
   min-width: 0;
-  width: 100%;
-  border: 0 !important;
-  outline: 0 !important;
-  background: transparent !important;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--ink);
   font-size: 13px;
   font-weight: 500;
-  padding: 0;
+  outline: 0;
 }
-.site-shell .site-header .catalog-search::placeholder {
+
+.site-shell .catalog-search::placeholder {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 12.5px;
 }
-.site-shell .shop-search-clear {
+
+.site-shell .catalog-search-wrap .shop-search-clear {
   display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  color: var(--muted);
-  background: var(--soft);
-  padding: 0;
   flex-shrink: 0;
-  transition: all 0.15s ease;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
 }
-.site-shell .shop-search-clear:hover {
+
+.site-shell .catalog-search-wrap .shop-search-clear:hover {
+  background: var(--surface);
   color: var(--ink);
-  background: var(--line);
 }
-.site-shell .site-header .shop-search-submit {
+
+.site-shell .catalog-search-wrap .shop-search-submit {
+  flex-shrink: 0;
   height: 32px;
+  min-height: 0;
   padding: 0 14px;
+  border: 0;
   border-radius: var(--radius-full);
   background: var(--ink);
-  color: var(--paper);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-.site-shell .site-header .shop-search-submit:hover {
-  background: var(--accent);
-  color: #fff;
+  color: var(--white);
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  transition: background-color var(--dur-fast) var(--ease-out);
 }
 
-/* Header Actions & Tool Icons */
+.site-shell .shop-search-submit:hover {
+  background: var(--accent);
+}
+
 .site-shell .header-actions {
+  order: 4;
   display: flex;
-  align-items: center;
-  gap: 8px;
   flex-shrink: 0;
-}
-.site-shell .header-actions .icon-button {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-full);
-  display: grid;
-  place-items: center;
-  background: var(--white);
-  border: 1px solid var(--line);
-  color: var(--ink);
-  position: relative;
-  transition: all 0.2s var(--ease-spring);
-  box-shadow: var(--shadow-xs);
-}
-.site-shell .header-actions .icon-button:hover {
-  background: var(--soft);
-  color: var(--accent);
-  transform: translateY(-1px);
-  border-color: var(--line-strong);
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
 }
 
-/* Notification & Wishlist & Cart Badges */
-.site-shell .header-actions .icon-button span,
-.site-shell .cart-button span {
+.site-shell .header-actions .icon-button {
+  position: relative;
+  width: 42px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--ink);
+}
+
+.site-shell .header-actions .icon-button:hover {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.site-shell .header-actions .icon-button > span,
+.site-shell .cart-button > span {
   position: absolute;
-  top: -3px;
-  right: -3px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 9px;
-  background: var(--accent);
-  color: #fff;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 800;
+  top: 4px;
+  right: 2px;
   display: grid;
   place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
   border: 2px solid var(--paper);
-  box-shadow: 0 2px 6px var(--accent-glow);
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: #ffffff;
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  font-weight: 600;
   line-height: 1;
 }
 
-/* Cart Button Specific */
 .site-shell .cart-button {
-  background: var(--ink) !important;
-  color: var(--paper) !important;
-  border-color: var(--ink) !important;
-}
-.site-shell .cart-button:hover {
-  background: var(--accent) !important;
-  border-color: var(--accent) !important;
-  color: #fff !important;
+  background: transparent;
+  color: var(--ink);
 }
 
-/* Account Dropdown Button & Panel */
 .site-shell .shop-account {
   position: relative;
 }
+
 .site-shell .account-button {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0 !important;
-  width: 42px !important;
-  min-width: 42px !important;
-  height: 42px !important;
-  padding: 0 !important;
-  border-radius: var(--radius-full) !important;
+  width: 42px;
+  height: 44px;
+  padding: 0;
 }
+
 .site-shell .account-status-dot {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
   width: 7px;
   height: 7px;
+  border: 2px solid var(--paper);
   border-radius: 50%;
   background: var(--success);
-  display: inline-block;
-  box-shadow: 0 0 0 2px var(--white);
 }
+
 .site-shell .shop-account-panel {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 12px);
   right: 0;
-  width: 290px;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  z-index: 70;
+  width: 300px;
   padding: 16px;
-  box-shadow: var(--shadow-modal);
-  z-index: 60;
-  animation: modalPop 0.2s var(--ease-spring);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  box-shadow: var(--shadow-md);
+  animation: shop-menu-in var(--dur-base) var(--ease-out);
 }
+
 .site-shell .shop-account-heading {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-bottom: 12px;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--line);
-  margin-bottom: 12px;
 }
+
 .site-shell .shop-account-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: var(--accent-tint);
-  color: var(--accent);
   display: grid;
-  place-items: center;
-  font-weight: 800;
-  font-size: 16px;
-  border: 1px solid var(--accent-soft);
   flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 800;
 }
+
 .site-shell .shop-account-heading small {
   display: block;
-  font-size: 11px;
   color: var(--muted);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
+
 .site-shell .shop-account-heading strong {
   display: block;
-  font-size: 14px;
   color: var(--ink);
-  line-height: 1.25;
+  font-size: 14px;
+  line-height: 1.3;
 }
+
 .site-shell .shop-account-heading p {
   margin: 2px 0 0;
-  font-size: 11px;
-  color: var(--muted);
   overflow: hidden;
+  color: var(--muted);
+  font-size: 11.5px;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 190px;
 }
+
 .site-shell .shop-account-panel nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
+
 .site-shell .shop-account-panel nav button {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  min-height: 44px;
   padding: 10px 12px;
+  border: 0;
   border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--sans);
   font-size: 13px;
   font-weight: 600;
-  color: var(--ink);
-  width: 100%;
   text-align: left;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out);
 }
+
+.site-shell .shop-account-panel nav button:hover {
+  background: var(--surface);
+}
+
+.site-shell .shop-account-panel nav button > svg:last-child {
+  margin-left: auto;
+  color: var(--muted);
+}
+
 .site-shell .shop-account-count {
-  font-family: var(--mono);
-  font-size: 10px;
-  background: var(--accent);
-  color: #fff;
+  margin-left: auto;
   padding: 1px 7px;
   border-radius: var(--radius-full);
+  background: var(--accent);
+  color: #ffffff;
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 600;
 }
-.site-shell .shop-account-logout {
-  color: var(--danger) !important;
+
+.site-shell .shop-account-panel nav .shop-account-logout {
   margin-top: 6px;
   border-top: 1px solid var(--line);
-  padding-top: 12px !important;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  color: var(--danger);
 }

@@ -1,38 +1,167 @@
-/* ── 10. Floating Toast Notifications ── */
+/* NOVA SHOP · Toast notifications */
+
+/* Session/connection banner rendered at the top of the main column. */
+.site-shell .shop-connection {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  width: calc(100% - var(--gutter) * 2);
+  max-width: var(--container);
+  margin: 20px auto 0;
+  padding: 12px 14px 12px 16px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--danger);
+  border-radius: var(--radius-xs);
+  background: var(--danger-soft);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.site-shell .shop-connection > svg {
+  flex-shrink: 0;
+  color: var(--danger);
+}
+
+.site-shell .shop-connection > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.site-shell .shop-connection > button {
+  flex-shrink: 0;
+  min-height: 34px;
+  margin-left: auto;
+  padding: 0 14px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-full);
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.site-shell .shop-connection > button:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
 .site-shell .toast {
   position: fixed;
   top: auto;
-  bottom: 28px;
-  right: 28px;
-  z-index: 120;
-  padding: 14px 20px;
-  border-radius: var(--radius-full);
-  background: var(--ink);
-  color: var(--paper);
-  font-size: 13px;
-  font-weight: 600;
+  right: 24px;
+  bottom: 24px;
+  left: auto;
+  z-index: var(--z-toast);
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: var(--shadow-modal);
-  animation: toastIn 0.3s var(--ease-spring);
+  width: max-content;
+  max-width: min(440px, calc(100vw - 32px));
+  height: auto;
+  padding: 13px 12px 13px 16px;
+  border: 1px solid rgba(251, 250, 247, 0.14);
+  border-radius: var(--radius-sm);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: var(--shadow-hover);
+  animation: shop-toast-in var(--dur-base) var(--ease-out);
 }
-@keyframes toastIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+
+@keyframes shop-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+.site-shell .toast > span {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.site-shell .toast.error > span {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
 .site-shell .toast.error {
   background: var(--danger);
-  color: #fff;
+  border-color: rgba(255, 255, 255, 0.18);
 }
-.site-shell .toast span {
+
+.site-shell .toast .toast-message {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.site-shell .toast > button:not(.toast-close) {
+  flex-shrink: 0;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(251, 250, 247, 0.32);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.site-shell .toast > button:not(.toast-close):hover {
+  border-color: var(--paper);
+  background: rgba(251, 250, 247, 0.08);
+}
+
+.site-shell .toast .toast-close {
   display: grid;
+  flex-shrink: 0;
   place-items: center;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(251, 250, 247, 0.7);
 }
-.site-shell .toast button {
-  font-size: 11px;
-  font-weight: 800;
-  text-decoration: underline;
-  color: var(--accent);
-  margin-left: 6px;
+
+.site-shell .toast .toast-close:hover {
+  background: rgba(251, 250, 247, 0.1);
+  color: var(--paper);
+}
+
+@media (max-width: 640px) {
+  .site-shell .toast {
+    left: 16px;
+    right: 16px;
+    bottom: calc(88px + env(safe-area-inset-bottom,0px));
+    width: auto;
+    max-width: none;
+    gap: 10px;
+  }
 }

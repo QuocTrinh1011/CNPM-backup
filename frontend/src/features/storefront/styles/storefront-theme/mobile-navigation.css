@@ -1,73 +1,106 @@
-/* ── 14. Mobile Bottom Navigation Bar & Back to Top ── */
+/* NOVA SHOP · Mobile bottom navigation and back-to-top */
+
 .site-shell .mobile-bottom-nav {
-  display: none;
   position: fixed;
-  left: 0;
   right: 0;
   bottom: 0;
-  z-index: 50;
-  height: 64px;
-  background: rgba(250, 248, 245, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  left: 0;
+  z-index: var(--z-header);
+  display: none;
+  align-items: stretch;
+  height: calc(60px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   border-top: 1px solid var(--line);
-  padding: 0 12px;
-  justify-content: space-around;
-  align-items: center;
+  background: rgba(251, 250, 247, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
+
 .site-shell .mobile-bottom-nav-item {
+  position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 6px 4px;
+  border: 0;
+  background: transparent;
   color: var(--muted);
+  font-family: var(--sans);
   font-size: 10px;
-  font-weight: 700;
-  padding: 6px 10px;
-  position: relative;
-  transition: color 0.15s ease;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  touch-action: manipulation;
+  transition: color var(--dur-fast) var(--ease-out);
 }
-.site-shell .mobile-bottom-nav-item.active,
-.site-shell .mobile-bottom-nav-item:hover {
+
+.site-shell .mobile-bottom-nav-item.active {
   color: var(--accent);
 }
+
+.site-shell .mobile-bottom-nav-item.active::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 20px;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: var(--accent);
+  transform: translateX(-50%);
+}
+
 .site-shell .mobile-nav-icon-wrap {
   position: relative;
-}
-.site-shell .mobile-nav-badge {
-  position: absolute;
-  top: -4px;
-  right: -8px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 3px;
-  border-radius: 8px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 800;
   display: grid;
   place-items: center;
+  width: 28px;
+  height: 26px;
 }
+
+.site-shell .mobile-nav-badge {
+  position: absolute;
+  top: -3px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border: 2px solid var(--paper);
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: #ffffff;
+  font-family: var(--font-data);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+}
+
 .site-shell .back-to-top-button {
   position: fixed;
   right: 24px;
-  bottom: 84px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--white);
-  border: 1px solid var(--line);
-  color: var(--ink);
+  bottom: 24px;
+  z-index: var(--z-header);
   display: grid;
   place-items: center;
-  z-index: 45;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--white);
+  color: var(--ink);
   box-shadow: var(--shadow-sm);
-  cursor: pointer;
-  transition: all 0.2s var(--ease-spring);
+  transition: border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
 }
+
 .site-shell .back-to-top-button:hover {
-  transform: translateY(-3px);
-  color: var(--accent);
-  border-color: var(--accent);
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
 }

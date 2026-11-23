@@ -1,84 +1,139 @@
-/* ── 13. Global Footer Section ── */
+/* NOVA SHOP · Footer */
+
 .site-shell .footer {
-  max-width: 1440px;
-  margin: 60px auto 0;
-  padding: 56px 32px 100px;
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
   gap: 48px;
+  margin-top: 0;
+  padding: 56px max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter))) 40px;
   border-top: 1px solid var(--line);
-  background: var(--white);
+  background: var(--ink);
+  color: rgba(251, 250, 247, 0.72);
 }
+
+.site-shell .footer-brand {
+  max-width: 340px;
+}
+
+.site-shell .footer .wordmark {
+  color: var(--paper);
+  font-size: 22px;
+}
+
+.site-shell .footer .wordmark em {
+  color: var(--accent);
+}
+
 .site-shell .footer-brand p {
+  margin: 14px 0 0;
   font-size: 13px;
-  line-height: 1.6;
-  color: var(--muted);
-  max-width: 320px;
-  margin: 14px 0 20px;
+  line-height: 1.65;
 }
+
 .site-shell .footer-contact-details {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 20px;
+  gap: 4px;
+  margin-top: 16px;
+  font-size: 12.5px;
 }
+
 .site-shell .footer-contact-details b {
-  color: var(--ink);
-}
-.site-shell .footer > div b {
-  display: block;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: var(--accent);
-  margin-bottom: 18px;
-}
-.site-shell .footer > div button {
-  display: block;
-  font-size: 13px;
+  color: var(--paper);
+  font-family: var(--font-data);
+  font-size: 12px;
   font-weight: 600;
-  color: var(--muted);
-  padding: 6px 0;
+}
+
+.site-shell .footer-brand small {
+  display: block;
+  margin-top: 20px;
+  color: rgba(251, 250, 247, 0.42);
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+}
+
+.site-shell .footer > div:not(.footer-brand) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.site-shell .footer > div > b {
+  margin-bottom: 12px;
+  color: var(--paper);
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+}
+
+.site-shell .footer button {
+  min-height: 36px;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: rgba(251, 250, 247, 0.72);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
   text-align: left;
-  transition: color 0.15s ease;
+  transition: color var(--dur-fast) var(--ease-out);
 }
-.site-shell .footer > div button:hover {
-  color: var(--ink);
+
+.site-shell .footer button:hover {
+  color: var(--paper);
 }
+
 .site-shell .socials-wrap {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 6px;
   margin-bottom: 16px;
 }
+
 .site-shell .social-tag {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 5px 12px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid rgba(251, 250, 247, 0.24);
   border-radius: var(--radius-full);
-  background: var(--soft);
-  color: var(--ink);
-  border: 1px solid var(--line);
+  color: var(--paper);
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
+
 .site-shell .footer-payment-tags {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
+
 .site-shell .footer-payment-tags span {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 800;
-  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
   border-radius: var(--radius-xs);
-  background: var(--soft);
-  color: var(--muted);
+  background: rgba(251, 250, 247, 0.08);
+  color: rgba(251, 250, 247, 0.82);
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
 }
+
 .site-shell .footer small {
-  display: block;
-  font-size: 11px;
-  color: var(--muted);
+  color: rgba(251, 250, 247, 0.5);
+  font-size: 11.5px;
+  line-height: 1.55;
 }

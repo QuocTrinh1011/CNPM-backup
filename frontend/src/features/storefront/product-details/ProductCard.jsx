@@ -1,5 +1,5 @@
 import React from 'react';
-import { Eye, Heart, ShoppingCart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { csv, discount, imageSrc, protectImage } from '../../../shared/utils/storefront-display';
 import { firstProductColor, imagesForColor } from '../product-image-gallery';
 
@@ -27,10 +27,12 @@ function cardPrice(value) {
   return `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Number(value || 0))}đ`;
 }
 
-export function ProductCard({ product, onOpen, onQuickView, isWishlisted, onWishlist }) {
+export function ProductCard({ product, onOpen, onQuickView, isWishlisted, onWishlist, onAddToCart, onBuyNow }) {
   const sale = discount(product);
   const coverImage = imagesForColor(product, firstProductColor(product))[0] || product.imageUrl;
   const colors = csv(product.colors);
+  const outOfStock = Number(product.stock) <= 0;
+  const defaultVariant = { size: csv(product.sizes)[0], color: firstProductColor(product) };
   return (
     <article className="product-card">
       <div className="product-image">
@@ -51,20 +53,6 @@ export function ProductCard({ product, onOpen, onQuickView, isWishlisted, onWish
             <span>{product.badge || 'ƯU ĐÃI'}</span>
           </div>
         )}
-        <div className="product-card-actions">
-          <button
-            type="button"
-            className="product-card-add"
-            aria-label={`Xem sản phẩm ${product.name}`}
-            title="Xem chi tiết sản phẩm"
-            onClick={onOpen}
-          >
-            <ShoppingCart size={19} />
-          </button>
-          <button type="button" className="product-card-detail" aria-label={`Xem nhanh ${product.name}`} onClick={onQuickView}>
-            <Eye size={19} />
-          </button>
-        </div>
         <button
           className={isWishlisted ? "heart active" : "heart"}
           type="button"
@@ -105,6 +93,24 @@ export function ProductCard({ product, onOpen, onQuickView, isWishlisted, onWish
             {colors.length > 5 && <span className="product-swatch-more">+{colors.length - 5}</span>}
           </div>
         )}
+      </div>
+      <div className="product-card-cta">
+        <button
+          type="button"
+          className="product-card-buy"
+          disabled={outOfStock}
+          onClick={() => onBuyNow?.(product, defaultVariant)}
+        >
+          MUA NGAY
+        </button>
+        <button
+          type="button"
+          className="product-card-cart"
+          disabled={outOfStock}
+          onClick={() => onAddToCart?.(product, defaultVariant)}
+        >
+          THÊM VÀO GIỎ HÀNG
+        </button>
       </div>
     </article>
   );

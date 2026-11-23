@@ -22,7 +22,6 @@ import CustomerLayout from '../features/customer/CustomerLayout';
 import { subtractPurchased } from "../features/storefront/cart-selection";
 import { useCustomerRouter, actionPaths, isAccountPath, needsCustomer, isKnownPath, safeReturn } from '../shared/routing/customer-routing';
 import '../shared/address/checkout-page.css';
-import '../features/customer/customer-pages.css';
 import { DEFAULT_ORDERS_ROUTE } from "../features/customer/orders/default-orders-route";
 import { api, endpoints, signOut } from "../api/api";
 import { ArrowUp, Check, CircleAlert, Headphones, RefreshCw, ShieldCheck, Truck, X } from "lucide-react";
@@ -464,6 +463,8 @@ function App() {
             loadProducts={loadProducts}
             openCatalog={openCatalog}
             goHome={goHome}
+            onAddToCart={addToCart}
+            onBuyNow={(product, variant) => buyNow(product, variant, 1)}
           />
         ) : (
           <StorefrontHome
@@ -476,6 +477,8 @@ function App() {
             onProduct={openProduct}
             onQuickView={openQuickView}
             onWishlist={toggleWishlist}
+            onAddToCart={addToCart}
+            onBuyNow={(product, variant) => buyNow(product, variant, 1)}
             onRetry={loadProducts}
             imageSrc={imageSrc}
           />

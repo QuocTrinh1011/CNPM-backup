@@ -23,6 +23,24 @@ export default function StorefrontHeader({
 }) {
   const [productsMenuOpen, setProductsMenuOpen] = useState(false);
   const productsMenuRef = useRef(null);
+  const productsMenuCloseTimer = useRef(null);
+  const canHover = () => typeof window !== "undefined" && window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
+  const openProductsMenuOnHover = () => {
+    if (!canHover()) return;
+    if (productsMenuCloseTimer.current) {
+      clearTimeout(productsMenuCloseTimer.current);
+      productsMenuCloseTimer.current = null;
+    }
+    setProductsMenuOpen(true);
+  };
+  const scheduleProductsMenuClose = () => {
+    if (!canHover()) return;
+    if (productsMenuCloseTimer.current) clearTimeout(productsMenuCloseTimer.current);
+    productsMenuCloseTimer.current = setTimeout(() => {
+      productsMenuCloseTimer.current = null;
+      setProductsMenuOpen(false);
+    }, 180);
+  };
   const availableCategories = Array.isArray(categories) && categories.length
     ? categories.filter(category => typeof category === "string")
     : ["Áo thun", "Áo polo", "Áo khoác", "Quần"];
@@ -48,6 +66,10 @@ export default function StorefrontHeader({
     ...(bottomCategories.length ? [{ title: "QUẦN NAM", links: bottomCategories.map(category => ({ label: category, category })) }] : []),
     ...(otherCategories.length ? [{ title: "DANH MỤC KHÁC", links: otherCategories.map(category => ({ label: category, category })) }] : []),
   ];
+
+  useEffect(() => () => {
+    if (productsMenuCloseTimer.current) clearTimeout(productsMenuCloseTimer.current);
+  }, []);
 
   useEffect(() => {
     if (!productsMenuOpen) return undefined;
@@ -86,6 +108,8 @@ export default function StorefrontHeader({
           <div
             ref={productsMenuRef}
             className={`shop-products-menu${productsMenuOpen ? " is-open" : ""}`}
+            onMouseEnter={openProductsMenuOnHover}
+            onMouseLeave={scheduleProductsMenuClose}
             onBlur={event => {
               if (!event.currentTarget.contains(event.relatedTarget)) setProductsMenuOpen(false);
             }}
