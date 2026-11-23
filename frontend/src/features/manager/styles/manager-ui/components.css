@@ -1,0 +1,460 @@
+/* ------------------------------------------------------------ components */
+
+/* Unified filter bar (replaces the per-page toolbar variants) */
+.manager-shell .manager-filter-bar {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-input);
+}
+
+.manager-shell .manager-filter-bar__row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.manager-shell .manager-filter-bar__search {
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  gap: 8px;
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+}
+
+.manager-shell .manager-filter-bar__search:focus-within {
+  border-color: color-mix(in srgb, var(--admin-primary) 60%, var(--admin-border));
+  box-shadow: 0 0 0 3px var(--admin-focus);
+}
+
+.manager-shell .manager-filter-bar__search :is(input, select) {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--admin-text);
+  font-size: 13px;
+}
+
+.manager-shell .manager-filter-bar__search :is(input, select):focus {
+  outline: none;
+}
+
+.manager-shell .manager-filter-bar__filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.manager-shell .manager-filter-bar__filters :is(input, select) {
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font-size: 12.5px;
+}
+
+.manager-shell .manager-filter-bar__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.manager-shell .manager-filter-bar__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.manager-shell .manager-filter-bar__advanced {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  align-items: end;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.manager-shell .manager-filter-bar__advanced > label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.manager-shell .manager-filter-bar__advanced :is(input, select) {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font-size: 12.5px;
+  box-sizing: border-box;
+}
+
+/* Empty state */
+.manager-shell .manager-empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 34px 18px;
+  border: 1px dashed var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-card);
+  text-align: center;
+}
+
+.manager-shell .manager-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--admin-input);
+  color: var(--admin-muted);
+}
+
+.manager-shell .manager-empty__title {
+  color: var(--admin-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.manager-shell .manager-empty__text {
+  max-width: 360px;
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 12.5px;
+}
+
+.manager-shell .manager-empty__action {
+  margin-top: 6px;
+}
+
+/* Loading skeleton */
+.manager-shell .manager-skeleton {
+  display: grid;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.manager-shell .manager-skeleton .manager-row {
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.manager-shell .manager-skeleton__row {
+  flex: 1 1 auto;
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--admin-input), color-mix(in srgb, var(--admin-input) 40%, var(--admin-card)), var(--admin-input));
+  background-size: 200% 100%;
+  animation: manager-shimmer 1.4s ease-in-out infinite;
+}
+
+.manager-shell .manager-skeleton__row.is-narrow {
+  flex: 0 1 72px;
+}
+
+.manager-shell .manager-skeleton__row:nth-child(even) {
+  opacity: .7;
+}
+
+@keyframes manager-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Inline notice */
+.manager-shell .manager-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+  color: var(--admin-text);
+  font-size: 12.5px;
+}
+
+.manager-shell .manager-notice__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.manager-shell .manager-notice__title {
+  display: block;
+  font-weight: 700;
+}
+
+.manager-shell .manager-notice__body p {
+  margin: 2px 0 0;
+  color: var(--admin-muted);
+}
+
+.manager-shell .manager-notice__close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.manager-shell .manager-notice__close:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.manager-shell .manager-notice--success {
+  border-color: color-mix(in srgb, var(--admin-success) 32%, var(--admin-border));
+  background: var(--admin-success-soft);
+  color: var(--admin-success);
+}
+
+.manager-shell .manager-notice--warning {
+  border-color: color-mix(in srgb, var(--admin-warning) 32%, var(--admin-border));
+  background: var(--admin-warning-soft);
+  color: var(--admin-warning);
+}
+
+.manager-shell .manager-notice--danger {
+  border-color: color-mix(in srgb, var(--admin-danger) 32%, var(--admin-border));
+  background: var(--admin-danger-soft);
+  color: var(--admin-danger);
+}
+
+.manager-shell .manager-notice--info {
+  border-color: color-mix(in srgb, var(--admin-info) 32%, var(--admin-border));
+  background: var(--admin-info-soft);
+  color: var(--admin-info);
+}
+
+.manager-shell .manager-notice--neutral {
+  border-color: var(--admin-border);
+  background: var(--admin-input);
+  color: var(--admin-text);
+}
+
+/* Status pill (extends .admin-badge) */
+.manager-shell .manager-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  background: var(--admin-input);
+  color: var(--admin-muted);
+  font-size: 11.5px;
+  font-weight: 650;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.manager-shell .manager-status-pill__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.manager-shell .manager-status-pill--success {
+  border-color: color-mix(in srgb, var(--admin-success) 30%, var(--admin-border));
+  background: var(--admin-success-soft);
+  color: var(--admin-success);
+}
+
+.manager-shell .manager-status-pill--warning {
+  border-color: color-mix(in srgb, var(--admin-warning) 30%, var(--admin-border));
+  background: var(--admin-warning-soft);
+  color: var(--admin-warning);
+}
+
+.manager-shell .manager-status-pill--danger {
+  border-color: color-mix(in srgb, var(--admin-danger) 30%, var(--admin-border));
+  background: var(--admin-danger-soft);
+  color: var(--admin-danger);
+}
+
+.manager-shell .manager-status-pill--info {
+  border-color: color-mix(in srgb, var(--admin-info) 30%, var(--admin-border));
+  background: var(--admin-info-soft);
+  color: var(--admin-info);
+}
+
+.manager-shell .manager-status-pill--primary {
+  border-color: color-mix(in srgb, var(--admin-primary) 30%, var(--admin-border));
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+}
+
+/* Tabs */
+.manager-shell .manager-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.manager-shell .manager-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.manager-shell .manager-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--admin-muted);
+  font-size: 12.5px;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--manager-transition), color var(--manager-transition), border-color var(--manager-transition);
+}
+
+.manager-shell .manager-tab:hover {
+  color: var(--admin-text);
+  background: color-mix(in srgb, var(--admin-card) 70%, transparent);
+}
+
+.manager-shell .manager-tab[aria-selected="true"] {
+  border-color: var(--admin-border);
+  background: var(--admin-card);
+  color: var(--admin-primary);
+}
+
+.manager-shell .manager-tab__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--admin-input);
+  color: var(--admin-muted);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.manager-shell .manager-tab[aria-selected="true"] .manager-tab__count {
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+}
+
+/* Metric card */
+.manager-shell .manager-metric {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-card);
+}
+
+.manager-shell .manager-metric__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 4px;
+  border-radius: 10px;
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+}
+
+.manager-shell .manager-metric__label {
+  color: var(--admin-muted);
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.manager-shell .manager-metric__value {
+  color: var(--admin-text);
+  font-size: 26px;
+  font-weight: 750;
+  letter-spacing: -.035em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.manager-shell .manager-metric__hint {
+  color: var(--admin-muted);
+  font-size: 11.5px;
+}
+
+.manager-shell .manager-metric--success .manager-metric__value { color: var(--admin-success); }
+.manager-shell .manager-metric--warning .manager-metric__value { color: var(--admin-warning); }
+.manager-shell .manager-metric--danger .manager-metric__value { color: var(--admin-danger); }
+
+/* Sticky table head option */
+.manager-shell .admin-table-wrap.is-sticky thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.manager-shell .admin-table-wrap td .manager-skeleton__row {
+  display: block;
+  min-width: 48px;
+}
+
+.manager-shell .admin-table-empty .manager-empty__action {
+  display: inline-flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.manager-shell .manager-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+

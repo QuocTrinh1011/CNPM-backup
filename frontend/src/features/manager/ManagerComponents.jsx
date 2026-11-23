@@ -23,10 +23,11 @@ export function PanelLoading() {
   );
 }
 
-export function Table({ headers, children, className = '' }) {
+export function Table({ headers, children, className = '', loading = false, skeletonRows = 5, empty, sticky = false }) {
   const hasRows = React.Children.count(children) > 0;
+  const emptyCopy = typeof empty === 'object' && empty ? empty : { description: empty };
   return (
-    <div className={`admin-table-wrap ${className}`}>
+    <div className={`admin-table-wrap${sticky ? ' is-sticky' : ''} ${className}`}>
       <table>
         <thead>
           <tr>
@@ -36,7 +37,17 @@ export function Table({ headers, children, className = '' }) {
           </tr>
         </thead>
         <tbody>
-          {hasRows ? (
+          {loading ? (
+            Array.from({ length: skeletonRows }).map((_, row) => (
+              <tr key={`skeleton-${row}`}>
+                {headers.map((__, cell) => (
+                  <td key={`skeleton-${row}-${cell}`}>
+                    <span className="manager-skeleton__row" />
+                  </td>
+                ))}
+              </tr>
+            ))
+          ) : hasRows ? (
             React.Children.map(children,row=>React.isValidElement(row)?React.cloneElement(row,{},React.Children.map(row.props.children,(cell,index)=>React.isValidElement(cell)?React.cloneElement(cell,{'data-label':headers[index]}):cell)):row)
           ) : (
             <tr>
@@ -45,12 +56,14 @@ export function Table({ headers, children, className = '' }) {
                   <Inbox size={20} />
                 </span>
                 <b>Chưa có dữ liệu</b>
-                <small>Dữ liệu sẽ hiển thị tại đây khi có bản ghi.</small>
+                <small>{emptyCopy?.description || 'Dữ liệu sẽ hiển thị tại đây khi có bản ghi.'}</small>
+                {emptyCopy?.action && <span className="manager-empty__action">{emptyCopy.action}</span>}
               </td>
             </tr>
           )}
         </tbody>
       </table>
+      {loading && <span className="manager-sr-only" role="status">Đang tải dữ liệu...</span>}
     </div>
   );
 }
@@ -77,12 +90,16 @@ export function PageControls({
   totalElements,
   onPage,
   disabled = false,
+  variant = 'default',
 }) {
   if (totalPages <= 1) return null;
+  const compact = variant === 'compact';
   return (
-    <div className="admin-pagination">
+    <div className={`admin-pagination${compact ? ' admin-pagination--compact' : ''}`}>
       <span>
-        Tổng {totalElements ?? 0} bản ghi · Trang {page + 1}/{totalPages}
+        {compact
+          ? `Trang ${page + 1}/${totalPages}`
+          : `Tổng ${totalElements ?? 0} bản ghi · Trang ${page + 1}/${totalPages}`}
       </span>
       <div>
         <button

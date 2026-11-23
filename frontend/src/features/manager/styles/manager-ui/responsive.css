@@ -12,19 +12,23 @@
   .manager-shell.admin-shell .admin-live-dot {
     display: none;
   }
+
+  .manager-shell .admin-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 900px) {
   .manager-shell.admin-shell .admin-sidebar {
     position: fixed;
-    z-index: 30;
+    z-index: 40;
     top: 0;
     left: 0;
-    width: min(300px, calc(100vw - 48px));
+    width: min(288px, calc(100vw - 48px));
     height: 100dvh;
     transform: translateX(-105%);
-    transition: transform .22s ease;
-    box-shadow: 20px 0 60px rgb(0 0 0 / 32%);
+    transition: transform 220ms cubic-bezier(.2, .7, .3, 1);
+    box-shadow: var(--admin-shadow-lg);
   }
 
   .manager-shell.admin-shell .admin-sidebar.is-open { transform: translateX(0); }
@@ -32,27 +36,26 @@
   .manager-shell.admin-shell .admin-sidebar-backdrop {
     display: block;
     position: fixed;
-    z-index: 28;
+    z-index: 38;
     inset: 0;
     border: 0;
-    background: rgb(3 10 8 / 58%);
+    background: color-mix(in srgb, var(--admin-ink) 62%, transparent);
     backdrop-filter: blur(3px);
   }
 
   .manager-shell.admin-shell .admin-mobile-toggle { display: grid;
     place-items: center;
     position: fixed;
-    z-index: 31;
+    z-index: 41;
     top: 12px;
     left: 12px;
     width: 40px;
     height: 40px;
     padding: 0;
     border: 1px solid var(--admin-border);
-    border-radius: 10px;
+    border-radius: var(--manager-radius-control);
     background: var(--admin-card);
     color: var(--admin-text);
-    box-shadow: var(--admin-shadow-sm);
     cursor: pointer;
   }
 
@@ -85,10 +88,6 @@
     grid-column: 1;
   }
 
-  .manager-shell .admin-quick-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .manager-shell .admin-topbar-actions {
     grid-column: 2;
     grid-row: 1 / span 2;
@@ -101,18 +100,31 @@
     margin: 22px 0 16px;
   }
 
-  .manager-shell.admin-shell .admin-panel {
-    padding: 16px;
+  .manager-shell .admin-panel {
+    padding: 18px;
+  }
+
+  .manager-shell .admin-quick-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .manager-login.admin-login .admin-login-card {
-    padding: 30px 22px;
+    padding: 30px 24px;
   }
 }
 
 @media (max-width: 768px) {
   .manager-shell .admin-search-wrap {
     flex-basis: 100%;
+  }
+
+  .manager-shell .manager-page-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .manager-shell .manager-page-toolbar-actions {
+    justify-content: flex-start;
   }
 
   /* Empty tables collapse instead of forcing a sideways scroll */
@@ -181,7 +193,7 @@
     gap: 2px;
     padding: 13px;
     border: 1px solid var(--admin-border);
-    border-radius: 14px;
+    border-radius: var(--manager-radius-panel);
     background: var(--admin-card);
   }
 
@@ -239,7 +251,7 @@
     gap: 2px;
     padding: 13px;
     border: 1px solid var(--admin-border);
-    border-radius: 14px;
+    border-radius: var(--manager-radius-panel);
     background: var(--admin-card);
   }
 
@@ -276,6 +288,10 @@
 @media (max-width: 600px) {
   .manager-shell .admin-page-heading h1 {
     font-size: 27px;
+  }
+
+  .manager-shell .admin-page-heading p {
+    font-size: 13px;
   }
 
   .manager-shell .admin-panel-title,
@@ -323,7 +339,7 @@
     width: 100%;
     max-height: 90dvh;
     padding: 18px;
-    border-radius: 18px 18px 0 0;
+    border-radius: var(--admin-radius-xl) var(--admin-radius-xl) 0 0;
   }
 
   .manager-shell .admin-dialog-backdrop {

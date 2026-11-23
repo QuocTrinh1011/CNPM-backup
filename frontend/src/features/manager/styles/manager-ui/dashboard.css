@@ -11,20 +11,29 @@
   padding: 18px;
   overflow: hidden;
   border: 1px solid var(--admin-border);
-  border-radius: 16px;
+  border-radius: var(--manager-radius-panel);
   background: var(--admin-card);
-  box-shadow: var(--admin-shadow-sm);
+  box-shadow: none;
+}
+
+.manager-shell.admin-shell .admin-stat::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--admin-primary), transparent 60%);
+  opacity: .55;
 }
 
 .manager-shell.admin-shell .admin-stat.is-clickable {
   cursor: pointer;
-  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  transition: border-color var(--manager-transition), transform var(--manager-transition);
 }
 
 .manager-shell.admin-shell .admin-stat.is-clickable:hover {
-  border-color: color-mix(in srgb, var(--admin-primary) 36%, var(--admin-border));
-  transform: translateY(-2px);
-  box-shadow: var(--admin-shadow-md);
+  border-color: color-mix(in srgb, var(--admin-primary) 38%, var(--admin-border));
+  transform: translateY(-1px);
 }
 
 .manager-shell.admin-shell .admin-stat strong {
@@ -35,6 +44,7 @@
   font-weight: 750;
   letter-spacing: -.04em;
   line-height: 1.15;
+  font-variant-numeric: tabular-nums;
 }
 
 .manager-shell.admin-shell .admin-stat small {
@@ -53,14 +63,25 @@
   border-radius: 11px;
 }
 
-.manager-shell .admin-kpi-icon.blue { background: #e0edff; color: #2563eb; }
-.manager-shell .admin-kpi-icon.green { background: #ddf5ea; color: #0f7a5f; }
-.manager-shell .admin-kpi-icon.violet { background: #ece8fe; color: #7c3aed; }
-.manager-shell .admin-kpi-icon.amber { background: #fdf0d9; color: #b45309; }
-.manager-shell.admin-shell[data-theme="dark"] .admin-kpi-icon.blue { background: #163152; color: #7eb5ff; }
-.manager-shell.admin-shell[data-theme="dark"] .admin-kpi-icon.green { background: #153b2e; color: #70e1ba; }
-.manager-shell.admin-shell[data-theme="dark"] .admin-kpi-icon.violet { background: #2d2456; color: #b6a1ff; }
-.manager-shell.admin-shell[data-theme="dark"] .admin-kpi-icon.amber { background: #4a3119; color: #ffc480; }
+.manager-shell .admin-kpi-icon.blue {
+  background: var(--admin-info-soft);
+  color: var(--admin-info);
+}
+
+.manager-shell .admin-kpi-icon.green {
+  background: var(--admin-success-soft);
+  color: var(--admin-success);
+}
+
+.manager-shell .admin-kpi-icon.violet {
+  background: color-mix(in srgb, var(--admin-accent) 14%, var(--admin-card));
+  color: var(--admin-accent);
+}
+
+.manager-shell .admin-kpi-icon.amber {
+  background: var(--admin-warning-soft);
+  color: var(--admin-warning);
+}
 
 .manager-shell .admin-quick-grid {
   display: grid;
@@ -79,9 +100,9 @@
   min-height: 72px;
   padding: 12px;
   border: 1px solid var(--admin-border);
-  border-radius: 12px;
+  border-radius: var(--manager-radius-control);
   background: var(--admin-input);
-  transition: transform .16s ease, border-color .16s ease, background-color .16s ease;
+  transition: transform var(--manager-transition), border-color var(--manager-transition), background-color var(--manager-transition);
 }
 
 .manager-shell .admin-quick-card:hover {
@@ -113,7 +134,7 @@
   gap: 6px;
   padding: 8px;
   border: 1px solid var(--admin-border);
-  border-radius: 12px;
+  border-radius: var(--manager-radius-control);
   background: var(--admin-input);
 }
 
@@ -123,6 +144,7 @@
   border-radius: 8px;
   background: var(--admin-card);
   font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
 }
 
 .manager-shell .admin-operational-alert {
@@ -130,9 +152,9 @@
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, #f59e0b 34%, var(--admin-border));
-  border-radius: 12px;
-  background: color-mix(in srgb, #f59e0b 8%, var(--admin-card));
+  border: 1px solid color-mix(in srgb, var(--admin-warning) 34%, var(--admin-border));
+  border-radius: var(--manager-radius-control);
+  background: color-mix(in srgb, var(--admin-warning) 8%, var(--admin-card));
   font-size: 12.5px;
 }
 
@@ -150,4 +172,5 @@
   font-size: 9.5px;
   font-weight: 750;
   letter-spacing: .12em;
+  text-transform: uppercase;
 }

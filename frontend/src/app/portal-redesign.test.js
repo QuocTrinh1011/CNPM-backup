@@ -51,7 +51,7 @@ describe('portal redesign isolation', () => {
     for (const selector of rules(cockpitStyles)) expect(selector).toMatch(/^\.manager-(shell|login)/);
     expect(cockpitStyles).not.toContain('@import');
     expect(cockpitStyles).toContain('font-family: "Manrope"');
-    expect(cockpitStyles).toContain('.admin-primary { background: var(--admin-primary); color: #07100d; }');
+    expect(cockpitStyles).toContain('.admin-primary { background: var(--admin-primary); color: var(--admin-on-primary); }');
     expect(cockpitStyles).toContain('max-height: 90dvh;');
     expect(cockpitStyles).not.toContain('.manager-login.admin-login-card');
   });

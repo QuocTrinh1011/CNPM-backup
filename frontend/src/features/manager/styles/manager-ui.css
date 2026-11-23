@@ -2,6 +2,8 @@
 @import "./manager-ui/sidebar.css";
 @import "./manager-ui/shell.css";
 @import "./manager-ui/surfaces.css";
+@import "./manager-ui/layout.css";
+@import "./manager-ui/components.css";
 @import "./manager-ui/toolbar.css";
 @import "./manager-ui/tables.css";
 @import "./manager-ui/pagination.css";

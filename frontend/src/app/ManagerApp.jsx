@@ -163,6 +163,11 @@ export default function ManagerApp() {
   };
   const roleNavItems = navItems.filter(([key]) => roleSections.has(key));
   const dashboardNavItem = roleNavItems.find(([key]) => key === "dashboard");
+  const roleLabel = admin.role === "EMPLOYEE"
+    ? (employeeProfile?.permissionProfile === "TEAM_LEAD"
+      ? "Trưởng nhóm"
+      : employeeProfile?.workArea === "WAREHOUSE" ? "Nhân viên kho" : "Nhân viên")
+    : { MANAGER_SALES: "Kinh doanh", MANAGER_WAREHOUSE: "Kho vận", MANAGER_HR: "Nhân sự" }[admin.role] || "Quản lý";
   return (
     <div className={`admin-shell manager-shell${profileMatch ? ' manager-profile-page' : ''}`} data-theme={theme} onKeyDown={event=>{if(['DIV','SPAN'].includes(event.target.tagName)&&event.target.getAttribute('role')==='button'&&['Enter',' '].includes(event.key)){event.preventDefault();event.target.click();}}}>
       <button
@@ -204,6 +209,10 @@ export default function ManagerApp() {
               <PanelLeftClose size={16} aria-hidden="true" />
             )}
           </button>
+        </div>
+        <div className="manager-role-plate">
+          <span>Vai trò</span>
+          <b>{roleLabel}</b>
         </div>
         <nav aria-label="Chức năng quản lý">
           {dashboardNavItem && renderNavItem(dashboardNavItem)}
@@ -297,6 +306,7 @@ export default function ManagerApp() {
           </div>
         </header>
         <div className="admin-page-heading">
+          <span className="manager-page-kicker">{roleLabel}</span>
           <h1>
             {profileMatch ? 'Hồ sơ khách hàng 360°' : navItems.find((item) => item[0] === section)?.[1] || "Tổng quan"}
           </h1>

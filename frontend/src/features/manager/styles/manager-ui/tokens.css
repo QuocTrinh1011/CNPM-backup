@@ -1,35 +1,49 @@
-/* Manager UI — single visual layer for the store-management portal.
+/* Manager UI — NOVA ink–paper tokens.
    Every selector is scoped to .manager-shell or .manager-login so the
    storefront and the system Admin portal are never affected. */
 
-/* ---------------------------------------------------------------- tokens */
 .manager-shell.admin-shell,
 .manager-login.admin-login {
-  --admin-bg: #f5f8f6;
-  --admin-card: #ffffff;
-  --admin-text: #13211c;
-  --admin-muted: #5b6b64;
-  --admin-border: #dfe8e3;
-  --admin-primary: #0f7a5f;
-  --admin-primary-soft: #e4f4ed;
-  --admin-input: #f2f6f4;
-  --admin-accent: #e8834a;
-  --admin-cyan: #3aa995;
-  --admin-mono: "Manrope", system-ui, sans-serif;
-  --admin-radius-sm: 9px;
-  --admin-radius-md: 12px;
-  --admin-radius-lg: 18px;
-  --admin-radius-xl: 24px;
-  --admin-shadow-sm: 0 1px 2px rgb(19 33 28 / 4%), 0 10px 28px rgb(19 33 28 / 4%);
-  --admin-shadow-md: 0 16px 44px rgb(19 33 28 / 9%);
-  --admin-shadow-lg: 0 32px 90px rgb(3 12 9 / 34%);
-  --manager-sidebar-width: 252px;
+  --admin-bg: #f6f3ee;
+  --admin-card: #fffdfa;
+  --admin-input: #efeae1;
+  --admin-text: #16120f;
+  --admin-muted: #6d635a;
+  --admin-border: #e3dbcf;
+  --admin-primary: #c9232c;
+  --admin-primary-soft: #fbecec;
+  --admin-on-primary: #ffffff;
+  --admin-ink: #14100e;
+  --admin-ink-border: #2a2421;
+  --admin-ink-text: #f4efe8;
+  --admin-ink-muted: #a89c90;
+  --admin-accent: #b0742f;
+  --admin-success: #2f7d52;
+  --admin-warning: #8a5d0f;
+  --admin-danger: #b3261e;
+  --admin-info: #2c5f85;
+  --admin-success-soft: #e3f2e9;
+  --admin-warning-soft: #f7edda;
+  --admin-danger-soft: #fbe9e7;
+  --admin-info-soft: #e6eef5;
+  --admin-focus: rgb(201 35 44 / 45%);
+  --admin-login-card: #1c1815;
+  --admin-login-border: #2e2724;
+  --admin-mono: "JetBrains Mono", ui-monospace, monospace;
+  --manager-sidebar-width: 264px;
   --manager-sidebar-rail: 76px;
-  --manager-radius-panel: 18px;
-  --manager-radius-control: 12px;
-  background:
-    radial-gradient(circle at 62% -12%, rgb(15 122 95 / 9%), transparent 34rem),
-    var(--admin-bg);
+  --manager-radius-sm: 6px;
+  --manager-radius-control: 10px;
+  --manager-radius-panel: 14px;
+  --admin-radius-sm: 6px;
+  --admin-radius-md: 10px;
+  --admin-radius-lg: 14px;
+  --admin-radius-xl: 20px;
+  --admin-shadow-sm: 0 1px 2px rgb(22 18 15 / 6%);
+  --admin-shadow-md: 0 12px 32px rgb(22 18 15 / 9%);
+  --admin-shadow-lg: 0 28px 70px rgb(22 18 15 / 22%);
+  --manager-transition: 160ms cubic-bezier(.2, .7, .3, 1);
+  background: var(--admin-bg);
   font-family: "Manrope", system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.6;
@@ -38,19 +52,32 @@
 
 .manager-shell.admin-shell[data-theme="dark"],
 .manager-login.admin-login[data-theme="dark"] {
-  --admin-bg: #080f0c;
-  --admin-card: #101b17;
-  --admin-text: #eef7f2;
-  --admin-muted: #9db1a8;
-  --admin-border: #22362e;
-  --admin-primary: #5fd7ae;
-  --admin-primary-soft: #153b2e;
-  --admin-input: #14241e;
-  --admin-accent: #ffb37c;
-  --admin-cyan: #72ddd4;
-  --admin-shadow-sm: 0 1px 2px rgb(0 0 0 / 28%), 0 12px 30px rgb(0 0 0 / 18%);
-  --admin-shadow-md: 0 18px 48px rgb(0 0 0 / 32%);
-  --admin-shadow-lg: 0 34px 96px rgb(0 0 0 / 46%);
+  --admin-bg: #12100e;
+  --admin-card: #1a1714;
+  --admin-input: #231f1b;
+  --admin-text: #f5f0e9;
+  --admin-muted: #b1a69a;
+  --admin-border: #342d27;
+  --admin-primary: #ff5a5f;
+  --admin-primary-soft: #3a1c1e;
+  --admin-on-primary: #1a0507;
+  --admin-ink: #0c0a09;
+  --admin-ink-border: #221d19;
+  --admin-accent: #e0a35f;
+  --admin-success: #6cc496;
+  --admin-warning: #e2b55a;
+  --admin-danger: #ff8a80;
+  --admin-info: #7db2d9;
+  --admin-success-soft: #17301f;
+  --admin-warning-soft: #33280f;
+  --admin-danger-soft: #3a1714;
+  --admin-info-soft: #16242e;
+  --admin-focus: rgb(255 90 95 / 55%);
+  --admin-login-card: #151210;
+  --admin-login-border: #2a2420;
+  --admin-shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --admin-shadow-md: 0 12px 32px rgb(0 0 0 / 45%);
+  --admin-shadow-lg: 0 28px 70px rgb(0 0 0 / 60%);
   color-scheme: dark;
 }
 
