@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { adminApi, adminEndpoints } from '../../api/manager-api';
 import { ListError, PageControls, PanelLoading, PanelTitle, Table } from './ManagerComponents';
+import { InlineNotice, ManagerDialog } from './ManagerKit';
 
 const localDate = () => {
   const date = new Date();
@@ -35,7 +36,7 @@ export default function ManagerEmployees() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [confirmEmployee, setConfirmEmployee] = useState(null);
   const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState('');
+  const [notice, setNotice] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -55,19 +56,20 @@ export default function ManagerEmployees() {
     return () => controller.abort();
   }, [reload]);
 
-  const beginCreate = () => { setSelectedId(null); setSelectedEmployee(null); setForm(emptyForm()); setFormMode('create'); setNotice(''); };
+  const beginCreate = () => { setSelectedId(null); setSelectedEmployee(null); setForm(emptyForm()); setFormMode('create'); setNotice(null); };
   const beginEdit = employee => {
     setSelectedId(employee.id);
     setSelectedEmployee(employee);
     setForm({ ...emptyForm(), ...employee, temporaryPassword: '', reportsToEmployeeId: employee.reportsToEmployeeId || '', hireDate: employee.hireDate || '', resignationDate: employee.resignationDate || '' });
     setFormMode('edit');
-    setNotice('');
+    setNotice(null);
   };
+  const closeForm = () => { if (!busy) setFormMode(null); };
   const setField = (field, value) => setForm(current => ({ ...current, [field]: value }));
   const save = async event => {
     event.preventDefault();
     setBusy(true);
-    setNotice('');
+    setNotice(null);
     const { temporaryPassword, resignationDate, employmentStatus, ...profileFields } = form;
     const body = {
       ...profileFields,
@@ -86,11 +88,11 @@ export default function ManagerEmployees() {
       await adminApi(formMode === 'create' ? adminEndpoints.createEmployee() : adminEndpoints.updateEmployee(selectedId), {
         method: formMode === 'create' ? 'POST' : 'PUT', body,
       });
-      setNotice(formMode === 'create' ? 'Đã tạo hồ sơ và tài khoản nhân viên.' : 'Đã cập nhật hồ sơ nhân viên.');
+      setNotice({ tone: 'success', text: formMode === 'create' ? 'Đã tạo hồ sơ và tài khoản nhân viên.' : 'Đã cập nhật hồ sơ nhân viên.' });
       setFormMode(null);
       setReload(value => value + 1);
     } catch (failure) {
-      setNotice(failure.message || 'Không thể lưu hồ sơ nhân viên.');
+      setNotice({ tone: 'danger', text: failure.message || 'Không thể lưu hồ sơ nhân viên.' });
     } finally { setBusy(false); }
   };
   const deactivate = async () => {
@@ -98,10 +100,10 @@ export default function ManagerEmployees() {
     setBusy(true);
     try {
       await adminApi(adminEndpoints.deactivateEmployee(confirmEmployee.id), { method: 'DELETE' });
-      setNotice(`Đã ngừng hoạt động ${confirmEmployee.fullName}.`);
+      setNotice({ tone: 'success', text: `Đã ngừng hoạt động ${confirmEmployee.fullName}.` });
       setConfirmEmployee(null);
       setReload(value => value + 1);
-    } catch (failure) { setNotice(failure.message || 'Không thể ngừng hoạt động nhân viên.'); }
+    } catch (failure) { setNotice({ tone: 'danger', text: failure.message || 'Không thể ngừng hoạt động nhân viên.' }); }
     finally { setBusy(false); }
   };
 
@@ -126,24 +128,6 @@ export default function ManagerEmployees() {
         <p><b>Trưởng nhóm (TEAM_LEAD):</b> xem hồ sơ nhóm trực tiếp và chấm công cho nhóm.</p>
         <p><b>Khu vực Kho:</b> cấp quyền tác vụ kho, không cấp quyền duyệt phiếu.</p>
       </div>
-      {formMode && <form className="hr-form-grid hr-employee-form" onSubmit={save}>
-        <h3>{formMode === 'create' ? 'Thêm hồ sơ nhân viên' : 'Cập nhật hồ sơ nhân viên'}</h3>
-        {editableFields.filter(([field]) => formMode === 'create' ? field !== 'resignationDate' : true).map(([field, label, type]) => <label key={field}>{label}
-          <input required={['fullName','email','employeeCode','jobTitle','hireDate'].includes(field)} type={type} min={type === 'number' ? '0' : undefined} step={type === 'number' ? '1000' : undefined} value={form[field] ?? ''} onChange={event => setField(field, event.target.value)} />
-        </label>)}
-        {formMode === 'create' && <label>Mật khẩu tạm thời<input aria-label="Mật khẩu tạm thời" type="password" required minLength="8" autoComplete="new-password" value={form.temporaryPassword} onChange={event => setField('temporaryPassword', event.target.value)} /></label>}
-        <label>Quyền trong nhóm<select value={form.permissionProfile || 'STAFF'} onChange={event => setField('permissionProfile', event.target.value)}><option value="STAFF">Nhân viên</option><option value="TEAM_LEAD">Trưởng nhóm</option></select></label>
-        <label>Khu vực làm việc<select aria-label="Khu vực làm việc" value={form.workArea || 'GENERAL'} onChange={event => setField('workArea', event.target.value)}><option value="GENERAL">Chung</option><option value="SALES">Bán hàng</option><option value="WAREHOUSE">Kho</option></select></label>
-        <label>Trưởng nhóm trực tiếp<select value={form.reportsToEmployeeId || ''} onChange={event => setField('reportsToEmployeeId', event.target.value)}>
-          {(formMode === 'create' || !selectedEmployee?.reportsToEmployeeId) && <option value="">Không gán trưởng nhóm</option>}
-          {formMode === 'edit' && selectedEmployee?.reportsToEmployeeId && !teamLeads.some(lead => lead.id === selectedEmployee.reportsToEmployeeId)
-            && <option value={selectedEmployee.reportsToEmployeeId}>ID {selectedEmployee.reportsToEmployeeId} · trưởng nhóm hiện tại (giữ nguyên)</option>}
-          {teamLeads.filter(lead => lead.id !== selectedId).map(lead => <option key={lead.id} value={lead.id}>{lead.fullName} · {lead.employeeCode || `ID ${lead.id}`}</option>)}
-        </select></label>
-        <p className="hr-form-help">Chỉ nhân sự đang làm việc có quyền Trưởng nhóm mới xuất hiện trong danh sách.</p>
-        {formMode === 'edit' && <label>Tình trạng<select value={form.employmentStatus || 'ACTIVE'} onChange={event => setField('employmentStatus', event.target.value)}><option value="ACTIVE">Đang làm việc</option><option value="RESIGNED">Nghỉ việc</option><option value="TERMINATED">Đã chấm dứt</option></select></label>}
-        <div className="hr-form-actions"><button className="admin-primary" type="submit" disabled={busy}>{busy ? 'Đang lưu…' : formMode === 'create' ? 'Tạo hồ sơ' : 'Lưu hồ sơ'}</button><button type="button" disabled={busy} onClick={() => setFormMode(null)}>Hủy</button></div>
-      </form>}
       {error ? <ListError message={error} onRetry={() => setReload(value => value + 1)} /> : <>
         {data.content?.length ? <Table headers={['ID','Mã NV','Nhân viên','Chức danh','Điện thoại','Tình trạng','Thao tác']}>
           {data.content.map(employee => <tr key={employee.id}>
@@ -153,16 +137,52 @@ export default function ManagerEmployees() {
             <td>{employee.jobTitle || '—'}<small>{employee.permissionProfile === 'TEAM_LEAD' ? 'Trưởng nhóm' : 'Nhân viên'}</small></td>
             <td>{employee.phone || '—'}</td>
             <td>{employee.archived ? 'Đã lưu trữ' : employee.employmentStatus === 'ACTIVE' && !employee.locked ? 'Đang làm việc' : employee.employmentStatus === 'RESIGNED' ? 'Nghỉ việc' : employee.employmentStatus === 'TERMINATED' ? 'Đã chấm dứt' : 'Đã khóa'}</td>
-            <td className="hr-inline-actions">{employee.archived ? <span>Chỉ xem</span> : <><button type="button" onClick={() => beginEdit(employee)} aria-label={`Sửa ${employee.fullName}`}>Sửa</button><button type="button" className="hr-danger" onClick={() => setConfirmEmployee(employee)} aria-label={`Ngừng hoạt động ${employee.fullName}`}>Ngừng hoạt động</button></>}</td>
+            <td className="hr-inline-actions">{employee.archived ? <span>Chỉ xem</span> : <><button type="button" onClick={() => beginEdit(employee)} aria-label={`Sửa ${employee.fullName}`}>Sửa</button><button type="button" className="hr-danger" onClick={() => { setNotice(null); setConfirmEmployee(employee); }} aria-label={`Ngừng hoạt động ${employee.fullName}`}>Ngừng hoạt động</button></>}</td>
           </tr>)}
         </Table> : <p className="admin-table-empty">Chưa có nhân viên phù hợp.</p>}
         <PageControls page={page} totalPages={data.totalPages || 0} totalElements={data.totalElements} onPage={setPage} />
       </>}
-      {notice && <p role="status" className="hr-notice">{notice}</p>}
-      {confirmEmployee && <div className="hr-confirm-backdrop"><div role="dialog" aria-modal="true" aria-labelledby="hr-deactivate-title" className="hr-confirm-dialog">
-        <h3 id="hr-deactivate-title">Ngừng hoạt động nhân viên?</h3><p>{confirmEmployee.fullName} sẽ không thể tiếp tục đăng nhập. Hồ sơ chấm công và phiếu lương cũ vẫn được giữ lại.</p>
-        <div className="hr-form-actions"><button type="button" className="hr-danger" disabled={busy} onClick={deactivate}>{busy ? 'Đang xử lý…' : 'Xác nhận ngừng hoạt động'}</button><button type="button" disabled={busy} onClick={() => setConfirmEmployee(null)}>Hủy</button></div>
-      </div></div>}
+      {notice && (!formMode || notice.tone === 'success') && <InlineNotice tone={notice.tone}>{notice.text}</InlineNotice>}
+      <ManagerDialog
+        open={!!formMode}
+        onClose={closeForm}
+        title={formMode === 'create' ? 'Thêm hồ sơ nhân viên' : 'Cập nhật hồ sơ nhân viên'}
+        description="HR quản lý hồ sơ, hồ sơ liên hệ và tình trạng làm việc của nhân viên."
+        size="lg"
+      >
+        <form className="hr-form-grid hr-employee-form" onSubmit={save}>
+          {editableFields.filter(([field]) => formMode === 'create' ? field !== 'resignationDate' : true).map(([field, label, type]) => <label key={field}>{label}
+            <input required={['fullName','email','employeeCode','jobTitle','hireDate'].includes(field)} type={type} min={type === 'number' ? '0' : undefined} step={type === 'number' ? '1000' : undefined} value={form[field] ?? ''} onChange={event => setField(field, event.target.value)} />
+          </label>)}
+          {formMode === 'create' && <label>Mật khẩu tạm thời<input aria-label="Mật khẩu tạm thời" type="password" required minLength="8" autoComplete="new-password" value={form.temporaryPassword} onChange={event => setField('temporaryPassword', event.target.value)} /></label>}
+          <label>Quyền trong nhóm<select value={form.permissionProfile || 'STAFF'} onChange={event => setField('permissionProfile', event.target.value)}><option value="STAFF">Nhân viên</option><option value="TEAM_LEAD">Trưởng nhóm</option></select></label>
+          <label>Khu vực làm việc<select aria-label="Khu vực làm việc" value={form.workArea || 'GENERAL'} onChange={event => setField('workArea', event.target.value)}><option value="GENERAL">Chung</option><option value="SALES">Bán hàng</option><option value="WAREHOUSE">Kho</option></select></label>
+          <label>Trưởng nhóm trực tiếp<select value={form.reportsToEmployeeId || ''} onChange={event => setField('reportsToEmployeeId', event.target.value)}>
+            {(formMode === 'create' || !selectedEmployee?.reportsToEmployeeId) && <option value="">Không gán trưởng nhóm</option>}
+            {formMode === 'edit' && selectedEmployee?.reportsToEmployeeId && !teamLeads.some(lead => lead.id === selectedEmployee.reportsToEmployeeId)
+              && <option value={selectedEmployee.reportsToEmployeeId}>ID {selectedEmployee.reportsToEmployeeId} · trưởng nhóm hiện tại (giữ nguyên)</option>}
+            {teamLeads.filter(lead => lead.id !== selectedId).map(lead => <option key={lead.id} value={lead.id}>{lead.fullName} · {lead.employeeCode || `ID ${lead.id}`}</option>)}
+          </select></label>
+          <p className="hr-form-help">Chỉ nhân sự đang làm việc có quyền Trưởng nhóm mới xuất hiện trong danh sách.</p>
+          {formMode === 'edit' && <label>Tình trạng<select value={form.employmentStatus || 'ACTIVE'} onChange={event => setField('employmentStatus', event.target.value)}><option value="ACTIVE">Đang làm việc</option><option value="RESIGNED">Nghỉ việc</option><option value="TERMINATED">Đã chấm dứt</option></select></label>}
+          {notice?.tone === 'danger' && <InlineNotice tone="danger">{notice.text}</InlineNotice>}
+          <div className="admin-dialog-actions">
+            <button type="button" className="admin-dialog-cancel" disabled={busy} onClick={closeForm}>Hủy</button>
+            <button className="admin-primary" type="submit" disabled={busy}>{busy ? 'Đang lưu…' : formMode === 'create' ? 'Tạo hồ sơ' : 'Lưu hồ sơ'}</button>
+          </div>
+        </form>
+      </ManagerDialog>
+      <ManagerDialog
+        open={!!confirmEmployee}
+        onClose={() => { if (!busy) setConfirmEmployee(null); }}
+        title="Ngừng hoạt động nhân viên?"
+        actions={<>
+          <button type="button" className="admin-dialog-cancel" disabled={busy} onClick={() => setConfirmEmployee(null)}>Hủy</button>
+          <button type="button" className="admin-primary admin-danger-button" disabled={busy} onClick={deactivate}>{busy ? 'Đang xử lý…' : 'Xác nhận ngừng hoạt động'}</button>
+        </>}
+      >
+        <p>{confirmEmployee?.fullName} sẽ không thể tiếp tục đăng nhập. Hồ sơ chấm công và phiếu lương cũ vẫn được giữ lại.</p>
+      </ManagerDialog>
     </section>
   );
 }

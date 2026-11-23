@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Plus, Boxes, ClipboardPlus, Trash2 } from 'lucide-react';
 import { adminApi, adminEndpoints } from '../../api/manager-api';
 import { ListError, PanelLoading, PanelTitle, Table } from './ManagerComponents';
-import './styles/warehouse-workspace.css';
+import { InlineNotice, Tabs } from './ManagerKit';
 
 const localDateTime = () => {
   const date = new Date();
@@ -81,10 +81,16 @@ export default function WarehouseMaterials() {
   if (materials === null && !error) return <PanelLoading />;
   return <section className="admin-panel warehouse-workspace">
     <PanelTitle title="Nguyên liệu và nhập kho" subtitle="Theo dõi tồn nguyên liệu, lập danh mục và ghi nhận phiếu nhập từ nhà cung cấp." />
-    <div className="warehouse-tabs" role="tablist" aria-label="Chức năng nguyên liệu">
-      <button type="button" role="tab" aria-selected={mode === 'materials'} onClick={() => setMode('materials')}><Boxes size={16}/> Danh mục nguyên liệu</button>
-      <button type="button" role="tab" aria-selected={mode === 'receipts'} onClick={() => setMode('receipts')}><ClipboardPlus size={16}/> Phiếu nhập nguyên liệu</button>
-    </div>
+    <Tabs
+      tabs={[
+        { key: 'materials', label: 'Danh mục nguyên liệu', icon: <Boxes size={16} /> },
+        { key: 'receipts', label: 'Phiếu nhập nguyên liệu', icon: <ClipboardPlus size={16} /> },
+      ]}
+      value={mode}
+      onChange={setMode}
+      ariaLabel="Chức năng nguyên liệu"
+    />
+    {notice && <InlineNotice tone={notice.startsWith('Đã') ? 'success' : 'danger'}>{notice}</InlineNotice>}
     {error ? <ListError message={error} onRetry={retry} /> : mode === 'materials' ? <>
       <form className="warehouse-form-card" onSubmit={saveMaterial}>
         <h3>{editing ? `Sửa nguyên liệu ${editing.code}` : 'Thêm nguyên liệu'}</h3>
@@ -117,12 +123,10 @@ export default function WarehouseMaterials() {
         <label className="warehouse-notes">Ghi chú<textarea rows="2" maxLength="2000" value={note} onChange={event => setNote(event.target.value)}/></label>
         <div className="warehouse-actions"><strong>Tổng tiền dự kiến: {money(total)}</strong><button className="admin-primary" disabled={busy}>{busy ? 'Đang ghi nhận…' : 'Xác nhận nhập nguyên liệu'}</button></div>
       </form>
-      {notice && <p className="warehouse-notice" role={notice.startsWith('Chọn') || notice.startsWith('Mỗi') ? 'alert' : 'status'}>{notice}</p>}
       <div className="warehouse-section-head"><h3>Lịch sử nhập nguyên liệu</h3><span>{receipts?.length || 0} phiếu gần nhất</span></div>
       <Table headers={['Mã phiếu', 'Ngày nhập', 'Nhà cung cấp', 'Số dòng', 'Tổng tiền']}>
         {(receipts || []).map(receipt => <tr key={receipt.id}><td>{receipt.receiptCode}</td><td>{receipt.receivedAt ? new Date(receipt.receivedAt).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }) : '—'}</td><td>{receipt.supplierName}</td><td>{receipt.itemCount}</td><td>{money(receipt.totalCost)}</td></tr>)}
       </Table>
     </>}
-    {notice && mode === 'materials' && <p className="warehouse-notice" role="status">{notice}</p>}
   </section>;
 }

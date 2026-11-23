@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { adminApi } from '../../api/manager-api';
-import './manager-payment.css';
+import { InlineNotice } from './ManagerKit';
 
 const money = value => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(Number(value || 0));
 const date = value => value ? new Date(value).toLocaleString('vi-VN') : '—';
@@ -78,13 +78,20 @@ export default function ManagerPaymentPanel({ order, onUpdated, onEditingChange 
     }
   };
 
+  const hasFinanceContent = finance.reviewRequired
+    || order.paymentMethod === 'PAYOS'
+    || finance.codCollectedAt
+    || (order.paymentMethod === 'COD' && ['DELIVERED', 'COMPLETED'].includes(order.status) && !finance.codCollectedAt)
+    || (order.status === 'CANCELLED' && order.paymentStatus === 'PAID');
+  if (!hasFinanceContent && !mode && !failure) return null;
+
   return <section className="manager-payment-panel" aria-label="Thanh toán và đối soát">
     <h3>Thanh toán và đối soát</h3>
-    {finance.reviewRequired && <div role="status" className="manager-payment-warning">
-      <strong>Cần kiểm tra thanh toán</strong>
-      <p>{reviewLabels[finance.reviewReason] || 'Cần đối chiếu thông tin giao dịch.'}</p>
-      <small>{date(finance.reviewAt)}</small>
-    </div>}
+    {finance.reviewRequired && (
+      <InlineNotice tone="warning" title="Cần kiểm tra thanh toán">
+        {reviewLabels[finance.reviewReason] || 'Cần đối chiếu thông tin giao dịch.'} · {date(finance.reviewAt)}
+      </InlineNotice>
+    )}
     {order.paymentMethod === 'PAYOS' && <button type="button" className="admin-action" disabled={busy || mode} onClick={reconcile}>Đối chiếu lại PayOS</button>}
     {finance.codCollectedAt && <p>Đã xác nhận thu toàn bộ COD: {date(finance.codCollectedAt)}</p>}
     {order.paymentMethod === 'COD' && ['DELIVERED', 'COMPLETED'].includes(order.status) && !finance.codCollectedAt && !mode &&

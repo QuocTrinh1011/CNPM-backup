@@ -2,6 +2,8 @@
 @import "./manager-ui/sidebar.css";
 @import "./manager-ui/shell.css";
 @import "./manager-ui/surfaces.css";
+@import "./manager-ui/layout.css";
+@import "./manager-ui/components.css";
 @import "./manager-ui/toolbar.css";
 @import "./manager-ui/tables.css";
 @import "./manager-ui/pagination.css";
@@ -11,3 +13,10 @@
 @import "./manager-ui/login.css";
 @import "./manager-ui/responsive.css";
 @import "./manager-ui/customer-table.css";
+@import "./manager-ui/domain/sales.css";
+@import "./manager-ui/domain/customers.css";
+@import "./manager-ui/domain/surveys.css";
+@import "./manager-ui/domain/promotions.css";
+@import "./manager-ui/domain/hr.css";
+@import "./manager-ui/domain/warehouse.css";
+@import "./manager-ui/domain/reports.css";

@@ -5,8 +5,9 @@ import { pageData } from "../manager-data";
 import { PanelLoading, Table, ListError, PageControls, PanelTitle } from "../ManagerComponents";
 import SurveyRewardEditor, { RewardFields, emptyReward } from "../SurveyRewardEditor";
 import React, { useCallback, useEffect, useState } from "react";
-import { ClipboardList, X, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { adminApi, adminEndpoints } from "../../../api/manager-api";
+import { ManagerDialog } from "../ManagerKit";
 import { useManagerList as useAdminList } from "../../../shared/hooks/useManagerResource";
 
 export function Surveys({ notify, location = '', go }) {
@@ -52,15 +53,6 @@ export function Surveys({ notify, location = '', go }) {
     setDialogOpen(false);
     setFormError("");
   }, [busy]);
-
-  useEffect(() => {
-    if (!dialogOpen) return;
-    const onKeyDown = (e) => {
-      if (e.key === "Escape") closeDialog();
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [dialogOpen, busy, closeDialog]);
 
   const change = (key, patch) =>
     setQuestions((current) =>
@@ -243,290 +235,252 @@ export function Surveys({ notify, location = '', go }) {
         </>
       )}
 
-      {/* Modal Dialog Tạo Khảo Sát */}
-      {dialogOpen && (
-        <div className="admin-dialog-backdrop" onClick={closeDialog}>
-          <div
-            className="admin-dialog admin-survey-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="survey-dialog-title"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="admin-dialog-header">
-              <div className="admin-dialog-header-title">
-                <ClipboardList size={20} className="admin-dialog-icon" />
-                <h2 id="survey-dialog-title">Tạo khảo sát mới</h2>
-              </div>
-              <button
-                type="button"
-                className="admin-dialog-close"
-                aria-label="Đóng"
-                disabled={busy}
-                onClick={closeDialog}
-              >
-                <X size={18} />
-              </button>
+      <ManagerDialog
+        open={dialogOpen}
+        onClose={closeDialog}
+        title="Tạo khảo sát mới"
+        size="xl"
+        closeLabel="Đóng"
+      >
+        <form onSubmit={create} className="manager-survey-form">
+          <RewardFields value={reward} onChange={setReward} disabled={busy}/>
+          {audience.recipientFilter?<SurveyRecipientGroup filter={audience.recipientFilter} onReady={setGroupReady} disabled={busy} onOther={()=>setAudience({audience:'ALL',customerIds:[]})}/>:<SurveyAudience value={audience} onChange={setAudience} disabled={busy}/>}
+          {formError && (
+            <p role="alert" className="manager-form-error">
+              {formError}
+            </p>
+          )}
+
+          <fieldset disabled={busy} className="admin-survey-fieldset">
+            <div className="admin-form-group">
+              <label htmlFor="survey-title">Tên khảo sát</label>
+              <input
+                id="survey-title"
+                required
+                maxLength={255}
+                placeholder="Ví dụ: Khảo sát mức độ hài lòng về chất lượng dịch vụ"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </div>
 
-            <form onSubmit={create} className="admin-dialog-form">
-              <div className="admin-survey-dialog-body">
-                <RewardFields value={reward} onChange={setReward} disabled={busy}/>
-                {audience.recipientFilter?<SurveyRecipientGroup filter={audience.recipientFilter} onReady={setGroupReady} disabled={busy} onOther={()=>setAudience({audience:'ALL',customerIds:[]})}/>:<SurveyAudience value={audience} onChange={setAudience} disabled={busy}/>}
-                {formError && (
-                  <p role="alert" className="danger-text" style={{ margin: 0 }}>
-                    {formError}
-                  </p>
-                )}
+            <div className="admin-form-group">
+              <label htmlFor="survey-desc">Mô tả</label>
+              <textarea
+                id="survey-desc"
+                maxLength={4000}
+                rows={2}
+                placeholder="Mô tả mục đích khảo sát hoặc thông điệp gửi tới khách hàng..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
 
-                <fieldset disabled={busy} className="admin-survey-fieldset">
-                  <div className="admin-form-group">
-                    <label htmlFor="survey-title">Tên khảo sát</label>
+            <div className="admin-survey-options-header manager-survey-questions-title">
+              DANH SÁCH CÂU HỎI ({questions.length})
+            </div>
+
+            {questions.map((q, index) => (
+              <div className="admin-survey-card" key={q.key}>
+                <div className="admin-survey-card-header">
+                  <div className="admin-survey-card-title">
+                    <span className="admin-survey-card-badge">
+                      #{index + 1}
+                    </span>
+                    <h3>Câu hỏi {index + 1}</h3>
+                  </div>
+                  {questions.length > 1 && (
+                    <button
+                      type="button"
+                      className="admin-action danger-text"
+                      onClick={() =>
+                        setQuestions((current) =>
+                          current.filter((item) => item.key !== q.key)
+                        )
+                      }
+                    >
+                      Xóa câu hỏi
+                    </button>
+                  )}
+                </div>
+
+                <div className="admin-form-group">
+                  <label htmlFor={`survey-q-${index}`}>
+                    Nội dung câu hỏi {index + 1}
+                  </label>
+                  <textarea
+                    id={`survey-q-${index}`}
+                    required
+                    maxLength={1000}
+                    rows={2}
+                    placeholder="Nhập nội dung câu hỏi..."
+                    value={q.text}
+                    onChange={(e) =>
+                      change(q.key, { text: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="admin-survey-controls-row">
+                  <div className="admin-survey-type-select">
+                    <label
+                      htmlFor={`survey-q-type-${index}`}
+                      className="manager-survey-type-label"
+                    >
+                      Kiểu câu hỏi {index + 1}
+                    </label>
+                    <select
+                      id={`survey-q-type-${index}`}
+                      value={q.type}
+                      onChange={(e) =>
+                        change(q.key, { type: e.target.value })
+                      }
+                    >
+                      <option value="SINGLE_CHOICE">
+                        Chọn một đáp án (Radio)
+                      </option>
+                      <option value="MULTIPLE_CHOICE">
+                        Chọn nhiều đáp án (Checkbox)
+                      </option>
+                    </select>
+                  </div>
+
+                  <label className="admin-survey-required-label">
                     <input
-                      id="survey-title"
-                      required
-                      maxLength={255}
-                      autoFocus
-                      placeholder="Ví dụ: Khảo sát mức độ hài lòng về chất lượng dịch vụ"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      type="checkbox"
+                      checked={q.required}
+                      onChange={(e) =>
+                        change(q.key, { required: e.target.checked })
+                      }
                     />
-                  </div>
+                    <span>Bắt buộc trả lời</span>
+                  </label>
+                </div>
 
-                  <div className="admin-form-group">
-                    <label htmlFor="survey-desc">Mô tả</label>
-                    <textarea
-                      id="survey-desc"
-                      maxLength={4000}
-                      rows={2}
-                      placeholder="Mô tả mục đích khảo sát hoặc thông điệp gửi tới khách hàng..."
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                    />
-                  </div>
-
-                  <div
-                    className="admin-survey-options-header"
-                    style={{ marginTop: 8 }}
-                  >
-                    DANH SÁCH CÂU HỎI ({questions.length})
-                  </div>
-
-                  {questions.map((q, index) => (
-                    <div className="admin-survey-card" key={q.key}>
-                      <div className="admin-survey-card-header">
-                        <div className="admin-survey-card-title">
-                          <span className="admin-survey-card-badge">
-                            #{index + 1}
-                          </span>
-                          <h3>Câu hỏi {index + 1}</h3>
-                        </div>
-                        {questions.length > 1 && (
-                          <button
-                            type="button"
-                            className="admin-action danger-text"
-                            onClick={() =>
-                              setQuestions((current) =>
-                                current.filter((item) => item.key !== q.key)
-                              )
-                            }
-                          >
-                            Xóa câu hỏi
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="admin-form-group">
-                        <label htmlFor={`survey-q-${index}`}>
-                          Nội dung câu hỏi {index + 1}
-                        </label>
-                        <textarea
-                          id={`survey-q-${index}`}
-                          required
-                          maxLength={1000}
-                          rows={2}
-                          placeholder="Nhập nội dung câu hỏi..."
-                          value={q.text}
-                          onChange={(e) =>
-                            change(q.key, { text: e.target.value })
-                          }
-                        />
-                      </div>
-
-                      <div className="admin-survey-controls-row">
-                        <div className="admin-survey-type-select">
-                          <label
-                            htmlFor={`survey-q-type-${index}`}
-                            style={{
-                              marginBottom: 4,
-                              display: "block",
-                              fontSize: "12px",
-                              fontWeight: 600,
-                            }}
-                          >
-                            Kiểu câu hỏi {index + 1}
-                          </label>
-                          <select
-                            id={`survey-q-type-${index}`}
-                            value={q.type}
-                            onChange={(e) =>
-                              change(q.key, { type: e.target.value })
-                            }
-                          >
-                            <option value="SINGLE_CHOICE">
-                              Chọn một đáp án (Radio)
-                            </option>
-                            <option value="MULTIPLE_CHOICE">
-                              Chọn nhiều đáp án (Checkbox)
-                            </option>
-                          </select>
-                        </div>
-
-                        <label className="admin-survey-required-label">
-                          <input
-                            type="checkbox"
-                            checked={q.required}
-                            onChange={(e) =>
-                              change(q.key, { required: e.target.checked })
-                            }
-                          />
-                          <span>Bắt buộc trả lời</span>
-                        </label>
-                      </div>
-
-                      <div className="admin-survey-options-group">
-                        <span className="admin-survey-options-header">
-                          Các phương án trả lời:
-                        </span>
-                        {q.options.map((option, oi) => (
-                          <div className="admin-survey-option-row" key={oi}>
-                            <div
-                              className={`admin-survey-option-bullet ${
-                                q.type === "MULTIPLE_CHOICE" ? "square" : ""
-                              }`}
-                            />
-                            <input
-                              aria-label={`Câu ${index + 1}, phương án ${oi + 1}`}
-                              required
-                              maxLength={4000}
-                              placeholder={`Phương án ${oi + 1}`}
-                              value={option}
-                              onChange={(e) =>
-                                change(q.key, {
-                                  options: q.options.map((v, i) =>
-                                    i === oi ? e.target.value : v
-                                  ),
-                                })
-                              }
-                            />
-                            <button
-                              type="button"
-                              className="admin-survey-option-delete"
-                              disabled={q.options.length <= 2}
-                              title={
-                                q.options.length <= 2
-                                  ? "Cần tối thiểu 2 phương án"
-                                  : "Xóa phương án này"
-                              }
-                              onClick={() =>
-                                change(q.key, {
-                                  options: q.options.filter((_, i) => i !== oi),
-                                })
-                              }
-                            >
-                              Xóa
-                            </button>
-                          </div>
-                        ))}
-
-                        <button
-                          type="button"
-                          className="admin-survey-add-option"
-                          onClick={() =>
-                            change(q.key, { options: [...q.options, ""] })
-                          }
-                        >
-                          <Plus size={14} /> Thêm phương án
-                        </button>
-                      </div>
+                <div className="admin-survey-options-group">
+                  <span className="admin-survey-options-header">
+                    Các phương án trả lời:
+                  </span>
+                  {q.options.map((option, oi) => (
+                    <div className="admin-survey-option-row" key={oi}>
+                      <div
+                        className={`admin-survey-option-bullet ${
+                          q.type === "MULTIPLE_CHOICE" ? "square" : ""
+                        }`}
+                      />
+                      <input
+                        aria-label={`Câu ${index + 1}, phương án ${oi + 1}`}
+                        required
+                        maxLength={4000}
+                        placeholder={`Phương án ${oi + 1}`}
+                        value={option}
+                        onChange={(e) =>
+                          change(q.key, {
+                            options: q.options.map((v, i) =>
+                              i === oi ? e.target.value : v
+                            ),
+                          })
+                        }
+                      />
+                      <button
+                        type="button"
+                        className="admin-survey-option-delete"
+                        disabled={q.options.length <= 2}
+                        title={
+                          q.options.length <= 2
+                            ? "Cần tối thiểu 2 phương án"
+                            : "Xóa phương án này"
+                        }
+                        onClick={() =>
+                          change(q.key, {
+                            options: q.options.filter((_, i) => i !== oi),
+                          })
+                        }
+                      >
+                        Xóa
+                      </button>
                     </div>
                   ))}
 
                   <button
                     type="button"
-                    className="admin-survey-add-question-btn"
+                    className="admin-survey-add-option"
                     onClick={() =>
-                      setQuestions((current) => [...current, newQuestion()])
+                      change(q.key, { options: [...q.options, ""] })
                     }
                   >
-                    <Plus size={16} /> Thêm câu hỏi mới
+                    <Plus size={14} /> Thêm phương án
                   </button>
-                </fieldset>
+                </div>
               </div>
+            ))}
 
-              <div className="admin-dialog-actions" style={{ marginTop: 16 }}>
-                <button
-                  type="button"
-                  className="admin-dialog-cancel"
-                  disabled={busy}
-                  onClick={closeDialog}
-                >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  className="admin-primary"
-                  disabled={busy || !questions.length || (!!audience.recipientFilter && !groupReady)}
-                >
-                  {busy ? "Đang lưu..." : "Lưu bản nháp"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            <button
+              type="button"
+              className="admin-survey-add-question-btn"
+              onClick={() =>
+                setQuestions((current) => [...current, newQuestion()])
+              }
+            >
+              <Plus size={16} /> Thêm câu hỏi mới
+            </button>
+          </fieldset>
 
-      {/* Modal xác nhận xóa khảo sát */}
-      {deleting && (
-        <div className="admin-dialog-backdrop" onClick={() => !busy && setDeleting(null)}>
-          <div
-            className="admin-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="survey-delete-title"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 id="survey-delete-title">Xóa khảo sát?</h2>
-            <p>
-              Khảo sát “{deleting.title}” sẽ bị gỡ khỏi danh sách. Câu hỏi và
-              kết quả đã thu thập được giữ lại.
-            </p>
-            {formError && (
-              <p role="alert" className="danger-text">
-                {formError}
-              </p>
-            )}
-            <div className="admin-dialog-actions">
-              <button
-                type="button"
-                className="admin-dialog-cancel"
-                disabled={busy}
-                onClick={() => setDeleting(null)}
-              >
-                Quay lại
-              </button>
-              <button
-                type="button"
-                className="admin-primary admin-danger-button"
-                disabled={busy}
-                onClick={remove}
-              >
-                {busy ? "Đang xóa..." : "Xác nhận xóa"}
-              </button>
-            </div>
+          <div className="admin-dialog-actions">
+            <button
+              type="button"
+              className="admin-dialog-cancel"
+              disabled={busy}
+              onClick={closeDialog}
+            >
+              Hủy
+            </button>
+            <button
+              type="submit"
+              className="admin-primary"
+              disabled={busy || !questions.length || (!!audience.recipientFilter && !groupReady)}
+            >
+              {busy ? "Đang lưu..." : "Lưu bản nháp"}
+            </button>
           </div>
-        </div>
-      )}
+        </form>
+      </ManagerDialog>
+
+      <ManagerDialog
+        open={!!deleting}
+        onClose={() => { if (!busy) setDeleting(null); }}
+        title="Xóa khảo sát?"
+        actions={
+          <>
+            <button
+              type="button"
+              className="admin-dialog-cancel"
+              disabled={busy}
+              onClick={() => setDeleting(null)}
+            >
+              Quay lại
+            </button>
+            <button
+              type="button"
+              className="admin-primary admin-danger-button"
+              disabled={busy}
+              onClick={remove}
+            >
+              {busy ? "Đang xóa..." : "Xác nhận xóa"}
+            </button>
+          </>
+        }
+      >
+        <p>
+          Khảo sát “{deleting?.title}” sẽ bị gỡ khỏi danh sách. Câu hỏi và
+          kết quả đã thu thập được giữ lại.
+        </p>
+        {formError && (
+          <p role="alert" className="manager-form-error">
+            {formError}
+          </p>
+        )}
+      </ManagerDialog>
     </div>
   );
 }

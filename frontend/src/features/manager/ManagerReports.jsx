@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Activity, AlertTriangle, ArrowDownRight, ArrowUpRight, BarChart3, RefreshCw } from "lucide-react";
 import { adminApi, adminEndpoints } from "../../api/manager-api";
 import { money } from "./manager-data";
-import "./manager-reports.css";
+import { Table } from "./ManagerComponents";
 
 const CURRENT_YEAR = new Date().getFullYear();
 const DETAIL_OPTIONS = [
@@ -29,14 +29,13 @@ function routeFilters(location) {
 
 function ReportTable({ name, headers, rows, renderRow }) {
   return (
-    <div className="manager-report-table-wrap">
-      <table aria-label={name}>
-        <thead><tr>{headers.map(header => <th key={header}>{header}</th>)}</tr></thead>
-        <tbody>{rows.length ? rows.map(renderRow) : (
-          <tr><td colSpan={headers.length} className="manager-report-empty">Chưa có dữ liệu trong kỳ này.</td></tr>
-        )}</tbody>
-      </table>
-    </div>
+    <Table
+      headers={headers}
+      ariaLabel={name}
+      empty={{ description: "Chưa có dữ liệu trong kỳ này." }}
+    >
+      {rows.map(renderRow)}
+    </Table>
   );
 }
 
@@ -99,11 +98,12 @@ export default function ManagerReports({ location, go }) {
 
   const trend = data?.trend || [];
   const maxTrend = Math.max(1, ...trend.flatMap(bucket => [Number(bucket.income) || 0, Number(bucket.expense) || 0]));
+  const barHeight = value => Math.max(0, Math.min(100, ((Number(value) || 0) / maxTrend) * 100));
   const activeTitle = DETAIL_OPTIONS.find(([value]) => value === detailType)?.[1] || DETAIL_OPTIONS[0][1];
 
   return <div className="admin-content manager-reports">
     <section className="admin-panel manager-reports-toolbar" aria-label="Bộ lọc báo cáo">
-      <div className="manager-reports-toolbar-copy"><span className="admin-eyebrow">PHÂN TÍCH CỬA HÀNG</span><p>Chọn kỳ để xem doanh thu, chi nhập và hiệu quả bán hàng.</p></div>
+      <div className="manager-reports-toolbar-copy"><p>Chọn kỳ để xem doanh thu, chi nhập và hiệu quả bán hàng.</p></div>
       <div className="manager-reports-filters">
         <label>Năm báo cáo<select aria-label="Năm báo cáo" value={String(year)} onChange={event => updateFilters({ year: Number(event.target.value) })}>
           {years.map(value => <option value={value} key={value}>{value}{value === CURRENT_YEAR ? " · Hiện hành" : ""}</option>)}
@@ -128,10 +128,19 @@ export default function ManagerReports({ location, go }) {
           <div className="manager-report-legend"><span><i className="income" />Tổng thu</span><span><i className="expense" />Chi nhập kho</span></div>
         </div>
         {trend.length ? <div className={`manager-report-chart${month == null ? " is-year" : " is-month"}`} role="img" aria-label={`Xu hướng thu chi ${month == null ? "theo tháng" : "theo ngày"}`}>
-          {trend.map((bucket, index) => <div className="manager-report-chart-bucket" key={`${bucket.label}-${index}`} aria-label={`${bucket.label}: thu ${money(bucket.income)}, chi ${money(bucket.expense)}`}>
-            <div className="manager-report-bars"><i className="income" style={{ height: `${Math.max(0, (Number(bucket.income) || 0) / maxTrend * 100)}%` }} /><i className="expense" style={{ height: `${Math.max(0, (Number(bucket.expense) || 0) / maxTrend * 100)}%` }} /></div>
-            <span>{bucket.label}</span>
-          </div>)}
+          {trend.map((bucket, index) => {
+            const incomeHeight = barHeight(bucket.income);
+            const expenseHeight = barHeight(bucket.expense);
+            return <div className="manager-report-chart-bucket" key={`${bucket.label}-${index}`} aria-label={`${bucket.label}: thu ${money(bucket.income)}, chi ${money(bucket.expense)}`}>
+              <div className="manager-report-bars">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                  <rect className="income" x="16" y={100 - incomeHeight} width="32" height={incomeHeight} rx="1.5" />
+                  <rect className="expense" x="52" y={100 - expenseHeight} width="32" height={expenseHeight} rx="1.5" />
+                </svg>
+              </div>
+              <span>{bucket.label}</span>
+            </div>;
+          })}
         </div> : <p className="manager-report-empty">Chưa có dữ liệu xu hướng trong kỳ này.</p>}
       </section>
 

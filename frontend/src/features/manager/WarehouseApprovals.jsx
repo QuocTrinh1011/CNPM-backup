@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Check, ClipboardCheck, X } from 'lucide-react';
 import { adminApi, adminEndpoints } from '../../api/manager-api';
 import { ListError, PanelLoading, PanelTitle } from './ManagerComponents';
-import './styles/warehouse-workspace.css';
+import { InlineNotice, StatusPill, Tabs } from './ManagerKit';
 
 const queues = [
   ['materials', 'Yêu cầu xuất nguyên liệu', adminEndpoints.warehouseMaterialRequests, adminEndpoints.decideWarehouseMaterialRequest],
@@ -10,6 +10,7 @@ const queues = [
   ['finished', 'Yêu cầu xuất thành phẩm', adminEndpoints.warehouseFinishedGoodsRequests, adminEndpoints.decideWarehouseFinishedGoodsRequest],
 ];
 const statusLabel = status => ({ PENDING: 'Chờ duyệt', APPROVED: 'Đã duyệt', REJECTED: 'Từ chối' })[status] || status;
+const statusTone = status => ({ PENDING: 'warning', APPROVED: 'success', REJECTED: 'danger' })[status] || 'neutral';
 
 export default function WarehouseApprovals() {
   const [queueKey, setQueueKey] = useState('materials');
@@ -43,14 +44,17 @@ export default function WarehouseApprovals() {
 
   return <section className="admin-panel warehouse-workspace">
     <PanelTitle title="Duyệt yêu cầu kho" subtitle="Xem và quyết định cấp nguyên liệu, nhận lại nguyên liệu dư hoặc chuyển thành phẩm sang kho bán." />
-    <div className="warehouse-tabs" role="tablist" aria-label="Hàng đợi yêu cầu kho">
-      {queues.map(([key, label]) => <button key={key} type="button" role="tab" aria-selected={queueKey === key} onClick={() => { setQueueKey(key); setNotice(''); }}><ClipboardCheck size={16}/>{label}</button>)}
-    </div>
+    <Tabs
+      tabs={queues.map(([key, label]) => ({ key, label, icon: <ClipboardCheck size={16} /> }))}
+      value={queueKey}
+      onChange={key => { setQueueKey(key); setNotice(''); }}
+      ariaLabel="Hàng đợi yêu cầu kho"
+    />
     <label className="warehouse-notes">Ghi chú quyết định<textarea aria-label="Ghi chú quyết định" rows="2" maxLength="2000" value={note} onChange={event => setNote(event.target.value)} placeholder="Không bắt buộc" /></label>
     {error && <ListError message={error} onRetry={() => setReload(value => value + 1)} />}
     {rows === null && !error ? <PanelLoading /> : rows?.length ? <div className="warehouse-approval-list">
       {rows.map(row => <article className="warehouse-approval-card" key={row.id}>
-        <div className="warehouse-approval-heading"><div><b>{row.requestCode || row.returnCode}</b><span>{row.planCode ? `Kế hoạch ${row.planCode} · ` : ''}{row.employeeName || 'Nhân viên'}</span></div><span className={`warehouse-status status-${String(row.status).toLowerCase()}`}>{statusLabel(row.status)}</span></div>
+        <div className="warehouse-approval-heading"><div><b>{row.requestCode || row.returnCode}</b><span>{row.planCode ? `Kế hoạch ${row.planCode} · ` : ''}{row.employeeName || 'Nhân viên'}</span></div><StatusPill tone={statusTone(row.status)}>{statusLabel(row.status)}</StatusPill></div>
         {row.employeeNote && <p>{row.employeeNote}</p>}
         <ul>{(row.items || []).map((item, index) => <li key={`${item.planMaterialId || item.productId || item.materialId}-${index}`}>
           {item.materialCode || item.productName || item.materialName} · {item.quantity} {item.unit || ''}
@@ -62,6 +66,6 @@ export default function WarehouseApprovals() {
         {row.decisionNote && <small>Ghi chú quyết định: {row.decisionNote}</small>}
       </article>)}
     </div> : !error ? <p className="warehouse-empty">Không có yêu cầu trong nhóm này.</p> : null}
-    {notice && <p className="warehouse-notice" role="status">{notice}</p>}
+    {notice && <InlineNotice tone={notice.startsWith('Đã') ? 'success' : 'danger'}>{notice}</InlineNotice>}
   </section>;
 }

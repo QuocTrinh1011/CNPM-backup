@@ -1,0 +1,506 @@
+/* ------------------------------------------------- customers & 360 profile */
+
+/* Lifecycle pill + advanced segmentation filters (ported from customer-lifecycle.css) */
+.manager-shell .customer-lifecycle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 160px;
+}
+
+.manager-shell .customer-lifecycle small {
+  display: block;
+  width: 100%;
+  color: var(--admin-muted);
+  font-size: 11px;
+}
+
+.manager-shell .customer-lifecycle .admin-badge {
+  background: var(--admin-input);
+  color: var(--admin-muted);
+}
+
+.manager-shell .customer-lifecycle .lifecycle-LOYAL {
+  color: var(--admin-info);
+  background: var(--admin-info-soft);
+}
+
+.manager-shell .customer-lifecycle .warning {
+  color: var(--admin-warning);
+  background: var(--admin-warning-soft);
+}
+
+.manager-shell .customer-lifecycle-filters {
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-input);
+}
+
+.manager-shell .customer-lifecycle-filters summary {
+  cursor: pointer;
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.manager-shell .customer-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.manager-shell .customer-filter-grid > label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.manager-shell .customer-filter-grid :is(input, select) {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font: inherit;
+  font-size: 12.5px;
+  box-sizing: border-box;
+}
+
+.manager-shell .customer-lifecycle-filters p {
+  margin: 10px 0 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.manager-shell .customer-lifecycle-filters > button {
+  margin-top: 10px;
+}
+
+.manager-shell .customer-purchase-metrics {
+  display: grid;
+  gap: 3px;
+  min-width: 160px;
+  color: var(--admin-muted);
+  font-size: 11.5px;
+}
+
+.manager-shell .customer-purchase-metrics strong {
+  color: var(--admin-text);
+  font-size: 13px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Survey picker embedded in the segmentation filters */
+.manager-shell .survey-filter-picker {
+  display: grid;
+  gap: 8px;
+  grid-column: 1 / -1;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.manager-shell .survey-filter-picker > label {
+  display: grid;
+  gap: 5px;
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.manager-shell .survey-filter-picker :is(input, select) {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font: inherit;
+  font-size: 12.5px;
+  box-sizing: border-box;
+}
+
+.manager-shell .survey-filter-picker small {
+  color: var(--admin-muted);
+  font-size: 11.5px;
+}
+
+.manager-shell .survey-filter-picker [role="alert"] {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--admin-danger);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.manager-shell .survey-filter-pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.manager-shell .survey-filter-picker > button {
+  justify-self: start;
+}
+
+/* Customer 360 profile (ported from customer-profile.css) */
+.manager-shell .customer-profile {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  max-width: 1400px;
+}
+
+.manager-shell .customer-profile > .admin-panel {
+  margin: 0;
+}
+
+.manager-shell .customer-profile > button {
+  justify-self: start;
+}
+
+.manager-shell .profile-identity {
+  display: grid;
+  gap: 12px;
+}
+
+.manager-shell .profile-identity > div:first-child {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.manager-shell .profile-identity h2 {
+  margin: 0;
+  color: var(--admin-text);
+  font-size: 19px;
+  font-weight: 750;
+  letter-spacing: -.02em;
+}
+
+.manager-shell .profile-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.manager-shell .profile-fields > div {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+}
+
+.manager-shell .profile-fields dt {
+  color: var(--admin-muted);
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.manager-shell .profile-fields dd {
+  margin: 4px 0 0;
+  color: var(--admin-text);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.manager-shell .profile-wide {
+  grid-column: 1 / -1;
+}
+
+.manager-shell .profile-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.manager-shell .profile-metrics .admin-panel {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 16px;
+}
+
+.manager-shell .profile-metrics span {
+  color: var(--admin-muted);
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.manager-shell .profile-metrics strong {
+  color: var(--admin-text);
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.manager-shell .profile-explanation {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.manager-shell .profile-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 16px;
+  padding: 4px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+}
+
+.manager-shell .profile-tabs button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--admin-muted);
+  font-size: 12.5px;
+  font-weight: 650;
+  box-shadow: none;
+}
+
+.manager-shell .profile-tabs button:hover {
+  color: var(--admin-text);
+  background: color-mix(in srgb, var(--admin-card) 70%, transparent);
+}
+
+.manager-shell .profile-tabs button.admin-primary {
+  border-color: var(--admin-border);
+  background: var(--admin-card);
+  color: var(--admin-primary);
+}
+
+.manager-shell .profile-voucher-sections {
+  display: grid;
+  gap: 22px;
+}
+
+.manager-shell .profile-history {
+  display: grid;
+  gap: 10px;
+}
+
+.manager-shell .profile-history + .profile-history {
+  margin-top: 22px;
+}
+
+.manager-shell .profile-history h2 {
+  margin: 0;
+  color: var(--admin-text);
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: -.01em;
+}
+
+.manager-shell .profile-history > p {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.manager-shell .profile-records {
+  display: grid;
+  gap: 10px;
+}
+
+.manager-shell .profile-record {
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-card);
+  overflow-wrap: anywhere;
+  transition: border-color var(--manager-transition);
+}
+
+.manager-shell .profile-record:hover {
+  border-color: color-mix(in srgb, var(--admin-primary) 38%, var(--admin-border));
+}
+
+.manager-shell .profile-record h3 {
+  margin: 0 0 6px;
+  color: var(--admin-text);
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.manager-shell .profile-record p {
+  margin: 4px 0;
+  color: var(--admin-muted);
+  font-size: 12.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.manager-shell .profile-record small {
+  color: var(--admin-muted);
+  font-size: 11.5px;
+}
+
+.manager-shell .profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.manager-shell .profile-row strong {
+  color: var(--admin-text);
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.manager-shell .profile-reply {
+  margin-top: 10px;
+  padding-inline-start: 10px;
+  border-inline-start: 3px solid var(--admin-primary);
+}
+
+.manager-shell .profile-reply b {
+  color: var(--admin-primary);
+  font-size: 11.5px;
+}
+
+.manager-shell .profile-empty {
+  padding: 20px 0;
+}
+
+/* AdminVouchers rendered inside the Manager shell */
+.manager-shell .manager-vouchers-slot {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .manager-shell .profile-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .manager-shell .profile-fields,
+  .manager-shell .profile-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .manager-shell.admin-shell.manager-profile-page .admin-topbar {
+    min-height: 66px;
+    height: auto;
+  }
+
+  .manager-shell.admin-shell.manager-profile-page .admin-topbar-left {
+    min-width: 0;
+  }
+
+  .manager-shell.admin-shell.manager-profile-page .admin-topbar-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 600px) {
+  .manager-shell .customer-filter-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .manager-shell .manager-customer-table {
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .manager-shell .manager-customer-table table,
+  .manager-shell .manager-customer-table tbody {
+    display: block;
+    min-width: 0;
+  }
+
+  .manager-shell .manager-customer-table thead {
+    display: none;
+  }
+
+  .manager-shell .manager-customer-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 12px;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--manager-radius-panel);
+    background: var(--admin-card);
+  }
+
+  .manager-shell .manager-customer-table td {
+    display: block;
+    min-width: 0;
+    padding: 2px 0;
+    border: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .manager-shell .manager-customer-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    color: var(--admin-muted);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  .manager-shell .manager-customer-table td:first-child::before,
+  .manager-shell .manager-customer-table td:last-child::before {
+    content: none;
+  }
+
+  .manager-shell .manager-customer-table td:last-child {
+    min-width: 0;
+  }
+
+  .manager-shell .manager-customer-table .admin-table-row-actions {
+    justify-content: flex-start;
+  }
+}

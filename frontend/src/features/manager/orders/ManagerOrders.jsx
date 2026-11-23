@@ -1,13 +1,25 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { RefreshCw, Search, X } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { hasReturn, showReturn, returnLabel } from "../../../shared/utils/order-display";
 import { useManagerFilters, managerQuery, vietnamDateRange } from "../../../shared/hooks/useManagerFilters";
 import ManagerOrderDetail from "../ManagerOrderDetail";
 import { useManagerList, useManagerList as useAdminList } from "../../../shared/hooks/useManagerResource";
 import { isFinalOrder } from "../order-transitions";
 import { money, pageData, orderStatuses, orderStatusOptions, paymentMethodLabels, paymentStatusLabels, formatDate } from "../manager-data";
-import { OrderBadge, PanelLoading, Table, ListError, PageControls, PanelTitle, FilterChip, ToolbarButton } from "../ManagerComponents";
+import { OrderBadge, PanelLoading, Table, ListError, PageControls, PanelTitle } from "../ManagerComponents";
+import { FilterBar, Tabs, ManagerDialog } from "../ManagerKit";
 import { adminApi, adminEndpoints } from "../../../api/manager-api";
+
+const orderQuickTabs = [
+  { key: "", label: "Tất cả" },
+  { key: "PENDING", label: "Chờ xác nhận" },
+  { key: "CONFIRMED", label: "Đã xác nhận" },
+  { key: "SHIPPED", label: "Đang giao" },
+  { key: "DELIVERED", label: "Đã giao" },
+  { key: "COMPLETED", label: "Khách đã nhận" },
+  { key: "CANCELLED", label: "Đã hủy" },
+  { key: "RETURN", label: "Đổi trả" },
+];
 
 export default function Orders({ notify }) {
   const [filters,changeFilters]=useManagerFilters({status:'',q:'',paymentStatus:'',paymentReview:'',paymentMethod:'',fromDate:'',toDate:'',sort:'createdAt',direction:'DESC',page:'0'});
@@ -29,7 +41,6 @@ export default function Orders({ notify }) {
   const summaryEndpoint=useCallback(()=>'/api/manager/orders/summary?'+managerQuery({q:query.q,paymentStatus:query.paymentStatus,paymentReview:query.paymentReview,from:query.from,to:query.to}),[query.q,query.paymentStatus,query.paymentReview,query.from,query.to]);
   const {data:counts}=useManagerList(summaryEndpoint);
   const [detailId, setDetailId] = useState(null);
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const detailEndpoint = useCallback(() => adminEndpoints.order(detailId), [detailId]);
   const { data: detailData, loading: detailLoading, error: detailError, load: reloadDetail } =
     useManagerList(detailEndpoint, { enabled: detailId !== null });
@@ -85,17 +96,16 @@ export default function Orders({ notify }) {
   };
   const orders = pageData(data);
   const filteredOrders = useMemo(() => filters.paymentMethod ? orders.filter(order => order.paymentMethod === filters.paymentMethod) : orders, [orders, filters.paymentMethod]);
-
-  const orderQuickTabs = [
-    { key: "", label: "Tất cả", color: "#64748b" },
-    { key: "PENDING", label: "Chờ xác nhận", color: "#d97706" },
-    { key: "CONFIRMED", label: "Đã xác nhận", color: "#8b5cf6" },
-    { key: "SHIPPED", label: "Đang giao", color: "#3b82f6" },
-    { key: "DELIVERED", label: "Đã giao", color: "#10b981" },
-    { key: "COMPLETED", label: "Khách đã nhận", color: "#14b8a6" },
-    { key: "CANCELLED", label: "Đã hủy", color: "#ef4444" },
-    { key: "RETURN", label: "Đổi trả", color: "#c2410c" },
-  ];
+  const tabs = orderQuickTabs.map((tab) => ({
+    key: tab.key,
+    label: tab.label,
+    count: counts?.[tab.key || "ALL"],
+  }));
+  const chips = activeFilters.map((item) => ({
+    key: item.key,
+    label: item.label,
+    onRemove: () => changeFilters(item.key === "sort" ? { sort: "createdAt", direction: "DESC" } : { [item.key]: "" }),
+  }));
 
   if (loading && !previousData) return <PanelLoading />;
   if (error)
@@ -110,98 +120,66 @@ export default function Orders({ notify }) {
         title="Danh sách đơn hàng"
         subtitle="Theo dõi và cập nhật tiến trình giao hàng."
       />
-      <div className="admin-order-status-tabs" role="tablist" aria-label="Lọc nhanh trạng thái đơn">
-        {orderQuickTabs.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            className={`admin-status-tab-btn ${status === tab.key ? "active" : ""}`}
-            onClick={() => {
-              setStatus(tab.key);
-              setPage(0);
-            }}
-          >
-            <span className="admin-status-tab-dot" style={{ background: tab.color }} />
-            <span>{tab.label}{counts?.[tab.key||'ALL']!==undefined?` (${counts[tab.key||'ALL']})`:''}</span>
-          </button>
-        ))}
-      </div>
-      <div className="admin-order-toolbar">
-        <div className="admin-search-wrap">
-          <Search size={15} className="admin-search-icon" aria-hidden="true" />
-          <input
-            type="search"
-            className="admin-search-input"
-            placeholder="Tìm theo mã đơn, khách hàng..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          {search && (
-            <button
-              type="button"
-              className="admin-search-clear"
-              onClick={() => setSearch("")}
+      <Tabs
+        tabs={tabs}
+        value={status}
+        ariaLabel="Lọc nhanh trạng thái đơn"
+        onChange={(value) => {
+          setStatus(value);
+          setPage(0);
+        }}
+      />
+      <FilterBar
+        search={search}
+        onSearch={setSearch}
+        placeholder="Tìm theo mã đơn, khách hàng..."
+        searchLabel="Tìm đơn hàng"
+        filters={
+          <div className="admin-order-filter-select">
+            <label htmlFor="admin-order-status">Lọc trạng thái</label>
+            <select
+              id="admin-order-status"
+              value={status}
+              onChange={(event) => {
+                setStatus(event.target.value);
+                setPage(0);
+              }}
             >
-              <X size={13} />
+              <option value="">Tất cả đơn hàng</option>
+              <option value="RETURN">Tất cả đổi trả</option>
+              <option value="RETURN_REQUESTED">Đổi trả — chờ xử lý</option>
+              <option value="RETURN_APPROVED">Đổi trả — đã chấp thuận</option>
+              <option value="RETURN_REJECTED">Đổi trả — đã từ chối</option>
+              <option value="RETURN_COMPLETED">Đổi trả — hoàn tất</option>
+              {orderStatuses.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        }
+        actions={
+          <>
+            <span className="manager-toolbar-count">{data?.totalElements ?? 0} đơn hàng</span>
+            <button type="button" className="manager-icon-btn" onClick={load} aria-label="Tải lại trạng thái thanh toán">
+              <RefreshCw size={16} />
             </button>
-          )}
-        </div>
-        <div className="admin-order-filter-select">
-          <label htmlFor="admin-order-status">Lọc trạng thái</label>
-          <select
-            id="admin-order-status"
-            value={status}
-            onChange={(event) => {
-              setStatus(event.target.value);
-              setPage(0);
-            }}
-          >
-            <option value="">Tất cả đơn hàng</option>
-            <option value="RETURN">Tất cả đổi trả</option>
-            <option value="RETURN_REQUESTED">Đổi trả — chờ xử lý</option>
-            <option value="RETURN_APPROVED">Đổi trả — đã chấp thuận</option>
-            <option value="RETURN_REJECTED">Đổi trả — đã từ chối</option>
-            <option value="RETURN_COMPLETED">Đổi trả — hoàn tất</option>
-            {orderStatuses.map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <ToolbarButton
-          active={filtersOpen}
-          count={activeFilters.length}
-          onClick={() => setFiltersOpen((value) => !value)}
-          aria-controls="manager-order-filters"
-        >
-          Bộ lọc
-        </ToolbarButton>
-        <span className="manager-toolbar-count">{data?.totalElements ?? 0} đơn hàng</span>
-        <button type="button" className="manager-icon-btn" onClick={load} aria-label="Tải lại trạng thái thanh toán">
-          <RefreshCw size={16} />
-        </button>
-      </div>
-      {activeFilters.length > 0 && (
-        <div className="manager-filter-chips">
-          {activeFilters.map((item) => (
-            <FilterChip
-              key={item.key}
-              label={item.label}
-              onRemove={() => changeFilters(item.key === "sort" ? { sort: "createdAt", direction: "DESC" } : { [item.key]: "" })}
-            />
-          ))}
-        </div>
-      )}
-      <div className={`manager-advanced-filters${filtersOpen ? " is-open" : ""}`} id="manager-order-filters">
-        <label>Kênh thanh toán<select value={filters.paymentMethod || ''} onChange={event => changeFilters({paymentMethod:event.target.value})}><option value="">Tất cả kênh</option><option value="PAYOS">Cổng PayOS QR</option><option value="COD">Tiền mặt COD</option></select></label>
-        <label>Thanh toán<select value={filters.paymentStatus} onChange={e=>changeFilters({paymentStatus:e.target.value})}><option value="">Tất cả</option><option value="COD">COD</option><option value="PENDING">Chờ thanh toán</option><option value="PAID">Đã thanh toán</option><option value="EXPIRED">Hết hạn</option><option value="FAILED">Thất bại</option><option value="CANCELLED">Đã hủy thanh toán</option></select></label>
-        <label>Đối soát PayOS<select value={filters.paymentReview} onChange={e=>changeFilters({paymentReview:e.target.value})}><option value="">Tất cả</option><option value="true">Thanh toán cần kiểm tra</option><option value="false">Không có cảnh báo</option></select></label>
-        <label>Từ ngày<input type="date" value={filters.fromDate} onChange={e=>changeFilters({fromDate:e.target.value})}/></label>
-        <label>Đến ngày<input type="date" value={filters.toDate} onChange={e=>changeFilters({toDate:e.target.value})}/></label>
-        <label>Sắp xếp<select value={filters.sort} onChange={e=>changeFilters({sort:e.target.value})}><option value="createdAt">Ngày đặt</option><option value="totalAmount">Tổng tiền</option><option value="orderCode">Mã đơn</option></select></label>
-        <label>Thứ tự<select value={filters.direction} onChange={e=>changeFilters({direction:e.target.value})}><option value="DESC">Giảm dần</option><option value="ASC">Tăng dần</option></select></label>
-      </div>
+          </>
+        }
+        chips={chips}
+        advanced={
+          <>
+            <label>Kênh thanh toán<select value={filters.paymentMethod || ''} onChange={event => changeFilters({paymentMethod:event.target.value})}><option value="">Tất cả kênh</option><option value="PAYOS">Cổng PayOS QR</option><option value="COD">Tiền mặt COD</option></select></label>
+            <label>Thanh toán<select value={filters.paymentStatus} onChange={e=>changeFilters({paymentStatus:e.target.value})}><option value="">Tất cả</option><option value="COD">COD</option><option value="PENDING">Chờ thanh toán</option><option value="PAID">Đã thanh toán</option><option value="EXPIRED">Hết hạn</option><option value="FAILED">Thất bại</option><option value="CANCELLED">Đã hủy thanh toán</option></select></label>
+            <label>Đối soát PayOS<select value={filters.paymentReview} onChange={e=>changeFilters({paymentReview:e.target.value})}><option value="">Tất cả</option><option value="true">Thanh toán cần kiểm tra</option><option value="false">Không có cảnh báo</option></select></label>
+            <label>Từ ngày<input type="date" value={filters.fromDate} onChange={e=>changeFilters({fromDate:e.target.value})}/></label>
+            <label>Đến ngày<input type="date" value={filters.toDate} onChange={e=>changeFilters({toDate:e.target.value})}/></label>
+            <label>Sắp xếp<select value={filters.sort} onChange={e=>changeFilters({sort:e.target.value})}><option value="createdAt">Ngày đặt</option><option value="totalAmount">Tổng tiền</option><option value="orderCode">Mã đơn</option></select></label>
+            <label>Thứ tự<select value={filters.direction} onChange={e=>changeFilters({direction:e.target.value})}><option value="DESC">Giảm dần</option><option value="ASC">Tăng dần</option></select></label>
+          </>
+        }
+      />
       <div className="admin-order-table">
         <Table
           headers={[
@@ -266,7 +244,11 @@ export default function Orders({ notify }) {
               <td>
                 <div className="admin-order-actions">
                   <select
-                    className="admin-inline-status-select"
+                    className={`admin-inline-status-select${
+                      isFinalOrder(order.status) || hasReturn(order)
+                        ? " is-locked"
+                        : ""
+                    }`}
                     aria-label={`Cập nhật trạng thái đơn ${order.orderCode}`}
                     disabled={
                       updatingId !== null || isFinalOrder(order.status) || hasReturn(order)
@@ -313,6 +295,11 @@ export default function Orders({ notify }) {
               <strong>{money(order.totalAmount)}</strong>
               <div className="admin-order-actions">
                 <select
+                  className={
+                    isFinalOrder(order.status) || hasReturn(order)
+                      ? "is-locked"
+                      : undefined
+                  }
                   aria-label={`Cập nhật trạng thái đơn ${order.orderCode}`}
                   disabled={
                     updatingId !== null || isFinalOrder(order.status) || hasReturn(order)
@@ -348,17 +335,14 @@ export default function Orders({ notify }) {
         onPage={setPage}
       />
       {cancelOrder && (
-        <div
-          className="admin-dialog-backdrop"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) closeCancel();
-          }}
+        <ManagerDialog
+          open
+          onClose={closeCancel}
+          size="sm"
+          title={`${cancelOrder.status === "CANCELLED" ? "Bổ sung lý do hủy đơn" : "Hủy đơn hàng"} #${cancelOrder.orderCode}`}
+          description="Lý do này sẽ được gửi đến người mua trong mục Thông báo."
         >
           <form
-            className="admin-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="admin-cancel-title"
             onSubmit={(event) => {
               event.preventDefault();
               if (
@@ -368,13 +352,6 @@ export default function Orders({ notify }) {
                 update(cancelOrder.id, "CANCELLED", cancelReason);
             }}
           >
-            <h2 id="admin-cancel-title">
-              {cancelOrder.status === "CANCELLED"
-                ? "Bổ sung lý do hủy đơn"
-                : "Hủy đơn hàng"}{" "}
-              #{cancelOrder.orderCode}
-            </h2>
-            <p>Lý do này sẽ được gửi đến người mua trong mục Thông báo.</p>
             <label htmlFor="admin-cancel-reason">Lý do hủy đơn</label>
             <textarea
               id="admin-cancel-reason"
@@ -384,7 +361,7 @@ export default function Orders({ notify }) {
               disabled={updatingId !== null}
               onChange={(event) => setCancelReason(event.target.value)}
             />
-            <small>{cancelReason.length}/1000 ký tự</small>
+            <small className="manager-dialog__hint">{cancelReason.length}/1000 ký tự</small>
             {cancelError && (
               <p role="alert" className="danger-text">
                 {cancelError}
@@ -399,6 +376,7 @@ export default function Orders({ notify }) {
                 Quay lại
               </button>
               <button
+                type="submit"
                 className="admin-primary admin-danger-button"
                 disabled={updatingId !== null || !cancelReason.trim()}
               >
@@ -410,7 +388,7 @@ export default function Orders({ notify }) {
               </button>
             </div>
           </form>
-        </div>
+        </ManagerDialog>
       )}
       {detail && !cancelOrder && <ManagerOrderDetail detail={detail} loading={detailLoading} error={detailError} onRetry={() => showDetail(detail.id)} onClose={() => setDetailId(null)} onCancel={openCancel} />}
     </div>

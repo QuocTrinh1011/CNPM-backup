@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Plus, Trash2, PackageCheck, Truck, X, Search } from 'lucide-react';
+import { Plus, Trash2, PackageCheck, Truck, Search } from 'lucide-react';
 import { adminApi } from '../../api/manager-api';
 import { useManagerList } from '../../shared/hooks/useManagerResource';
 import { managerQuery } from '../../shared/hooks/useManagerFilters';
-import './stock-receiving.css';
+import { InlineNotice, ManagerDialog } from './ManagerKit';
 
 const money = value => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 2 }).format(Number(value || 0));
 const localDateTime = value => { const date = new Date(value); return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
@@ -114,10 +114,10 @@ export default function StockReceiving() {
           <button type="button" className="admin-action" onClick={() => { setSupplierError(''); setSupplierForm({ code: '', name: '', email: '', phone: '', address: '', notes: '' }); }}>+ Thêm nhà cung cấp</button>
           <label>Ngày nhận<input type="datetime-local" required value={receivedAt} onChange={event => setReceivedAt(event.target.value)} /></label>
         </div>
-        {supplierError && <p className="stock-error" role="alert">{supplierError}</p>}
+        {supplierError && <InlineNotice tone="danger">{supplierError}</InlineNotice>}
 
         <div className="stock-product-search"><Search size={16}/><input aria-label="Tìm sản phẩm nhập kho" placeholder="Tìm sản phẩm theo tên..." value={productSearch} onChange={event => setProductSearch(event.target.value)} /></div>
-        {productError && <p className="stock-error" role="alert">{productError}</p>}
+        {productError && <InlineNotice tone="danger">{productError}</InlineNotice>}
         <div className="stock-lines">
           {lines.length === 0 && <p className="stock-empty-lines">Chưa có sản phẩm. Bấm “Thêm sản phẩm” để bắt đầu.</p>}
           {lines.map((line, index) => <div className="stock-line" key={index}>
@@ -130,14 +130,15 @@ export default function StockReceiving() {
         </div>
         <button type="button" className="admin-action stock-add-line" onClick={addLine}><Plus size={16}/> Thêm sản phẩm</button>
         <label className="stock-note-field">Ghi chú<textarea rows="2" maxLength={2000} value={note} onChange={event => setNote(event.target.value)} placeholder="Số hóa đơn nhà cung cấp, ghi chú nhận hàng..."/></label>
-        {error && <p className="stock-error" role="alert">{error}</p>}{notice && <p className="stock-success" role="status">{notice}</p>}
+        {error && <InlineNotice tone="danger">{error}</InlineNotice>}
+        {notice && <InlineNotice tone="success">{notice}</InlineNotice>}
         <div className="stock-submit-row"><span>Tổng phiếu <strong>{money(totalCost)}</strong></span><button className="admin-primary" disabled={saving || suppliers.length === 0 || products.length === 0}>{saving ? 'Đang lưu...' : 'Xác nhận nhập kho'}</button></div>
         <small className="stock-note">Tồn kho hiện được theo dõi theo tổng sản phẩm; số lượng chưa tách riêng theo size/màu.</small>
       </form>
 
       <section className="stock-history-card">
         <div className="stock-section-heading"><div><h3>Lịch sử phiếu nhập</h3><p>{history?.totalElements ?? 0} phiếu</p></div><button type="button" className="admin-action" onClick={() => reloadHistory()}>Tải lại</button></div>
-        {historyError && <p className="stock-error" role="alert">{historyError}</p>}
+        {historyError && <InlineNotice tone="danger">{historyError}</InlineNotice>}
         {historyLoading && !history ? <p role="status">Đang tải phiếu nhập...</p> : <div className="stock-history-list">
           {!history?.content?.length ? <p className="stock-empty">Chưa có phiếu nhập nào.</p> : history.content.map(receipt => <button type="button" className="stock-history-row" key={receipt.id} onClick={() => setDetailId(receipt.id)}>
             <span className="stock-history-icon"><PackageCheck size={18}/></span><span className="stock-history-main"><strong>{receipt.receiptCode}</strong><small>{dateLabel(receipt.receivedAt)} · {receipt.supplierName} · {receipt.itemCount} dòng</small></span><b>{money(receipt.totalCost)}</b>
@@ -146,18 +147,41 @@ export default function StockReceiving() {
       </section>
     </div>
 
-    {supplierForm && <div className="admin-dialog-backdrop" onMouseDown={event => { if (event.target === event.currentTarget && !supplierBusy) setSupplierForm(null); }}><form className="admin-dialog stock-supplier-dialog" onSubmit={createSupplier}>
-      <div className="stock-section-heading"><div><h3>Thêm nhà cung cấp</h3><p>Thông tin được lưu vào danh bạ nhà cung cấp.</p></div><button type="button" className="admin-action" aria-label="Đóng" onClick={() => setSupplierForm(null)}><X size={17}/></button></div>
-      <label>Mã nhà cung cấp<input required maxLength={40} value={supplierForm.code} onChange={event => setSupplierForm(current => ({ ...current, code: event.target.value.toUpperCase() }))}/></label>
-      <label>Tên nhà cung cấp<input required maxLength={150} value={supplierForm.name} onChange={event => setSupplierForm(current => ({ ...current, name: event.target.value }))}/></label>
-      <div className="stock-supplier-two"><label>Số điện thoại<input maxLength={30} value={supplierForm.phone} onChange={event => setSupplierForm(current => ({ ...current, phone: event.target.value }))}/></label><label>Email<input type="email" maxLength={255} value={supplierForm.email} onChange={event => setSupplierForm(current => ({ ...current, email: event.target.value }))}/></label></div>
-      <label>Địa chỉ<input maxLength={1000} value={supplierForm.address} onChange={event => setSupplierForm(current => ({ ...current, address: event.target.value }))}/></label>
-      {supplierError && <p className="stock-error" role="alert">{supplierError}</p>}<div className="admin-dialog-actions"><button type="button" className="admin-action" disabled={supplierBusy} onClick={() => setSupplierForm(null)}>Hủy</button><button className="admin-primary" disabled={supplierBusy}>{supplierBusy ? 'Đang lưu...' : 'Lưu nhà cung cấp'}</button></div>
-    </form></div>}
+    {supplierForm && <ManagerDialog
+      open={!!supplierForm}
+      onClose={() => { if (!supplierBusy) setSupplierForm(null); }}
+      title="Thêm nhà cung cấp"
+      description="Thông tin được lưu vào danh bạ nhà cung cấp."
+      size="lg"
+      actions={<>
+        <button type="button" className="admin-dialog-cancel" disabled={supplierBusy} onClick={() => setSupplierForm(null)}>Hủy</button>
+        <button type="submit" form="stock-supplier-form" className="admin-primary" disabled={supplierBusy}>{supplierBusy ? 'Đang lưu...' : 'Lưu nhà cung cấp'}</button>
+      </>}
+    >
+      <form id="stock-supplier-form" className="stock-supplier-dialog" onSubmit={createSupplier}>
+        <label>Mã nhà cung cấp<input required maxLength={40} value={supplierForm.code} onChange={event => setSupplierForm(current => ({ ...current, code: event.target.value.toUpperCase() }))}/></label>
+        <label>Tên nhà cung cấp<input required maxLength={150} value={supplierForm.name} onChange={event => setSupplierForm(current => ({ ...current, name: event.target.value }))}/></label>
+        <div className="stock-supplier-two"><label>Số điện thoại<input maxLength={30} value={supplierForm.phone} onChange={event => setSupplierForm(current => ({ ...current, phone: event.target.value }))}/></label><label>Email<input type="email" maxLength={255} value={supplierForm.email} onChange={event => setSupplierForm(current => ({ ...current, email: event.target.value }))}/></label></div>
+        <label>Địa chỉ<input maxLength={1000} value={supplierForm.address} onChange={event => setSupplierForm(current => ({ ...current, address: event.target.value }))}/></label>
+        {supplierError && <InlineNotice tone="danger">{supplierError}</InlineNotice>}
+      </form>
+    </ManagerDialog>}
 
-    {detailId !== null && <div className="admin-dialog-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setDetailId(null); }}><section className="admin-dialog stock-receipt-detail" role="dialog" aria-modal="true" aria-labelledby="stock-detail-title">
-      <div className="stock-section-heading"><div><h3 id="stock-detail-title">Chi tiết phiếu nhập</h3><p>{detail?.receiptCode || 'Đang tải...'}</p></div><button type="button" className="admin-action" aria-label="Đóng" onClick={() => setDetailId(null)}><X size={17}/></button></div>
-      {detailLoading ? <p role="status">Đang tải...</p> : detailError ? <p className="stock-error" role="alert">{detailError}</p> : detail && <><p><b>Nhà cung cấp:</b> {detail.supplierCode} · {detail.supplierName}</p><p><b>Ngày nhận:</b> {dateLabel(detail.receivedAt)}</p><div className="stock-table-scroll"><table className="stock-items-table"><thead><tr><th>Sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>{detail.items.map(item => <tr key={item.id}><td>{item.productName}</td><td>{item.quantity}</td><td>{money(item.unitCost)}</td><td>{money(item.lineTotal)}</td></tr>)}</tbody><tfoot><tr><th colSpan="3">Tổng phiếu</th><th>{money(detail.totalCost)}</th></tr></tfoot></table></div>{detail.note && <p><b>Ghi chú:</b> {detail.note}</p>}</>}
-    </section></div>}
+    {detailId !== null && <ManagerDialog
+      open={detailId !== null}
+      onClose={() => setDetailId(null)}
+      title="Chi tiết phiếu nhập"
+      description={detail?.receiptCode || 'Đang tải...'}
+      size="lg"
+    >
+      <div className="stock-receipt-detail">
+        {detailLoading ? <p role="status">Đang tải...</p> : detailError ? <InlineNotice tone="danger">{detailError}</InlineNotice> : detail && <>
+          <p><b>Nhà cung cấp:</b> {detail.supplierCode} · {detail.supplierName}</p>
+          <p><b>Ngày nhận:</b> {dateLabel(detail.receivedAt)}</p>
+          <div className="stock-table-scroll"><table className="stock-items-table"><thead><tr><th>Sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>{detail.items.map(item => <tr key={item.id}><td>{item.productName}</td><td>{item.quantity}</td><td>{money(item.unitCost)}</td><td>{money(item.lineTotal)}</td></tr>)}</tbody><tfoot><tr><th colSpan="3">Tổng phiếu</th><th>{money(detail.totalCost)}</th></tr></tfoot></table></div>
+          {detail.note && <p><b>Ghi chú:</b> {detail.note}</p>}
+        </>}
+      </div>
+    </ManagerDialog>}
   </section>;
 }

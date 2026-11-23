@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { X, KeyRound } from "lucide-react";
 import { managerChangePassword } from "../../../api/manager-api";
+import { InlineNotice, ManagerDialog } from "../ManagerKit";
 
 export function ManagerChangePasswordDialog({ open, onClose, onSuccess, userEmail }) {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -9,7 +9,9 @@ export function ManagerChangePasswordDialog({ open, onClose, onSuccess, userEmai
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  if (!open) return null;
+  const close = () => {
+    if (!busy) onClose?.();
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -26,7 +28,7 @@ export function ManagerChangePasswordDialog({ open, onClose, onSuccess, userEmai
     try {
       await managerChangePassword(currentPassword, newPassword);
       onSuccess?.('Đổi mật khẩu thành công! Hãy lưu lại mật khẩu mới.');
-      onClose();
+      onClose?.();
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -38,48 +40,58 @@ export function ManagerChangePasswordDialog({ open, onClose, onSuccess, userEmai
   };
 
   return (
-    <div
-      className="admin-modal-backdrop manager-change-password-backdrop"
-      style={{
-        position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
-        display: 'grid', placeItems: 'center', zIndex: 9999, padding: '16px',
-      }}
-      onClick={(event) => {
-        if (event.target === event.currentTarget && !busy) onClose();
-      }}
+    <ManagerDialog
+      open={open}
+      onClose={close}
+      title="Đổi mật khẩu cá nhân"
+      description={userEmail}
+      size="sm"
+      closeLabel="Đóng"
     >
-      <div className="admin-card manager-change-password-dialog" role="dialog" aria-modal="true" aria-labelledby="manager-change-password-title" style={{ width: '100%', maxWidth: '440px', padding: '24px', position: 'relative' }}>
-        <div className="manager-change-password-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ padding: '8px', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.12)', color: '#6366f1', display: 'flex' }}>
-              <KeyRound size={20} aria-hidden="true" />
-            </span>
-            <div>
-              <h3 id="manager-change-password-title" style={{ margin: 0, fontSize: '17px', fontWeight: '700' }}>Đổi mật khẩu cá nhân</h3>
-              <small style={{ color: 'var(--admin-muted)', fontSize: '12px' }}>{userEmail}</small>
-            </div>
-          </div>
-          <button className="manager-change-password-close" type="button" disabled={busy} onClick={onClose} aria-label="Đóng">
-            <X size={18} aria-hidden="true" />
+      {error && <InlineNotice tone="danger">{error}</InlineNotice>}
+      <form className="manager-change-password-form" onSubmit={handleSubmit}>
+        <label>
+          MẬT KHẨU HIỆN TẠI
+          <input
+            type="password"
+            required
+            disabled={busy}
+            value={currentPassword}
+            onChange={(event) => setCurrentPassword(event.target.value)}
+            autoComplete="current-password"
+          />
+        </label>
+        <label>
+          MẬT KHẨU MỚI (TỐI THIỂU 8 KÝ TỰ)
+          <input
+            type="password"
+            required
+            minLength={8}
+            disabled={busy}
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
+            autoComplete="new-password"
+          />
+        </label>
+        <label>
+          XÁC NHẬN MẬT KHẨU MỚI
+          <input
+            type="password"
+            required
+            minLength={8}
+            disabled={busy}
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            autoComplete="new-password"
+          />
+        </label>
+        <div className="manager-change-password-actions">
+          <button type="button" className="admin-action" disabled={busy} onClick={close}>Hủy</button>
+          <button type="submit" className="admin-primary" disabled={busy}>
+            {busy ? 'Đang cập nhật...' : 'Đổi mật khẩu'}
           </button>
         </div>
-        {error && <div role="alert" className="manager-change-password-error">{error}</div>}
-        <form className="manager-change-password-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          <label>MẬT KHẨU HIỆN TẠI
-            <input type="password" required disabled={busy} value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" />
-          </label>
-          <label>MẬT KHẨU MỚI (TỐI THIỂU 8 KÝ TỰ)
-            <input type="password" required minLength={8} disabled={busy} value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" />
-          </label>
-          <label>XÁC NHẬN MẬT KHẨU MỚI
-            <input type="password" required minLength={8} disabled={busy} value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} autoComplete="new-password" />
-          </label>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
-            <button type="button" disabled={busy} onClick={onClose}>Hủy</button>
-            <button type="submit" disabled={busy} className="admin-primary-btn">{busy ? 'Đang cập nhật...' : 'Đổi mật khẩu'}</button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </ManagerDialog>
   );
 }

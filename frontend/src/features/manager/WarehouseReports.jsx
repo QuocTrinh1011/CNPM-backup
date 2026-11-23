@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Activity, CalendarDays } from 'lucide-react';
 import { adminApi, adminEndpoints } from '../../api/manager-api';
-import { ListError, PanelLoading, PanelTitle } from './ManagerComponents';
-import './styles/warehouse-workspace.css';
+import { ListError, PanelLoading, PanelTitle, Table } from './ManagerComponents';
+import { InlineNotice } from './ManagerKit';
 
 const periodLabels = { MONTH: 'Tháng', QUARTER: 'Quý', YEAR: 'Năm' };
 const movementLabels = {
@@ -16,15 +16,15 @@ const number = value => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 
 const dateLabel = value => value ? new Date(value).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }) : '—';
 
 function BalanceTable({ name, rows, allocated = false }) {
+  const headers = ['Mã', 'Mặt hàng', ...(allocated ? ['Phạm vi'] : []), 'ĐVT', 'Đầu kỳ', 'Nhập', 'Xuất', 'Cuối kỳ'];
   return <section className="warehouse-report-section">
     <div className="warehouse-section-head"><h3>{name}</h3><span>{rows.length} mặt hàng/vị trí</span></div>
-    <div className="warehouse-table-scroll"><table aria-label={name}>
-      <thead><tr><th>Mã</th><th>Mặt hàng</th>{allocated && <th>Phạm vi</th>}<th>ĐVT</th><th>Đầu kỳ</th><th>Nhập</th><th>Xuất</th><th>Cuối kỳ</th></tr></thead>
-      <tbody>{rows.length ? rows.map(row => <tr key={`${row.itemType}-${row.itemId}-${row.location}-${row.scopeId || ''}`}>
+    <Table ariaLabel={name} headers={headers} empty={{ description: 'Không có số dư trong kỳ này.' }}>
+      {rows.map(row => <tr key={`${row.itemType}-${row.itemId}-${row.location}-${row.scopeId || ''}`}>
         <td>{row.itemCode}</td><td>{row.itemName}</td>{allocated && <td>{row.scopeId ? `Kế hoạch #${row.scopeId}` : '—'}</td>}<td>{row.unit}</td>
         <td>{number(row.openingQuantity)}</td><td>{number(row.incomingQuantity)}</td><td>{number(row.outgoingQuantity)}</td><td><b>{number(row.closingQuantity)}</b></td>
-      </tr>) : <tr><td className="admin-table-empty" colSpan={allocated ? 8 : 7}>Không có số dư trong kỳ này.</td></tr>}</tbody>
-    </table></div>
+      </tr>)}
+    </Table>
   </section>;
 }
 
@@ -75,10 +75,10 @@ export default function WarehouseReports() {
     {loading && <PanelLoading />}
     {error && <ListError message={error} onRetry={() => setRetry(value => value + 1)} />}
     {!loading && !error && data && <>
-      {!data.historyComplete && <p className="warehouse-notice is-warning" role="status">
+      {!data.historyComplete && <InlineNotice tone="warning">
         Lịch sử kho chỉ được ghi nhận từ {dateLabel(data.historyAvailableFrom)}. Kỳ báo cáo bắt đầu trước mốc này chỉ phản ánh phần dữ liệu từ {dateLabel(data.effectiveFromInclusive)}.
-      </p>}
-      {data.historyComplete && data.historyAvailableFrom && <p className="warehouse-notice" role="status">Lịch sử đầy đủ từ {dateLabel(data.historyAvailableFrom)}.</p>}
+      </InlineNotice>}
+      {data.historyComplete && data.historyAvailableFrom && <InlineNotice>Lịch sử đầy đủ từ {dateLabel(data.historyAvailableFrom)}.</InlineNotice>}
       <div className="warehouse-report-meta"><span>Kỳ: {dateLabel(data.fromInclusive)} – trước {dateLabel(data.toExclusive)}</span><span><Activity size={15}/> {data.balances?.length || 0} số dư vị trí</span></div>
       <BalanceTable name="Nguyên liệu khả dụng" rows={materialsAvailable} />
       <BalanceTable name="Nguyên liệu đã cấp theo kế hoạch" rows={materialsAllocated} allocated />
@@ -86,9 +86,13 @@ export default function WarehouseReports() {
       <BalanceTable name="Sản phẩm sẵn sàng bán" rows={sellableStock} />
       <section className="warehouse-report-section">
         <div className="warehouse-section-head"><h3>Tổng hợp luân chuyển</h3><span>{data.movementTotals?.length || 0} nhóm</span></div>
-        <div className="warehouse-table-scroll"><table aria-label="Tổng hợp luân chuyển"><thead><tr><th>Loại hàng</th><th>Vị trí</th><th>Nghiệp vụ</th><th>Nhập</th><th>Xuất</th><th>Chênh lệch</th></tr></thead><tbody>
-          {data.movementTotals?.length ? data.movementTotals.map((row, index) => <tr key={`${row.itemType}-${row.location}-${row.movementType}-${index}`}><td>{row.itemType === 'MATERIAL' ? 'Nguyên liệu' : 'Thành phẩm'}</td><td>{row.location}</td><td>{movementLabels[row.movementType] || row.movementType}</td><td>{number(row.incomingQuantity)}</td><td>{number(row.outgoingQuantity)}</td><td>{number(row.netQuantity)}</td></tr>) : <tr><td className="admin-table-empty" colSpan="6">Không có biến động trong kỳ này.</td></tr>}
-        </tbody></table></div>
+        <Table
+          ariaLabel="Tổng hợp luân chuyển"
+          headers={['Loại hàng', 'Vị trí', 'Nghiệp vụ', 'Nhập', 'Xuất', 'Chênh lệch']}
+          empty={{ description: 'Không có biến động trong kỳ này.' }}
+        >
+          {(data.movementTotals || []).map((row, index) => <tr key={`${row.itemType}-${row.location}-${row.movementType}-${index}`}><td>{row.itemType === 'MATERIAL' ? 'Nguyên liệu' : 'Thành phẩm'}</td><td>{row.location}</td><td>{movementLabels[row.movementType] || row.movementType}</td><td>{number(row.incomingQuantity)}</td><td>{number(row.outgoingQuantity)}</td><td>{number(row.netQuantity)}</td></tr>)}
+        </Table>
       </section>
     </>}
   </section>;

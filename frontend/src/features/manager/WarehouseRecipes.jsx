@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { adminApi, adminEndpoints } from '../../api/manager-api';
 import { ListError, PanelLoading, PanelTitle } from './ManagerComponents';
-import './styles/warehouse-workspace.css';
+import { InlineNotice } from './ManagerKit';
 
 const blankLine = () => ({ materialId: '', quantityPerProduct: '' });
 
@@ -70,7 +70,7 @@ export default function WarehouseRecipes() {
   return <section className="admin-panel warehouse-workspace">
     <PanelTitle title="Công thức sản phẩm" subtitle="Mỗi lần lưu tạo một phiên bản mới; kế hoạch đã lập giữ nguyên công thức đã chốt." />
     <label className="warehouse-select-product">Sản phẩm<select aria-label="Sản phẩm" value={productId} onChange={event => setProductId(event.target.value)}><option value="">Chọn sản phẩm</option>{products.map(product => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>
-    {error && <p className="warehouse-notice is-error" role="alert">{error}<button type="button" className="admin-action" onClick={() => setReload(value => value + 1)}>Thử lại</button></p>}
+    {error && <ListError message={error} onRetry={() => setReload(value => value + 1)} />}
     {productId && recipe && <form className="warehouse-form-card" onSubmit={save}>
       <div className="warehouse-section-head"><div><h3>{recipe.productName}</h3><p>{recipe.active ? `Phiên bản hiện tại: ${recipe.version}` : 'Chưa có công thức đang hoạt động'}</p></div></div>
       {lines.map((line, index) => <div className="warehouse-recipe-line" key={index}>
@@ -82,6 +82,6 @@ export default function WarehouseRecipes() {
       <div className="warehouse-actions"><button type="button" className="admin-action" onClick={() => setLines(rows => [...rows, blankLine()])}><Plus size={15}/> Thêm nguyên liệu</button><button className="admin-primary" disabled={saving || materials.length === 0}>{saving ? 'Đang lưu…' : 'Lưu phiên bản công thức'}</button></div>
     </form>}
     {!productId && <p className="warehouse-empty">Chọn sản phẩm để xem hoặc khai báo công thức nguyên liệu.</p>}
-    {notice && <p className="warehouse-notice" role="status">{notice}</p>}
+    {notice && <InlineNotice tone="success">{notice}</InlineNotice>}
   </section>;
 }

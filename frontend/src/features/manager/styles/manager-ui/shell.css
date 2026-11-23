@@ -20,9 +20,9 @@
   margin: 0 -32px;
   padding: 0 32px;
   border-bottom: 1px solid var(--admin-border);
-  background: color-mix(in srgb, var(--admin-bg) 86%, transparent);
+  background: color-mix(in srgb, var(--admin-bg) 88%, transparent);
   box-shadow: none;
-  backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(130%);
 }
 
 .manager-shell .admin-topbar-left {
@@ -91,6 +91,7 @@
   border-radius: 999px;
   background: currentColor;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-primary) 16%, transparent);
+  animation: none;
 }
 
 .manager-shell .manager-theme-toggle,
@@ -108,11 +109,13 @@
   font-weight: 650;
   text-decoration: none;
   cursor: pointer;
+  transition: border-color var(--manager-transition), color var(--manager-transition), background-color var(--manager-transition);
 }
 
 .manager-shell .manager-theme-toggle:hover,
 .manager-shell .admin-topbar a:hover {
   border-color: color-mix(in srgb, var(--admin-primary) 34%, var(--admin-border));
+  background: var(--admin-primary-soft);
   color: var(--admin-primary);
 }
 
@@ -126,19 +129,56 @@
   content: none;
 }
 
+.manager-shell .manager-page-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--admin-primary);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.manager-shell .manager-page-kicker::before {
+  content: "";
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
 .manager-shell .admin-page-heading h1 {
   margin: 0;
   color: var(--admin-text);
-  font-size: clamp(26px, 2.4vw, 34px);
+  font-size: clamp(26px, 2.6vw, 34px);
   font-weight: 750;
-  letter-spacing: -.035em;
-  line-height: 1.25;
+  letter-spacing: -.03em;
+  line-height: 1.2;
 }
 
 .manager-shell .admin-page-heading p {
   max-width: 72ch;
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   color: var(--admin-muted);
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+/* Native scrollbars follow the admin palette instead of the storefront track */
+.manager-shell {
+  scrollbar-color: color-mix(in srgb, var(--admin-text) 24%, transparent) transparent;
+}
+
+.manager-shell *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.manager-shell *::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--admin-text) 24%, transparent);
+  background-clip: padding-box;
 }

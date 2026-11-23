@@ -1,0 +1,396 @@
+/* ----------------------------------------------------------- promotions */
+
+.manager-shell .promotion-campaigns {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.manager-shell .promotion-page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.manager-shell .promotion-page-heading h2 {
+  margin: 7px 0 5px;
+  color: var(--admin-text);
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -.02em;
+}
+
+.manager-shell .promotion-page-heading p {
+  margin: 4px 0 0;
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.manager-shell .promotion-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--admin-primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+}
+
+.manager-shell .promotion-notice,
+.manager-shell .promotion-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--manager-radius-control);
+  font-size: 12.5px;
+}
+
+.manager-shell .promotion-notice {
+  border: 1px solid color-mix(in srgb, var(--admin-success) 28%, var(--admin-border));
+  background: var(--admin-success-soft);
+  color: var(--admin-success);
+}
+
+.manager-shell .promotion-error {
+  border: 1px solid color-mix(in srgb, var(--admin-danger) 28%, var(--admin-border));
+  background: var(--admin-danger-soft);
+  color: var(--admin-danger);
+}
+
+.manager-shell .promotion-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+
+.manager-shell .promotion-search {
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  gap: 8px;
+  min-width: 0;
+  min-height: 38px;
+  max-width: 560px;
+  padding: 0 4px 0 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+  color: var(--admin-muted);
+}
+
+.manager-shell .promotion-search:focus-within {
+  border-color: color-mix(in srgb, var(--admin-primary) 60%, var(--admin-border));
+  box-shadow: 0 0 0 3px var(--admin-focus);
+}
+
+.manager-shell .promotion-search input {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--admin-text);
+  font-size: 13px;
+}
+
+.manager-shell .promotion-search input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.manager-shell .promotion-table-wrap {
+  overflow: auto;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-card);
+}
+
+.manager-shell .promotion-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.manager-shell .promotion-table :is(th, td) {
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--admin-border);
+  text-align: left;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.manager-shell .promotion-table th {
+  background: var(--admin-input);
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.manager-shell .promotion-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.manager-shell .promotion-code {
+  display: block;
+  margin-top: 3px;
+  color: var(--admin-muted);
+  font-family: var(--admin-mono);
+  font-size: 11px;
+}
+
+.manager-shell .promotion-counts,
+.manager-shell .promotion-row-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.manager-shell .promotion-counts span {
+  padding: 3px 8px;
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  background: var(--admin-input);
+  color: var(--admin-muted);
+  font-size: 10.5px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.manager-shell .promotion-row-actions .admin-action {
+  min-width: 34px;
+  padding: 0 8px;
+}
+
+.manager-shell .promotion-row-actions .promotion-delete {
+  color: var(--admin-danger);
+}
+
+.manager-shell .promotion-empty {
+  margin: 0;
+  padding: 30px 12px;
+  text-align: center;
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.manager-shell .promotion-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+
+.manager-shell .promotion-pagination > div {
+  display: flex;
+  gap: 8px;
+}
+
+.manager-shell .promotion-pagination .admin-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Editor contents (rendered inside ManagerDialog) */
+.manager-shell .promotion-editor-form {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.manager-shell .promotion-editor-fields {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.manager-shell .promotion-campaign-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.manager-shell .promotion-rule-group {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-input);
+}
+
+.manager-shell .promotion-rule-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.manager-shell .promotion-rule-heading h4 {
+  margin: 0;
+  color: var(--admin-text);
+  font-size: 13.5px;
+  font-weight: 750;
+}
+
+.manager-shell .promotion-rule-heading p {
+  margin: 3px 0 0;
+  color: var(--admin-muted);
+  font-size: 11.5px;
+}
+
+.manager-shell .promotion-rule-heading .admin-action {
+  flex: none;
+}
+
+.manager-shell .promotion-rule-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(120px, .65fr) 36px;
+  align-items: end;
+  gap: 10px;
+}
+
+.manager-shell .promotion-remove-rule {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+  color: var(--admin-danger);
+  cursor: pointer;
+}
+
+.manager-shell .promotion-remove-rule:hover {
+  border-color: color-mix(in srgb, var(--admin-danger) 40%, var(--admin-border));
+  background: var(--admin-danger-soft);
+}
+
+.manager-shell .promotion-rule-empty {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+
+/* Details contents */
+.manager-shell .promotion-detail-meta {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+}
+
+.manager-shell .promotion-detail-meta span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.manager-shell .promotion-detail-meta small {
+  color: var(--admin-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.manager-shell .promotion-detail-meta b {
+  color: var(--admin-text);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.manager-shell .promotion-detail-groups {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.manager-shell .promotion-detail-groups section {
+  padding: 13px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+}
+
+.manager-shell .promotion-detail-groups h4 {
+  margin: 0;
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 750;
+}
+
+.manager-shell .promotion-detail-groups p {
+  margin: 6px 0 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+
+.manager-shell .promotion-detail-groups ul {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.manager-shell .promotion-detail-groups li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+}
+
+.manager-shell .promotion-detail-groups li span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.manager-shell .promotion-detail-groups li b {
+  flex: none;
+  color: var(--admin-text);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .manager-shell .promotion-campaign-fields,
+  .manager-shell .promotion-detail-meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .manager-shell .promotion-search {
+    max-width: none;
+    flex-basis: 100%;
+  }
+
+  .manager-shell .promotion-rule-heading {
+    flex-direction: column;
+  }
+
+  .manager-shell .promotion-rule-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, .7fr) 36px;
+    gap: 7px;
+  }
+}

@@ -1,6 +1,6 @@
 import { showReturn } from "../../../shared/utils/order-display";
 import { TicketPercent } from "lucide-react";
-import { money, pageData, statusLabels, statusColors } from "../manager-data";
+import { money, pageData, statusLabels } from "../manager-data";
 import { OrderBadge, PanelLoading, Table, ListError } from "../ManagerComponents";
 import React from "react";
 import { Users as UsersIcon, Package, ShoppingCart, MessageSquare, ClipboardList, ArrowRight, ChevronRight } from "lucide-react";
@@ -10,6 +10,17 @@ import { useManagerList as useAdminList } from "../../../shared/hooks/useManager
 const recentOrdersEndpoint = () => adminEndpoints.orders({ size: 100 });
 
 const orderSummaryEndpoint = () => '/api/manager/orders/summary';
+
+const statusTones = {
+  PENDING: "warning",
+  PENDING_PAYMENT: "warning",
+  CONFIRMED: "info",
+  SHIPPED: "info",
+  DELIVERED: "success",
+  COMPLETED: "success",
+  RETURN: "danger",
+  CANCELLED: "danger",
+};
 
 export function Dashboard({ go }) {
   return (
@@ -23,66 +34,66 @@ export function Dashboard({ go }) {
           </div>
         </div>
         <div className="admin-quick-grid">
-          <div className="admin-quick-card" role="button" tabIndex={0} onClick={() => go("orders")} title="Đến trang xử lý đơn hàng">
-            <div className="admin-quick-icon blue">
-              <ShoppingCart size={18} />
-            </div>
-            <div className="admin-quick-text">
+          <button type="button" className="admin-quick-card" onClick={() => go("orders")} title="Đến trang xử lý đơn hàng">
+            <span className="admin-quick-icon">
+              <ShoppingCart size={18} aria-hidden="true" />
+            </span>
+            <span className="admin-quick-text">
               <b>Xử lý đơn hàng</b>
-              <small>Theo dõi giao hàng & trạng thái</small>
-            </div>
-            <ChevronRight size={16} className="admin-quick-arrow" />
-          </div>
-          <div className="admin-quick-card" role="button" tabIndex={0} onClick={() => go("products")} title="Đến trang quản lý sản phẩm">
-            <div className="admin-quick-icon green">
-              <Package size={18} />
-            </div>
-            <div className="admin-quick-text">
+              <small>Theo dõi giao hàng &amp; trạng thái</small>
+            </span>
+            <ChevronRight size={16} className="admin-quick-arrow" aria-hidden="true" />
+          </button>
+          <button type="button" className="admin-quick-card" onClick={() => go("products")} title="Đến trang quản lý sản phẩm">
+            <span className="admin-quick-icon">
+              <Package size={18} aria-hidden="true" />
+            </span>
+            <span className="admin-quick-text">
               <b>Kho sản phẩm</b>
-              <small>Quản lý giá bán & tồn kho</small>
-            </div>
-            <ChevronRight size={16} className="admin-quick-arrow" />
-          </div>
-          <div className="admin-quick-card" role="button" tabIndex={0} onClick={() => go("vouchers")} title="Đến trang Voucher">
-            <div className="admin-quick-icon violet">
-              <TicketPercent size={18} />
-            </div>
-            <div className="admin-quick-text">
+              <small>Quản lý giá bán &amp; tồn kho</small>
+            </span>
+            <ChevronRight size={16} className="admin-quick-arrow" aria-hidden="true" />
+          </button>
+          <button type="button" className="admin-quick-card" onClick={() => go("vouchers")} title="Đến trang Voucher">
+            <span className="admin-quick-icon">
+              <TicketPercent size={18} aria-hidden="true" />
+            </span>
+            <span className="admin-quick-text">
               <b>Voucher cửa hàng</b>
               <small>Quản lý mã và lượt sử dụng</small>
-            </div>
-            <ChevronRight size={16} className="admin-quick-arrow" />
-          </div>
-          <div className="admin-quick-card" role="button" tabIndex={0} onClick={() => go("users")} title="Đến danh sách khách hàng">
-            <div className="admin-quick-icon amber">
-              <UsersIcon size={18} />
-            </div>
-            <div className="admin-quick-text">
+            </span>
+            <ChevronRight size={16} className="admin-quick-arrow" aria-hidden="true" />
+          </button>
+          <button type="button" className="admin-quick-card" onClick={() => go("users")} title="Đến danh sách khách hàng">
+            <span className="admin-quick-icon">
+              <UsersIcon size={18} aria-hidden="true" />
+            </span>
+            <span className="admin-quick-text">
               <b>Hồ sơ khách hàng</b>
-              <small>Tra cứu danh sách & phân quyền</small>
-            </div>
-            <ChevronRight size={16} className="admin-quick-arrow" />
-          </div>
-          <div className="admin-quick-card" role="button" tabIndex={0} onClick={() => go("surveys")} title="Đến trang khảo sát ý kiến">
-            <div className="admin-quick-icon cyan">
-              <ClipboardList size={18} />
-            </div>
-            <div className="admin-quick-text">
+              <small>Tra cứu danh sách &amp; phân quyền</small>
+            </span>
+            <ChevronRight size={16} className="admin-quick-arrow" aria-hidden="true" />
+          </button>
+          <button type="button" className="admin-quick-card" onClick={() => go("surveys")} title="Đến trang khảo sát ý kiến">
+            <span className="admin-quick-icon">
+              <ClipboardList size={18} aria-hidden="true" />
+            </span>
+            <span className="admin-quick-text">
               <b>Khảo sát ý kiến</b>
-              <small>Tạo câu hỏi & xem phản hồi</small>
-            </div>
-            <ChevronRight size={16} className="admin-quick-arrow" />
-          </div>
-          <div className="admin-quick-card" role="button" tabIndex={0} onClick={() => go("feedback")} title="Đến trang phản hồi đánh giá">
-            <div className="admin-quick-icon rose">
-              <MessageSquare size={18} />
-            </div>
-            <div className="admin-quick-text">
+              <small>Tạo câu hỏi &amp; xem phản hồi</small>
+            </span>
+            <ChevronRight size={16} className="admin-quick-arrow" aria-hidden="true" />
+          </button>
+          <button type="button" className="admin-quick-card" onClick={() => go("feedback")} title="Đến trang phản hồi đánh giá">
+            <span className="admin-quick-icon">
+              <MessageSquare size={18} aria-hidden="true" />
+            </span>
+            <span className="admin-quick-text">
               <b>Phản hồi đánh giá</b>
-              <small>Duyệt & trả lời khách hàng</small>
-            </div>
-            <ChevronRight size={16} className="admin-quick-arrow" />
-          </div>
+              <small>Duyệt &amp; trả lời khách hàng</small>
+            </span>
+            <ChevronRight size={16} className="admin-quick-arrow" aria-hidden="true" />
+          </button>
         </div>
       </section>
 
@@ -126,7 +137,7 @@ export function RecentOrders({ go }) {
             onClick={() => go(`orders?status=${encodeURIComponent(status)}`)}
             title={`Lọc đơn hàng: ${label}`}
           >
-            <i style={{ background: statusColors[status] }} />
+            <i className="admin-status-dot" data-tone={statusTones[status] || "muted"} aria-hidden="true" />
             {label}
             <b>{count}</b>
           </button>

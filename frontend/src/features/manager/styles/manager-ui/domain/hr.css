@@ -1,0 +1,373 @@
+/* ------------------------------------------------------------- hr & people */
+/* Ported from manager-hr.css. Every selector is scoped to .manager-shell. */
+
+.manager-shell .hr-workspace {
+  display: grid;
+  gap: 18px;
+}
+
+.manager-shell :is(.hr-directory-toolbar, .hr-filter-row, .hr-inline-actions, .hr-period-actions, .hr-payslip-head) {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.manager-shell .hr-directory-toolbar {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.manager-shell .hr-directory-toolbar .admin-search-wrap {
+  flex: 1 1 260px;
+  max-width: 520px;
+}
+
+.manager-shell .hr-status-filter,
+.manager-shell .hr-filter {
+  display: grid;
+  gap: 6px;
+  color: var(--admin-text);
+  font-size: 13px;
+}
+
+.manager-shell .hr-filter {
+  max-width: 340px;
+}
+
+.manager-shell .hr-status-filter select,
+.manager-shell .hr-filter select {
+  min-height: 40px;
+  padding: 9px 11px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font: inherit;
+}
+
+.manager-shell .hr-role-guidance {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.manager-shell .hr-role-guidance p {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.manager-shell .hr-role-guidance b {
+  color: var(--admin-text);
+}
+
+.manager-shell :is(.hr-form-grid, .hr-settings-form) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-card);
+}
+
+.manager-shell :is(.hr-form-grid, .hr-settings-form) > h3,
+.manager-shell .hr-settings-form > p,
+.manager-shell .hr-employee-form .admin-dialog-actions {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.manager-shell .hr-form-help {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+
+.manager-shell :is(.hr-form-grid, .hr-settings-form, .hr-filter-row) label {
+  display: grid;
+  gap: 6px;
+  color: var(--admin-text);
+  font-size: 13px;
+}
+
+.manager-shell :is(.hr-form-grid, .hr-settings-form, .hr-filter-row) :is(input, select, textarea),
+.manager-shell .hr-inline-actions input {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font: inherit;
+}
+
+.manager-shell :is(.hr-form-grid, .hr-settings-form) :is(input, select, textarea):focus,
+.manager-shell .hr-inline-actions input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--admin-primary) 60%, var(--admin-border));
+  box-shadow: 0 0 0 3px var(--admin-focus);
+}
+
+.manager-shell :is(.hr-form-grid, .hr-settings-form) textarea {
+  resize: vertical;
+}
+
+.manager-shell :is(.hr-form-grid, .hr-settings-form) small,
+.manager-shell .hr-settings-form p {
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.manager-shell :is(.hr-inline-actions, .hr-period-actions, .hr-payslip-head, .hr-settings-form, .hr-annual-print, .hr-rule-preset) button:not(.admin-primary, .admin-danger-button) {
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color var(--manager-transition), background-color var(--manager-transition);
+}
+
+.manager-shell :is(.hr-inline-actions, .hr-period-actions, .hr-payslip-head, .hr-settings-form, .hr-annual-print, .hr-rule-preset) button:not(.admin-primary, .admin-danger-button):hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--admin-text) 30%, var(--admin-border));
+}
+
+.manager-shell .hr-danger:is(button, a):not(:disabled) {
+  border-color: color-mix(in srgb, var(--admin-danger) 40%, var(--admin-border));
+  background: var(--admin-card);
+  color: var(--admin-danger);
+}
+
+.manager-shell .hr-danger:is(button, a):hover:not(:disabled) {
+  border-color: var(--admin-danger);
+}
+
+.manager-shell .hr-inline-actions {
+  align-items: center;
+}
+
+.manager-shell .hr-inline-actions input {
+  min-width: 180px;
+}
+
+.manager-shell .hr-notice {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+  color: var(--admin-text);
+  font-size: 12.5px;
+}
+
+.manager-shell .hr-settings-form > button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.manager-shell :is(.hr-form-grid, .hr-settings-form) > .admin-primary {
+  align-self: end;
+  justify-self: start;
+}
+
+.manager-shell .hr-profile-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+  color: var(--admin-text);
+}
+
+.manager-shell .hr-profile-summary b {
+  font-size: 18px;
+}
+
+.manager-shell :is(.hr-request-list, .hr-team-roster, .hr-payslip-list) {
+  display: grid;
+  gap: 12px;
+}
+
+.manager-shell :is(.hr-request-card, .hr-team-roster, .hr-payslip, .hr-period-actions, .hr-report-summaries > article) {
+  padding: 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+  color: var(--admin-text);
+}
+
+.manager-shell .hr-request-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.manager-shell .hr-request-card > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.manager-shell :is(.hr-request-card small, .hr-request-card span, .hr-team-roster span, .hr-payslip p, .hr-payslip small) {
+  color: var(--admin-muted);
+}
+
+.manager-shell .hr-team-roster {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.manager-shell .hr-team-roster h3 {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.manager-shell .hr-team-roster span {
+  padding: 7px 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+}
+
+.manager-shell .hr-period-actions {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.manager-shell .hr-payslip-head {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.manager-shell .hr-payslip-head > div {
+  display: grid;
+  gap: 4px;
+}
+
+.manager-shell .hr-payslip-head h3 {
+  margin: 0;
+}
+
+.manager-shell .hr-payslip-head p {
+  margin: 0;
+}
+
+.manager-shell .hr-annual-print {
+  justify-self: start;
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+  color: var(--admin-text);
+  cursor: pointer;
+}
+
+.manager-shell :is(.hr-pay-totals, .hr-kpi-grid, .hr-report-summaries) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.manager-shell :is(.hr-pay-totals span, .hr-kpi-grid article) {
+  display: grid;
+  gap: 7px;
+  padding: 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+  color: var(--admin-text);
+}
+
+.manager-shell .hr-pay-totals b,
+.manager-shell .hr-kpi-grid b {
+  font-variant-numeric: tabular-nums;
+}
+
+.manager-shell .hr-kpi-grid article b {
+  font-size: 22px;
+}
+
+.manager-shell .hr-report-summaries h3 {
+  margin: 0 0 10px;
+}
+
+.manager-shell .hr-report-summaries p {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--admin-muted);
+}
+
+.manager-shell .hr-report-summaries b {
+  color: var(--admin-text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.manager-shell .hr-rule-preset {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px dashed var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.manager-shell .hr-rule-preset span {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+/* Employee form living inside ManagerDialog: the dialog already provides the card. */
+.manager-shell .manager-dialog .hr-form-grid.hr-employee-form {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.manager-shell .hr-employee-form .admin-dialog-actions {
+  justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+  .manager-shell :is(.hr-form-grid, .hr-settings-form, .hr-report-summaries, .hr-role-guidance) {
+    grid-template-columns: 1fr;
+  }
+
+  .manager-shell :is(.hr-pay-totals, .hr-kpi-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .manager-shell .hr-directory-toolbar {
+    align-items: stretch;
+  }
+
+  .manager-shell .hr-directory-toolbar > button {
+    width: 100%;
+  }
+}
