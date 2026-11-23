@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { api, endpoints } from "../../../api/api";
 
-const CATALOG_PAGE_SIZE = 8;
+const CATALOG_PAGE_SIZE = 30;
 const CATALOG_FETCH_PAGE_SIZE = 48;
 const isDiscountedProduct = product => {
   const price = Number(product?.price);

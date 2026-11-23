@@ -8,10 +8,8 @@ import ProductGrid from "./catalog/ProductGrid";
 export default function CatalogSection({
   catalogPage,
   products,
-  categories,
   filters,
   setFilters,
-  chooseCategory,
   filtersOpen,
   setFiltersOpen,
   loading,
@@ -73,10 +71,8 @@ export default function CatalogSection({
       </div>
 
       <CatalogToolbar
-        categories={categories}
         filters={filters}
         setFilters={setFilters}
-        chooseCategory={chooseCategory}
         filtersOpen={filtersOpen}
         setFiltersOpen={setFiltersOpen}
       />

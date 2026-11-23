@@ -139,8 +139,6 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps -- This effect runs on account changes; loadCart is recreated during render and would duplicate cart and notification requests.
   }, [user]);
 
-  const chooseCategory = (category) =>
-    setFilters((current) => ({ ...current, category, page: 0 }));
   const navigateOrders = (next = DEFAULT_ORDERS_ROUTE, { replace = false } = {}) => {
     const route = {
       orderId: next.orderId || null,
@@ -452,10 +450,8 @@ function App() {
           <CatalogSection
             catalogPage={catalogPage}
             products={products}
-            categories={categories}
             filters={filters}
             setFilters={setFilters}
-            chooseCategory={chooseCategory}
             filtersOpen={filtersOpen}
             setFiltersOpen={setFiltersOpen}
             loading={loading}

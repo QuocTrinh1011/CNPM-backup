@@ -902,3 +902,6 @@ WHERE payslip.status = 'PUBLISHED'
   );
 
 COMMIT;
+
+-- Add the separate ICONDENIM catalog sample after all demo seed data commits.
+\ir icondenim_products.sql

@@ -1971,7 +1971,9 @@
 .site-shell[data-shop-theme].catalog-page .catalog-section.is-catalog-page {
   width: 100%;
   max-width: 1440px;
+  margin-top: 0;
   padding: 30px 20px 64px;
+  border-top: 0;
 }
 
 .site-shell[data-shop-theme].catalog-page .product-grid {

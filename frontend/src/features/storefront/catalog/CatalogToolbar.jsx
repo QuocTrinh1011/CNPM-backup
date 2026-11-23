@@ -1,30 +1,9 @@
 import React from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 
-export default function CatalogToolbar({ categories = [], filters, setFilters, chooseCategory, filtersOpen, setFiltersOpen }) {
+export default function CatalogToolbar({ filters, setFilters, filtersOpen, setFiltersOpen }) {
   return (
-    <div className="filter-bar" role="group" aria-label="Điều khiển danh mục sản phẩm">
-      <div className="filter-pills">
-        <button
-          className={!filters.category && !filters.onSale ? "active" : ""}
-          type="button"
-          aria-pressed={!filters.category && !filters.onSale}
-          onClick={() => chooseCategory("")}
-        >
-          TẤT CẢ
-        </button>
-        {categories.map(category => (
-          <button
-            className={filters.category === category ? "active" : ""}
-            type="button"
-            aria-pressed={filters.category === category}
-            key={category}
-            onClick={() => chooseCategory(category)}
-          >
-            {category.toUpperCase()}
-          </button>
-        ))}
-      </div>
+    <div className="filter-bar" role="group" aria-label="Sắp xếp và lọc sản phẩm">
       <div className="filter-tools">
         <select
           aria-label="Sắp xếp sản phẩm"
