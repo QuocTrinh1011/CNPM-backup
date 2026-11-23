@@ -14,6 +14,7 @@ export function ManagerPageToolbar({ children, meta }) {
 export function FilterBar({
   search = "",
   onSearch,
+  onSubmit,
   placeholder = "Tìm kiếm…",
   searchLabel,
   filters,
@@ -28,7 +29,10 @@ export function FilterBar({
       <form
         className="manager-filter-bar__row"
         role="search"
-        onSubmit={(event) => event.preventDefault()}
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit?.(event);
+        }}
       >
         <div className="manager-filter-bar__search">
           <Search size={15} aria-hidden="true" />

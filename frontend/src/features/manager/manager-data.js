@@ -43,8 +43,8 @@ export const orderStatusOptions = (current,order) => [
   ),
 ];
 export const paymentMethodLabels = {
-  COD: "Thanh toán khi nhận hàng",
-  PAYOS: "Thanh toán trực tuyến",
+  COD: "Tiền mặt COD",
+  PAYOS: "PayOS QR",
 };
 export const paymentStatusLabels = {
   COD: "Thanh toán khi nhận hàng",

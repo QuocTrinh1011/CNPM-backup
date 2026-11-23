@@ -166,3 +166,19 @@
   font-size: 13.5px;
   line-height: 1.6;
 }
+
+/* Native scrollbars follow the admin palette instead of the storefront track */
+.manager-shell {
+  scrollbar-color: color-mix(in srgb, var(--admin-text) 24%, transparent) transparent;
+}
+
+.manager-shell *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.manager-shell *::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--admin-text) 24%, transparent);
+  background-clip: padding-box;
+}

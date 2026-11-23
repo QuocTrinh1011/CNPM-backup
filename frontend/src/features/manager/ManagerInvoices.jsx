@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { RefreshCw, Search, X } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { managerQuery, useManagerFilters, vietnamDateRange } from '../../shared/hooks/useManagerFilters';
 import { useManagerList } from '../../shared/hooks/useManagerResource';
 import { money, date, orderLabels, paymentLabels } from './ManagerOrderDetail';
 import ManagerInvoiceDetail from './ManagerInvoiceDetail';
-import { PanelTitle, ToolbarButton } from './ManagerComponents';
-import './manager-invoices.css';
+import { PanelTitle, Table, ListError, PageControls } from './ManagerComponents';
+import { FilterBar, DataTableSkeleton } from './ManagerKit';
 
 const paymentOptions = [
   ['', 'Tất cả'],
@@ -16,13 +16,12 @@ const paymentOptions = [
   ['FAILED', 'Thất bại'],
   ['CANCELLED', 'Đã hủy thanh toán'],
 ];
+const paymentOptionLabel = value => paymentOptions.find(([option]) => option === value)?.[1] || value;
 const methodLabels = { COD: 'COD', PAYOS: 'PayOS / VietQR' };
 
 export default function ManagerInvoices() {
   const [filters, changeFilters] = useManagerFilters({ q: '', paymentStatus: '', fromDate: '', toDate: '', page: '0' });
   const [search, setSearch] = useState(filters.q);
-  const [filtersOpen, setFiltersOpen] = useState(false);
-  const activeFilterCount = [filters.paymentStatus, filters.fromDate, filters.toDate].filter(Boolean).length;
   const [invoiceSelection, setInvoiceSelection] = useState(null);
   const invoiceId = invoiceSelection?.id ?? null;
   useEffect(() => setSearch(filters.q), [filters.q]);
@@ -43,15 +42,17 @@ export default function ManagerInvoices() {
   const totalPages = data?.totalPages || 0;
   const totalElements = data?.totalElements ?? 0;
 
-  const submitSearch = event => {
-    event.preventDefault();
-    changeFilters({ q: search.trim() });
-  };
-  const clearSearch = () => {
-    setSearch('');
-    changeFilters({ q: '' });
-  };
+  const submitSearch = () => changeFilters({ q: search.trim() });
   const setPage = next => changeFilters({ page: String(next) });
+  const chips = [
+    filters.paymentStatus && {
+      key: 'paymentStatus',
+      label: `Thanh toán: ${paymentOptionLabel(filters.paymentStatus)}`,
+      onRemove: () => changeFilters({ paymentStatus: '' }),
+    },
+    filters.fromDate && { key: 'fromDate', label: `Từ ${filters.fromDate}`, onRemove: () => changeFilters({ fromDate: '' }) },
+    filters.toDate && { key: 'toDate', label: `Đến ${filters.toDate}`, onRemove: () => changeFilters({ toDate: '' }) },
+  ].filter(Boolean);
 
   return (
     <div className="admin-panel manager-invoices">
@@ -59,117 +60,87 @@ export default function ManagerInvoices() {
         title="Danh sách hóa đơn"
         subtitle="Tra cứu hóa đơn theo mã đơn, khách hàng, ngày lập và trạng thái thanh toán."
       />
-      <form className="admin-order-toolbar" onSubmit={submitSearch}>
-        <div className="admin-search-wrap">
-          <Search size={15} className="admin-search-icon" aria-hidden="true" />
-          <input
-            type="search"
-            className="admin-search-input"
-            placeholder="Tìm mã hóa đơn, tên hoặc email khách..."
-            value={search}
-            onChange={event => setSearch(event.target.value)}
-          />
-          {search && <button type="button" className="admin-search-clear" onClick={clearSearch} aria-label="Xóa tìm kiếm"><X size={13} /></button>}
-        </div>
-        <button type="submit" className="admin-action">Tìm hóa đơn</button>
-        <ToolbarButton
-          active={filtersOpen}
-          count={activeFilterCount}
-          onClick={() => setFiltersOpen(value => !value)}
-          aria-controls="manager-invoice-filters"
-        >
-          Bộ lọc
-        </ToolbarButton>
-        <button type="button" className="manager-icon-btn" onClick={() => load()} disabled={refreshing} aria-label="Tải lại danh sách hóa đơn">
-          <RefreshCw size={16} className={refreshing ? 'admin-spinner' : ''} />
-        </button>
-        <span className="manager-toolbar-count">{totalElements} hóa đơn</span>
-      </form>
-      <div className={`manager-advanced-filters invoice-filters${filtersOpen ? " is-open" : ""}`} id="manager-invoice-filters">
-        <label>Thanh toán
-          <select value={filters.paymentStatus} onChange={event => changeFilters({ paymentStatus: event.target.value })}>
-            {paymentOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-          </select>
-        </label>
-        <label>Từ ngày<input type="date" value={filters.fromDate} onChange={event => changeFilters({ fromDate: event.target.value })} /></label>
-        <label>Đến ngày<input type="date" value={filters.toDate} onChange={event => changeFilters({ toDate: event.target.value })} /></label>
-      </div>
+      <FilterBar
+        search={search}
+        onSearch={setSearch}
+        onSubmit={submitSearch}
+        placeholder="Tìm mã hóa đơn, tên hoặc email khách..."
+        searchLabel="Tìm hóa đơn"
+        filters={
+          <>
+            <label className="manager-inline-filter">Thanh toán
+              <select value={filters.paymentStatus} onChange={event => changeFilters({ paymentStatus: event.target.value })}>
+                {paymentOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
+            </label>
+            <label className="manager-inline-filter">Từ ngày<input type="date" value={filters.fromDate} onChange={event => changeFilters({ fromDate: event.target.value })} /></label>
+            <label className="manager-inline-filter">Đến ngày<input type="date" value={filters.toDate} onChange={event => changeFilters({ toDate: event.target.value })} /></label>
+          </>
+        }
+        actions={
+          <>
+            <span className="manager-toolbar-count">{totalElements} hóa đơn</span>
+            <button type="button" className="manager-icon-btn" onClick={() => load()} disabled={refreshing} aria-label="Tải lại danh sách hóa đơn">
+              <RefreshCw size={16} className={refreshing ? 'admin-spinner' : ''} />
+            </button>
+            <button type="submit" className="admin-action">Tìm hóa đơn</button>
+          </>
+        }
+        chips={chips}
+      />
       <div className={`invoice-layout${invoiceId !== null ? ' has-detail' : ''}`}>
         <div className="invoice-list">
           {loading && !data ? (
-            <div className="invoice-loading" role="status"><RefreshCw size={18} className="admin-spinner" /> Đang tải hóa đơn...</div>
+            <DataTableSkeleton rows={6} cols={8} />
           ) : error && !data ? (
-            <div className="admin-list-error" role="alert"><p>{error}</p><button className="admin-action" onClick={() => load()}>Thử lại</button></div>
+            <div role="alert"><ListError message={error} onRetry={() => load()} /></div>
           ) : (
             <>
-              <div className="admin-table-wrap invoice-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Mã hóa đơn</th>
-                      <th>Khách hàng</th>
-                      <th>Tạm tính</th>
-                      <th>Giảm giá</th>
-                      <th>Tổng thanh toán</th>
-                      <th>Thanh toán</th>
-                      <th>Trạng thái đơn</th>
-                      <th>Thao tác</th>
+              <Table
+                className="invoice-table"
+                headers={['Mã hóa đơn', 'Khách hàng', 'Tạm tính', 'Giảm giá', 'Tổng thanh toán', 'Thanh toán', 'Trạng thái đơn', 'Thao tác']}
+                empty={{ description: 'Thử đổi từ khóa, trạng thái thanh toán hoặc khoảng ngày.' }}
+              >
+                {invoices.map(invoice => {
+                  const discount = Number(invoice.discountAmount || 0);
+                  const shippingFee = Number(invoice.shippingFee || 0);
+                  const subtotal = Number(invoice.totalAmount || 0) + discount - shippingFee;
+                  return (
+                    <tr key={invoice.id}>
+                      <td data-label="Mã hóa đơn">
+                        <span className="admin-order-code-badge">#{invoice.orderCode}</span>
+                        <small className="admin-table-subline">{date(invoice.createdAt)}</small>
+                      </td>
+                      <td data-label="Khách hàng">
+                        <b>{invoice.customer?.fullName || '—'}</b>
+                        <small className="admin-table-subline">{invoice.customer?.email || ''}</small>
+                      </td>
+                      <td data-label="Tạm tính">{money(subtotal)}</td>
+                      <td data-label="Giảm giá">
+                        {discount > 0 ? `-${money(discount)}` : '—'}
+                        {invoice.voucherCode && <small className="admin-table-subline">{invoice.voucherCode}</small>}
+                      </td>
+                      <td data-label="Tổng thanh toán"><strong>{money(invoice.totalAmount)}</strong></td>
+                      <td data-label="Thanh toán">
+                        <span>{methodLabels[invoice.paymentMethod] || invoice.paymentMethod || '—'}</span>
+                        <small className={`admin-table-subline admin-payment-status-pill ${invoice.paymentStatus === 'PAID' ? 'is-paid' : invoice.paymentStatus === 'PENDING' ? 'is-pending' : ''}`}>
+                          {paymentLabels[invoice.paymentStatus] || invoice.paymentStatus || '—'}
+                        </small>
+                      </td>
+                      <td data-label="Trạng thái đơn">
+                        <span className={`admin-status admin-status-${(invoice.status || '').toLowerCase()}`}>
+                          <span className="admin-badge-dot" />
+                          {orderLabels[invoice.status] || invoice.status}
+                        </span>
+                      </td>
+                      <td data-label="Thao tác">
+                        <button className="admin-action" onClick={event => setInvoiceSelection({ id: invoice.id, opener: event.currentTarget })}>Xem hóa đơn</button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {invoices.map(invoice => {
-                      const discount = Number(invoice.discountAmount || 0);
-                      const shippingFee = Number(invoice.shippingFee || 0);
-                      const subtotal = Number(invoice.totalAmount || 0) + discount - shippingFee;
-                      return (
-                        <tr key={invoice.id}>
-                          <td data-label="Mã hóa đơn">
-                            <span className="admin-order-code-badge">#{invoice.orderCode}</span>
-                            <small className="admin-table-subline">{date(invoice.createdAt)}</small>
-                          </td>
-                          <td data-label="Khách hàng">
-                            <b>{invoice.customer?.fullName || '—'}</b>
-                            <small className="admin-table-subline">{invoice.customer?.email || ''}</small>
-                          </td>
-                          <td data-label="Tạm tính">{money(subtotal)}</td>
-                          <td data-label="Giảm giá">
-                            {discount > 0 ? `-${money(discount)}` : '—'}
-                            {invoice.voucherCode && <small className="admin-table-subline">{invoice.voucherCode}</small>}
-                          </td>
-                          <td data-label="Tổng thanh toán"><strong>{money(invoice.totalAmount)}</strong></td>
-                          <td data-label="Thanh toán">
-                            <span>{methodLabels[invoice.paymentMethod] || invoice.paymentMethod || '—'}</span>
-                            <small className={`admin-table-subline admin-payment-status-pill ${invoice.paymentStatus === 'PAID' ? 'is-paid' : invoice.paymentStatus === 'PENDING' ? 'is-pending' : ''}`}>
-                              {paymentLabels[invoice.paymentStatus] || invoice.paymentStatus || '—'}
-                            </small>
-                          </td>
-                          <td data-label="Trạng thái đơn">
-                            <span className={`admin-status admin-status-${(invoice.status || '').toLowerCase()}`}>
-                              <span className="admin-badge-dot" />
-                              {orderLabels[invoice.status] || invoice.status}
-                            </span>
-                          </td>
-                          <td data-label="Thao tác">
-                            <button className="admin-action" onClick={event => setInvoiceSelection({ id: invoice.id, opener: event.currentTarget })}>Xem hóa đơn</button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    {!invoices.length && (
-                      <tr><td colSpan={8} className="admin-table-empty"><b>Không có hóa đơn phù hợp.</b><small>Thử đổi từ khóa, trạng thái thanh toán hoặc khoảng ngày.</small></td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              {(totalPages > 1 || page > 0) && (
-                <div className="admin-pagination invoice-pagination">
-                  <span>Trang {page + 1}/{Math.max(1, totalPages)} · {totalElements} hóa đơn</span>
-                  <div>
-                    <button disabled={page <= 0 || loading} onClick={() => setPage(page - 1)}>Trước</button>
-                    <button disabled={page + 1 >= totalPages || loading} onClick={() => setPage(page + 1)}>Sau</button>
-                  </div>
-                </div>
-              )}
+                  );
+                })}
+              </Table>
+              <PageControls variant="compact" page={page} totalPages={totalPages} totalElements={totalElements} onPage={setPage} disabled={loading} />
             </>
           )}
         </div>

@@ -1,0 +1,296 @@
+/* ------------------------------------------------- sales orders & invoices */
+.manager-shell .manager-inline-icon {
+  margin-right: 4px;
+  vertical-align: -1px;
+  color: inherit;
+}
+
+.manager-shell .manager-detail-cancel {
+  background: var(--admin-danger-soft);
+  border-color: color-mix(in srgb, var(--admin-danger) 30%, var(--admin-border));
+}
+
+.manager-shell .manager-detail-cancel span,
+.manager-shell .manager-cancel-reason {
+  color: var(--admin-danger);
+}
+
+.manager-shell .admin-detail-total strong {
+  color: var(--admin-success);
+}
+
+.manager-shell .invoice-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.manager-shell .invoice-layout.has-detail {
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.8fr);
+}
+
+.manager-shell .invoice-list {
+  min-width: 0;
+}
+
+.manager-shell .invoice-table table {
+  min-width: 980px;
+}
+
+.manager-shell .invoice-table :is(th, td):nth-child(6) {
+  min-width: 122px;
+}
+
+.manager-shell .invoice-table td strong {
+  white-space: nowrap;
+}
+
+.manager-shell .invoice-detail-panel {
+  position: sticky;
+  top: 12px;
+  width: auto;
+  min-width: 0;
+  max-height: min(80vh, 900px);
+  overflow: auto;
+  padding: 20px;
+  color: var(--admin-text);
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  box-shadow: var(--admin-shadow-md);
+}
+
+.manager-shell .invoice-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.manager-shell .invoice-detail-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -.02em;
+}
+
+.manager-shell .invoice-detail-panel .admin-detail-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.manager-shell .invoice-detail-panel .admin-detail-grid .admin-detail-wide {
+  grid-column: 1;
+}
+
+.manager-shell .invoice-detail-panel h3 {
+  margin: 20px 0 10px;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.manager-shell .invoice-detail-panel td b {
+  display: block;
+  font-weight: 650;
+}
+
+.manager-shell .invoice-detail-panel .admin-table-wrap {
+  border-radius: var(--manager-radius-control);
+}
+
+.manager-shell .invoice-detail-panel .admin-table-wrap table {
+  min-width: 0;
+}
+
+.manager-shell .invoice-detail-panel .admin-table-wrap :is(th, td) {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.manager-shell .invoice-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 2px;
+}
+
+.manager-shell .invoice-payment-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  background: var(--admin-input);
+  color: var(--admin-muted);
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+.manager-shell .invoice-payment-badge.is-paid {
+  color: var(--admin-success);
+  border-color: color-mix(in srgb, var(--admin-success) 32%, var(--admin-border));
+  background: var(--admin-success-soft);
+}
+
+.manager-shell .invoice-totals {
+  display: grid;
+  gap: 7px;
+  max-width: 380px;
+  margin: 16px 0 0 auto;
+}
+
+.manager-shell .invoice-totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.manager-shell .invoice-totals b {
+  color: var(--admin-text);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.manager-shell .invoice-total-row {
+  align-items: center;
+  margin-top: 3px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--admin-border);
+}
+
+.manager-shell .invoice-total-row strong {
+  color: var(--admin-text);
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.manager-shell .invoice-note {
+  margin: 18px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.manager-shell .invoice-error {
+  display: grid;
+  gap: 12px;
+}
+
+/* Payment and reconciliation block inside the order detail dialog */
+.manager-shell .manager-payment-panel {
+  min-width: 0;
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-input);
+}
+
+.manager-shell .manager-payment-panel h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.manager-shell .manager-payment-panel p {
+  overflow-wrap: anywhere;
+}
+
+.manager-shell .manager-payment-note {
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--admin-warning);
+  border-radius: var(--manager-radius-sm);
+  background: var(--admin-warning-soft);
+  color: var(--admin-text);
+  font-size: 12.5px;
+}
+
+.manager-shell .manager-payment-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-card);
+}
+
+.manager-shell .manager-payment-form h4,
+.manager-shell .manager-payment-form p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.manager-shell .manager-payment-form label {
+  display: grid;
+  gap: 5px;
+  color: var(--admin-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.manager-shell .manager-payment-form textarea {
+  min-height: 80px;
+  padding: 9px 10px;
+  resize: vertical;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-sm);
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font: inherit;
+  font-size: 13px;
+}
+
+.manager-shell .manager-payment-form > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.manager-shell .manager-dialog__hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--admin-muted);
+  font-size: 11px;
+}
+
+@media (max-width: 1150px) {
+  .manager-shell .invoice-layout.has-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .manager-shell .invoice-detail-panel {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .manager-shell .invoice-detail-panel {
+    padding: 16px;
+  }
+
+  .manager-shell .invoice-totals {
+    max-width: none;
+  }
+
+  .manager-shell .invoice-table table {
+    min-width: 820px;
+  }
+}

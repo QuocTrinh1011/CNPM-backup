@@ -164,8 +164,26 @@
   gap: 6px;
 }
 
+/* Final or return-locked orders already show their status as a badge */
+.manager-shell .admin-order-actions .is-locked {
+  display: none;
+}
+
 .manager-shell.admin-shell .admin-order-table table {
-  min-width: 900px;
+  min-width: 0;
+}
+
+/* Order grid stays compact at 1280px: tighter gutters, no avatar, status badge may wrap */
+.manager-shell.admin-shell .admin-order-table :is(th, td) {
+  padding-inline: 12px;
+}
+
+.manager-shell .admin-order-table .admin-table-customer .admin-customer-avatar {
+  display: none;
+}
+
+.manager-shell .admin-order-table .admin-payment-method {
+  white-space: nowrap;
 }
 
 .manager-shell .admin-inline-status-select,
@@ -227,10 +245,32 @@
   background: currentColor;
 }
 
+.manager-shell .admin-order-table .admin-badge {
+  white-space: normal;
+  max-width: 150px;
+  line-height: 1.4;
+}
+
 .manager-shell .payment-review-warning {
   display: block;
   margin-top: 3px;
   color: var(--admin-warning);
   font-size: 10px;
   font-weight: 650;
+}
+
+/* Wide order/invoice tables keep their actions reachable while scrolling */
+@media (min-width: 769px) {
+  .manager-shell .admin-order-table :is(th, td):last-child,
+  .manager-shell .invoice-table :is(th, td):last-child {
+    position: sticky;
+    right: 0;
+    background: var(--admin-card);
+    box-shadow: inset 1px 0 0 var(--admin-border);
+  }
+
+  .manager-shell .admin-order-table tbody tr:hover td:last-child,
+  .manager-shell .invoice-table tbody tr:hover td:last-child {
+    background: color-mix(in srgb, var(--admin-primary) 3.5%, var(--admin-card));
+  }
 }

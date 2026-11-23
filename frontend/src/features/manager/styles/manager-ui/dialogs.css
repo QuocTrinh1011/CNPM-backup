@@ -47,12 +47,17 @@
 }
 
 .manager-shell .manager-dialog__header {
+  position: sticky;
+  z-index: 2;
+  top: -24px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  padding-bottom: 14px;
+  margin: -24px -24px 14px;
+  padding: 24px 24px 12px;
   border-bottom: 1px solid var(--admin-border);
+  background: var(--admin-card);
 }
 
 .manager-shell .manager-dialog__title {
