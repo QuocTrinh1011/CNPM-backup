@@ -419,7 +419,9 @@
   border: 1px solid var(--line-strong);
   border-radius: 50%;
   background: var(--surface);
-  transition: box-shadow var(--dur-fast) var(--ease-out);
+  transition: box-shadow var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
 .site-shell .product-color-swatch img {
@@ -435,8 +437,10 @@
   height: 100%;
 }
 
-.site-shell .product-color-swatch:hover {
+.site-shell .product-color-swatch:hover:not(.active) {
   border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--white), 0 0 0 3.5px var(--line-strong);
+  transform: scale(1.06);
 }
 
 .site-shell .product-color-swatch.active {
@@ -459,8 +463,9 @@
     color var(--dur-fast) var(--ease-out);
 }
 
-.site-shell .choice-chip:hover {
-  border-color: var(--line-strong);
+.site-shell .choice-chip:hover:not(.active):not(:disabled) {
+  border-color: var(--ink);
+  background: var(--surface);
 }
 
 .site-shell .choice-chip.active {
