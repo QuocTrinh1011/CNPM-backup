@@ -1,1 +1,2 @@
-/* Checkout styles live here (populated by the checkout redesign task). */
+/* Checkout & address visuals are authored in shared/address/checkout-page.css
+   and shared/payment/payment-qr.css, loaded by the checkout route and address module. */

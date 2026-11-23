@@ -25,15 +25,6 @@
 .site-shell[data-shop-theme] .shop-order-card > footer { background: var(--soft); }
 .site-shell[data-shop-theme] .shop-orders-tabs { overflow-x: auto; scrollbar-width: thin; }
 .site-shell[data-shop-theme] .shop-orders-tabs button { white-space: nowrap; }
-.site-shell[data-shop-theme] .shop-checkout-page { max-width: var(--container); padding: 32px var(--gutter) 64px; }
-.site-shell[data-shop-theme] .shop-checkout-grid { grid-template-columns: minmax(0,1.5fr) minmax(340px,1fr); gap: 24px; }
-.site-shell[data-shop-theme] .shop-checkout-card { padding: 24px; border-radius: var(--radius-md); background: var(--white); color: var(--ink); box-shadow: var(--shadow-card); }
-.site-shell[data-shop-theme] .shop-checkout-card h2 { font-size: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
-.site-shell[data-shop-theme] .shop-delivery-card { border-top: 3px solid var(--accent); }
-.site-shell[data-shop-theme] .shop-checkout-totals { position: sticky; top: 24px; max-height: none; overflow: visible; background: var(--white); color: var(--ink); }
-.site-shell[data-shop-theme] .shop-checkout-totals :is(h2,dt,dd,label,p) { color: var(--ink); }
-.site-shell[data-shop-theme] .shop-payment-method { border-radius: var(--radius-sm); background: var(--white); border-color: var(--line); }
-.site-shell[data-shop-theme] .shop-payment-method.selected { background: var(--accent-tint); border-color: var(--accent); }
 .site-shell[data-shop-theme] :is(.cart-line-info,.shop-order-product,.shop-checkout-products article) { min-width: 0; }
 .site-shell[data-shop-theme] :is(.voucher-code,.shop-voucher-code) { overflow-wrap: anywhere; }
 .site-shell[data-shop-theme] .shop-wallet-card { background: var(--white); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius-sm); padding: 20px; margin: 16px 0; }
