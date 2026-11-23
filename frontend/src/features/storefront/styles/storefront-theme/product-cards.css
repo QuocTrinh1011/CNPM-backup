@@ -211,3 +211,30 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+
+/* Home rail: flat cards on the paper canvas */
+.site-shell .shop-product-rail .product-card,
+.site-shell .shop-product-rail .product-card:hover {
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.site-shell .shop-product-rail .product-image {
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+}
+
+.site-shell .shop-product-rail .product-info {
+  padding: 12px 0 0;
+}
+
+.site-shell .shop-product-rail .product-card-actions {
+  margin-top: 10px;
+  padding-top: 0;
+  border-top: 0;
+}
