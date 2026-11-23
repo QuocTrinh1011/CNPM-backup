@@ -36,8 +36,10 @@
   z-index: var(--z-header);
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 16px;
   width: 100%;
+  max-width: none;
   height: 64px;
   margin: 0;
   padding-inline: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
@@ -215,7 +217,7 @@
   max-width: 320px;
   min-width: 180px;
   height: 44px;
-  margin: 0 0 0 auto;
+  margin: 0;
   padding: 0 6px 0 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius-full);
@@ -297,6 +299,7 @@
   flex-shrink: 0;
   align-items: center;
   gap: 2px;
+  margin-left: auto;
 }
 
 .site-shell .header-actions .icon-button {
