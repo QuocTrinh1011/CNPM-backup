@@ -183,6 +183,25 @@
   font-size: 12.5px;
 }
 
-.manager-shell .manager-change-password-backdrop {
-  z-index: 9999;
+.manager-shell .manager-change-password-form {
+  display: grid;
+  gap: 4px;
+}
+
+.manager-shell .manager-change-password-form label {
+  margin-top: 8px;
+}
+
+.manager-shell .manager-change-password-form .manager-notice {
+  margin-bottom: 10px;
+}
+
+.manager-shell .manager-change-password-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--admin-border);
 }

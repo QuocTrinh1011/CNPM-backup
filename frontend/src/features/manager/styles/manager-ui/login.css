@@ -1,5 +1,14 @@
 /* ----------------------------------------------------------------- login */
 .manager-login.admin-login {
+  --login-surface: var(--admin-login-card);
+  --login-border: var(--admin-login-border);
+  --login-text: var(--admin-ink-text);
+  --login-muted: var(--admin-ink-muted);
+  --login-field: color-mix(in srgb, var(--admin-login-card) 88%, var(--admin-ink-text));
+  --login-link: color-mix(in srgb, var(--admin-primary) 58%, var(--admin-ink-text));
+  --login-danger: color-mix(in srgb, var(--admin-danger) 38%, var(--admin-ink-text));
+  --login-danger-bg: color-mix(in srgb, var(--admin-danger) 16%, var(--admin-login-card));
+  --login-danger-border: color-mix(in srgb, var(--admin-danger) 38%, var(--admin-login-border));
   position: relative;
   display: grid;
   place-items: center;
@@ -8,18 +17,6 @@
   isolation: isolate;
   background: var(--admin-ink);
   font-family: "Manrope", system-ui, sans-serif;
-}
-
-.manager-login.admin-login[data-theme] {
-  --admin-card: #1c1815;
-  --admin-input: #141110;
-  --admin-text: #f4efe8;
-  --admin-muted: #a89c90;
-  --admin-border: #2e2724;
-  --admin-primary-soft: #3a1c1e;
-  --admin-danger-soft: #471f22;
-  --admin-danger: #f3a29d;
-  --admin-shadow-lg: 0 32px 80px rgb(0 0 0 / 55%);
 }
 
 .manager-login.admin-login::before {
@@ -32,17 +29,17 @@
     linear-gradient(rgb(244 239 232 / 4%) 1px, transparent 1px),
     linear-gradient(90deg, rgb(244 239 232 / 4%) 1px, transparent 1px);
   background-size: 48px 48px;
-  mask-image: radial-gradient(circle at 50% 40%, #000, transparent 78%);
+  mask-image: radial-gradient(circle at 50% 40%, black, transparent 78%);
 }
 
 .manager-login.admin-login .admin-login-card {
   width: min(440px, 100%);
   padding: 38px;
-  border: 1px solid var(--admin-border);
-  border-radius: 20px;
-  background: var(--admin-card);
+  border: 1px solid var(--login-border);
+  border-radius: var(--admin-radius-xl);
+  background: var(--login-surface);
   box-shadow: var(--admin-shadow-lg);
-  color: var(--admin-text);
+  color: var(--login-text);
 }
 
 .manager-login.admin-login .admin-mark {
@@ -51,7 +48,7 @@
   gap: 7px;
   height: 40px;
   padding: 0 12px;
-  border-radius: 10px;
+  border-radius: var(--manager-radius-control);
   background: var(--admin-primary);
   color: var(--admin-on-primary);
   font-size: 13px;
@@ -68,7 +65,7 @@
 .manager-login.admin-login .admin-eyebrow {
   display: block;
   margin-top: 20px;
-  color: color-mix(in srgb, var(--admin-primary) 58%, #fff);
+  color: var(--login-link);
   font-size: 9.5px;
   font-weight: 750;
   letter-spacing: .16em;
@@ -76,29 +73,29 @@
 
 .manager-login.admin-login .admin-login-card h1 {
   margin: 10px 0 8px;
-  color: var(--admin-text);
+  color: var(--login-text);
   font: 780 34px/1.16 "Manrope", system-ui, sans-serif;
   letter-spacing: -.045em;
 }
 
 .manager-login.admin-login .admin-login-card h1 i {
-  color: color-mix(in srgb, var(--admin-primary) 68%, #fff);
+  color: var(--login-link);
   font-style: normal;
 }
 
 .manager-login.admin-login .admin-login-card p {
   margin: 0 0 18px;
-  color: var(--admin-muted);
+  color: var(--login-muted);
   font-size: 13px;
 }
 
 .manager-login.admin-login .admin-login-card [role="alert"] {
   margin: 0 0 12px;
   padding: 10px 12px;
-  border: 1px solid color-mix(in srgb, var(--admin-danger) 38%, var(--admin-border));
-  border-radius: 10px;
-  background: var(--admin-danger-soft);
-  color: var(--admin-danger);
+  border: 1px solid var(--login-danger-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--login-danger-bg);
+  color: var(--login-danger);
   font-size: 12px;
   overflow-wrap: anywhere;
 }
@@ -111,7 +108,7 @@
 .manager-login.admin-login .admin-login-card label {
   display: grid;
   gap: 6px;
-  color: var(--admin-muted);
+  color: var(--login-muted);
   font-family: "Manrope", system-ui, sans-serif;
   font-size: 10px;
   font-weight: 700;
@@ -122,10 +119,10 @@
   width: 100%;
   min-height: 44px;
   padding: 0 12px;
-  border: 1px solid var(--admin-border);
-  border-radius: 10px;
-  background: var(--admin-input);
-  color: var(--admin-text);
+  border: 1px solid var(--login-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--login-field);
+  color: var(--login-text);
   font-family: inherit;
   font-size: 14px;
   box-sizing: border-box;
@@ -147,13 +144,13 @@
 .manager-login.admin-login .admin-login-card > a {
   display: block;
   margin-top: 14px;
-  color: var(--admin-muted);
+  color: var(--login-muted);
   font-size: 11.5px;
   text-align: center;
 }
 
 .manager-login.admin-login .admin-login-card > a {
-  color: color-mix(in srgb, var(--admin-primary) 62%, #fff);
+  color: var(--login-link);
   text-decoration: none;
 }
 

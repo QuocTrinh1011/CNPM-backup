@@ -97,11 +97,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
   min-height: 72px;
   padding: 12px;
   border: 1px solid var(--admin-border);
   border-radius: var(--manager-radius-control);
   background: var(--admin-input);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   transition: transform var(--manager-transition), border-color var(--manager-transition), background-color var(--manager-transition);
 }
 
@@ -146,6 +151,31 @@
   font-size: 11.5px;
   font-variant-numeric: tabular-nums;
 }
+
+.manager-shell .admin-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--admin-text);
+  cursor: pointer;
+}
+
+.manager-shell .admin-status-chip b {
+  font-weight: 750;
+}
+
+.manager-shell .admin-status-dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--admin-muted);
+}
+
+.manager-shell .admin-status-dot[data-tone="warning"] { background: var(--admin-warning); }
+.manager-shell .admin-status-dot[data-tone="info"] { background: var(--admin-info); }
+.manager-shell .admin-status-dot[data-tone="success"] { background: var(--admin-success); }
+.manager-shell .admin-status-dot[data-tone="danger"] { background: var(--admin-danger); }
 
 .manager-shell .admin-operational-alert {
   display: flex;

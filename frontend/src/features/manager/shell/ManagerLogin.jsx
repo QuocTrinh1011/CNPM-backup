@@ -38,6 +38,7 @@ export function AdminLogin({ theme, onAuthenticated, onNotice, error }) {
             <input
               type="email"
               required
+              autoComplete="email"
               value={form.email}
               onChange={(event) =>
                 setForm({ ...form, email: event.target.value })
@@ -49,6 +50,7 @@ export function AdminLogin({ theme, onAuthenticated, onNotice, error }) {
             <input
               type="password"
               required
+              autoComplete="current-password"
               value={form.password}
               onChange={(event) =>
                 setForm({ ...form, password: event.target.value })

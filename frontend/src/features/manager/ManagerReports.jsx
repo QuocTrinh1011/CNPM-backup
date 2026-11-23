@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Activity, AlertTriangle, ArrowDownRight, ArrowUpRight, BarChart3, RefreshCw } from "lucide-react";
 import { adminApi, adminEndpoints } from "../../api/manager-api";
 import { money } from "./manager-data";
-import "./manager-reports.css";
+import { Table } from "./ManagerComponents";
 
 const CURRENT_YEAR = new Date().getFullYear();
 const DETAIL_OPTIONS = [
@@ -29,14 +29,13 @@ function routeFilters(location) {
 
 function ReportTable({ name, headers, rows, renderRow }) {
   return (
-    <div className="manager-report-table-wrap">
-      <table aria-label={name}>
-        <thead><tr>{headers.map(header => <th key={header}>{header}</th>)}</tr></thead>
-        <tbody>{rows.length ? rows.map(renderRow) : (
-          <tr><td colSpan={headers.length} className="manager-report-empty">Chưa có dữ liệu trong kỳ này.</td></tr>
-        )}</tbody>
-      </table>
-    </div>
+    <Table
+      headers={headers}
+      ariaLabel={name}
+      empty={{ description: "Chưa có dữ liệu trong kỳ này." }}
+    >
+      {rows.map(renderRow)}
+    </Table>
   );
 }
 
