@@ -14,37 +14,14 @@
 .site-shell[data-shop-theme] :is(.price-row,.subtotal,.shop-checkout-totals,.shop-order-card > footer) { font-variant-numeric: tabular-nums; }
 
 /* Interim account + checkout surfaces until their dedicated partials land. */
-.site-shell[data-shop-theme] .customer-layout { max-width: var(--container); padding: 32px var(--gutter) 64px; gap: 24px; grid-template-columns: 240px minmax(0,1fr); }
-.site-shell[data-shop-theme] .customer-sidebar { border-radius: var(--radius-sm); padding: 20px 12px; border: 1px solid var(--line); background: var(--white); }
-.site-shell[data-shop-theme] .customer-sidebar a { border-radius: var(--radius-xs); min-height: 44px; font-size: 14px; }
-.site-shell[data-shop-theme] .customer-sidebar a[aria-current="page"] { background: var(--accent-tint); color: var(--accent); font-weight: 800; }
-.site-shell[data-shop-theme] .customer-content { min-width: 0; }
 .site-shell[data-shop-theme] :is(.product-modal-content h2,.shop-order-product h3,.notification-item p,.survey-question legend) { overflow-wrap: anywhere; }
-.site-shell[data-shop-theme] .customer-page-body :is(.wide-modal,.profile-modal,.survey-modal,.cart-drawer) { background: var(--white); color: var(--ink); border-radius: var(--radius-md); border-color: var(--line); }
-.site-shell[data-shop-theme] :is(.shop-order-card,.survey-question,.wishlist-card,.notification-item) { border-radius: var(--radius-md); border-color: var(--line); background: var(--white); }
-.site-shell[data-shop-theme] .shop-order-card > footer { background: var(--soft); }
-.site-shell[data-shop-theme] .shop-orders-tabs { overflow-x: auto; scrollbar-width: thin; }
-.site-shell[data-shop-theme] .shop-orders-tabs button { white-space: nowrap; }
 .site-shell[data-shop-theme] :is(.cart-line-info,.shop-order-product,.shop-checkout-products article) { min-width: 0; }
 .site-shell[data-shop-theme] :is(.voucher-code,.shop-voucher-code) { overflow-wrap: anywhere; }
-.site-shell[data-shop-theme] .shop-wallet-card { background: var(--white); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius-sm); padding: 20px; margin: 16px 0; }
-.site-shell[data-shop-theme] .shop-wallet-card > b { display: block; font: 700 14px/1.6 var(--sans); overflow-wrap: anywhere; color: var(--ink); }
-.site-shell[data-shop-theme] .shop-wallet-card h3 { color: var(--accent); font-size: 24px; margin: 8px 0; }
-.site-shell[data-shop-theme] .shop-wallet-card p { color: var(--muted); margin: 8px 0; }
-.site-shell[data-shop-theme] .shop-wallet-card button { margin: 8px 8px 0 0; }
-.site-shell[data-shop-theme] .customer-sidebar { top: 24px; max-height: calc(100dvh - 48px); overflow-y: auto; }
-.site-shell[data-shop-theme] .shop-orders-search { border-radius: var(--radius-sm); }
-.site-shell[data-shop-theme] .shop-orders-tabs { gap: 4px; padding-bottom: 4px; }
-.site-shell[data-shop-theme] .shop-orders-tabs button { padding: 12px 14px; min-height: 44px; }
 .site-shell[data-shop-theme] .cart-line { background: var(--white); border: 1px solid var(--line); }
 .site-shell[data-shop-theme] .cart-line-info small { display: block; margin-top: 3px; }
 .site-shell[data-shop-theme] .cart-line-info h3 { margin: 0 0 6px; line-height: 1.5; overflow-wrap: anywhere; white-space: normal; overflow: visible; text-overflow: clip; }
-.site-shell[data-shop-theme] :is(.shop-order-card > header,.shop-order-card > footer) { gap: 12px; flex-wrap: wrap; }
 
 @media (max-width: 900px) {
-  .site-shell[data-shop-theme] .customer-layout { grid-template-columns: minmax(0,1fr); }
-  .site-shell[data-shop-theme] .customer-sidebar { position: static; }
-  .site-shell[data-shop-theme] .customer-sidebar { max-height: none; overflow: visible; }
   .site-shell[data-shop-theme] .shop-checkout-grid { grid-template-columns: minmax(0,1fr); }
   .site-shell[data-shop-theme] .shop-checkout-totals { position: static; }
 }
