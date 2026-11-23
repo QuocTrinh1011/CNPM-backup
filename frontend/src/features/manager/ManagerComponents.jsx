@@ -23,12 +23,12 @@ export function PanelLoading() {
   );
 }
 
-export function Table({ headers, children, className = '', loading = false, skeletonRows = 5, empty, sticky = false }) {
+export function Table({ headers, children, className = '', loading = false, skeletonRows = 5, empty, sticky = false, ariaLabel }) {
   const hasRows = React.Children.count(children) > 0;
   const emptyCopy = typeof empty === 'object' && empty ? empty : { description: empty };
   return (
     <div className={`admin-table-wrap${sticky ? ' is-sticky' : ''} ${className}`}>
-      <table>
+      <table aria-label={ariaLabel}>
         <thead>
           <tr>
             {headers.map((header) => (

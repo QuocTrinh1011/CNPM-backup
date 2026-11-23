@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ClipboardList, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { adminApi, adminEndpoints } from '../../api/manager-api';
 import { ListError, PanelLoading, PanelTitle, Table } from './ManagerComponents';
-import './styles/warehouse-workspace.css';
+import { InlineNotice, StatusPill } from './ManagerKit';
 
 const today = () => {
   const date = new Date();
@@ -10,6 +10,7 @@ const today = () => {
 };
 const emptyForm = () => ({ productId: '', targetQuantity: '', assignedEmployeeId: '', dueDate: '', note: '' });
 const statusLabel = status => ({ PLANNED: 'Chờ thực hiện', IN_PROGRESS: 'Đang thực hiện', COMPLETED: 'Hoàn thành', CANCELLED: 'Đã hủy' })[status] || status;
+const statusTone = status => ({ PLANNED: 'neutral', IN_PROGRESS: 'info', COMPLETED: 'success', CANCELLED: 'neutral' })[status] || 'neutral';
 
 export default function WarehouseProductionPlans() {
   const [data, setData] = useState(null);
@@ -75,14 +76,16 @@ export default function WarehouseProductionPlans() {
         <label>Hạn hoàn thành<input type="date" min={today()} value={form.dueDate} onChange={event => setForm(current => ({ ...current, dueDate: event.target.value }))}/></label>
       </div>
       <label className="warehouse-notes">Ghi chú<textarea rows="2" maxLength="2000" value={form.note} onChange={event => setForm(current => ({ ...current, note: event.target.value }))}/></label>
-      {!products.length && <p className="warehouse-notice is-error" role="alert">Chưa có sản phẩm đang kinh doanh để lập kế hoạch.</p>}
-      {!employees.length && <p className="warehouse-notice is-error" role="alert">Chưa có nhân viên kho đang làm việc.</p>}
+      {!products.length && <InlineNotice tone="danger">Chưa có sản phẩm đang kinh doanh để lập kế hoạch.</InlineNotice>}
+      {!employees.length && <InlineNotice tone="danger">Chưa có nhân viên kho đang làm việc.</InlineNotice>}
       <div className="warehouse-actions"><button className="admin-primary" disabled={saving || !products.length || !employees.length}>{saving ? 'Đang lưu…' : 'Lưu kế hoạch'}</button><button type="button" className="admin-action" disabled={saving} onClick={() => setShowForm(false)}>Hủy</button></div>
     </form>}
-    {error ? <ListError message={error} onRetry={() => setReload(value => value + 1)} /> : <Table headers={['Kế hoạch', 'Sản phẩm', 'Chỉ tiêu', 'Đã hoàn thành', 'Nhân viên kho', 'Hạn', 'Trạng thái', 'Thao tác']}>
-      {(data?.content || []).map(plan => <tr key={plan.id}><td><b>{plan.planCode}</b></td><td>{plan.productName}<small>Công thức v{plan.recipeVersion}</small></td><td>{plan.targetQuantity}</td><td>{plan.completedQuantity}</td><td>{plan.assignedEmployeeName}</td><td>{plan.dueDate || '—'}</td><td>{statusLabel(plan.status)}</td><td>{plan.status === 'PLANNED' && <button type="button" className="admin-action warehouse-danger-action" onClick={() => cancel(plan)}>Hủy kế hoạch</button>}</td></tr>)}
+    {error ? <ListError message={error} onRetry={() => setReload(value => value + 1)} /> : <Table
+      headers={['Kế hoạch', 'Sản phẩm', 'Chỉ tiêu', 'Đã hoàn thành', 'Nhân viên kho', 'Hạn', 'Trạng thái', 'Thao tác']}
+      empty={{ description: 'Chưa có kế hoạch sản xuất.' }}
+    >
+      {(data?.content || []).map(plan => <tr key={plan.id}><td><b>{plan.planCode}</b></td><td>{plan.productName}<small>Công thức v{plan.recipeVersion}</small></td><td>{plan.targetQuantity}</td><td>{plan.completedQuantity}</td><td>{plan.assignedEmployeeName}</td><td>{plan.dueDate || '—'}</td><td><StatusPill tone={statusTone(plan.status)}>{statusLabel(plan.status)}</StatusPill></td><td>{plan.status === 'PLANNED' && <button type="button" className="admin-action warehouse-danger-action" onClick={() => cancel(plan)}>Hủy kế hoạch</button>}</td></tr>)}
     </Table>}
-    {!error && data?.content?.length === 0 && <p className="warehouse-empty"><ClipboardList size={18}/> Chưa có kế hoạch sản xuất.</p>}
-    {notice && <p className="warehouse-notice" role="status">{notice}</p>}
+    {notice && <InlineNotice tone={notice.startsWith('Đã') ? 'success' : 'danger'}>{notice}</InlineNotice>}
   </section>;
 }

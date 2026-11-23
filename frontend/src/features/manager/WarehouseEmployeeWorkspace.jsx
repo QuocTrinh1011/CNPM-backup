@@ -2,9 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Boxes, ClipboardList, Factory, PackageCheck, RefreshCw, RotateCcw } from 'lucide-react';
 import { adminApi, adminEndpoints } from '../../api/manager-api';
 import { ListError, PanelLoading, PanelTitle } from './ManagerComponents';
-import './styles/warehouse-workspace.css';
+import { InlineNotice, StatusPill } from './ManagerKit';
 
 const statusLabel = status => ({ PENDING: 'Chờ duyệt', APPROVED: 'Đã duyệt', REJECTED: 'Từ chối', PLANNED: 'Chờ thực hiện', IN_PROGRESS: 'Đang thực hiện', COMPLETED: 'Hoàn thành', CANCELLED: 'Đã hủy' })[status] || status;
+const statusTone = status => ({ PENDING: 'warning', APPROVED: 'success', REJECTED: 'danger', PLANNED: 'neutral', IN_PROGRESS: 'info', COMPLETED: 'success', CANCELLED: 'neutral' })[status] || 'neutral';
 
 export default function WarehouseEmployeeWorkspace() {
   const [plans, setPlans] = useState(null);
@@ -93,16 +94,16 @@ export default function WarehouseEmployeeWorkspace() {
 
   const renderHistory = (title, rows, codeField) => <section className="warehouse-employee-history" aria-label={title}>
     <h3>{title}</h3>
-    {rows.length ? rows.map(row => <div className="warehouse-history-row" key={row.id}><b>{row[codeField]}</b><span>{row.planCode || row.items?.map(item => item.productName).join(', ')}</span><span className={`warehouse-status status-${String(row.status).toLowerCase()}`}>{statusLabel(row.status)}</span></div>) : <p className="warehouse-empty">Chưa có yêu cầu.</p>}
+    {rows.length ? rows.map(row => <div className="warehouse-history-row" key={row.id}><b>{row[codeField]}</b><span>{row.planCode || row.items?.map(item => item.productName).join(', ')}</span><StatusPill tone={statusTone(row.status)}>{statusLabel(row.status)}</StatusPill></div>) : <p className="warehouse-empty">Chưa có yêu cầu.</p>}
   </section>;
 
   return <section className="admin-panel warehouse-workspace">
     <PanelTitle title="Công việc kho của tôi" subtitle="Xem kế hoạch được giao, ghi nhận sản xuất và theo dõi các đề nghị kho." />
-    {error && <p className="warehouse-notice is-error" role="alert">{error}</p>}
-    {notice && <p className="warehouse-notice" role="status">{notice}</p>}
+    {error && <InlineNotice tone="danger">{error}</InlineNotice>}
+    {notice && <InlineNotice tone="success">{notice}</InlineNotice>}
     <div className="warehouse-section-head"><h3>Kế hoạch được giao</h3><button type="button" className="admin-action" onClick={() => setReload(value => value + 1)}><RefreshCw size={15}/> Tải lại</button></div>
     {plans.length ? <div className="warehouse-employee-plans">{plans.map(plan => <article className="warehouse-employee-plan" key={plan.id}>
-      <div className="warehouse-approval-heading"><div><b>{plan.planCode} · {plan.productName}</b><span>Chỉ tiêu {plan.targetQuantity} · Hoàn thành {plan.completedQuantity} · Hạn {plan.dueDate || 'chưa đặt'}</span></div><span className={`warehouse-status status-${String(plan.status).toLowerCase()}`}>{statusLabel(plan.status)}</span></div>
+      <div className="warehouse-approval-heading"><div><b>{plan.planCode} · {plan.productName}</b><span>Chỉ tiêu {plan.targetQuantity} · Hoàn thành {plan.completedQuantity} · Hạn {plan.dueDate || 'chưa đặt'}</span></div><StatusPill tone={statusTone(plan.status)}>{statusLabel(plan.status)}</StatusPill></div>
       <div className="warehouse-material-breakdown"><b>Định mức và nguyên liệu đã nhận</b>{plan.materials.map(material => <div key={material.id}><span>{material.materialName} ({material.unit})</span><span>Yêu cầu {material.requiredQuantity} · Đã cấp {material.allocatedQuantity} · Đã dùng {material.consumedQuantity} · Đã trả {material.returnedQuantity}</span></div>)}</div>
       <div className="warehouse-actions">
         <button type="button" className="admin-action" onClick={() => startAction('material-request', plan)}><Boxes size={15}/> Đề nghị nguyên liệu {plan.planCode}</button>

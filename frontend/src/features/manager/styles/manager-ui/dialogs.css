@@ -60,6 +60,14 @@
   background: var(--admin-card);
 }
 
+@media (max-width: 600px) {
+  .manager-shell .manager-dialog__header {
+    top: -18px;
+    margin: -18px -18px 14px;
+    padding: 18px 18px 12px;
+  }
+}
+
 .manager-shell .manager-dialog__title {
   margin: 0;
   font-size: 19px;
