@@ -245,6 +245,13 @@
   background: currentColor;
 }
 
+.manager-shell .admin-badge[data-tone="warning"] { color: var(--admin-warning); }
+.manager-shell .admin-badge[data-tone="info"] { color: var(--admin-info); }
+.manager-shell .admin-badge[data-tone="success"] { color: var(--admin-success); }
+.manager-shell .admin-badge[data-tone="danger"] { color: var(--admin-danger); }
+.manager-shell .admin-badge[data-tone="return"] { color: var(--admin-accent); }
+.manager-shell .admin-badge[data-tone="muted"] { color: var(--admin-muted); }
+
 .manager-shell .admin-order-table .admin-badge {
   white-space: normal;
   max-width: 150px;

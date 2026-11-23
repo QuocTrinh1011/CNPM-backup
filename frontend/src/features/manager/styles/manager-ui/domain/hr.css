@@ -6,7 +6,7 @@
   gap: 18px;
 }
 
-.manager-shell :is(.hr-directory-toolbar, .hr-filter-row, .hr-form-actions, .hr-inline-actions, .hr-period-actions, .hr-payslip-head) {
+.manager-shell :is(.hr-directory-toolbar, .hr-filter-row, .hr-inline-actions, .hr-period-actions, .hr-payslip-head) {
   display: flex;
   align-items: end;
   gap: 12px;
@@ -78,7 +78,6 @@
 
 .manager-shell :is(.hr-form-grid, .hr-settings-form) > h3,
 .manager-shell .hr-settings-form > p,
-.manager-shell .hr-form-actions,
 .manager-shell .hr-employee-form .admin-dialog-actions {
   grid-column: 1 / -1;
   margin: 0;
@@ -128,12 +127,7 @@
   line-height: 1.5;
 }
 
-.manager-shell .hr-form-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.manager-shell :is(.hr-form-actions, .hr-inline-actions, .hr-period-actions, .hr-payslip-head, .hr-settings-form, .hr-annual-print, .hr-rule-preset) button:not(.admin-primary, .admin-danger-button) {
+.manager-shell :is(.hr-inline-actions, .hr-period-actions, .hr-payslip-head, .hr-settings-form, .hr-annual-print, .hr-rule-preset) button:not(.admin-primary, .admin-danger-button) {
   min-height: 38px;
   padding: 8px 14px;
   border: 1px solid var(--admin-border);
@@ -145,7 +139,7 @@
   transition: border-color var(--manager-transition), background-color var(--manager-transition);
 }
 
-.manager-shell :is(.hr-form-actions, .hr-inline-actions, .hr-period-actions, .hr-payslip-head, .hr-settings-form, .hr-annual-print, .hr-rule-preset) button:not(.admin-primary, .admin-danger-button):hover:not(:disabled) {
+.manager-shell :is(.hr-inline-actions, .hr-period-actions, .hr-payslip-head, .hr-settings-form, .hr-annual-print, .hr-rule-preset) button:not(.admin-primary, .admin-danger-button):hover:not(:disabled) {
   border-color: color-mix(in srgb, var(--admin-text) 30%, var(--admin-border));
 }
 

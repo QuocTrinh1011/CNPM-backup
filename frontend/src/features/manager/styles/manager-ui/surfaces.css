@@ -13,7 +13,6 @@
   box-shadow: none;
 }
 
-.manager-shell .admin-panel-title,
 .manager-shell .manager-section-head {
   display: flex;
   align-items: flex-start;
@@ -23,7 +22,6 @@
   margin-bottom: 16px;
 }
 
-.manager-shell .admin-panel-title h2,
 .manager-shell .manager-section-copy h2 {
   margin: 0;
   color: var(--admin-text);
@@ -33,7 +31,6 @@
   line-height: 1.35;
 }
 
-.manager-shell .admin-panel-title p,
 .manager-shell .manager-section-copy p {
   margin: 3px 0 0;
   color: var(--admin-muted);

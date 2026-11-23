@@ -17,15 +17,6 @@ export const statusLabels = {
   COMPLETED: "Khách đã nhận hàng",
   CANCELLED: "Đã hủy",
 };
-export const statusColors = {
-  PENDING_PAYMENT: "#f59e0b",
-  PENDING: "#d97706",
-  CONFIRMED: "#8b5cf6",
-  SHIPPED: "#3b82f6",
-  DELIVERED: "#10b981",
-  COMPLETED: "#14b8a6",
-  CANCELLED: "#ef4444",
-};
 export const orderStatuses = Object.entries(statusLabels);
 export const orderStatusOptions = (current,order) => [
   [

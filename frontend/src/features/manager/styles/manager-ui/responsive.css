@@ -12,10 +12,6 @@
   .manager-shell.admin-shell .admin-live-dot {
     display: none;
   }
-
-  .manager-shell .admin-stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 900px) {
@@ -294,7 +290,6 @@
     font-size: 13px;
   }
 
-  .manager-shell .admin-panel-title,
   .manager-shell .manager-section-head {
     flex-direction: column;
     align-items: stretch;
@@ -308,7 +303,6 @@
     grid-template-columns: 1fr;
   }
 
-  .manager-shell .admin-order-toolbar,
   .manager-shell .admin-table-toolbar {
     align-items: stretch;
   }
@@ -325,10 +319,6 @@
 
   .manager-shell .admin-topbar-actions a span {
     display: none;
-  }
-
-  .manager-shell .admin-order-toolbar > .manager-toolbar-count {
-    margin-left: auto;
   }
 
   .manager-shell .admin-pagination {
@@ -382,10 +372,6 @@
 }
 
 @media (max-width: 480px) {
-  .manager-shell .admin-stat-grid {
-    grid-template-columns: 1fr;
-  }
-
   .manager-shell .admin-quick-grid {
     grid-template-columns: 1fr;
   }

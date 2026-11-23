@@ -11,13 +11,6 @@
   gap: 20px;
 }
 
-.manager-shell .manager-reports-toolbar-copy .admin-eyebrow {
-  color: var(--admin-primary);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .13em;
-}
-
 .manager-shell .manager-reports-toolbar-copy p,
 .manager-shell .manager-report-section-heading p {
   margin: 5px 0 0;
@@ -174,24 +167,25 @@
 }
 
 .manager-shell .manager-report-bars {
-  display: flex;
-  align-items: end;
-  justify-content: center;
-  gap: 3px;
+  position: relative;
   border-bottom: 1px solid var(--admin-border);
   background: repeating-linear-gradient(to top, transparent 0 34px, color-mix(in srgb, var(--admin-border) 50%, transparent) 35px 36px);
 }
 
-.manager-shell .manager-report-bars i {
-  width: min(34%, 16px);
-  min-height: 0;
-  border-radius: 5px 5px 2px 2px;
-  background: var(--admin-success);
-  transition: height .2s ease;
+.manager-shell .manager-report-bars svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.manager-shell .manager-report-bars i.expense {
-  background: var(--admin-accent);
+.manager-shell .manager-report-bars rect {
+  fill: var(--admin-success);
+}
+
+.manager-shell .manager-report-bars rect.expense {
+  fill: var(--admin-accent);
 }
 
 .manager-shell .manager-report-detail-filter {

@@ -1,12 +1,22 @@
 import React from "react";
 import { CircleAlert, Inbox, RefreshCw, SlidersHorizontal, X } from "lucide-react";
 import { displayOrderLabel, showReturn } from "../../shared/utils/order-display";
-import { statusColors, statusLabels } from "./manager-data";
+import { statusLabels } from "./manager-data";
+
+const orderTones = {
+  PENDING_PAYMENT: "warning",
+  PENDING: "warning",
+  CONFIRMED: "info",
+  SHIPPED: "info",
+  DELIVERED: "success",
+  COMPLETED: "success",
+  CANCELLED: "danger",
+};
 
 export function OrderBadge({ status, order }) {
   return (
     <>
-    <span className="admin-badge" style={{ color: showReturn(order) ? "var(--order-return-color, #c2410c)" : statusColors[status] }}>
+    <span className="admin-badge" data-tone={showReturn(order) ? "return" : orderTones[status] || "muted"}>
       <span className="admin-badge-dot" />
       {order ? displayOrderLabel(order, statusLabels) : statusLabels[status] || status}
     </span>

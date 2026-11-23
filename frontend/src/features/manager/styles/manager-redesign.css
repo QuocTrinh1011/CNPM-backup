@@ -15,7 +15,6 @@
 .manager-shell .admin-main { flex: 1; width: auto; min-width: 0; }
 .manager-shell .admin-sidebar nav { min-height: 0; overflow-y: auto; scrollbar-width: thin; }
 .manager-shell .admin-page-heading p { max-width: 72ch; }
-.manager-shell .admin-panel-title { flex-wrap: wrap; }
 .manager-shell .admin-profile b { display: block; overflow-wrap: anywhere; }
 .manager-shell .admin-table-wrap { max-width: 100%; overflow-x: auto; scrollbar-width: thin; }
 .manager-shell .admin-table-wrap th { white-space: nowrap; }
@@ -78,7 +77,6 @@
 }
 @media (max-width: 600px) {
   .manager-shell .admin-page-heading h1 { font-size: 27px; }
-  .manager-shell .admin-panel-title { flex-direction: column; align-items: stretch; }
   .manager-shell .admin-pagination { align-items: flex-start; }
   .manager-shell .admin-pagination button { min-height: 38px; }
   .manager-shell .admin-dialog { width: 100%; padding: 20px; }
