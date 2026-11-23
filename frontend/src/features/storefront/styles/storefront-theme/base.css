@@ -1,0 +1,230 @@
+/* NOVA SHOP · Base primitives — every selector stays inside .site-shell */
+
+.site-shell {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.site-shell :is(h1, h2, h3, h4) {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.site-shell :is(p, ul, ol, dl, dd, figure) {
+  margin: 0;
+}
+
+.site-shell img {
+  display: block;
+  max-width: 100%;
+}
+
+.site-shell a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-shell button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.site-shell :is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.site-shell ::selection {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.site-shell ::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.site-shell :is(input, select, textarea) {
+  font: inherit;
+  color: var(--ink);
+}
+
+.site-shell .shop-container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.site-shell .shop-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.site-shell .shop-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.site-shell .shop-eyebrow > span {
+  width: 28px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.site-shell .shop-hairline {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.site-shell .shop-rule-accent {
+  margin: 0;
+  border: 0;
+  border-top: 2px solid var(--accent);
+}
+
+.site-shell .shop-data {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.site-shell :is(.button, .shop-btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  transition: background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.site-shell :is(.button, .shop-btn):hover:not(:disabled) {
+  border-color: var(--ink);
+}
+
+.site-shell :is(.button, .shop-btn):active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.site-shell :is(.button-dark, .shop-primary, .buy-now-btn) {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.site-shell :is(.button-dark, .shop-primary, .buy-now-btn):hover:not(:disabled) {
+  border-color: var(--accent-hover);
+  background: var(--accent-hover);
+}
+
+.site-shell .button-light {
+  border-color: var(--line);
+  background: var(--white);
+  color: var(--ink);
+}
+
+.site-shell .icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: inherit;
+  transition: background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.site-shell .icon-button:hover:not(:disabled) {
+  background: var(--surface);
+}
+
+.site-shell button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.site-shell .skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--soft);
+}
+
+.site-shell .skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  animation: shop-shimmer 1.4s var(--ease-out) infinite;
+}
+
+.site-shell .empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 56px 24px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  text-align: center;
+}
+
+.site-shell .empty-state h2 {
+  font-size: 20px;
+}
+
+.site-shell .empty-state p {
+  max-width: 44ch;
+  color: var(--muted);
+}
+
+@keyframes shop-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

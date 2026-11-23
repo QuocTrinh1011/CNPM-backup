@@ -1,73 +1,87 @@
-/* ==========================================================================
-   NOVA SHOP · MENSWEAR — CONTEMPORARY MINIMALIST DESIGN SYSTEM
-   High-End Streetwear & Everyday Essentials Aesthetic Layer
-   Optimized for Beauty, Responsiveness, Accessibility & Full Feature Preservation
-   ========================================================================== */
+/* NOVA SHOP · MENSWEAR — Design tokens (storefront-scoped only) */
 
-/* ── 1. Root Design Tokens & Color Palette ── */
 .site-shell {
-  font-family: var(--sans);
-  letter-spacing: -0.012em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  /* Light Theme Palette: Warm Cream Paper & Midnight Ink */
-  --paper: #faf8f5;
+  /* Surfaces */
+  --paper: #fbfaf7;
   --white: #ffffff;
-  --soft: #f3eee7;
-  --subtle: #eae3d7;
-  --ink: #121824;
-  --muted: #64748b;
-  --line: #e6dfd5;
-  --line-strong: #cbd5e1;
+  --surface: #f3f0e9;
+  --soft: #f3f0e9;
+  --subtle: #e9e5dc;
 
-  /* Accent Brand Color: Vibrant Terracotta Ember */
-  --accent: #ea580c;
-  --accent-hover: #c2410c;
-  --accent-soft: #ffedd5;
-  --accent-tint: #fff7ed;
-  --accent-glow: rgba(234, 88, 12, 0.22);
+  /* Text */
+  --ink: #161513;
+  --muted: #6f6b63;
 
-  /* Status Colors */
-  --success: #16a34a;
-  --success-soft: #dcfce7;
-  --warning: #d97706;
-  --warning-soft: #fef3c7;
-  --danger: #dc2626;
-  --danger-soft: #fee2e2;
+  /* Lines */
+  --line: #e7e3db;
+  --line-strong: #cfc9bd;
 
-  /* Modern Layered Shadows */
-  --shadow-xs: 0 1px 2px rgba(18, 24, 36, 0.04);
-  --shadow-sm: 0 2px 8px rgba(18, 24, 36, 0.06);
-  --shadow-card: 0 8px 24px -4px rgba(18, 24, 36, 0.06), 0 2px 6px -1px rgba(18, 24, 36, 0.03);
-  --shadow-hover: 0 20px 36px -6px rgba(18, 24, 36, 0.1), 0 8px 16px -4px rgba(234, 88, 12, 0.1);
-  --shadow-modal: 0 24px 60px -8px rgba(18, 24, 36, 0.22), 0 12px 24px -4px rgba(18, 24, 36, 0.12);
-  --shadow-drawer: -12px 0 40px rgba(18, 24, 36, 0.18);
+  /* Brand accent: NOVA crimson */
+  --accent: #c9232c;
+  --accent-hover: #a61b23;
+  --accent-soft: #fbecec;
+  --accent-tint: #fdf3f3;
+  --accent-glow: rgba(201, 35, 44, 0.18);
 
-  /* Rounded Radii */
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 28px;
-  --radius-full: 9999px;
+  /* Status */
+  --success: #2f6b4f;
+  --success-soft: #e6f2ea;
+  --warning: #9a6b15;
+  --warning-soft: #faf0dc;
+  --danger: #b3261e;
+  --danger-soft: #fbe9e8;
 
-  /* Motion & Spring Timings */
-  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Elevation */
+  --shadow-xs: 0 1px 2px rgba(22, 21, 19, 0.06);
+  --shadow-sm: 0 2px 8px rgba(22, 21, 19, 0.06);
+  --shadow-card: 0 1px 2px rgba(22, 21, 19, 0.05);
+  --shadow-md: 0 16px 40px -16px rgba(22, 21, 19, 0.24);
+  --shadow-hover: 0 12px 28px -14px rgba(22, 21, 19, 0.28);
+  --shadow-modal: 0 24px 64px -16px rgba(22, 21, 19, 0.28);
+  --shadow-drawer: -16px 0 48px rgba(22, 21, 19, 0.18);
+
+  /* Radii */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 999px;
+
+  /* Type */
+  --sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: 'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+  --serif: var(--sans);
+  --mono: var(--font-data);
+
+  /* Layout */
+  --container: 1360px;
+  --gutter: 24px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 48px;
+  --space-9: 56px;
+  --space-10: 64px;
+  --z-header: 100;
+  --z-drawer: 1000;
+  --z-modal: 1200;
+  --z-toast: 1400;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-spring: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-base: 220ms;
 
-  background-color: var(--paper);
-  color: var(--ink);
-  min-height: 100vh;
-  position: relative;
+  color-scheme: light;
 }
 
-/* ── Dark Theme: Deep Obsidian & Warm Flame ── */
-
-
-/* ── Accessibility & Global Focus States ── */
-.site-shell :is(button, a, input, textarea, select):focus-visible {
-  outline: 2px solid var(--accent) !important;
-  outline-offset: 3px !important;
-  box-shadow: 0 0 0 4px var(--accent-glow) !important;
+.site-shell[data-shop-theme="light"] {
+  color-scheme: light;
 }
