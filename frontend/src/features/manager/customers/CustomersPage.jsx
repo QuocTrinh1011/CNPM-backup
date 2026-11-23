@@ -4,6 +4,7 @@ import { CustomerCreate } from "../ManagerTools";
 import { groupSurveyRoute } from "../SurveyRecipientGroup";
 import { money, pageData } from "../manager-data";
 import { Table, ListError, PageControls, PanelTitle } from "../ManagerComponents";
+import { ManagerDialog } from "../ManagerKit";
 import React, { useCallback, useEffect, useState } from "react";
 import { X, Search } from "lucide-react";
 import { adminApi, adminEndpoints } from "../../../api/manager-api";
@@ -164,79 +165,68 @@ export function Users({ notify, location, go }) {
         onPage={setPage}
       />
       {dialog && (
-        <div
-          className="admin-dialog-backdrop"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) closeDialog();
-          }}
+        <ManagerDialog
+          open
+          onClose={closeDialog}
+          title={
+            dialog.type === "lock"
+              ? "Khóa tài khoản"
+              : "Vô hiệu hóa tài khoản"
+          }
+          description={`${dialog.user.fullName} · ${dialog.user.email}`}
         >
-          <div
-            className="admin-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="admin-user-dialog-title"
-          >
-            <h2 id="admin-user-dialog-title">
-              {dialog.type === "lock"
-                ? "Khóa tài khoản"
-                : "Vô hiệu hóa tài khoản"}
-            </h2>
-            <p>
-              <strong>{dialog.user.fullName}</strong> · {dialog.user.email}
-            </p>
-            {dialog.type === "lock" ? (
-              <form
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  if (reason.trim()) update(dialog.user, true, reason);
-                }}
-              >
-                <label htmlFor="admin-lock-reason">
-                  Lý do khóa gửi đến người dùng
-                </label>
-                <textarea
-                  id="admin-lock-reason"
-                  required
-                  maxLength={2000}
-                  value={reason}
-                  onChange={(event) => setReason(event.target.value)}
-                  placeholder="Nhập lý do cụ thể để người dùng thấy khi đăng nhập lại"
-                />
-                <small>{reason.length}/2000 ký tự</small>
-                <div className="admin-dialog-actions">
-                  <button type="button" onClick={closeDialog} disabled={busy}>
-                    Hủy
-                  </button>
-                  <button
-                    className="admin-primary"
-                    disabled={busy || !reason.trim()}
-                  >
-                    {busy ? "Đang lưu..." : "Xác nhận khóa"}
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <>
-                <p>
-                  Tài khoản sẽ không thể đăng nhập và biến mất khỏi danh sách.
-                  Đơn hàng cũ vẫn được giữ lại.
-                </p>
-                <div className="admin-dialog-actions">
-                  <button onClick={closeDialog} disabled={busy}>
-                    Hủy
-                  </button>
-                  <button
-                    className="admin-primary admin-danger-button"
-                    disabled={busy}
-                    onClick={() => remove(dialog.user)}
-                  >
-                    {busy ? "Đang xóa..." : "Xóa tài khoản"}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+          {dialog.type === "lock" ? (
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (reason.trim()) update(dialog.user, true, reason);
+              }}
+            >
+              <label htmlFor="admin-lock-reason">
+                Lý do khóa gửi đến người dùng
+              </label>
+              <textarea
+                id="admin-lock-reason"
+                required
+                maxLength={2000}
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                placeholder="Nhập lý do cụ thể để người dùng thấy khi đăng nhập lại"
+              />
+              <small>{reason.length}/2000 ký tự</small>
+              <div className="admin-dialog-actions">
+                <button type="button" onClick={closeDialog} disabled={busy}>
+                  Hủy
+                </button>
+                <button
+                  className="admin-primary"
+                  disabled={busy || !reason.trim()}
+                >
+                  {busy ? "Đang lưu..." : "Xác nhận khóa"}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              <p>
+                Tài khoản sẽ không thể đăng nhập và biến mất khỏi danh sách.
+                Đơn hàng cũ vẫn được giữ lại.
+              </p>
+              <div className="admin-dialog-actions">
+                <button onClick={closeDialog} disabled={busy}>
+                  Hủy
+                </button>
+                <button
+                  className="admin-primary admin-danger-button"
+                  disabled={busy}
+                  onClick={() => remove(dialog.user)}
+                >
+                  {busy ? "Đang xóa..." : "Xóa tài khoản"}
+                </button>
+              </div>
+            </>
+          )}
+        </ManagerDialog>
       )}
     </div>
   );

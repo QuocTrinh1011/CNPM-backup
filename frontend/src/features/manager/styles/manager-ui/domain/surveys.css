@@ -1,0 +1,234 @@
+/* ------------------------------------------------------------- surveys */
+
+/* Recipient group preview (ported from survey-recipient-group.css) */
+.manager-shell .survey-recipient-group {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-panel);
+  background: var(--admin-card);
+  color: var(--admin-text);
+}
+
+.manager-shell .survey-recipient-group legend {
+  padding: 0 4px;
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 750;
+}
+
+.manager-shell .survey-recipient-group p {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.manager-shell .survey-recipient-group p[role="alert"] {
+  color: var(--admin-danger);
+}
+
+.manager-shell .survey-recipient-group dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.manager-shell .survey-recipient-group dl > div {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-input);
+}
+
+.manager-shell .survey-recipient-group dt {
+  color: var(--admin-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.manager-shell .survey-recipient-group dd {
+  margin: 3px 0 0;
+  color: var(--admin-text);
+  font-size: 12.5px;
+  overflow-wrap: anywhere;
+}
+
+.manager-shell .survey-recipient-group ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.manager-shell .survey-recipient-group li {
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: var(--admin-input);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.manager-shell .survey-recipient-group nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.manager-shell .survey-recipient-group nav span {
+  color: var(--admin-muted);
+  font-size: 11.5px;
+}
+
+.manager-shell .survey-recipient-group > button {
+  justify-self: start;
+  margin: 4px 8px 0 0;
+}
+
+/* Survey builder dialog */
+.manager-shell .manager-survey-form {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.manager-shell .manager-survey-form .admin-survey-fieldset {
+  min-width: 0;
+}
+
+.manager-shell .manager-survey-questions-title {
+  margin-top: 4px;
+}
+
+.manager-shell .manager-survey-type-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.manager-shell .admin-dialog .admin-survey-required-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.manager-shell .admin-dialog .admin-survey-required-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--admin-primary);
+}
+
+.manager-shell .manager-survey-audience {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.manager-shell .manager-survey-form .admin-survey-fieldset > legend {
+  padding: 0 4px;
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 750;
+}
+
+.manager-shell .manager-survey-form label:has(> input[type="checkbox"]) {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.manager-shell .manager-survey-form label > input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--admin-primary);
+}
+
+.manager-shell .manager-survey-audience > legend {
+  padding: 0 4px;
+  color: var(--admin-text);
+  font-size: 12.5px;
+  font-weight: 750;
+}
+
+.manager-shell .manager-survey-audience > p {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.manager-shell .manager-survey-audience > label {
+  display: grid;
+  gap: 5px;
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.manager-shell .manager-survey-audience-list {
+  display: grid;
+  gap: 6px;
+  max-height: 220px;
+  padding: 8px;
+  overflow-y: auto;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--manager-radius-control);
+  background: var(--admin-input);
+}
+
+.manager-shell .manager-survey-audience-list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 4px 6px;
+  border-radius: 6px;
+  color: var(--admin-text);
+  font-size: 12.5px;
+  overflow-wrap: anywhere;
+}
+
+.manager-shell .manager-survey-audience-list label:hover {
+  background: var(--admin-card);
+}
+
+.manager-shell .manager-survey-audience-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.manager-shell .manager-dialog .manager-notice {
+  margin: 0;
+}

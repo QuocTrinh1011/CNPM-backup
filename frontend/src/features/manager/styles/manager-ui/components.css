@@ -468,3 +468,46 @@
   border: 0;
 }
 
+/* Inline form validation message inside dialogs */
+.manager-shell .manager-form-error {
+  margin: 0;
+  color: var(--admin-danger);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* Low-stock banner on the products page */
+.manager-shell .manager-low-stock-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.manager-shell .manager-low-stock-banner > svg {
+  flex: 0 0 auto;
+}
+
+.manager-shell .manager-low-stock-banner .manager-notice__body {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.manager-shell .manager-low-stock-banner .manager-notice__body p {
+  color: inherit;
+}
+
+.manager-shell .manager-low-stock-banner .admin-action {
+  flex: 0 0 auto;
+  margin-left: auto;
+  border-color: color-mix(in srgb, var(--admin-warning) 40%, var(--admin-border));
+  background: var(--admin-card);
+  color: var(--admin-warning);
+}
+
+.manager-shell .manager-low-stock-banner .admin-action.is-active {
+  background: var(--admin-warning);
+  color: var(--admin-on-primary);
+}
+

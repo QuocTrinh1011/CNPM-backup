@@ -3,7 +3,6 @@ import { usePromotionCampaigns } from './promotion-campaigns/usePromotionCampaig
 import { PromotionCampaignList } from './promotion-campaigns/PromotionCampaignList';
 import { PromotionCampaignEditor } from './promotion-campaigns/PromotionCampaignEditor';
 import { PromotionCampaignDetails } from './promotion-campaigns/PromotionCampaignDetails';
-import './promotion-campaigns.css';
 
 export default function PromotionCampaigns() {
   const campaignState = usePromotionCampaigns();

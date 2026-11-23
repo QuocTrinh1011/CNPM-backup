@@ -353,7 +353,7 @@ export default function ManagerApp() {
         {section === "invoices" && <ManagerInvoices />}
         {section === "feedback" && <Feedback notify={notify} />}{" "}
         {section === "surveys" && <Surveys notify={notify} location={path} go={go} />}
-        {section === "vouchers" && <AdminVouchers />}
+        {section === "vouchers" && <div className="manager-vouchers-slot"><AdminVouchers /></div>}
         {section === "promotions" && <PromotionCampaigns />}
         {section === "reports" && <ManagerReports location={path} go={go} />}
         </React.Suspense>

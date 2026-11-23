@@ -5,6 +5,7 @@ import { useManagerList as useAdminList, useManagerList, useManagerReadPause } f
 import { adminApi, adminEndpoints } from "../../../api/manager-api";
 import { money, pageData } from "../manager-data";
 import { ListError, PageControls, PanelLoading, PanelTitle, Table, ToolbarButton } from "../ManagerComponents";
+import { ManagerDialog } from "../ManagerKit";
 
 const emptyProductForm = () => ({
   name: "",
@@ -210,40 +211,15 @@ export default function Products({ notify, readOnly = false }) {
       )}
 
       {lowStockCount > 0 && (
-<div
-          className="admin-low-stock-banner"
-          role="alert"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "12px 18px",
-            marginBottom: "16px",
-            background: "rgba(245, 158, 11, 0.1)",
-            border: "1px solid rgba(245, 158, 11, 0.3)",
-            borderRadius: "8px",
-            color: "#d97706",
-            fontSize: "13px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <CircleAlert size={18} />
-            <span>
-              <strong>Cảnh báo tồn kho:</strong> Có <b>{lowStockCount}</b> sản phẩm sắp hết hàng (tồn kho từ 1 đến 5). Vui lòng kiểm tra và nhập thêm.
-            </span>
+        <div className="manager-notice manager-notice--warning manager-low-stock-banner" role="alert">
+          <CircleAlert size={18} aria-hidden="true" />
+          <div className="manager-notice__body">
+            <span className="manager-notice__title">Cảnh báo tồn kho</span>
+            <p>Có <b>{lowStockCount}</b> sản phẩm sắp hết hàng (tồn kho từ 1 đến 5). Vui lòng kiểm tra và nhập thêm.</p>
           </div>
           <button
             type="button"
-            style={{
-              background: filters.stock === "LOW" ? "#d97706" : "transparent",
-              color: filters.stock === "LOW" ? "#ffffff" : "#d97706",
-              border: "1px solid #d97706",
-              padding: "4px 12px",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: "12px",
-            }}
+            className={`admin-action${filters.stock === "LOW" ? " is-active" : ""}`}
             onClick={() => changeFilters({ stock: filters.stock === "LOW" ? "ALL" : "LOW" })}
           >
             {filters.stock === "LOW" ? "Xem tất cả sản phẩm" : "Lọc hàng sắp hết"}
@@ -374,38 +350,13 @@ export default function Products({ notify, readOnly = false }) {
       </Table>
 
       <PageControls page={Number(filters.page)||0} totalPages={data?.totalPages||0} totalElements={data?.totalElements} onPage={page=>changeFilters({page:String(page)})}/>
-      {/* Dialogue Thêm / Chỉnh sửa sản phẩm */}
-      {dialogOpen && (
-        <div
-          className="admin-dialog-backdrop"
-          onClick={closeDialog}
-        >
-          <div
-            className="admin-dialog admin-product-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="product-dialog-title"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="admin-dialog-header">
-              <div className="admin-dialog-header-title">
-                <Package size={20} className="admin-dialog-icon" />
-                <h2 id="product-dialog-title">
-                  {editing ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới"}
-                </h2>
-              </div>
-              <button
-                type="button"
-                className="admin-dialog-close"
-                aria-label="Đóng"
-                disabled={saving}
-                onClick={closeDialog}
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={save} className="admin-dialog-form">
+      <ManagerDialog
+        open={dialogOpen}
+        onClose={closeDialog}
+        title={editing ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới"}
+        size="lg"
+      >
+        <form onSubmit={save} className="admin-dialog-form">
               <div className="admin-form-grid">
                 <div className="admin-form-group span-2">
                   <label htmlFor="prod-name">TÊN SẢN PHẨM *</label>
@@ -593,48 +544,38 @@ export default function Products({ notify, readOnly = false }) {
                   )}
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+        </form>
+      </ManagerDialog>
 
-      {/* Confirmation dialog when archiving product */}
-      {confirmArchive && (
-        <div
-          className="admin-dialog-backdrop"
-          onClick={() => setConfirmArchive(null)}
-        >
-          <div
-            className="admin-dialog"
-            role="dialog"
-            aria-modal="true"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2>Xác nhận ẩn sản phẩm</h2>
-            <p>
-              Bạn có chắc chắn muốn ẩn sản phẩm <b>{confirmArchive.name}</b> khỏi storefront không?
-            </p>
-            <div className="admin-dialog-actions">
-              <button
-                type="button"
-                className="admin-dialog-cancel"
-                disabled={saving}
-                onClick={() => setConfirmArchive(null)}
-              >
-                Hủy
-              </button>
-              <button
-                type="button"
-                className="admin-danger-button"
-                disabled={saving}
-                onClick={() => archive(confirmArchive.id)}
-              >
-                Xác nhận ẩn
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ManagerDialog
+        open={!!confirmArchive}
+        onClose={() => { if (!saving) setConfirmArchive(null); }}
+        title="Xác nhận ẩn sản phẩm"
+        actions={
+          <>
+            <button
+              type="button"
+              className="admin-dialog-cancel"
+              disabled={saving}
+              onClick={() => setConfirmArchive(null)}
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              className="admin-primary admin-danger-button"
+              disabled={saving}
+              onClick={() => archive(confirmArchive.id)}
+            >
+              Xác nhận ẩn
+            </button>
+          </>
+        }
+      >
+        <p>
+          Bạn có chắc chắn muốn ẩn sản phẩm <b>{confirmArchive?.name}</b> khỏi storefront không?
+        </p>
+      </ManagerDialog>
     </div>
   );
 }

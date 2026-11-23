@@ -14,3 +14,6 @@
 @import "./manager-ui/responsive.css";
 @import "./manager-ui/customer-table.css";
 @import "./manager-ui/domain/sales.css";
+@import "./manager-ui/domain/customers.css";
+@import "./manager-ui/domain/surveys.css";
+@import "./manager-ui/domain/promotions.css";

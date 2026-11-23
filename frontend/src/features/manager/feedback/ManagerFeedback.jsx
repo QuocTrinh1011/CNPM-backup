@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { useManagerList as useAdminList } from "../../../shared/hooks/useManagerResource";
 import { pageData } from "../manager-data";
 import { PanelLoading, Table, ListError, PageControls, PanelTitle } from "../ManagerComponents";
+import { ManagerDialog } from "../ManagerKit";
 import { adminApi, adminEndpoints } from "../../../api/manager-api";
 
 export default function Feedback({ notify }) {
@@ -174,29 +175,22 @@ export default function Feedback({ notify }) {
         disabled={busy}
       />
       {replying && (
-        <div
-          className="admin-dialog-backdrop"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget && !busy)
-              setReplying(null);
+        <ManagerDialog
+          open
+          onClose={() => {
+            if (!busy) setReplying(null);
           }}
+          title={
+            replying.adminResponse ? "Sửa câu trả lời" : "Trả lời khách hàng"
+          }
         >
           <form
-            className="admin-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="admin-reply-title"
             onSubmit={(event) => {
               event.preventDefault();
               if (reply.trim())
                 update(replying, { adminResponse: reply.trim() });
             }}
           >
-            <h2 id="admin-reply-title">
-              {replying.adminResponse
-                ? "Sửa câu trả lời"
-                : "Trả lời khách hàng"}
-            </h2>
             <p className="admin-feedback-quote">
               <b>{replying.customer?.fullName || "Khách hàng"}</b>:{" "}
               {replying.comment}
@@ -235,34 +229,17 @@ export default function Feedback({ notify }) {
               </button>
             </div>
           </form>
-        </div>
+        </ManagerDialog>
       )}
       {deleting && (
-        <div
-          className="admin-dialog-backdrop"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget && !busy)
-              setDeleting(null);
+        <ManagerDialog
+          open
+          onClose={() => {
+            if (!busy) setDeleting(null);
           }}
-        >
-          <div
-            className="admin-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="admin-delete-feedback-title"
-          >
-            <h2 id="admin-delete-feedback-title">Xóa phản hồi?</h2>
-            <p>
-              Phản hồi của {deleting.customer?.fullName || "khách hàng"} sẽ bị gỡ
-              khỏi trang sản phẩm và danh sách quản lý. Dữ liệu lịch sử vẫn được
-              giữ lại.
-            </p>
-            {actionError && (
-              <p role="alert" className="danger-text">
-                {actionError}
-              </p>
-            )}
-            <div className="admin-dialog-actions">
+          title="Xóa phản hồi?"
+          actions={
+            <>
               <button disabled={busy} onClick={() => setDeleting(null)}>
                 Quay lại
               </button>
@@ -273,9 +250,20 @@ export default function Feedback({ notify }) {
               >
                 {busy ? "Đang xóa..." : "Xác nhận xóa"}
               </button>
-            </div>
-          </div>
-        </div>
+            </>
+          }
+        >
+          <p>
+            Phản hồi của {deleting.customer?.fullName || "khách hàng"} sẽ bị gỡ
+            khỏi trang sản phẩm và danh sách quản lý. Dữ liệu lịch sử vẫn được
+            giữ lại.
+          </p>
+          {actionError && (
+            <p role="alert" className="danger-text">
+              {actionError}
+            </p>
+          )}
+        </ManagerDialog>
       )}
     </div>
   );

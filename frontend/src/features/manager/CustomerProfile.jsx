@@ -3,7 +3,6 @@ import { displayOrderLabel } from '../../shared/utils/order-display';
 import { adminApi, adminEndpoints } from '../../api/manager-api';
 import { useManagerResource } from '../../shared/hooks/useManagerResource';
 import ManagerOrderDetail, { money, date, orderLabels, paymentLabels, returnLabels } from './ManagerOrderDetail';
-import './customer-profile.css';
 import CustomerLifecycle, {lifecycleExplanation} from './CustomerLifecycle';
 
 const tabs = [['orders','Đơn hàng'],['activities','Lịch sử hoạt động'],['addresses','Địa chỉ'],['feedback','Đánh giá'],['surveys','Khảo sát'],['vouchers','Voucher']];

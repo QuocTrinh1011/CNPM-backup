@@ -68,19 +68,6 @@ export function usePromotionCampaigns() {
     return () => { active = false; };
   }, []);
 
-  useEffect(() => {
-    if (!editor && detailId === null) return undefined;
-    const onKeyDown = event => {
-      if (event.key === 'Escape' && !saving && deletingId === null) {
-        setEditor(null);
-        setEditingId(null);
-        closeDetail();
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [editor, detailId, saving, deletingId, closeDetail]);
-
   useEffect(() => () => { detailRequest.current += 1; }, []);
 
   const productNames = useMemo(() => new Map(products.map(product => [String(product.id), product.name])), [products]);
