@@ -444,7 +444,7 @@
   line-height: 1.1;
 }
 
-.site-shell .notification-head .back-link {
+.site-shell[data-shop-theme] .notification-head .back-link {
   flex-shrink: 0;
   min-height: 0;
   margin: 0 0 5px;
@@ -464,7 +464,7 @@
   box-shadow: none;
 }
 
-.site-shell .notification-head .back-link:hover:not(:disabled) {
+.site-shell[data-shop-theme] .notification-head .back-link:hover:not(:disabled) {
   background: none;
   color: var(--accent);
   transform: none;
@@ -548,7 +548,7 @@
   font-style: italic;
 }
 
-.site-shell .survey-modal .back-link {
+.site-shell[data-shop-theme] .survey-modal .back-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -570,11 +570,42 @@
   transition: color var(--dur-fast) var(--ease-out);
 }
 
-.site-shell .survey-modal .back-link:hover {
+.site-shell[data-shop-theme] .survey-modal .back-link:hover {
   background: none;
   color: var(--accent);
   transform: none;
   box-shadow: none;
+}
+
+/* Legacy customer-pages.css ships a pill "back" button for the product dialog;
+   the editorial layout keeps a quiet text link instead. */
+.site-shell[data-shop-theme] .product-modal-content .back-link {
+  min-height: 32px;
+  margin-bottom: 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--muted);
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.site-shell[data-shop-theme] .product-modal-content .back-link:hover {
+  border-color: transparent;
+  background: none;
+  color: var(--accent);
+  transform: none;
+  box-shadow: none;
+}
+
+.site-shell[data-shop-theme] .product-modal-content .back-link svg {
+  width: 14px;
+  height: 14px;
 }
 
 .site-shell .survey-list {
