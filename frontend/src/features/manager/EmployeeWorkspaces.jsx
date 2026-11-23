@@ -1,4 +1,4 @@
-import './manager-hr.css';
+import './styles/manager-ui/manager-print.css';
 
 export { EmployeeSelfProfile } from './employee-workspaces/EmployeeSelfProfile';
 export { EmployeeLeaveRequests } from './employee-workspaces/EmployeeLeaveRequests';

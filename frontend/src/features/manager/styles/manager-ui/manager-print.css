@@ -1,0 +1,21 @@
+/* Print rules for employee payslips. Imported by EmployeeWorkspaces.jsx and
+   intentionally kept outside the manager-ui aggregate: they rely on `body:has()`
+   and !important, which the rest of the design system avoids. */
+
+@media print {
+  body:has(.hr-payslip-list.hr-print-monthly) * { visibility: hidden !important; }
+  body:has(.hr-payslip-list.hr-print-monthly) .hr-payslip.is-print-target,
+  body:has(.hr-payslip-list.hr-print-monthly) .hr-payslip.is-print-target * { visibility: visible !important; }
+  body:has(.hr-payslip-list.hr-print-annual) * { visibility: hidden !important; }
+  body:has(.hr-payslip-list.hr-print-annual) .hr-payslip,
+  body:has(.hr-payslip-list.hr-print-annual) .hr-payslip * { visibility: visible !important; }
+  body:has(.hr-payslip-list.hr-print-annual) .hr-annual-summary,
+  body:has(.hr-payslip-list.hr-print-annual) .hr-annual-summary * { visibility: visible !important; }
+  body:has(.hr-print-monthly) .hr-payslip.is-print-target,
+  body:has(.hr-print-annual) .hr-payslip { position: relative; width: 100%; border: 0; break-after: page; }
+  body:has(.hr-payslip-list.hr-print-monthly) .hr-payslip:not(.is-print-target) { display: none !important; }
+  body:has(.hr-print-monthly) .hr-payslip button,
+  body:has(.hr-print-annual) .hr-payslip button,
+  body:has(.hr-print-annual) .hr-annual-print { display: none !important; }
+  body:has(.hr-payslip-list) .admin-table-wrap { overflow: visible; }
+}
