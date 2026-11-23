@@ -110,52 +110,55 @@
   white-space: nowrap;
 }
 
-/* Hover actions */
-.site-shell .product-card-actions {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  z-index: 4;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  opacity: 0;
-  transform: translateY(6px);
-  pointer-events: none;
-  transition: opacity var(--dur-base) var(--ease-out),
-    transform var(--dur-base) var(--ease-out);
-}
-
-.site-shell .product-card:hover .product-card-actions,
-.site-shell .product-card:focus-within .product-card-actions {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.site-shell .product-card-actions button {
+/* Card purchase actions (always visible below the info block) */
+.site-shell .product-card-cta {
   display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: rgba(251, 250, 247, 0.95);
-  color: var(--ink);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.site-shell .product-card-cta button {
+  min-height: 36px;
+  padding: 0 8px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
   transition: background-color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
     color var(--dur-fast) var(--ease-out);
 }
 
-.site-shell .product-card-actions .product-card-add:hover:not(:disabled) {
-  border-color: var(--ink);
+.site-shell .product-card-buy {
+  border: 1px solid var(--ink);
   background: var(--ink);
   color: var(--paper);
 }
 
-.site-shell .product-card-actions .product-card-detail:hover {
+.site-shell .product-card-buy:hover:not(:disabled) {
   border-color: var(--accent);
-  color: var(--accent);
+  background: var(--accent);
+}
+
+.site-shell .product-card-cart {
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+}
+
+.site-shell .product-card-cart:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.site-shell .product-card-cta button:disabled {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: not-allowed;
 }
 
 .site-shell .heart {
@@ -283,14 +286,3 @@
 }
 
 /* Home rail shares the flat treatment */
-.site-shell .shop-product-rail .product-card-actions {
-  bottom: 10px;
-}
-
-@media (hover: none) {
-  .site-shell .product-card-actions {
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
-  }
-}

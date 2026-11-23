@@ -463,6 +463,8 @@ function App() {
             loadProducts={loadProducts}
             openCatalog={openCatalog}
             goHome={goHome}
+            onAddToCart={addToCart}
+            onBuyNow={(product, variant) => buyNow(product, variant, 1)}
           />
         ) : (
           <StorefrontHome
@@ -475,6 +477,8 @@ function App() {
             onProduct={openProduct}
             onQuickView={openQuickView}
             onWishlist={toggleWishlist}
+            onAddToCart={addToCart}
+            onBuyNow={(product, variant) => buyNow(product, variant, 1)}
             onRetry={loadProducts}
             imageSrc={imageSrc}
           />

@@ -22,6 +22,8 @@ export default function CatalogSection({
   loadProducts,
   openCatalog,
   goHome,
+  onAddToCart,
+  onBuyNow,
 }) {
   const catalogTitle = filters.category || (filters.onSale ? "Sản phẩm ưu đãi" : "Tất cả sản phẩm");
   const activeFilters = [
@@ -119,6 +121,8 @@ export default function CatalogSection({
         openQuickView={openQuickView}
         toggleWishlist={toggleWishlist}
         loadProducts={loadProducts}
+        onAddToCart={onAddToCart}
+        onBuyNow={onBuyNow}
       />
     </section>
   );

@@ -29,6 +29,8 @@ export default function StorefrontHome({
   onProduct,
   onQuickView,
   onWishlist,
+  onAddToCart,
+  onBuyNow,
   onRetry,
   imageSrc = value => value,
 }) {
@@ -143,6 +145,8 @@ export default function StorefrontHome({
             onQuickView={() => onQuickView(product)}
             isWishlisted={wishlist.some(item => item.productId === product.id)}
             onWishlist={() => onWishlist(product)}
+            onAddToCart={onAddToCart}
+            onBuyNow={onBuyNow}
           />
         </div>)}
       </div>

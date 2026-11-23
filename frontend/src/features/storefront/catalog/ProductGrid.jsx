@@ -2,7 +2,7 @@ import React from "react";
 import { ChevronRight, CircleAlert, Search } from "lucide-react";
 import { ProductCard } from "../ProductDetails";
 
-export default function ProductGrid({ catalogPage, products, filters, setFilters, loading, catalogError, setSearchInput, wishlist, openProduct, openQuickView, toggleWishlist, loadProducts }) {
+export default function ProductGrid({ catalogPage, products, filters, setFilters, loading, catalogError, setSearchInput, wishlist, openProduct, openQuickView, toggleWishlist, loadProducts, onAddToCart, onBuyNow }) {
   return <>
     {loading ? (
       <div className="loading-grid" role="status" aria-label="Đang tải sản phẩm">
@@ -18,6 +18,8 @@ export default function ProductGrid({ catalogPage, products, filters, setFilters
             onQuickView={() => openQuickView(product)}
             isWishlisted={wishlist.some(item => item.productId === product.id)}
             onWishlist={() => toggleWishlist(product)}
+            onAddToCart={onAddToCart}
+            onBuyNow={onBuyNow}
           />
         ))}
       </div>
