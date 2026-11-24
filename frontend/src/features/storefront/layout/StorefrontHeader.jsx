@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Bell, ChevronDown, Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
+import { PANTS_SUBCATEGORIES } from "../catalog/pants-subcategories";
 export default function StorefrontHeader({
   mobileMenuOpen,
   setMobileMenuOpen,
@@ -41,9 +42,9 @@ export default function StorefrontHeader({
       setProductsMenuOpen(false);
     }, 180);
   };
-  const availableCategories = Array.isArray(categories) && categories.length
+  const availableCategories = Array.isArray(categories)
     ? categories.filter(category => typeof category === "string")
-    : ["Áo thun", "Áo polo", "Áo khoác", "Quần"];
+    : [];
   const categoryOrder = ["Áo thun", "Áo polo", "Áo sơ mi", "Áo khoác", "Áo nỉ", "Quần"];
   const sortCategories = names => [...names].sort((a, b) => {
     const aIndex = categoryOrder.findIndex(name => name.toLocaleLowerCase("vi") === a.toLocaleLowerCase("vi"));
@@ -51,8 +52,12 @@ export default function StorefrontHeader({
     return (aIndex < 0 ? categoryOrder.length : aIndex) - (bIndex < 0 ? categoryOrder.length : bIndex) || a.localeCompare(b, "vi");
   });
   const topCategories = sortCategories(availableCategories.filter(category => /áo|polo|hoodie|shirt|top/i.test(category)));
-  const bottomCategories = sortCategories(availableCategories.filter(category => /quần|jean|denim|short|kaki|chino/i.test(category)));
-  const otherCategories = sortCategories(availableCategories.filter(category => !topCategories.includes(category) && !bottomCategories.includes(category)));
+  const bottomCategoryNames = sortCategories(availableCategories.filter(category => /quần|jean|denim|short|kaki|chino/i.test(category)));
+  const hasGeneralPantsCategory = bottomCategoryNames.some(category => category.toLocaleLowerCase("vi") === "quần");
+  const bottomCategories = hasGeneralPantsCategory
+    ? PANTS_SUBCATEGORIES.map(subCategory => ({ label: subCategory.label, category: "Quần", options: { subCategory: subCategory.value } }))
+    : bottomCategoryNames.map(category => ({ label: category, category }));
+  const otherCategories = sortCategories(availableCategories.filter(category => !topCategories.includes(category) && !bottomCategoryNames.includes(category)));
   const productMenuColumns = [
     {
       title: "TẤT CẢ SẢN PHẨM",
@@ -63,7 +68,7 @@ export default function StorefrontHeader({
       ],
     },
     ...(topCategories.length ? [{ title: "ÁO NAM", links: topCategories.map(category => ({ label: category, category })) }] : []),
-    ...(bottomCategories.length ? [{ title: "QUẦN NAM", links: bottomCategories.map(category => ({ label: category, category })) }] : []),
+    ...(bottomCategories.length ? [{ title: "QUẦN NAM", links: bottomCategories }] : []),
     ...(otherCategories.length ? [{ title: "DANH MỤC KHÁC", links: otherCategories.map(category => ({ label: category, category })) }] : []),
   ];
 

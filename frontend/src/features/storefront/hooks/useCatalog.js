@@ -23,6 +23,7 @@ export default function useCatalog(showNotice) {
     return {
       keyword: isCatalog ? params.get("keyword") || "" : "",
       category: isCatalog ? params.get("category") || "" : "",
+      subCategory: isCatalog ? params.get("subCategory") || "" : "",
       minPrice: isCatalog ? params.get("minPrice") || "" : "",
       maxPrice: isCatalog ? params.get("maxPrice") || "" : "",
       onSale: isCatalog && params.get("onSale") === "true",
@@ -88,12 +89,13 @@ export default function useCatalog(showNotice) {
       catalogRequest.current++;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- The effect intentionally tracks only catalog query fields; loadProducts is recreated each render and would refetch on unrelated state updates.
-  }, [catalogPage, filters.keyword, filters.category, filters.minPrice, filters.maxPrice, filters.onSale, filters.sort, filters.page]);
+  }, [catalogPage, filters.keyword, filters.category, filters.subCategory, filters.minPrice, filters.maxPrice, filters.onSale, filters.sort, filters.page]);
   useEffect(() => {
     if (!catalogPage || window.location.pathname !== "/san-pham") return;
     const params = new URLSearchParams();
     if (filters.keyword) params.set("keyword", filters.keyword);
     if (filters.category) params.set("category", filters.category);
+    if (filters.subCategory) params.set("subCategory", filters.subCategory);
     if (filters.minPrice) params.set("minPrice", filters.minPrice);
     if (filters.maxPrice) params.set("maxPrice", filters.maxPrice);
     if (filters.onSale) params.set("onSale", "true");
@@ -101,7 +103,7 @@ export default function useCatalog(showNotice) {
     if (filters.page > 0) params.set("page", String(filters.page));
     const query = params.toString();
     window.history.replaceState({}, "", `/san-pham${query ? `?${query}` : ""}`);
-  }, [catalogPage, filters.keyword, filters.category, filters.minPrice, filters.maxPrice, filters.onSale, filters.sort, filters.page]);
+  }, [catalogPage, filters.keyword, filters.category, filters.subCategory, filters.minPrice, filters.maxPrice, filters.onSale, filters.sort, filters.page]);
   return {
     products,
     catalogPage,

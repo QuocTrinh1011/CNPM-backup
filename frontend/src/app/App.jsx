@@ -171,12 +171,14 @@ function App() {
       minPrice: "",
       maxPrice: "",
       onSale: false,
+      subCategory: "",
       ...options,
       category,
       page: 0,
     };
     const params = new URLSearchParams();
     if (category) params.set("category", category);
+    if (nextFilters.subCategory) params.set("subCategory", nextFilters.subCategory);
     if (nextFilters.minPrice) params.set("minPrice", nextFilters.minPrice);
     if (nextFilters.maxPrice) params.set("maxPrice", nextFilters.maxPrice);
     if (nextFilters.onSale) params.set("onSale", "true");
@@ -200,6 +202,7 @@ function App() {
       ...current,
       keyword: "",
       category: "",
+      subCategory: "",
       minPrice: "",
       maxPrice: "",
       onSale: false,
@@ -220,6 +223,7 @@ function App() {
         ...current,
         keyword: isCatalog ? params.get("keyword") || "" : "",
         category: isCatalog ? params.get("category") || "" : "",
+        subCategory: isCatalog ? params.get("subCategory") || "" : "",
         minPrice: isCatalog ? params.get("minPrice") || "" : "",
         maxPrice: isCatalog ? params.get("maxPrice") || "" : "",
         onSale: isCatalog && params.get("onSale") === "true",

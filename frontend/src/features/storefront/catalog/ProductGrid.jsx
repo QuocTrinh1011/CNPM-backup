@@ -42,7 +42,7 @@ export default function ProductGrid({ catalogPage, products, filters, setFilters
             className="button button-dark"
             onClick={() => {
               setSearchInput("");
-              setFilters({ keyword: "", category: "", minPrice: "", maxPrice: "", onSale: false, gender: "NAM", sort: "newest", page: 0 });
+              setFilters({ keyword: "", category: "", subCategory: "", minPrice: "", maxPrice: "", onSale: false, gender: "NAM", sort: "newest", page: 0 });
             }}
           >
             XOÁ BỘ LỌC
