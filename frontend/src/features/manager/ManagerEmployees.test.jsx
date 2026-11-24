@@ -16,6 +16,33 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
+it.each(['Nguyễn Minh Khang', 'nvbh01@shop.com'])('keeps search focused while typing and loading %s', async value => {
+  let resolveSearch;
+  adminApi.mockImplementation(url => {
+    const params = new URL(url, 'http://localhost').searchParams;
+    if (params.get('q')) return new Promise(resolve => { resolveSearch = resolve; });
+    return Promise.resolve({ content: [], totalPages: 0, totalElements: 0 });
+  });
+  render(<ManagerEmployees />);
+  await screen.findByText('Chưa có nhân viên phù hợp.');
+  const input = screen.getByRole('searchbox', { name: 'Tìm nhân viên' });
+  input.focus();
+  for (let length = 1; length <= value.length; length += 1) {
+    fireEvent.change(input, { target: { value: value.slice(0, length) } });
+  }
+  const searches = () => adminApi.mock.calls.filter(([url]) => new URL(url, 'http://localhost').searchParams.get('q'));
+  expect(searches()).toHaveLength(0);
+  await waitFor(() => expect(searches()).toHaveLength(1));
+  expect(new URL(searches()[0][0], 'http://localhost').searchParams.get('q')).toBe(value);
+  expect(screen.getByRole('searchbox', { name: 'Tìm nhân viên' })).toBe(input);
+  expect(document.activeElement).toBe(input);
+  expect(input.value).toBe(value);
+  fireEvent.change(input, { target: { value: `${value}x` } });
+  expect(document.activeElement).toBe(input);
+  resolveSearch({ content: [], totalPages: 0, totalElements: 0 });
+  await screen.findByText('Chưa có nhân viên phù hợp.');
+});
+
 it('lets HR create an employee account with a self-service profile', async () => {
   adminApi.mockImplementation(async (url) => {
     if (url.includes('/api/manager/employees?')) {

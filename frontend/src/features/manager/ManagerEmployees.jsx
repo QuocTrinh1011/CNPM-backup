@@ -24,6 +24,7 @@ const editableFields = [
 
 export default function ManagerEmployees() {
   const [query, setQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [status, setStatus] = useState('ACTIVE');
   const [page, setPage] = useState(0);
   const [data, setData] = useState(null);
@@ -39,14 +40,23 @@ export default function ManagerEmployees() {
   const [notice, setNotice] = useState(null);
 
   useEffect(() => {
+    if (query === searchQuery) return;
+    const timeout = setTimeout(() => {
+      setPage(0);
+      setSearchQuery(query);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [query, searchQuery]);
+
+  useEffect(() => {
     const controller = new AbortController();
     setData(null);
     setError('');
-    adminApi(adminEndpoints.employees({ q: query, status, page, size: 15 }), { signal: controller.signal })
+    adminApi(adminEndpoints.employees({ q: searchQuery, status, page, size: 15 }), { signal: controller.signal })
       .then(result => { if (!controller.signal.aborted) setData(result); })
       .catch(reason => { if (!controller.signal.aborted) setError(reason.message || 'Không tải được danh sách nhân viên.'); });
     return () => controller.abort();
-  }, [query, status, page, reload]);
+  }, [searchQuery, status, page, reload]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -107,14 +117,12 @@ export default function ManagerEmployees() {
     finally { setBusy(false); }
   };
 
-  if (!data && !error) return <PanelLoading />;
-
   return (
     <section className="admin-panel hr-workspace">
       <PanelTitle title="Danh sách nhân viên" subtitle="HR quản lý hồ sơ và tình trạng làm việc. Admin quản lý quyền truy cập hệ thống." />
       <div className="hr-directory-toolbar">
         <label className="admin-search-wrap">Tìm nhân viên
-          <input type="search" aria-label="Tìm nhân viên" value={query} placeholder="Tên hoặc email" onChange={event => { setPage(0); setQuery(event.target.value); }} />
+          <input type="search" aria-label="Tìm nhân viên" value={query} placeholder="Tên hoặc email" onChange={event => setQuery(event.target.value)} />
         </label>
         <label className="hr-status-filter">Tình trạng nhân viên
           <select aria-label="Tình trạng nhân viên" value={status} onChange={event => { setPage(0); setStatus(event.target.value); }}>
@@ -128,7 +136,7 @@ export default function ManagerEmployees() {
         <p><b>Trưởng nhóm (TEAM_LEAD):</b> xem hồ sơ nhóm trực tiếp và chấm công cho nhóm.</p>
         <p><b>Khu vực Kho:</b> cấp quyền tác vụ kho, không cấp quyền duyệt phiếu.</p>
       </div>
-      {error ? <ListError message={error} onRetry={() => setReload(value => value + 1)} /> : <>
+      {error ? <ListError message={error} onRetry={() => setReload(value => value + 1)} /> : !data ? <PanelLoading /> : <>
         {data.content?.length ? <Table headers={['ID','Mã NV','Nhân viên','Chức danh','Điện thoại','Tình trạng','Thao tác']}>
           {data.content.map(employee => <tr key={employee.id}>
             <td>{employee.id}</td>

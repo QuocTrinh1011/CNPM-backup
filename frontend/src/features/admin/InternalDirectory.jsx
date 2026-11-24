@@ -37,7 +37,7 @@ export default function InternalDirectory({ kind, manager = false }) {
       />
       <DirectoryFilters kind={kind} filters={filters} change={change} clear={clearFilters} suppliers={supplierOptions} />
 
-      {error && (
+      {error && !(kind === 'accounts' && form) && (
         <div role="alert" style={{ padding: '12px 16px', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span>{error}</span>
           <button type="button" onClick={() => setReload((n) => n + 1)}>
@@ -55,6 +55,7 @@ export default function InternalDirectory({ kind, manager = false }) {
         setForm={setForm}
         busy={busy}
         customerAccount={customerAccount}
+        error={error}
       />
       <DirectoryTable
         data={data}

@@ -91,7 +91,19 @@ it('admin has only system navigation and accounts use admin APIs',async()=>{
  render(<SystemAdminApp/>);await screen.findByText('Chưa có dữ liệu phù hợp.');
  expect(screen.queryByRole('link',{name:'Khách hàng'})).toBeNull();expect(screen.queryByRole('link',{name:'Đơn hàng'})).toBeNull();
  expect(adminApi.mock.calls.every(([url])=>url.startsWith('/api/admin/'))).toBe(true);
- fireEvent.click(screen.getByText('Thêm mới'));expect(screen.getByLabelText('Vai trò').value).toBe('MANAGER_SALES');
+ const addButton=screen.getByText('Thêm mới');
+ addButton.focus();fireEvent.click(addButton);
+ const dialog=screen.getByRole('dialog',{name:'Thêm tài khoản mới'});
+ expect(within(dialog).getByLabelText('Vai trò').value).toBe('MANAGER_SALES');
+ expect(document.activeElement).toBe(within(dialog).getByLabelText('Họ tên'));
+ fireEvent.change(within(dialog).getByLabelText('Họ tên'),{target:{value:'Quản lý mới'}});
+ fireEvent.keyDown(dialog,{key:'Escape'});
+ expect(screen.queryByRole('dialog')).toBeNull();
+ expect(document.activeElement).toBe(addButton);
+ fireEvent.click(addButton);
+ expect(screen.getByLabelText('Họ tên').value).toBe('');
+ fireEvent.click(screen.getByRole('button',{name:'Hủy'}));
+ expect(screen.queryByRole('dialog')).toBeNull();
 });
 it('splits admin accounts into manager, employee, and customer tabs',async()=>{
  window.history.replaceState({},'', '/admin/accounts');adminRefreshSession.mockResolvedValue({admin:{email:'admin@test.vn'}});

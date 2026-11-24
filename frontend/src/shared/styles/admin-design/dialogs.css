@@ -1,4 +1,40 @@
 /* Dialogs & Modals */
+.admin-shell .admin-account-dialog {
+  width: min(640px, 100%);
+}
+
+.admin-account-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-shell.internal-portal .admin-account-dialog .admin-account-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.admin-account-form .admin-dialog-actions,
+.admin-account-form .admin-account-error {
+  grid-column: 1 / -1;
+}
+
+.admin-account-form .admin-account-error {
+  color: #dc2626;
+}
+
+@media (max-width: 600px) {
+  .admin-shell.internal-portal .admin-account-dialog .admin-account-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .admin-dialog-backdrop {
   position: fixed;
   inset: 0;

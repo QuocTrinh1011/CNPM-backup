@@ -23,6 +23,20 @@
   max-width: 520px;
 }
 
+.manager-shell .hr-directory-toolbar .admin-search-wrap input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.manager-shell .hr-directory-toolbar .admin-search-wrap input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 .manager-shell .hr-status-filter,
 .manager-shell .hr-filter {
   display: grid;
