@@ -13,7 +13,7 @@
   border-bottom: 1px solid var(--line);
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 500;
   letter-spacing: 0.18em;
   line-height: 1.4;
@@ -69,7 +69,7 @@
 .site-shell .shop-section-title h2 {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(26px, 3vw, 38px);
+  font-size: clamp(29px, 3vw, 42.5px);
   font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 1.1;
@@ -87,7 +87,7 @@
   background: transparent;
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.02em;
   transition: color var(--dur-fast) var(--ease-out),
@@ -167,12 +167,12 @@
 }
 
 .site-shell .shop-home-products .error-state h2 {
-  font-size: 20px;
+  font-size: 22.5px;
 }
 
 .site-shell .shop-home-products .error-state p {
   color: var(--muted);
-  font-size: 13.5px;
+  font-size: 15px;
 }
 
 .site-shell .loading-grid {

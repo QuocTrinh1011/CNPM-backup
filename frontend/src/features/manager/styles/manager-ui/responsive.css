@@ -207,7 +207,7 @@
     content: attr(data-label);
     flex: 0 0 auto;
     color: var(--admin-muted);
-    font-size: 11px;
+    font-size: 12.5px;
     font-weight: 650;
   }
 
@@ -271,7 +271,7 @@
     content: attr(data-label);
     flex: 0 0 auto;
     color: var(--admin-muted);
-    font-size: 11px;
+    font-size: 12.5px;
     font-weight: 650;
   }
 
@@ -283,11 +283,11 @@
 
 @media (max-width: 600px) {
   .manager-shell .admin-page-heading h1 {
-    font-size: 27px;
+    font-size: 30px;
   }
 
   .manager-shell .admin-page-heading p {
-    font-size: 13px;
+    font-size: 14.5px;
   }
 
   .manager-shell .manager-section-head {
@@ -347,7 +347,7 @@
 
   .manager-shell :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea),
   .manager-login input {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .manager-shell .admin-topbar-actions a {
@@ -367,7 +367,7 @@
   }
 
   .manager-login.admin-login .admin-login-card h1 {
-    font-size: 30px;
+    font-size: 33.5px;
   }
 }
 

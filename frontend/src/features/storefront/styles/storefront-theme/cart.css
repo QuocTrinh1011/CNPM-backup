@@ -50,7 +50,7 @@
 .site-shell .drawer-head h2 {
   margin: 0;
   color: var(--ink);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
@@ -79,7 +79,7 @@
   border-bottom: 1px solid var(--line);
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -133,7 +133,7 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   color: var(--ink);
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.45;
 }
@@ -143,7 +143,7 @@
   margin-top: 2px;
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 10.5px;
+  font-size: 12px;
 }
 
 .site-shell .cart-line-info .shop-field-error {
@@ -164,14 +164,14 @@
 
 .site-shell .cart-line .quantity span {
   min-width: 24px;
-  font-size: 11.5px;
+  font-size: 13px;
 }
 
 .site-shell .cart-line > strong {
   flex-shrink: 0;
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -207,13 +207,13 @@
 .site-shell .drawer-empty h3 {
   margin: 12px 0 4px;
   color: var(--ink);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 800;
 }
 
 .site-shell .drawer-empty p {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 14px;
   line-height: 1.6;
 }
 
@@ -236,7 +236,7 @@
 .site-shell .drawer-foot .subtotal span {
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
 }
@@ -244,7 +244,7 @@
 .site-shell .drawer-foot .subtotal strong {
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 19px;
+  font-size: 21.5px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
@@ -252,7 +252,7 @@
 .site-shell .drawer-foot p {
   margin: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12.5px;
   line-height: 1.5;
 }
 
@@ -260,7 +260,7 @@
   min-height: 50px;
   margin-top: 4px;
   border-radius: var(--radius-xs);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -272,7 +272,7 @@
   background: transparent;
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;

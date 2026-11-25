@@ -17,7 +17,7 @@
 
 .site-shell .footer .wordmark {
   color: var(--paper);
-  font-size: 22px;
+  font-size: 24.5px;
 }
 
 .site-shell .footer .wordmark em {
@@ -26,7 +26,7 @@
 
 .site-shell .footer-brand p {
   margin: 14px 0 0;
-  font-size: 13px;
+  font-size: 14.5px;
   line-height: 1.65;
 }
 
@@ -35,13 +35,13 @@
   flex-direction: column;
   gap: 4px;
   margin-top: 16px;
-  font-size: 12.5px;
+  font-size: 14px;
 }
 
 .site-shell .footer-contact-details b {
   color: var(--paper);
   font-family: var(--font-data);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
 }
 
@@ -50,7 +50,7 @@
   margin-top: 20px;
   color: rgba(251, 250, 247, 0.42);
   font-family: var(--font-data);
-  font-size: 9.5px;
+  font-size: 10.5px;
   letter-spacing: 0.12em;
 }
 
@@ -65,7 +65,7 @@
   margin-bottom: 12px;
   color: var(--paper);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.16em;
   line-height: 1.4;
@@ -78,7 +78,7 @@
   background: transparent;
   color: rgba(251, 250, 247, 0.72);
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 500;
   line-height: 1.4;
   text-align: left;
@@ -105,7 +105,7 @@
   border-radius: var(--radius-full);
   color: var(--paper);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -127,13 +127,13 @@
   background: rgba(251, 250, 247, 0.08);
   color: rgba(251, 250, 247, 0.82);
   font-family: var(--font-data);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 500;
   letter-spacing: 0.06em;
 }
 
 .site-shell .footer small {
   color: rgba(251, 250, 247, 0.5);
-  font-size: 11.5px;
+  font-size: 13px;
   line-height: 1.55;
 }

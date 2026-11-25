@@ -7,7 +7,7 @@
   flex-wrap: wrap;
   padding: 16px 2px 2px;
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .manager-shell .admin-pagination > div {
@@ -22,7 +22,7 @@
   border-radius: 8px;
   background: var(--admin-card);
   color: var(--admin-text);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 650;
   cursor: pointer;
   transition: border-color var(--manager-transition), color var(--manager-transition), background-color var(--manager-transition);
@@ -42,11 +42,11 @@
 .manager-shell .admin-pagination--compact {
   gap: 8px;
   padding: 10px 2px 0;
-  font-size: 11.5px;
+  font-size: 13px;
 }
 
 .manager-shell .admin-pagination--compact button {
   min-height: 28px;
   padding: 0 9px;
-  font-size: 11.5px;
+  font-size: 13px;
 }

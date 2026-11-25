@@ -21,7 +21,7 @@
 
 .admin-breadcrumb {
   color: var(--admin-muted);
-  font: 500 12px var(--admin-mono);
+  font: 500 13.5px var(--admin-mono);
   display: flex;
   gap: 10px;
   align-items: center;
@@ -30,7 +30,7 @@
 .admin-breadcrumb b {
   font-weight: 700;
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .admin-shell .admin-topbar-actions {
@@ -40,7 +40,7 @@
 }
 
 .admin-shell .admin-live-dot {
-  font: 700 10.5px/1 var(--admin-mono);
+  font: 700 12px/1 var(--admin-mono);
   color: #10b981;
   display: inline-flex;
   align-items: center;
@@ -76,7 +76,7 @@
   border: 1px solid var(--admin-border);
   background: var(--admin-input);
   color: var(--admin-text);
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -97,7 +97,7 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-md);
   color: var(--admin-muted);
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 500;
   text-decoration: none;
   background: var(--admin-input);
@@ -113,9 +113,9 @@
 .admin-page-heading { margin: 28px 0 24px; }
 .admin-page-heading h1 {
   margin: 0 0 6px;
-  font-size: 24px;
+  font-size: 27px;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
-.admin-page-heading p { margin: 0; font-size: 13px; color: var(--admin-muted); }
+.admin-page-heading p { margin: 0; font-size: 14.5px; color: var(--admin-muted); }

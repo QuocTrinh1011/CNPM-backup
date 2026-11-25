@@ -98,6 +98,7 @@ function App() {
   const buyNow = async (product, variant, quantity) => {
     const next = await addToCart(product, variant, quantity);
     if (next) { selection.only({ productId: product.id, ...variant }, next); goCheckout(); }
+    return next;
   };
 
   const openAuth = (afterLogin = null) => {
@@ -238,6 +239,8 @@ function App() {
     navigate(`/san-pham/${product.id}`);
   };
   const openQuickView = product => setQuickViewProduct({ product, feedback: [] });
+  const openPurchaseOptions = (product, purchaseIntent, initialVariant, initialQuantity = 1) =>
+    setQuickViewProduct({ product, feedback: [], purchaseIntent, initialVariant, initialQuantity });
   useEffect(() => {
     const requestId = ++productRequest.current;
     setSelectedProduct(null); setProductError('');
@@ -463,8 +466,8 @@ function App() {
             loadProducts={loadProducts}
             openCatalog={openCatalog}
             goHome={goHome}
-            onAddToCart={addToCart}
-            onBuyNow={(product, variant) => buyNow(product, variant, 1)}
+            onAddToCart={product => openPurchaseOptions(product, 'cart')}
+            onBuyNow={product => openPurchaseOptions(product, 'buy')}
           />
         ) : (
           <StorefrontHome
@@ -477,8 +480,8 @@ function App() {
             onProduct={openProduct}
             onQuickView={openQuickView}
             onWishlist={toggleWishlist}
-            onAddToCart={addToCart}
-            onBuyNow={(product, variant) => buyNow(product, variant, 1)}
+            onAddToCart={product => openPurchaseOptions(product, 'cart')}
+            onBuyNow={product => openPurchaseOptions(product, 'buy')}
             onRetry={loadProducts}
             imageSrc={imageSrc}
           />
@@ -562,9 +565,9 @@ function App() {
             user={user}
             onClose={() => navigate(safeReturn(window.history.state?.customerFrom, '/san-pham'))}
             onAdd={(variant, quantity) =>
-              addToCart(selectedProduct.product, variant, quantity)
+              openPurchaseOptions(selectedProduct.product, 'cart', variant, quantity)
             }
-            onBuyNow={(variant, quantity) => buyNow(selectedProduct.product, variant, quantity)}
+            onBuyNow={(variant, quantity) => openPurchaseOptions(selectedProduct.product, 'buy', variant, quantity)}
             onLogin={() => openAuth()}
           />
       )}
@@ -662,10 +665,13 @@ function App() {
       </>}
       </CustomerPageFrame>}
 
-      {quickViewProduct && !productId && (
+      {quickViewProduct && (
         <ProductModal
-          key={quickViewProduct.product.id}
+          key={`${quickViewProduct.product.id}-${quickViewProduct.purchaseIntent || 'preview'}`}
           quickView
+          purchaseIntent={quickViewProduct.purchaseIntent}
+          initialVariant={quickViewProduct.initialVariant}
+          initialQuantity={quickViewProduct.initialQuantity}
           data={quickViewProduct}
           user={user}
           onClose={() => setQuickViewProduct(null)}

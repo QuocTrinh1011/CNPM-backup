@@ -32,7 +32,6 @@ export function ProductCard({ product, onOpen, onQuickView, isWishlisted, onWish
   const coverImage = imagesForColor(product, firstProductColor(product))[0] || product.imageUrl;
   const colors = csv(product.colors);
   const outOfStock = Number(product.stock) <= 0;
-  const defaultVariant = { size: csv(product.sizes)[0], color: firstProductColor(product) };
   return (
     <article className="product-card">
       <div className="product-image">
@@ -99,7 +98,7 @@ export function ProductCard({ product, onOpen, onQuickView, isWishlisted, onWish
           type="button"
           className="product-card-buy"
           disabled={outOfStock}
-          onClick={() => onBuyNow?.(product, defaultVariant)}
+          onClick={() => onBuyNow?.(product)}
         >
           MUA NGAY
         </button>
@@ -107,7 +106,7 @@ export function ProductCard({ product, onOpen, onQuickView, isWishlisted, onWish
           type="button"
           className="product-card-cart"
           disabled={outOfStock}
-          onClick={() => onAddToCart?.(product, defaultVariant)}
+          onClick={() => onAddToCart?.(product)}
         >
           THÊM VÀO GIỎ HÀNG
         </button>

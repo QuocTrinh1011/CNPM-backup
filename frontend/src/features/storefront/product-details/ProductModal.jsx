@@ -10,14 +10,14 @@ import { ProductSizeGuide } from "./ProductSizeGuide";
 import { ProductBenefits } from "./ProductBenefits";
 import { ProductFeedback } from "./ProductFeedback";
 
-export function ProductModal({ page = false, quickView = false, data, user, onClose, onAdd, onBuyNow, onViewDetails, onLogin }) {
+export function ProductModal({ page = false, quickView = false, purchaseIntent, initialVariant, initialQuantity = 1, data, user, onClose, onAdd, onBuyNow, onViewDetails, onLogin }) {
   const product = data.product;
   const [size, setSize] = useState(
-    (quickView ? csv(product.sizes)[0] : csv(product.sizes)[1]) || csv(product.sizes)[0] || "M",
+    initialVariant?.size || (quickView ? csv(product.sizes)[0] : csv(product.sizes)[1]) || csv(product.sizes)[0] || "M",
   );
-  const [color, setColor] = useState(firstProductColor(product));
+  const [color, setColor] = useState(initialVariant?.color || firstProductColor(product));
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(initialQuantity);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [showAllFeedback, setShowAllFeedback] = useState(false);
   const purchaseLock = useRef(false);
@@ -25,7 +25,7 @@ export function ProductModal({ page = false, quickView = false, data, user, onCl
   const purchase = async (buy = false) => {
     if (purchaseLock.current) return;
     purchaseLock.current = true; setPurchasing(true);
-    try { await (buy && onBuyNow ? onBuyNow : onAdd)({ size, color }, quantity); if (!page) onClose(); }
+    try { const result = await (buy && onBuyNow ? onBuyNow : onAdd)({ size, color }, quantity); if (!page && result) onClose(); }
     finally { purchaseLock.current = false; setPurchasing(false); }
   };
   const sale = discount(product);
@@ -48,7 +48,7 @@ export function ProductModal({ page = false, quickView = false, data, user, onCl
       className={page ? "customer-page-body" : "modal-backdrop"}
       onMouseDown={(event) => !page && event.target === event.currentTarget && onClose()}
     >
-      <div className={`product-modal ${page ? "product-modal--page" : "product-modal--dialog"} ${quickView ? "product-modal--quick-view" : ""}`}>
+      <div role={page ? undefined : 'dialog'} aria-modal={page ? undefined : true} aria-label={page ? undefined : `Chọn size và màu: ${product.name}`} className={`product-modal ${page ? "product-modal--page" : "product-modal--dialog"} ${quickView ? "product-modal--quick-view" : ""}`}>
         <button
           className="close-button"
           aria-label="Đóng chi tiết sản phẩm"
@@ -86,6 +86,7 @@ export function ProductModal({ page = false, quickView = false, data, user, onCl
             setShowSizeGuide={setShowSizeGuide}
           />
           <ProductPurchaseActions
+            purchaseIntent={purchaseIntent}
             page={page}
             product={product}
             quantity={quantity}
@@ -94,7 +95,7 @@ export function ProductModal({ page = false, quickView = false, data, user, onCl
             purchase={purchase}
             quickView={quickView}
           />
-          {quickView && (
+          {quickView && !purchaseIntent && (
             <button type="button" className="quick-view-details-link" onClick={onViewDetails}>
               Xem chi tiết »
             </button>

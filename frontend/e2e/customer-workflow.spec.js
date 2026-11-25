@@ -45,6 +45,11 @@ test('customer registers, saves delivery address, and completes a COD order', as
   await product.click();
   await expect(page.getByRole('heading', { name: 'E2E Playwright Tee' })).toBeVisible();
   await page.getByRole('button', { name: 'MUA NGAY' }).click();
+  const options = page.getByRole('dialog');
+  await expect(options).toBeVisible();
+  await options.locator('.product-size-chip').last().click();
+  await options.locator('.product-color-swatch').first().click();
+  await options.getByRole('button', { name: 'MUA NGAY', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Hoàn tất đơn hàng' })).toBeVisible();
   await expect(page.getByText(fullName)).toBeVisible();
 

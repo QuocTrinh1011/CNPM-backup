@@ -61,6 +61,7 @@
 
 /* ── Product modal layout ── */
 .site-shell .product-modal {
+  height: auto;
   max-width: 980px;
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
@@ -97,6 +98,9 @@
 }
 
 .site-shell .product-modal-image {
+  min-height: 0;
+  width: 100%;
+  height: auto;
   position: relative;
   overflow: hidden;
   aspect-ratio: 4 / 5;
@@ -121,7 +125,7 @@
   background: var(--ink);
   color: var(--paper);
   font-family: var(--font-data);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -193,9 +197,23 @@
 
 /* ── Summary ── */
 .site-shell .product-modal-content {
+  padding: 0;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   min-width: 0;
+}
+
+@media (max-width: 680px) {
+  .site-shell .product-modal--quick-view .product-modal-image {
+    min-height: 0;
+    height: 180px;
+    max-height: 28vh;
+  }
+
+  .site-shell .product-modal--quick-view .product-image-thumbnails {
+    display: none;
+  }
 }
 
 .site-shell .back-link {
@@ -210,7 +228,7 @@
   background: transparent;
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -224,7 +242,7 @@
 .site-shell .product-modal-content h2 {
   margin: 0 0 12px;
   color: var(--ink);
-  font-size: clamp(22px, 2.4vw, 30px);
+  font-size: clamp(24.5px, 2.4vw, 33.5px);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.16;
@@ -251,7 +269,7 @@
   background: var(--success-soft);
   color: var(--success);
   font-family: var(--font-data);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -267,7 +285,7 @@
   margin: 0 0 10px;
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -283,14 +301,14 @@
 .site-shell .modal-price strong {
   color: var(--accent);
   font-family: var(--mono);
-  font-size: 24px;
+  font-size: 27px;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .site-shell .modal-price del {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .site-shell .modal-price em {
@@ -301,7 +319,7 @@
   color: var(--accent);
   font-family: var(--font-data);
   font-style: normal;
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -346,12 +364,12 @@
 
 .site-shell .product-voucher-copy b {
   color: var(--ink);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .site-shell .product-voucher-copy small {
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 .site-shell .product-voucher-link > svg {
@@ -362,7 +380,7 @@
 .site-shell .modal-description {
   margin: 0 0 20px;
   color: var(--muted);
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.7;
 }
 
@@ -377,7 +395,7 @@
   margin-bottom: 8px;
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -456,7 +474,7 @@
   border-radius: var(--radius-xs);
   background: var(--white);
   color: var(--ink);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   transition: border-color var(--dur-fast) var(--ease-out),
     background-color var(--dur-fast) var(--ease-out),
@@ -484,7 +502,7 @@
   border: 0;
   background: transparent;
   color: var(--accent);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -524,7 +542,7 @@
   text-align: center;
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 700;
 }
 
@@ -537,7 +555,7 @@
   margin-bottom: 8px;
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
 }
@@ -552,7 +570,7 @@
   display: block;
   margin-top: 6px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 .site-shell .product-modal-actions {
@@ -570,7 +588,7 @@
   width: 100%;
   margin: 0;
   border-radius: var(--radius-xs);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -594,7 +612,7 @@
   border: 1px solid var(--accent);
   background: var(--accent);
   color: #fff;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -625,7 +643,7 @@
   border-radius: var(--radius-xs);
   background: var(--ink);
   color: var(--paper);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -644,7 +662,7 @@
   background: transparent;
   color: var(--accent);
   font-family: var(--font-data);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -672,7 +690,7 @@
   border-radius: var(--radius-xs);
   background: var(--white);
   color: var(--ink);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -703,7 +721,7 @@
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
   line-height: 1.45;
 }
@@ -742,7 +760,7 @@
 .site-shell .size-guide-header h3 {
   margin: 0;
   color: var(--ink);
-  font-size: 20px;
+  font-size: 22.5px;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
@@ -762,7 +780,7 @@
 .site-shell .size-guide-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12.5px;
+  font-size: 14px;
   text-align: left;
 }
 
@@ -780,7 +798,7 @@
   background: var(--soft);
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -792,7 +810,7 @@
   border-radius: var(--radius-xs);
   background: var(--accent-tint);
   color: var(--ink);
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.6;
 }
 
@@ -821,7 +839,7 @@
   margin: 0;
   color: var(--ink);
   font-family: var(--font-data);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -833,7 +851,7 @@
   background: var(--soft);
   color: var(--muted);
   font-family: var(--font-data);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 600;
 }
 
@@ -851,13 +869,13 @@
 .site-shell .feedback-avg-score {
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 800;
 }
 
 .site-shell .feedback-rating-scale {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 .site-shell .star-filled {
@@ -890,13 +908,13 @@
 .site-shell .feedback-empty-title {
   margin: 0 0 4px;
   color: var(--ink);
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 700;
 }
 
 .site-shell .feedback-empty-subtitle {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.55;
 }
 
@@ -929,7 +947,7 @@
   border-radius: 50%;
   background: var(--ink);
   color: var(--paper);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 800;
 }
 
@@ -949,7 +967,7 @@
 
 .site-shell .feedback-author-name {
   color: var(--ink);
-  font-size: 12.5px;
+  font-size: 14px;
 }
 
 .site-shell .feedback-verified-tag {
@@ -957,7 +975,7 @@
   align-items: center;
   gap: 3px;
   color: var(--success);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 700;
 }
 
@@ -974,13 +992,13 @@
 
 .site-shell .feedback-time {
   color: var(--muted);
-  font-size: 10.5px;
+  font-size: 12px;
 }
 
 .site-shell .feedback-comment {
   margin: 0;
   color: var(--ink);
-  font-size: 13px;
+  font-size: 14.5px;
   line-height: 1.6;
 }
 
@@ -990,7 +1008,7 @@
   border-left: 2px solid var(--accent);
   border-radius: var(--radius-xs);
   background: var(--surface);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .site-shell .shop-reply-header {
@@ -999,7 +1017,7 @@
   gap: 5px;
   margin-bottom: 4px;
   color: var(--accent);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -1018,7 +1036,7 @@
   border-radius: var(--radius-full);
   background: var(--white);
   color: var(--ink);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1051,7 +1069,7 @@
 
 .site-shell .feedback-help {
   color: var(--ink);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
 }
 
@@ -1062,7 +1080,7 @@
   border-radius: var(--radius-full);
   background: var(--accent);
   color: #fff;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -1129,7 +1147,7 @@
   }
 
   .site-shell .product-modal-actions > button {
-    font-size: 10.5px;
+    font-size: 12px;
   }
 
   .site-shell .product-page-purchase-row .product-add-button {

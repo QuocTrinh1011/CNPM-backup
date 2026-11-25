@@ -36,7 +36,7 @@ describe('portal redesign isolation', () => {
       for (const selector of rules(css)) expect(selector).toMatch(/^\.admin-shell\.internal-portal/);
       expect(css).not.toContain('@import');
     }
-    expect(adminStyles[1]).toContain('font-family: "Manrope"');
+    expect(adminStyles[1]).toContain('font-family: "Be Vietnam Pro"');
     expect(adminStyles[1]).toContain('pointer-events: none;');
   });
   it('keeps logout and portal links visible in mobile Admin', () => {
@@ -49,7 +49,7 @@ describe('portal redesign isolation', () => {
   it('keeps the Manager cockpit isolated from User and system Admin', () => {
     for (const selector of rules(cockpitStyles)) expect(selector).toMatch(/^\.manager-(shell|login)/);
     expect(cockpitStyles).not.toContain('@import');
-    expect(cockpitStyles).toContain('font-family: "Manrope"');
+    expect(cockpitStyles).toContain('font-family: "Be Vietnam Pro"');
     expect(cockpitStyles).toContain('.admin-primary { background: var(--admin-primary); color: var(--admin-on-primary); }');
     expect(cockpitStyles).toContain('max-height: 90dvh;');
     expect(cockpitStyles).not.toContain('.manager-login.admin-login-card');
@@ -77,7 +77,7 @@ describe('portal redesign isolation', () => {
     const selectors = rules(userStyles);
     expect(selectors.length).toBeGreaterThan(50);
     for (const selector of selectors) expect(selector).toMatch(/^\.site-shell/);
-    expect(userStyles).toContain("--sans: 'Manrope'");
+    expect(userStyles).toContain("--sans: 'Be Vietnam Pro'");
     expect(userStyles).not.toContain('[data-shop-theme="dark"]');
   });
   it('keeps Manager selectors separate from Admin, including login and dark mode', () => {
@@ -94,7 +94,7 @@ describe('portal redesign isolation', () => {
   });
   it('loads fonts once at the entry and keeps Manager login links in the same font', () => {
     const entry = readFileSync('index.html', 'utf8');
-    expect(entry).toContain('family=Manrope');
+    expect(entry).toContain('family=Be+Vietnam+Pro');
     expect(entry.match(/fonts.googleapis.com\/css2/g)).toHaveLength(1);
     for (const file of ['styles/styles.css', 'shared/styles/admin-design.css', 'features/storefront/styles/storefront-theme.css', 'features/manager/styles/manager-redesign.css']) {
       expect(readFileSync(`src/${file}`, 'utf8')).not.toContain('@import url');
@@ -103,8 +103,8 @@ describe('portal redesign isolation', () => {
     expect(managerStyles).toContain('input,a,small,label');
   });
   it('keeps mobile input text readable and stacks the Admin hero', () => {
-    expect(userStyles).toContain('textarea) { font-size: 16px; }');
-    expect(managerStyles).toContain('.manager-login input { font-size: 16px; }');
+    expect(userStyles).toContain('textarea) { font-size: 18px; }');
+    expect(managerStyles).toContain('.manager-login input { font-size: 18px; }');
     expect(readFileSync('src/shared/styles/internal-portal.css', 'utf8')).toContain('.internal-hero-banner { flex-direction: column;');
   });
   it('keeps notices content-sized instead of stretching between top and bottom', () => {

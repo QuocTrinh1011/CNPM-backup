@@ -102,6 +102,9 @@ it('keeps the product page open when adding to the guest cart', async () => {
   window.history.replaceState({}, '', '/san-pham/4'); render(<App/>);
   await screen.findByRole('heading', { name: product.name });
   fireEvent.click(screen.getByRole('button', { name: /THÊM 1 VÀO GIỎ/ }));
+  const options = await screen.findByRole('dialog');
+  expect(window.location.pathname).toBe('/san-pham/4');
+  fireEvent.click(within(options).getByRole('button', { name: 'THÊM VÀO GIỎ', exact: true }));
   await screen.findByText('Đã thêm sản phẩm vào giỏ tạm. Đăng nhập khi thanh toán nhé.');
   expect(window.location.pathname).toBe('/san-pham/4');
   fireEvent.click(screen.getByRole('button', { name: 'Xem giỏ hàng' }));

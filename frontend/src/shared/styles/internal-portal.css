@@ -5,8 +5,8 @@
   min-height: 100vh;
   background: var(--admin-bg, #f8fafc);
   color: var(--admin-text, #0f172a);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 13px;
+  font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  font-size: 14.5px;
   line-height: 1.5;
 }
 
@@ -79,7 +79,7 @@
 
 .internal-brand-title h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--admin-text);
@@ -87,7 +87,7 @@
 }
 
 .internal-brand-title small {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--admin-primary);
   letter-spacing: 0.08em;
@@ -111,7 +111,7 @@
   border-radius: 8px;
   color: var(--admin-muted);
   text-decoration: none;
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 500;
   border: 1px solid transparent;
   transition: all 0.15s ease;
@@ -140,7 +140,7 @@
 .internal-sidebar-section-title {
   padding: 0 14px;
   margin-bottom: 6px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--admin-muted);
@@ -148,7 +148,7 @@
 }
 
 .internal-nav-link.external {
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .internal-nav-link.external .external-icon {
@@ -181,7 +181,7 @@
   display: grid;
   place-items: center;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14.5px;
   flex-shrink: 0;
 }
 
@@ -192,7 +192,7 @@
 
 .internal-user-info b {
   display: block;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-text);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -201,7 +201,7 @@
 
 .internal-user-info small {
   display: block;
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--admin-muted);
 }
 
@@ -216,7 +216,7 @@
   border: 1px solid rgba(239, 68, 68, 0.3);
   background: rgba(239, 68, 68, 0.05);
   color: #ef4444;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -254,7 +254,7 @@
 }
 
 .internal-breadcrumb {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--admin-muted);
   display: flex;
@@ -266,7 +266,7 @@
 
 .internal-header h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 27px;
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--admin-text);
@@ -284,7 +284,7 @@
   gap: 6px;
   padding: 6px 10px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #10b981;
   background: rgba(16, 185, 129, 0.1);
@@ -313,7 +313,7 @@
   border: 1px solid var(--admin-border);
   background: var(--admin-card);
   color: var(--admin-text);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -351,7 +351,7 @@
 }
 
 .internal-hero-text .internal-eyebrow {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--admin-primary);
@@ -360,14 +360,14 @@
 
 .internal-hero-text h2 {
   margin: 6px 0 4px;
-  font-size: 20px;
+  font-size: 22.5px;
   font-weight: 700;
   color: var(--admin-text);
 }
 
 .internal-hero-text p {
   margin: 0;
-  font-size: 13px;
+  font-size: 14.5px;
   color: var(--admin-muted);
 }
 
@@ -380,7 +380,7 @@
   border: 1px solid var(--admin-border);
   background: var(--admin-card);
   color: var(--admin-text);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -427,7 +427,7 @@
 }
 
 .internal-kpi-title {
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--admin-muted);
   text-transform: uppercase;
@@ -449,7 +449,7 @@
 .internal-kpi-icon.emerald { background: rgba(5, 150, 105, 0.12); color: #059669; }
 
 .internal-kpi-value {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--admin-text);
@@ -460,7 +460,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--admin-muted);
   border-top: 1px solid var(--admin-border);
   padding-top: 10px;
@@ -512,14 +512,14 @@
 
 .internal-card-head h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--admin-text);
 }
 
 .internal-card-head p {
   margin: 4px 0 0;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-muted);
 }
 
@@ -576,7 +576,7 @@
 
 .internal-action-text b {
   display: block;
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 600;
   color: var(--admin-text);
   margin-bottom: 2px;
@@ -584,7 +584,7 @@
 
 .internal-action-text small {
   display: block;
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--admin-muted);
   line-height: 1.4;
 }
@@ -620,7 +620,7 @@
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid var(--admin-border);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .internal-spec-row:last-child {
@@ -645,7 +645,7 @@
   color: var(--admin-primary);
   padding: 3px 8px;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 .internal-security-tips {
@@ -661,7 +661,7 @@
   padding: 10px 12px;
   border-radius: 8px;
   background: var(--admin-input);
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-text);
 }
 
@@ -682,7 +682,7 @@
   background: var(--admin-primary-soft);
   color: var(--admin-primary);
   font-family: monospace;
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 /* ===== InternalDirectory (Accounts, Products, Suppliers) Styling ===== */
@@ -698,7 +698,7 @@
 .internal-directory-panel h2,
 .admin-shell.internal-portal .admin-card h2 {
   margin: 0 0 18px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--admin-text);
 }
@@ -764,7 +764,7 @@
   padding: 0 4px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.2);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .internal-directory-advanced {
@@ -779,7 +779,7 @@
   display: block;
   margin-top: 4px;
   color: var(--admin-muted);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 400;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -789,7 +789,7 @@
   display: grid;
   gap: 6px;
   min-width: 150px;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--admin-muted);
   text-transform: uppercase;
@@ -803,7 +803,7 @@
   border-radius: 8px;
   background: var(--admin-card);
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
   font-family: inherit;
   transition: border-color 0.15s ease;
   min-height: 38px;
@@ -827,7 +827,7 @@
   border: 1px solid var(--admin-border);
   background: var(--admin-primary);
   color: #ffffff;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
   min-height: 38px;
@@ -875,7 +875,7 @@ form.internal-filters {
   padding: 12px 16px;
   background: var(--admin-input);
   color: var(--admin-muted);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -887,7 +887,7 @@ form.internal-filters {
   padding: 14px 16px;
   border-bottom: 1px solid var(--admin-border);
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .admin-shell.internal-portal tbody tr:hover {
@@ -900,7 +900,7 @@ form.internal-filters {
 
 .admin-shell.internal-portal td button {
   padding: 5px 12px;
-  font-size: 12px;
+  font-size: 13.5px;
   min-height: 30px;
   background: var(--admin-input);
   color: var(--admin-text);
@@ -927,14 +927,14 @@ form.internal-filters {
 
 .internal-login h1 {
   margin: 0 0 6px;
-  font-size: 22px;
+  font-size: 24.5px;
   font-weight: 700;
   color: var(--admin-text);
 }
 
 .internal-login p {
   margin: 0 0 24px;
-  font-size: 13px;
+  font-size: 14.5px;
   color: var(--admin-muted);
 }
 
@@ -946,7 +946,7 @@ form.internal-filters {
 .internal-login label {
   display: grid;
   gap: 6px;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--admin-text);
 }
@@ -957,13 +957,13 @@ form.internal-filters {
   border-radius: 8px;
   background: var(--admin-input);
   color: var(--admin-text);
-  font-size: 14px;
+  font-size: 15.5px;
 }
 
 .internal-login button {
   margin-top: 8px;
   min-height: 44px;
-  font-size: 14px;
+  font-size: 15.5px;
 }
 
 /* Responsive */
@@ -992,7 +992,7 @@ form.internal-filters {
   .internal-hero-banner { flex-direction: column; align-items: flex-start; gap: 16px; }
   .internal-kpi-grid { grid-template-columns: minmax(0, 1fr); }
   .internal-header-right { flex-wrap: wrap; }
-  .admin-shell.internal-portal :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) { font-size: 16px; }
+  .admin-shell.internal-portal :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) { font-size: 18px; }
   .internal-directory-filter-toolbar { grid-template-columns: minmax(0, 1fr); }
   .internal-directory-filter-toolbar .internal-directory-keyword,
   .internal-directory-filter-actions { grid-column: auto; }

@@ -21,7 +21,7 @@
   background: var(--admin-card);
   color: var(--admin-text);
   box-shadow: var(--admin-shadow-lg);
-  font-size: 13px;
+  font-size: 14.5px;
   animation: admin-toast-in 0.25s ease-out;
 }
 .admin-shell .admin-toast.error { border-color: #ef4444; color: #ef4444; }
