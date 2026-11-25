@@ -141,8 +141,8 @@ export default function ManagerEmployees() {
           {data.content.map(employee => <tr key={employee.id}>
             <td>{employee.id}</td>
             <td>{employee.employeeCode || '—'}</td>
-            <td><b>{employee.fullName}</b><small>{employee.email || '—'}</small></td>
-            <td>{employee.jobTitle || '—'}<small>{employee.permissionProfile === 'TEAM_LEAD' ? 'Trưởng nhóm' : 'Nhân viên'}</small></td>
+            <td><div className="hr-employee-cell"><b>{employee.fullName}</b><small>{employee.email || '—'}</small></div></td>
+            <td><div className="hr-employee-cell"><span>{employee.jobTitle || '—'}</span><small>{employee.permissionProfile === 'TEAM_LEAD' ? 'Trưởng nhóm' : 'Nhân viên'}</small></div></td>
             <td>{employee.phone || '—'}</td>
             <td>{employee.archived ? 'Đã lưu trữ' : employee.employmentStatus === 'ACTIVE' && !employee.locked ? 'Đang làm việc' : employee.employmentStatus === 'RESIGNED' ? 'Nghỉ việc' : employee.employmentStatus === 'TERMINATED' ? 'Đã chấm dứt' : 'Đã khóa'}</td>
             <td className="hr-inline-actions">{employee.archived ? <span>Chỉ xem</span> : <><button type="button" onClick={() => beginEdit(employee)} aria-label={`Sửa ${employee.fullName}`}>Sửa</button><button type="button" className="hr-danger" onClick={() => { setNotice(null); setConfirmEmployee(employee); }} aria-label={`Ngừng hoạt động ${employee.fullName}`}>Ngừng hoạt động</button></>}</td>

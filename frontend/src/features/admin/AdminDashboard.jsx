@@ -104,6 +104,7 @@ function QuarterCell({ amount, count, countLabel }) {
 }
 
 function QuarterlyProductTable({ rows }) {
+  const [page, setPage] = useState(0);
   const grouped = new Map();
   for (const item of rows) {
     const key = String(item.productId);
@@ -128,17 +129,33 @@ function QuarterlyProductTable({ rows }) {
     quantitySold: row.quarters.reduce((total, quarter) => total + quarter.quantitySold, 0),
     totalRevenue: row.quarters.reduce((total, quarter) => total + quarter.totalRevenue, 0),
   })).sort((left, right) => right.totalRevenue - left.totalRevenue || left.productName.localeCompare(right.productName, 'vi'));
+  const pageSize = 4;
+  const pageCount = Math.max(1, Math.ceil(reportRows.length / pageSize));
+  const currentPage = Math.min(page, pageCount - 1);
+  const visibleRows = reportRows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
-  return <ReportTable
-    label="Doanh thu và số lượng sản phẩm theo quý"
-    columns={['Sản phẩm', 'Q1', 'Q2', 'Q3', 'Q4', 'Tổng năm']}
-    rows={reportRows}
-    renderRow={(row) => <tr key={row.productId}>
-      <td className="admin-quarterly-entity"><strong>{row.productName || 'Sản phẩm'}</strong><small>{row.categoryName || '—'}</small></td>
-      {row.quarters.map((quarter, index) => <td key={index}><QuarterCell amount={quarter.totalRevenue} count={quarter.quantitySold} countLabel="sp" /></td>)}
-      <td><QuarterCell amount={row.totalRevenue} count={row.quantitySold} countLabel="sp" /></td>
-    </tr>}
-  />;
+  useEffect(() => setPage(0), [rows]);
+
+  return <>
+    <ReportTable
+      label="Doanh thu và số lượng sản phẩm theo quý"
+      columns={['Sản phẩm', 'Q1', 'Q2', 'Q3', 'Q4', 'Tổng năm']}
+      rows={visibleRows}
+      renderRow={(row) => <tr key={row.productId}>
+        <td className="admin-quarterly-entity"><strong>{row.productName || 'Sản phẩm'}</strong><small>{row.categoryName || '—'}</small></td>
+        {row.quarters.map((quarter, index) => <td key={index}><QuarterCell amount={quarter.totalRevenue} count={quarter.quantitySold} countLabel="sp" /></td>)}
+        <td><QuarterCell amount={row.totalRevenue} count={row.quantitySold} countLabel="sp" /></td>
+      </tr>}
+    />
+    {reportRows.length > pageSize && <nav className="admin-pagination" aria-label="Phân trang sản phẩm theo quý">
+      <span aria-live="polite">Hiển thị {currentPage * pageSize + 1}–{Math.min((currentPage + 1) * pageSize, reportRows.length)} trong {reportRows.length} sản phẩm</span>
+      <div>
+        <button type="button" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>Trước</button>
+        <span aria-live="polite">Trang {currentPage + 1} / {pageCount}</span>
+        <button type="button" disabled={currentPage + 1 >= pageCount} onClick={() => setPage(currentPage + 1)}>Sau</button>
+      </div>
+    </nav>}
+  </>;
 }
 
 function QuarterlyEmployeeTable({ rows }) {

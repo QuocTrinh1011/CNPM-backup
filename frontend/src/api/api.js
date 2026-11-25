@@ -106,8 +106,9 @@ export async function adminSignOut() {
 }
 
 export const endpoints = {
-  catalog: ({ keyword = '', category = '', minPrice = '', maxPrice = '', onSale = false, gender = 'NAM', sort = 'newest', page = 0, size = 30 } = {}) => {
+  catalog: ({ keyword = '', category = '', subCategory = '', minPrice = '', maxPrice = '', onSale = false, gender = 'NAM', sort = 'newest', page = 0, size = 30 } = {}) => {
     const params = new URLSearchParams({ keyword, category, gender, sort, page, size });
+    if (subCategory) params.set('subCategory', subCategory);
     if (minPrice !== '') params.set('minPrice', minPrice);
     if (maxPrice !== '') params.set('maxPrice', maxPrice);
     if (onSale) params.set('onSale', 'true');

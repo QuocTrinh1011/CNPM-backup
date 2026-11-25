@@ -4,6 +4,7 @@ import { money } from "../../shared/utils/storefront-display";
 import CatalogFilterPanel from "./catalog/CatalogFilterPanel";
 import CatalogToolbar from "./catalog/CatalogToolbar";
 import ProductGrid from "./catalog/ProductGrid";
+import { pantsSubcategoryLabel } from "./catalog/pants-subcategories";
 
 export default function CatalogSection({
   catalogPage,
@@ -25,11 +26,12 @@ export default function CatalogSection({
   onAddToCart,
   onBuyNow,
 }) {
-  const catalogTitle = filters.category || (filters.onSale ? "Sản phẩm ưu đãi" : "Tất cả sản phẩm");
+  const subCategoryLabel = pantsSubcategoryLabel(filters.subCategory);
+  const catalogTitle = subCategoryLabel || filters.category || (filters.onSale ? "Sản phẩm ưu đãi" : "Tất cả sản phẩm");
   const activeFilters = [
     filters.keyword ? "“" + filters.keyword + "”" : null,
     filters.onSale ? "Sản phẩm đang ưu đãi" : null,
-    filters.category,
+    subCategoryLabel || filters.category,
     filters.minPrice ? "từ " + money(filters.minPrice) : null,
     filters.maxPrice ? "đến " + money(filters.maxPrice) : null,
   ].filter(Boolean).join(" · ");
@@ -49,7 +51,7 @@ export default function CatalogSection({
                 <>
                   <button type="button" onClick={() => openCatalog("")}>Sản phẩm</button>
                   <ChevronRight size={14} aria-hidden="true" />
-                  <span aria-current="page">{filters.category}</span>
+                  <span aria-current="page">{subCategoryLabel || filters.category}</span>
                 </>
               ) : (
                 <span aria-current="page">Sản phẩm</span>
@@ -96,6 +98,7 @@ export default function CatalogSection({
                 ...current,
                 keyword: "",
                 category: "",
+                subCategory: "",
                 minPrice: "",
                 maxPrice: "",
                 onSale: false,
