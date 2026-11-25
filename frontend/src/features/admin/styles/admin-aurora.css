@@ -135,8 +135,8 @@
   border-color: rgb(255 255 255 / 8%);
   background: rgb(20 29 49 / 76%);
 }
-.admin-shell.internal-portal .internal-header h1 { font-size: 21px; }
-.admin-shell.internal-portal .internal-breadcrumb { font-size: 9px; }
+.admin-shell.internal-portal .internal-header h1 { font-size: 23.5px; }
+.admin-shell.internal-portal .internal-breadcrumb { font-size: 10px; }
 .admin-shell.internal-portal .internal-live-badge {
   border: 0;
   background: color-mix(in srgb, var(--internal-success) 12%, var(--admin-card));
@@ -181,7 +181,7 @@
 }
 .admin-shell.internal-portal .internal-hero-text h2 {
   max-width: 780px;
-  font-size: clamp(32px, 4.2vw, 50px);
+  font-size: clamp(36px, 4.2vw, 56px);
 }
 .admin-shell.internal-portal .internal-hero-text p { max-width: 680px; }
 .admin-shell.internal-portal .internal-sync-btn {
@@ -224,7 +224,7 @@
 .admin-shell.internal-portal .internal-kpi-icon.green { background: #dff7ef; color: #16896e; }
 .admin-shell.internal-portal .internal-kpi-icon.violet { background: #f0e8ff; color: #8b5bd1; }
 .admin-shell.internal-portal .internal-kpi-icon.emerald { background: #dcf7f8; color: #1597a3; }
-.admin-shell.internal-portal .internal-kpi-value { font-size: 38px; }
+.admin-shell.internal-portal .internal-kpi-value { font-size: 42.5px; }
 
 .admin-shell.internal-portal .internal-section-card,
 .admin-shell.internal-portal .admin-card {
@@ -305,7 +305,7 @@
   border-radius: 50%;
   background: linear-gradient(145deg, rgb(99 91 255 / 28%), rgb(39 197 210 / 24%));
 }
-.admin-shell.internal-portal .internal-login h1 { font-size: 40px; }
+.admin-shell.internal-portal .internal-login h1 { font-size: 45px; }
 .admin-shell.internal-portal .internal-login input {
   border-radius: 12px;
   background: var(--admin-input);
@@ -340,13 +340,13 @@
 
 @media (max-width: 480px) {
   .admin-shell.internal-portal .internal-login { padding: 34px 24px; }
-  .admin-shell.internal-portal .internal-login h1 { font-size: 34px; }
+  .admin-shell.internal-portal .internal-login h1 { font-size: 38px; }
   .admin-shell.internal-portal .internal-kpi-card { min-height: 148px; }
 }
 
 /* Current system-only routes: accessible actions and no hidden mobile controls. */
-.admin-shell.internal-portal { --admin-muted: #54647f; --admin-mono: "Manrope", system-ui, sans-serif; font-family: "Manrope", system-ui, sans-serif; }
-.admin-shell.internal-portal[data-theme]:not(.manager-shell) { --admin-mono: "Manrope", system-ui, sans-serif; font-family: "Manrope", system-ui, sans-serif; }
+.admin-shell.internal-portal { --admin-muted: #54647f; --admin-mono: "Be Vietnam Pro", system-ui, sans-serif; font-family: "Be Vietnam Pro", system-ui, sans-serif; }
+.admin-shell.internal-portal[data-theme]:not(.manager-shell) { --admin-mono: "Be Vietnam Pro", system-ui, sans-serif; font-family: "Be Vietnam Pro", system-ui, sans-serif; }
 .admin-shell.internal-portal[data-theme="light"]:not(.manager-shell) { --admin-bg: #eef3fb; --admin-card: rgb(255 255 255 / 82%); --admin-sidebar-bg: rgb(255 255 255 / 76%); --admin-text: #172033; --admin-muted: #54647f; --admin-border: #d9e2f0; --admin-primary: #635bff; --admin-primary-soft: #ecebff; --admin-input: #f5f8fc; }
 .admin-shell.internal-portal[data-theme="dark"] { --admin-muted: #b3bfd4; }
 .admin-shell.internal-portal[data-theme="dark"]:not(.manager-shell) { --admin-bg: #0c1221; --admin-card: rgb(20 29 49 / 84%); --admin-sidebar-bg: rgb(16 24 42 / 84%); --admin-text: #f3f6fc; --admin-muted: #b3bfd4; --admin-border: #2a3853; --admin-primary: #9c96ff; --admin-primary-soft: #332f68; --admin-input: #18243a; }
@@ -354,8 +354,8 @@
 .admin-shell.internal-portal .internal-main { min-width: 0; width: auto; flex: 1; }
 .admin-shell.internal-portal .internal-directory-panel { min-width: 0; width: 100%; box-sizing: border-box; }
 .admin-shell.internal-portal .internal-header { z-index: 20; gap: 16px; flex-wrap: wrap; padding-block: 12px; }
-.admin-shell.internal-portal .internal-nav::before { content: "ADMIN HỆ THỐNG"; font-size: 10px; letter-spacing: .08em; }
-.admin-shell.internal-portal .internal-breadcrumb { font-size: 11px; }
+.admin-shell.internal-portal .internal-nav::before { content: "ADMIN HỆ THỐNG"; font-size: 11px; letter-spacing: .08em; }
+.admin-shell.internal-portal .internal-breadcrumb { font-size: 12.5px; }
 .admin-shell.internal-portal .internal-hero-text h2 { line-height: 1.2; letter-spacing: -.035em; }
 .admin-shell.internal-portal .internal-hero-text p { color: #e4eafa; line-height: 1.7; }
 .admin-shell.internal-portal .internal-hero-actions { flex-shrink: 0; position: relative; z-index: 1; }
@@ -392,12 +392,12 @@
   .admin-shell.internal-portal .internal-header { position: static; padding: 16px; }
   .admin-shell.internal-portal .internal-header-right { flex-wrap: wrap; gap: 10px; }
   .admin-shell.internal-portal .internal-hero-banner { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .admin-shell.internal-portal .internal-hero-text h2 { font-size: clamp(28px,7vw,38px); }
+  .admin-shell.internal-portal .internal-hero-text h2 { font-size: clamp(31.5px,7vw,42.5px); }
   .admin-shell.internal-portal .internal-directory-panel { padding: 18px; }
   .admin-shell.internal-portal .internal-filters { gap: 12px; }
   .admin-shell.internal-portal .internal-filters label { flex: 1 1 160px; }
   .admin-shell.internal-portal .internal-login { width: calc(100% - 32px); margin: 32px 16px; }
-  .admin-shell.internal-portal :is(input,select,textarea) { font-size: 16px; }
+  .admin-shell.internal-portal :is(input,select,textarea) { font-size: 18px; }
 }
 .admin-shell.internal-portal .internal-brand .internal-collapse-toggle {
   display: grid;

@@ -21,7 +21,7 @@
 
 .hallmark-hero-text .hallmark-eyebrow {
   display: inline-block;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--admin-primary, #3b82f6);
@@ -31,7 +31,7 @@
 
 .hallmark-hero-text h2 {
   margin: 0 0 6px 0;
-  font-size: 22px;
+  font-size: 24.5px;
   font-weight: 700;
   color: var(--admin-text, #f1f5f9);
   letter-spacing: -0.02em;
@@ -39,7 +39,7 @@
 
 .hallmark-hero-text p {
   margin: 0;
-  font-size: 13px;
+  font-size: 14.5px;
   color: var(--admin-muted, #94a3b8);
   line-height: 1.5;
 }
@@ -49,7 +49,7 @@
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   color: #10b981;
   background: rgba(16, 185, 129, 0.08);
@@ -94,7 +94,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 600;
   color: var(--admin-muted, #94a3b8);
 }
@@ -127,7 +127,7 @@
 
 .hallmark-kpi-number {
   margin: 14px 0 8px 0;
-  font-size: 30px;
+  font-size: 33.5px;
   font-weight: 800;
   color: var(--admin-text, #f1f5f9);
   font-variant-numeric: tabular-nums;
@@ -139,7 +139,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-muted, #94a3b8);
 }
 
@@ -211,13 +211,13 @@
 .admin-stat-error p {
   margin: 4px 0 0;
   color: var(--admin-muted, #94a3b8);
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.5;
 }
 
 .admin-stat-eyebrow {
   color: var(--admin-primary, #3b82f6);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 750;
   letter-spacing: 0.08em;
 }
@@ -225,7 +225,7 @@
 .admin-stat-heading h2 {
   margin: 4px 0 0;
   color: var(--admin-text, #f1f5f9);
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1.3;
 }
 
@@ -244,7 +244,7 @@
   display: grid;
   gap: 5px;
   color: var(--admin-muted, #94a3b8);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
 }
 
@@ -281,7 +281,7 @@
   justify-content: space-between;
   gap: 10px;
   color: var(--admin-muted, #94a3b8);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 650;
 }
 
@@ -294,7 +294,7 @@
   overflow-wrap: anywhere;
   margin-top: 13px;
   color: var(--admin-text, #f1f5f9);
-  font-size: clamp(18px, 2vw, 25px);
+  font-size: clamp(20px, 2vw, 28px);
   font-variant-numeric: tabular-nums;
 }
 
@@ -302,7 +302,7 @@
   display: block;
   margin-top: 6px;
   color: var(--admin-muted, #94a3b8);
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 .admin-stat-trend-heading {
@@ -321,13 +321,13 @@
 
 .admin-stat-trend-heading span {
   color: var(--admin-muted, #94a3b8);
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 .admin-stat-legend {
   gap: 12px;
   color: var(--admin-muted, #94a3b8);
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 .admin-stat-legend span {
@@ -373,7 +373,7 @@
   align-items: center;
   gap: 7px;
   color: var(--admin-muted, #94a3b8);
-  font-size: 10px;
+  font-size: 11px;
   white-space: nowrap;
 }
 
@@ -401,7 +401,7 @@
 .admin-stat-table-wrap table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: 13.5px;
   text-align: left;
 }
 
@@ -414,7 +414,7 @@
 
 .admin-stat-table-wrap th {
   color: var(--admin-muted, #94a3b8);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.035em;
   text-transform: uppercase;
@@ -440,7 +440,7 @@
   align-items: center;
   gap: 10px;
   color: var(--admin-muted, #94a3b8);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .admin-stat-error {
@@ -475,7 +475,7 @@
   border-radius: 7px;
   cursor: pointer;
   font: inherit;
-  font-size: 12px;
+  font-size: 13.5px;
   text-decoration: none;
 }
 
@@ -493,7 +493,7 @@
   background: var(--admin-input, rgba(255, 255, 255, 0.025));
   border: 1px dashed var(--admin-border, #1e293b);
   border-radius: 7px;
-  font-size: 11px;
+  font-size: 12.5px;
   line-height: 1.5;
 }
 
@@ -546,14 +546,14 @@
 
 .hallmark-section-header h3 {
   margin: 0 0 4px 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--admin-text, #f1f5f9);
 }
 
 .hallmark-section-header p {
   margin: 0;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-muted, #94a3b8);
 }
 
@@ -563,7 +563,7 @@
   color: var(--admin-text, #f1f5f9);
   padding: 5px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -594,7 +594,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 500;
   color: var(--admin-muted, #94a3b8);
   background: transparent;
@@ -673,7 +673,7 @@
 }
 
 .hallmark-center-val {
-  font-size: 22px;
+  font-size: 24.5px;
   font-weight: 800;
   color: var(--admin-text, #f1f5f9);
   font-variant-numeric: tabular-nums;
@@ -681,7 +681,7 @@
 }
 
 .hallmark-center-lbl {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--admin-muted, #94a3b8);
   margin-top: 3px;
@@ -701,7 +701,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 14.5px;
   padding: 5px 8px;
   border-radius: 6px;
   transition: background 0.15s ease;
@@ -742,7 +742,7 @@
 }
 
 .hallmark-stats-percent {
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--admin-muted, #94a3b8);
 }
 
@@ -803,14 +803,14 @@
 
 .hallmark-dispatch-info h4 {
   margin: 0 0 2px 0;
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--admin-text, #f1f5f9);
 }
 
 .hallmark-dispatch-info p {
   margin: 0;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-muted, #94a3b8);
 }
 
@@ -833,7 +833,7 @@
   background: rgba(99, 102, 241, 0.06);
   border: 1px dashed rgba(99, 102, 241, 0.3);
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-text, #f1f5f9);
   line-height: 1.5;
   margin-top: 4px;
@@ -864,14 +864,14 @@
 
 .hallmark-org-header h3 {
   margin: 0 0 4px 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--admin-text, #f1f5f9);
 }
 
 .hallmark-org-header p {
   margin: 0;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-muted, #94a3b8);
 }
 
@@ -906,7 +906,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 700;
 }
 
@@ -932,13 +932,13 @@
 
 .hallmark-branch-title h4 {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--admin-text, #f1f5f9);
 }
 
 .hallmark-branch-title span {
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--admin-muted, #94a3b8);
 }
 
@@ -956,7 +956,7 @@
   background: var(--admin-card, #0f172a);
   border: 1px solid var(--admin-border, #1e293b);
   border-radius: 6px;
-  font-size: 12.5px;
+  font-size: 14px;
   transition: border-color 0.15s ease;
 }
 
@@ -971,7 +971,7 @@
 }
 
 .hallmark-staff-role-badge {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
   padding: 2px 7px;
   border-radius: 4px;
@@ -998,7 +998,7 @@
 }
 
 .hallmark-staff-count {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--admin-text, #f1f5f9);
   background: var(--admin-border, #1e293b);
@@ -1023,7 +1023,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
+  font-size: 14px;
   color: var(--admin-muted, #94a3b8);
 }
 
@@ -1039,7 +1039,7 @@
 }
 
 .hallmark-staff-duty {
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--admin-muted, #94a3b8);
   margin-top: 2px;
 }
@@ -1074,7 +1074,7 @@
 }
 
 .hallmark-tier-pill {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1094,13 +1094,13 @@
 
 .hallmark-tier-title-wrap h4 {
   margin: 0;
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 700;
   color: var(--admin-text, #f1f5f9);
 }
 
 .hallmark-tier-badge {
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-muted, #94a3b8);
 }
 
@@ -1139,7 +1139,7 @@
 }
 
 .hallmark-role-bullet {
-  font-size: 14px;
+  font-size: 15.5px;
 }
 
 .hallmark-role-card-title {
@@ -1150,7 +1150,7 @@
 }
 
 .hallmark-role-code {
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -1161,12 +1161,12 @@
 .hallmark-role-code.hr { color: #34d399; }
 
 .hallmark-role-card-title strong {
-  font-size: 13.5px;
+  font-size: 15px;
   color: var(--admin-text, #f1f5f9);
 }
 
 .hallmark-role-count {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--admin-text, #f1f5f9);
   background: var(--admin-border, #1e293b);
@@ -1176,7 +1176,7 @@
 }
 
 .hallmark-role-desc {
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-muted, #94a3b8);
   line-height: 1.5;
 }
@@ -1217,14 +1217,14 @@
 
 .hallmark-team-title h5 {
   margin: 0 0 3px 0;
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 700;
   color: var(--admin-text, #f1f5f9);
 }
 
 .hallmark-team-duty-headline {
   display: block;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--admin-muted, #94a3b8);
   line-height: 1.4;
 }
@@ -1250,7 +1250,7 @@
 }
 
 .hallmark-subcard-tag {
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   padding: 1px 6px;
   border-radius: 4px;
@@ -1267,13 +1267,13 @@
 }
 
 .hallmark-subcard-head strong {
-  font-size: 12.5px;
+  font-size: 14px;
   color: var(--admin-text, #f1f5f9);
 }
 
 .hallmark-subcard p {
   margin: 0;
-  font-size: 11.5px;
+  font-size: 13px;
   color: var(--admin-muted, #94a3b8);
   line-height: 1.4;
 }
@@ -1287,13 +1287,13 @@
 
 .admin-quarterly-cell strong {
   color: var(--admin-text, #f1f5f9);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .admin-quarterly-cell small,
 .admin-quarterly-entity small {
   color: var(--admin-muted, #94a3b8);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .admin-stat-table-wrap td.admin-quarterly-entity {

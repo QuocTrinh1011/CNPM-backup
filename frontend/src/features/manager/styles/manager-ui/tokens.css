@@ -44,8 +44,8 @@
   --admin-shadow-lg: 0 28px 70px rgb(22 18 15 / 22%);
   --manager-transition: 160ms cubic-bezier(.2, .7, .3, 1);
   background: var(--admin-bg);
-  font-family: "Manrope", system-ui, sans-serif;
-  font-size: 14px;
+  font-family: "Be Vietnam Pro", system-ui, sans-serif;
+  font-size: 15.5px;
   line-height: 1.6;
   color: var(--admin-text);
 }

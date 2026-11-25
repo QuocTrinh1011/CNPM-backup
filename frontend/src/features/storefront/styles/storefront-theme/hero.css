@@ -28,7 +28,7 @@
   border-radius: var(--radius-xs);
   overflow: hidden;
   font-family: var(--font-data);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
   line-height: 1;
@@ -60,7 +60,7 @@
 .site-shell .shop-editorial h1 {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(40px, 5.6vw, 78px);
+  font-size: clamp(45px, 5.6vw, 87.5px);
   font-weight: 800;
   letter-spacing: -0.045em;
   line-height: 1.02;
@@ -77,7 +77,7 @@
   max-width: 46ch;
   margin: clamp(18px, 2.4vw, 26px) 0 clamp(26px, 3vw, 36px);
   color: var(--muted);
-  font-size: 15.5px;
+  font-size: 17.5px;
   line-height: 1.7;
 }
 
@@ -95,7 +95,7 @@
   border-radius: var(--radius-sm);
   background: var(--accent);
   color: #ffffff;
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -150,7 +150,7 @@
 
 .site-shell .shop-editorial-stamp small {
   font-family: var(--font-data);
-  font-size: 8.5px;
+  font-size: 9.5px;
   font-weight: 500;
   letter-spacing: 0.14em;
   line-height: 1.2;
@@ -159,7 +159,7 @@
 
 .site-shell .shop-editorial-stamp b {
   font-family: var(--font-data);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 700;
   letter-spacing: 0.06em;
   line-height: 1.2;
@@ -179,7 +179,7 @@
   }
 
   .site-shell .shop-editorial h1 {
-    font-size: clamp(36px, 7vw, 54px);
+    font-size: clamp(40.5px, 7vw, 60.5px);
   }
 }
 

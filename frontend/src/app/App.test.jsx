@@ -14,6 +14,25 @@ beforeEach(() => {
   api.mockImplementation(async path => path.includes('categories') ? ['Áo thun'] : {content:[product],totalPages:1,totalElements:1});
 });
 afterEach(cleanup);
+it.each(['THÊM VÀO GIỎ HÀNG', 'MUA NGAY'])('requires variant confirmation before %s from a product card', async action => {
+  const configurableProduct = {...product, colors:'Đen,Trắng'};
+  api.mockImplementation(async path => path.includes('categories') ? ['Áo thun'] : {content:[configurableProduct],totalPages:1,totalElements:1});
+  render(<App/>);
+  await screen.findByRole('heading', {name:product.name});
+  fireEvent.click(screen.getByRole('button', {name:action}));
+  const dialog = await screen.findByRole('dialog');
+  expect(JSON.parse(localStorage.getItem('anh-lon-shop-guest-cart') || '{"items":[]}').items).toHaveLength(0);
+  expect(window.location.pathname).toBe('/');
+  expect(screen.queryByText('Đã thêm sản phẩm vào giỏ tạm. Đăng nhập khi thanh toán nhé.')).toBeNull();
+  fireEvent.click(within(dialog).getByRole('button', {name:'L',exact:true}));
+  fireEvent.click(within(dialog).getByRole('button', {name:'Trắng',exact:true}));
+  expect(within(dialog).getByRole('button', {name:'L',exact:true}).getAttribute('aria-pressed')).toBe('true');
+  fireEvent.click(within(dialog).getByRole('button', {name:action === 'MUA NGAY' ? 'MUA NGAY' : 'THÊM VÀO GIỎ',exact:true}));
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  expect(JSON.parse(localStorage.getItem('anh-lon-shop-guest-cart')).items[0]).toMatchObject({size:'L',color:'Trắng',quantity:1});
+  if (action === 'MUA NGAY') await waitFor(() => expect(window.location.pathname).toBe('/dang-nhap'));
+  else expect(window.location.pathname).toBe('/');
+});
 it('keeps the size-exchange announcement without a free-shipping promotion', () => {
   const view = render(<App/>);
   const banner = view.container.querySelector('.announcement');

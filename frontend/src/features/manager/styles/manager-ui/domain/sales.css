@@ -72,7 +72,7 @@
 
 .manager-shell .invoice-detail-head h2 {
   margin: 0;
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 750;
   letter-spacing: -.02em;
 }
@@ -87,7 +87,7 @@
 
 .manager-shell .invoice-detail-panel h3 {
   margin: 20px 0 10px;
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 750;
 }
 
@@ -106,7 +106,7 @@
 
 .manager-shell .invoice-detail-panel .admin-table-wrap :is(th, td) {
   padding: 8px 10px;
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .manager-shell .invoice-head {
@@ -125,7 +125,7 @@
   border-radius: 999px;
   background: var(--admin-input);
   color: var(--admin-muted);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 650;
 }
 
@@ -147,7 +147,7 @@
   justify-content: space-between;
   gap: 16px;
   color: var(--admin-muted);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell .invoice-totals b {
@@ -165,7 +165,7 @@
 
 .manager-shell .invoice-total-row strong {
   color: var(--admin-text);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
@@ -177,7 +177,7 @@
   border-radius: var(--manager-radius-control);
   background: var(--admin-input);
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.55;
 }
 
@@ -198,7 +198,7 @@
 
 .manager-shell .manager-payment-panel h3 {
   margin: 0 0 10px;
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 750;
 }
 
@@ -213,7 +213,7 @@
   border-radius: var(--manager-radius-sm);
   background: var(--admin-warning-soft);
   color: var(--admin-text);
-  font-size: 12.5px;
+  font-size: 14px;
 }
 
 .manager-shell .manager-payment-form {
@@ -229,14 +229,14 @@
 .manager-shell .manager-payment-form h4,
 .manager-shell .manager-payment-form p {
   margin: 0;
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell .manager-payment-form label {
   display: grid;
   gap: 5px;
   color: var(--admin-muted);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -251,7 +251,7 @@
   background: var(--admin-card);
   color: var(--admin-text);
   font: inherit;
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell .manager-payment-form > div {
@@ -265,7 +265,7 @@
   display: block;
   margin-top: 4px;
   color: var(--admin-muted);
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 @media (max-width: 1150px) {

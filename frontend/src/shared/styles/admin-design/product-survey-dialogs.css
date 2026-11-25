@@ -81,7 +81,7 @@
 }
 
 .admin-survey-card-badge {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   background: var(--admin-primary-soft);
   color: var(--admin-primary);
@@ -91,7 +91,7 @@
 
 .admin-survey-card-title h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 600;
   color: var(--admin-text);
 }
@@ -112,7 +112,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 14.5px;
   cursor: pointer;
   user-select: none;
   margin-top: 2px;
@@ -133,7 +133,7 @@
 }
 
 .admin-survey-options-header {
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -170,7 +170,7 @@
   background: transparent;
   border-radius: var(--admin-radius-sm);
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13.5px;
   transition: all 0.15s ease;
 }
 
@@ -194,7 +194,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 500;
   color: var(--admin-primary);
   background: transparent;
@@ -217,7 +217,7 @@
   gap: 8px;
   width: 100%;
   padding: 12px 16px;
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 600;
   border: 2px dashed var(--admin-border);
   border-radius: var(--admin-radius-lg);
@@ -249,7 +249,7 @@
 
 .admin-dialog-header-title h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
@@ -294,7 +294,7 @@
 }
 
 .admin-form-group label {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
   font-family: var(--admin-mono);
   color: var(--admin-muted);
@@ -310,7 +310,7 @@
   border-radius: var(--admin-radius-md);
   background: var(--admin-input);
   color: var(--admin-text);
-  font-size: 13.5px;
+  font-size: 15px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -338,7 +338,7 @@
 }
 
 .admin-preview-label {
-  font-size: 11px;
+  font-size: 12.5px;
   font-family: var(--admin-mono);
   color: var(--admin-muted);
 }

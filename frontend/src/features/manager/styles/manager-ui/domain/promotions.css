@@ -17,7 +17,7 @@
 .manager-shell .promotion-page-heading h2 {
   margin: 7px 0 5px;
   color: var(--admin-text);
-  font-size: 24px;
+  font-size: 27px;
   font-weight: 750;
   letter-spacing: -.02em;
 }
@@ -25,7 +25,7 @@
 .manager-shell .promotion-page-heading p {
   margin: 4px 0 0;
   color: var(--admin-muted);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell .promotion-kicker {
@@ -33,7 +33,7 @@
   align-items: center;
   gap: 7px;
   color: var(--admin-primary);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 800;
   letter-spacing: .1em;
 }
@@ -43,7 +43,7 @@
   margin: 0;
   padding: 10px 12px;
   border-radius: var(--manager-radius-control);
-  font-size: 12.5px;
+  font-size: 14px;
 }
 
 .manager-shell .promotion-notice {
@@ -64,7 +64,7 @@
   flex-wrap: wrap;
   gap: 12px;
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .manager-shell .promotion-search {
@@ -95,7 +95,7 @@
   border: 0;
   background: transparent;
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell .promotion-search input:focus-visible {
@@ -120,14 +120,14 @@
   padding: 13px 15px;
   border-bottom: 1px solid var(--admin-border);
   text-align: left;
-  font-size: 13px;
+  font-size: 14.5px;
   vertical-align: middle;
 }
 
 .manager-shell .promotion-table th {
   background: var(--admin-input);
   color: var(--admin-muted);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   letter-spacing: .05em;
   text-transform: uppercase;
@@ -142,7 +142,7 @@
   margin-top: 3px;
   color: var(--admin-muted);
   font-family: var(--admin-mono);
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 .manager-shell .promotion-counts,
@@ -159,7 +159,7 @@
   border-radius: 999px;
   background: var(--admin-input);
   color: var(--admin-muted);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 650;
   white-space: nowrap;
 }
@@ -178,7 +178,7 @@
   padding: 30px 12px;
   text-align: center;
   color: var(--admin-muted);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell .promotion-pagination {
@@ -188,7 +188,7 @@
   flex-wrap: wrap;
   gap: 10px;
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .manager-shell .promotion-pagination > div {
@@ -245,14 +245,14 @@
 .manager-shell .promotion-rule-heading h4 {
   margin: 0;
   color: var(--admin-text);
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 750;
 }
 
 .manager-shell .promotion-rule-heading p {
   margin: 3px 0 0;
   color: var(--admin-muted);
-  font-size: 11.5px;
+  font-size: 13px;
 }
 
 .manager-shell .promotion-rule-heading .admin-action {
@@ -287,7 +287,7 @@
 .manager-shell .promotion-rule-empty {
   margin: 0;
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 /* Details contents */
@@ -309,7 +309,7 @@
 
 .manager-shell .promotion-detail-meta small {
   color: var(--admin-muted);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: .05em;
   text-transform: uppercase;
@@ -317,7 +317,7 @@
 
 .manager-shell .promotion-detail-meta b {
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
   overflow-wrap: anywhere;
 }
 
@@ -337,14 +337,14 @@
 .manager-shell .promotion-detail-groups h4 {
   margin: 0;
   color: var(--admin-text);
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 750;
 }
 
 .manager-shell .promotion-detail-groups p {
   margin: 6px 0 0;
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .manager-shell .promotion-detail-groups ul {
@@ -360,7 +360,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-size: 12.5px;
+  font-size: 14px;
 }
 
 .manager-shell .promotion-detail-groups li span {

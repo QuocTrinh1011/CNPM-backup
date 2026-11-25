@@ -16,7 +16,7 @@
   padding: 24px;
   isolation: isolate;
   background: var(--admin-ink);
-  font-family: "Manrope", system-ui, sans-serif;
+  font-family: "Be Vietnam Pro", system-ui, sans-serif;
 }
 
 .manager-login.admin-login::before {
@@ -51,13 +51,13 @@
   border-radius: var(--manager-radius-control);
   background: var(--admin-primary);
   color: var(--admin-on-primary);
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 800;
   letter-spacing: .04em;
 }
 
 .manager-login.admin-login .admin-mark span {
-  font-size: 8.5px;
+  font-size: 9.5px;
   letter-spacing: .12em;
   opacity: .72;
 }
@@ -66,7 +66,7 @@
   display: block;
   margin-top: 20px;
   color: var(--login-link);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 750;
   letter-spacing: .16em;
 }
@@ -74,7 +74,7 @@
 .manager-login.admin-login .admin-login-card h1 {
   margin: 10px 0 8px;
   color: var(--login-text);
-  font: 780 34px/1.16 "Manrope", system-ui, sans-serif;
+  font: 780 38px/1.16 "Be Vietnam Pro", system-ui, sans-serif;
   letter-spacing: -.045em;
 }
 
@@ -86,7 +86,7 @@
 .manager-login.admin-login .admin-login-card p {
   margin: 0 0 18px;
   color: var(--login-muted);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-login.admin-login .admin-login-card [role="alert"] {
@@ -96,7 +96,7 @@
   border-radius: var(--manager-radius-control);
   background: var(--login-danger-bg);
   color: var(--login-danger);
-  font-size: 12px;
+  font-size: 13.5px;
   overflow-wrap: anywhere;
 }
 
@@ -109,8 +109,8 @@
   display: grid;
   gap: 6px;
   color: var(--login-muted);
-  font-family: "Manrope", system-ui, sans-serif;
-  font-size: 10px;
+  font-family: "Be Vietnam Pro", system-ui, sans-serif;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: .1em;
 }
@@ -124,7 +124,7 @@
   background: var(--login-field);
   color: var(--login-text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: 15.5px;
   box-sizing: border-box;
 }
 
@@ -145,7 +145,7 @@
   display: block;
   margin-top: 14px;
   color: var(--login-muted);
-  font-size: 11.5px;
+  font-size: 13px;
   text-align: center;
 }
 

@@ -49,7 +49,7 @@
   --radius-full: 999px;
 
   /* Type */
-  --sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-data: 'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
   --serif: var(--sans);
   --mono: var(--font-data);

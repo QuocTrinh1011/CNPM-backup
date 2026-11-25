@@ -18,7 +18,7 @@
   border: 1px solid var(--admin-border);
   background: var(--admin-card);
   color: var(--admin-muted);
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
@@ -68,7 +68,7 @@
 
 .admin-order-filter-select label {
   color: var(--admin-muted);
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 500;
 }
 
@@ -80,7 +80,7 @@
   border-radius: var(--admin-radius-md);
   background: var(--admin-input);
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
   cursor: pointer;
   transition: border-color 0.15s ease;
 }
@@ -93,14 +93,14 @@
 .admin-order-toolbar > span {
   margin-left: auto;
   color: var(--admin-muted);
-  font: 600 12px var(--admin-mono);
+  font: 600 13.5px var(--admin-mono);
 }
 
 .admin-table-subline {
   display: block;
   margin-top: 4px;
   color: var(--admin-muted);
-  font-size: 11.5px;
+  font-size: 13px;
 }
 
 .admin-order-actions {

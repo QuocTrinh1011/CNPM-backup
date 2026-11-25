@@ -22,7 +22,7 @@
   border-bottom: 1px solid var(--admin-border);
   background: var(--admin-card);
   color: var(--admin-muted);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 750;
   letter-spacing: .06em;
   text-align: left;
@@ -34,7 +34,7 @@
   padding: 12px 14px;
   border-bottom: 1px solid color-mix(in srgb, var(--admin-border) 72%, transparent);
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
   vertical-align: middle;
 }
 
@@ -64,13 +64,13 @@
   display: block;
   margin-top: 8px;
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell .admin-table-empty small {
   display: block;
   margin-top: 2px;
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .manager-shell .admin-state-icon {
@@ -96,13 +96,13 @@
 }
 
 .manager-shell .admin-list-error b {
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell .admin-list-error p {
   margin: 2px 0 0;
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .manager-shell .admin-list-error .admin-action {
@@ -125,7 +125,7 @@
   border-radius: 9px;
   background: var(--admin-primary-soft);
   color: var(--admin-primary);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -133,7 +133,7 @@
   display: block;
   margin-top: 2px;
   color: var(--admin-muted);
-  font-size: 11px;
+  font-size: 12.5px;
   line-height: 1.45;
 }
 
@@ -145,14 +145,14 @@
   background: var(--admin-input);
   color: var(--admin-text);
   font-family: var(--admin-mono);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
 }
 
 .manager-shell .admin-order-total-cell strong {
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 750;
   white-space: nowrap;
 }
@@ -195,11 +195,11 @@
   border-radius: 8px;
   background: var(--admin-card);
   color: var(--admin-text);
-  font-size: 11.5px;
+  font-size: 13px;
 }
 
 .manager-shell .admin-payment-method {
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 650;
 }
 
@@ -211,7 +211,7 @@
   border-radius: 999px;
   background: var(--admin-input);
   color: var(--admin-muted);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -232,7 +232,7 @@
   padding: 3px 9px;
   border-radius: 999px;
   background: color-mix(in srgb, currentColor 10%, transparent);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   line-height: 1.6;
   white-space: nowrap;
@@ -262,7 +262,7 @@
   display: block;
   margin-top: 3px;
   color: var(--admin-warning);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 650;
 }
 

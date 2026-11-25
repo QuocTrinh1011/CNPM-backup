@@ -42,7 +42,7 @@
   display: grid;
   gap: 6px;
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell .hr-filter {
@@ -72,7 +72,7 @@
   border: 1px solid var(--admin-border);
   border-radius: var(--manager-radius-control);
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.5;
 }
 
@@ -101,14 +101,14 @@
   grid-column: 1 / -1;
   margin: 0;
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .manager-shell :is(.hr-form-grid, .hr-settings-form, .hr-filter-row) label {
   display: grid;
   gap: 6px;
   color: var(--admin-text);
-  font-size: 13px;
+  font-size: 14.5px;
 }
 
 .manager-shell :is(.hr-form-grid, .hr-settings-form, .hr-filter-row) :is(input, select, textarea),
@@ -137,7 +137,7 @@
 .manager-shell :is(.hr-form-grid, .hr-settings-form) small,
 .manager-shell .hr-settings-form p {
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.5;
 }
 
@@ -198,7 +198,7 @@
   border-radius: var(--manager-radius-control);
   background: var(--admin-input);
   color: var(--admin-text);
-  font-size: 12.5px;
+  font-size: 14px;
 }
 
 .manager-shell .hr-settings-form > button {
@@ -224,7 +224,7 @@
 }
 
 .manager-shell .hr-profile-summary b {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .manager-shell :is(.hr-request-list, .hr-team-roster, .hr-payslip-list) {
@@ -331,7 +331,7 @@
 }
 
 .manager-shell .hr-kpi-grid article b {
-  font-size: 22px;
+  font-size: 24.5px;
 }
 
 .manager-shell .hr-report-summaries h3 {
@@ -363,7 +363,7 @@
   border-radius: var(--manager-radius-control);
   background: var(--admin-input);
   color: var(--admin-muted);
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.5;
 }
 

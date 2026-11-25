@@ -1,7 +1,7 @@
 import React from 'react';
 import { Minus, Plus } from 'lucide-react';
 
-export function ProductPurchaseActions({ page, quickView, product, quantity, setQuantity, purchasing, purchase }) {
+export function ProductPurchaseActions({ page, quickView, purchaseIntent, product, quantity, setQuantity, purchasing, purchase }) {
   const addButton = (
     <button
       type="button"
@@ -15,7 +15,7 @@ export function ProductPurchaseActions({ page, quickView, product, quantity, set
   const buyButton = (
     <button
       type="button"
-      className={page ? "buy-now-btn product-page-buy-button" : "buy-now-btn"}
+      className={quickView ? "button quick-view-add-button buy-now-btn" : page ? "buy-now-btn product-page-buy-button" : "buy-now-btn"}
       disabled={!product.stock || purchasing}
       onClick={() => purchase(true)}
     >
@@ -45,7 +45,7 @@ export function ProductPurchaseActions({ page, quickView, product, quantity, set
                   <Plus size={17} />
                 </button>
               </div>
-              {addButton}
+              {purchaseIntent === 'buy' ? buyButton : addButton}
             </div>
           ) : page ? (
             <div className="product-page-purchase">

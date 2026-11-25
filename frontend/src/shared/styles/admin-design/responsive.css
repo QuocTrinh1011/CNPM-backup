@@ -83,7 +83,7 @@
   }
   .admin-order-card > small { display: block; margin: 4px 0 12px; color: var(--admin-muted); }
   .admin-order-card p { margin: 4px 0; }
-  .admin-order-card > strong { display: block; margin: 8px 0; font-size: 16px; }
+  .admin-order-card > strong { display: block; margin: 8px 0; font-size: 18px; }
   .admin-order-empty { padding: 24px; text-align: center; color: var(--admin-muted); }
   .admin-report-columns { grid-template-columns: 1fr; }
 }

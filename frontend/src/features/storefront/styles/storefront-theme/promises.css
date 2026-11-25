@@ -33,7 +33,7 @@
 .site-shell .promise b {
   color: var(--ink);
   font-family: var(--font-data);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
   line-height: 1.5;
@@ -41,6 +41,6 @@
 
 .site-shell .promise small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.5;
 }
